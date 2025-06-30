@@ -22,5 +22,8 @@ class SwitchPageController extends Controller
     {
         return Inertia::render('Coursespage');
     }
-    
+    public function contact()
+    {
+        return Inertia::render('Contactpage');
+    }
 }

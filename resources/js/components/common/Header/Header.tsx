@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import $ from 'jquery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 
 export default function Header() {
@@ -118,6 +118,10 @@ export default function Header() {
         };
     }, []);
 
+    const { url } = usePage();
+    const isActive = (path: string) => url === path || url.startsWith(path + '/');
+
+
     return (
         <>
             <div>
@@ -163,17 +167,17 @@ export default function Header() {
                                 <div className="main-menu__wrap ul_li navbar navbar-expand-lg">
                                     <nav className="main-menu navbar-collapse collapse">
                                         <ul>
-                                            <li className="menu-item-has-children active">
+                                            <li className={`menu-item-has-children ${isActive('/') ? 'active' : ''}`}>
                                                 <Link href={route('home')}>Accueil</Link>
                                             </li>
-                                            <li>
+                                            <li className={`menu-item-has-children ${isActive('/admission') ? 'active' : ''}`}>
                                                 <Link href={route('admission')}>Admission</Link>
                                             </li>
-                                            <li className="menu-item-has-children">
+                                            <li className={`menu-item-has-children ${isActive('/courses') ? 'active' : ''}`}>
                                                 <Link href={route('courses')}>Cours</Link>
                                             </li>
-                                            <li>
-                                                <Link href="#">Contact</Link>
+                                            <li className={`menu-item-has-children ${isActive('/contact') ? 'active' : ''}`}>
+                                                <Link href={route('contact')}>Contact</Link>
                                             </li>
                                         </ul>
                                     </nav>
@@ -196,17 +200,17 @@ export default function Header() {
                                                 </div>
                                                 <nav className="xb-header-nav">
                                                     <ul className="xb-menu-primary clearfix">
-                                                        <li className="menu-item">
+                                                        <li className={`menu-item ${isActive('/home') ? 'active' : ''}`}>
                                                             <Link href={route('home')}>Accueil</Link>
                                                         </li>
-                                                        <li className="menu-item">
+                                                        <li className={`menu-item ${isActive('/admission') ? 'active' : ''}`}>
                                                             <Link href={route('admission')}>Admission</Link>
                                                         </li>
-                                                        <li className="menu-item">
+                                                        <li className={`menu-item ${isActive('/courses') ? 'active' : ''}`}>
                                                             <Link href={route('courses')}>Cours</Link>
                                                         </li>
-                                                        <li className="menu-item">
-                                                            <Link href="#">Contact</Link>
+                                                        <li className={`menu-item ${isActive('/contact') ? 'active' : ''}`}>
+                                                            <Link href={route('contact')}>Contact</Link>
                                                         </li>
                                                     </ul>
                                                 </nav>
