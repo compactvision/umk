@@ -8,7 +8,7 @@ import Campus from "@/components/section/home/Campus";
 import Testimonial from "@/components/section/home/Testimonial";
 import Event from "@/components/section/home/Event";
 
-export default function Welcome() {
+export default function Homepage() {
     return <App>
         <Hero />
         <Blog />

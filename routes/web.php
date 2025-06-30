@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SwitchPageController;
 
-Route::get('/', function () {
-    return Inertia::render('homepage');
-})->name('home');
+Route::get('/', [SwitchPageController::class, 'home'])->name('home');
+Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admission');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

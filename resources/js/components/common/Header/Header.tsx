@@ -167,7 +167,7 @@ export default function Header() {
                                                 <Link href={route('home')}>Accueil</Link>
                                             </li>
                                             <li>
-                                                <Link href="#">Admission</Link>
+                                                <Link href={route('admission')}>Admission</Link>
                                             </li>
                                             <li className="menu-item-has-children">
                                                 <Link href="#">Cours</Link>
@@ -182,9 +182,9 @@ export default function Header() {
                                             <div className="xb-header-menu-scroll">
                                                 <div className="xb-menu-close xb-hide-xl xb-close" />
                                                 <div className="xb-logo-mobile xb-hide-xl">
-                                                    <a href="index.html" rel="home">
+                                                    <Link href={route('home')}>
                                                         <img src="/assets/img/logo/logo.png" alt="" />
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                                 <div className="xb-header-mobile-search xb-hide-xl">
                                                     <form role="search" action="#">
@@ -197,16 +197,16 @@ export default function Header() {
                                                 <nav className="xb-header-nav">
                                                     <ul className="xb-menu-primary clearfix">
                                                         <li className="menu-item">
-                                                            <a href="index.html">Accueil</a>
+                                                            <Link href={route('home')}>Accueil</Link>
                                                         </li>
                                                         <li className="menu-item">
-                                                            <a href="admission.html">Admission</a>
+                                                            <Link href={route('admission')}>Admission</Link>
                                                         </li>
                                                         <li className="menu-item">
-                                                            <a href="#!">Cours</a>
+                                                            <Link href="#!">Cours</Link>
                                                         </li>
                                                         <li className="menu-item">
-                                                            <a href="contact.html">Contact</a>
+                                                            <Link href="#">Contact</Link>
                                                         </li>
                                                     </ul>
                                                 </nav>

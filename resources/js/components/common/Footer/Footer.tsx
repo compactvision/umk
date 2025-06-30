@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-      <footer className="footer bg_img pos-rel pt-20" data-background="assets/img/bg/footer-bg.jpg">
+      <footer className="footer bg_img pos-rel pt-20" data-background="assets/img/bg/footer.jpg">
           <div className="xb-footer-wrap">
               <div className="container">
                   <div className="footer-cta ul_li_between mb-35">
@@ -19,7 +19,7 @@ export default function Footer() {
                       </div>
                       <div className="xb-item--contact mt-30">
                           <span>ou contactez notre hotline 24h/24</span>
-                          <h3>+1&nbsp;(415)&nbsp;555‑0132</h3>
+                          <h3>+243&nbsp;(0)&nbsp;555‑0132</h3>
                       </div>
                   </div>
               </div>
@@ -34,7 +34,7 @@ export default function Footer() {
                                       </a>
                                   </div>
                                   <span className="xb-item--details">
-                                      25/1, N.I.A. Post Office, Balewadi, <br /> Bristol – BS1 5TA, Angleterre, <br /> Royaume-Uni
+                                      127, Quai des Martyrs Kinkole <br /> Kinshasa, RDC
                                   </span>
                                   <div className="xb-item--meta mt-20">
                                       <span>Réseaux sociaux</span>
