@@ -5,13 +5,13 @@ export default function Admission() {
                 <div className="row align-items-center mt-none-30">
                     <div className="col-xl-5 mt-30">
                         <div className="section-title section-title--md">
-                            <span className="sub-title">Our Dedicated instructor</span>
-                            <h2 className="title mb-20">experience eedford with excellent academics and endless opportunities</h2>
-                            <p>As a public institution, EduFord University is to fostering positive change through education. We are committed</p>
+                            <span className="sub-title">Nos enseignants dévoués</span>
+                            <h2 className="title mb-20">Vivez l'expérience UMK avec une excellence académique et des opportunités infinies</h2>
+                            <p>En tant qu'institution publique, l'Université Moderne de Kinkole s'engage à favoriser des changements positifs à travers l'éducation. Nous sommes déterminés</p>
                         </div>
                         <div className="admission-btn mt-65">
-                            <a className="thm-btn" href="contact.html">
-                                apply now
+                            <a className="thm-btn" href="#">
+                                Postuler maintenant
                                 <span className="icon">
                                     <svg width={21} height={21} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -30,9 +30,9 @@ export default function Admission() {
                                     <img src="assets/img/icon/am_01.svg" alt="" />
                                 </div>
                                 <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Choose from hundreds of programs.</h3>
+                                    <h3 className="xb-item--title">Choisissez parmi des centaines de programmes.</h3>
                                     <p className="xb-item--content">
-                                        Choose from hundreds of programs" highlights the diverse range of academic options available.
+                                        Notre large éventail de programmes académiques vous permet de trouver la formation qui correspond à vos aspirations.
                                     </p>
                                 </div>
                             </div>
@@ -41,9 +41,9 @@ export default function Admission() {
                                     <img src="assets/img/icon/am_02.svg" alt="" />
                                 </div>
                                 <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Customize your University experience.</h3>
+                                    <h3 className="xb-item--title">Personnalisez votre expérience universitaire.</h3>
                                     <p className="xb-item--content">
-                                        Customize your university experience available to tailor your education your individual needs.
+                                        Adaptez votre parcours universitaire selon vos besoins individuels et vos centres d'intérêt.
                                     </p>
                                 </div>
                             </div>
@@ -52,9 +52,9 @@ export default function Admission() {
                                     <img src="assets/img/icon/am_03.svg" alt="" />
                                 </div>
                                 <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Choose from hundreds of programs.</h3>
+                                    <h3 className="xb-item--title">Bénéficiez d'un accompagnement personnalisé.</h3>
                                     <p className="xb-item--content">
-                                        Choose from hundreds of programs" highlights the diverse range of academic options available.
+                                        Profitez d'un suivi individualisé par nos enseignants pour maximiser votre réussite académique.
                                     </p>
                                 </div>
                             </div>

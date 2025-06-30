@@ -238,7 +238,7 @@ export default function Courses() {
                 </div>
 
                 {/* CTA */}
-                {/* <div className="xb-cta bg_img pos-rel mt-120" data-background="assets/img/bg/pro-banner.png">
+                <div className="xb-cta bg_img pos-rel mt-120" data-background="assets/img/bg/pro-banner.png">
                     <h2 className="mb-15">Obtenez votre certification professionnelle avec UMK</h2>
                     <div className="xb-btn xb-cta-btn ul_li">
                         <a className="thm-btn btn-yellow mt-20" href="#">
@@ -251,7 +251,7 @@ export default function Courses() {
                             <img src="assets/img/icon/calling-icon.png" alt="Téléphone" /> +243 821 11 22 333
                         </span>
                     </div>
-                </div> */}
+                </div>
             </div>
             
             {/* Éléments décoratifs */}
