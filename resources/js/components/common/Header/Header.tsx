@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import $ from 'jquery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from '@inertiajs/react';
 
 
 export default function Header() {
@@ -128,26 +129,23 @@ export default function Header() {
                                 <div className="xb-help_desk">
                                     <img src="/assets/img/icon/hero_top-icon.png" alt="" />
                                     <p>
-                                        Help Desk : <span>+1&nbsp;(415)&nbsp;555‑0132</span>
+                                        Service d'assistance: <span>+243&nbsp;(810)&nbsp;01 01 111</span>
                                     </p>
                                 </div>
                                 <div className="xb-info">
                                     <ul className="ul_li align-items-end">
-                                        <li>Information For :</li>
+                                        <li>Information Pour :</li>
                                         <li>
-                                            <a href="#!">Students</a>
+                                            <a href="#!">Etudiants</a>
                                         </li>
                                         <li>
-                                            <a href="#!">Faculty</a>
+                                            <a href="#!">Faculté</a>
                                         </li>
                                         <li>
-                                            <a href="#!">Alumni</a>
+                                            <a href="#!">Recherche</a>
                                         </li>
                                         <li>
-                                            <a href="#!">Research</a>
-                                        </li>
-                                        <li>
-                                            <a href="#!">Community</a>
+                                            <a href="#!">Communauté</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -158,24 +156,24 @@ export default function Header() {
                         <div className="container">
                             <div className="header__wrap ul_li_between">
                                 <div className="header-logo">
-                                    <a href="index.html">
+                                    <Link href={route('home')}>
                                         <img src="/assets/img/logo/logo.png" alt="" />
-                                    </a>
+                                    </Link>
                                 </div>
                                 <div className="main-menu__wrap ul_li navbar navbar-expand-lg">
                                     <nav className="main-menu navbar-collapse collapse">
                                         <ul>
                                             <li className="menu-item-has-children active">
-                                                <a href="index.html">Accueil</a>
+                                                <Link href={route('home')}>Accueil</Link>
                                             </li>
                                             <li>
-                                                <a href="admission.html">Admission</a>
+                                                <Link href="#">Admission</Link>
                                             </li>
                                             <li className="menu-item-has-children">
-                                                <a href="#!">Cours</a>
+                                                <Link href="#">Cours</Link>
                                             </li>
                                             <li>
-                                                <a href="contact.html">Contact</a>
+                                                <Link href="#">Contact</Link>
                                             </li>
                                         </ul>
                                     </nav>
@@ -190,7 +188,7 @@ export default function Header() {
                                                 </div>
                                                 <div className="xb-header-mobile-search xb-hide-xl">
                                                     <form role="search" action="#">
-                                                        <input type="text" placeholder="Search..." name="s" className="search-field" />
+                                                        <input type="text" placeholder="Rechercher..." name="s" className="search-field" />
                                                         <button className="search-submit" type="submit">
                                                             <i className="far fa-search" />
                                                         </button>
@@ -237,7 +235,7 @@ export default function Header() {
                                                 strokeLinejoin="round"
                                             />
                                         </svg>
-                                        Search
+                                        Rechercher
                                     </a>
                                     <div className="language_dropdown dropdown">
                                         <button
@@ -248,35 +246,23 @@ export default function Header() {
                                             aria-expanded="false"
                                         >
                                             <span className="flag">
-                                                <img src="/assets/img/icon/flag.png" alt="USA" />
+                                                <img src="/assets/img/icon/fr.png" alt="FR" />
                                             </span>
-                                            <span className="name">English</span>
+                                            <span className="name">Français</span>
                                         </button>
                                         <div className="dropdown-menu">
                                             <ul className="unordered_list_block">
                                                 <li className="dropdown-item">
                                                     <span className="flag">
-                                                        <img src="assets/img/icon/flag_saudi_arabia.webp" alt="Saudi Arabia" />
-                                                    </span>
-                                                    <span className="name">Arabic</span>
-                                                </li>
-                                                <li className="dropdown-item">
-                                                    <span className="flag">
-                                                        <img src="assets/img/icon/flag_bangladesh.webp" alt="Bangladesh" />
-                                                    </span>
-                                                    <span className="name">Bangali</span>
-                                                </li>
-                                                <li className="dropdown-item">
-                                                    <span className="flag">
-                                                        <img src="assets/img/icon/flag_usa.webp" alt="USA" />
+                                                        <img src="/assets/img/icon/flag_usa.webp" alt="USA" />
                                                     </span>
                                                     <span className="name">English</span>
                                                 </li>
                                                 <li className="dropdown-item">
                                                     <span className="flag">
-                                                        <img src="assets/img/icon/flag_portugal.webp" alt="Portugal" />
+                                                        <img src="/assets/img/icon/fr.png" alt="France" />
                                                     </span>
-                                                    <span className="name">Portuguese</span>
+                                                    <span className="name">Français</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -297,7 +283,7 @@ export default function Header() {
                     <div className="xb-search-close xb-close" />
                     <div className="header-search-container">
                         <form role="search" className="search-form" action="#">
-                            <input type="search" className="search-field" placeholder="Search …" defaultValue="" name="s" />
+                            <input type="search" className="search-field" placeholder="Rechercher ..." defaultValue="" name="s" />
                             <button type="submit" className="search-submit">
                                 <i className="far fa-search" />
                             </button>

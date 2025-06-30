@@ -4,17 +4,17 @@ export default function Blog() {
             <div className="container">
                 <div className="blog-sec-top ul_li_between">
                     <div className="section-title mb-40">
-                        <span className="sub-title">Latest News</span>
-                        <h1 className="title">Campus News</h1>
+                        <span className="sub-title">Actualités récentes</span>
+                        <h1 className="title">L'actualité du campus</h1>
                     </div>
                     <div className="xb-topic">
                         <select name="Topic" id="seelct">
-                            <option value={1}>Topic</option>
-                            <option value={2}>Arts, Humanities, &amp; Social Sciences</option>
-                            <option value={3}>Campus &amp; Community</option>
-                            <option value={4}>Education, Business, &amp; Law</option>
-                            <option value={5}>Health Sciences</option>
-                            <option value={5}>Science &amp; Technology</option>
+                            <option value={1}>Thématiques</option>
+                            <option value={2}>Arts, Lettres & Sciences Humaines</option>
+                            <option value={3}>Vie étudiante & Communauté</option>
+                            <option value={4}>Droit, Économie & Gestion</option>
+                            <option value={5}>Sciences de la Santé</option>
+                            <option value={5}>Sciences & Technologies</option>
                         </select>
                     </div>
                 </div>
@@ -29,11 +29,11 @@ export default function Blog() {
                                 </div>
                                 <div className="xb-item--holder">
                                     <a className="xb-item--cta" href="#!">
-                                        #Study
+                                        #Études
                                     </a>
                                     <h2 className="xb-item--title border-effect-2">
                                         {' '}
-                                        <a href="blog-single.html">EduFord University Hosts International on Climate..</a>
+                                        <a href="#">Notre Université accueille un sommet international sur le climat...</a>
                                     </h2>
                                 </div>
                             </div>
@@ -45,11 +45,11 @@ export default function Blog() {
                                 </div>
                                 <div className="xb-item--holder">
                                     <a className="xb-item--cta" href="#!">
-                                        #Membership
+                                        #Distinctions
                                     </a>
                                     <h2 className="xb-item--title border-effect-2">
                                         {' '}
-                                        <a href="blog-single.html">Thirty-one UChicago faculty members receive named..</a>
+                                        <a href="#">Trente-et-un enseignants-chercheurs honorés par des chaires prestigieuses</a>
                                     </h2>
                                 </div>
                             </div>
@@ -64,26 +64,26 @@ export default function Blog() {
                             </div>
                             <div className="xb-item--holder">
                                 <a className="xb-item--cta" href="#!">
-                                    #Study programs
+                                    #Formations
                                 </a>
                                 <h2 className="xb-item--title border-effect">
                                     {' '}
-                                    <a href="blog-single.html">
-                                        EduFord University Receives Grant for <br /> Advanced STEM Programs..
+                                    <a href="#">
+                                        Notre Université obtient un financement exceptionnel <br /> pour ses programmes STEM innovants...
                                     </a>
                                 </h2>
                                 <div className="xb-item--meta ul_li">
                                     <span>
                                         <i className="far fa-user" />
-                                        Louis Saville
+                                        Par Louis Saville
                                     </span>
                                     <span>
                                         <i className="far fa-clock" />
-                                        2023/10/15
+                                        15/10/2023
                                     </span>
                                     <span>
                                         <i className="far fa-comment" />
-                                        15
+                                        15 commentaires
                                     </span>
                                 </div>
                             </div>
@@ -98,12 +98,12 @@ export default function Blog() {
                                     </a>
                                 </div>
                                 <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#!">
-                                        #Awarded
+                                    <a className="xb-item--cta" href="#">
+                                        #Récompense
                                     </a>
                                     <h2 className="xb-item--title border-effect-2">
                                         {' '}
-                                        <a href="blog-single.html">our Awarded National for Community Outreach..</a>
+                                        <a href="#">Notre Université primée pour son engagement citoyen...</a>
                                     </h2>
                                 </div>
                             </div>
@@ -114,13 +114,13 @@ export default function Blog() {
                                     </a>
                                 </div>
                                 <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#!">
-                                        #Campus Life
+                                    <a className="xb-item--cta" href="#">
+                                        #Campus
                                     </a>
                                     <h2 className="xb-item--title border-effect-2">
                                         {' '}
-                                        <a href="blog-single.html">
-                                            Expands Campus Facilities <br /> with State of-the-Art Lab..
+                                        <a href="#">
+                                            Modernisation de nos infrastructures <br /> avec un nouveau laboratoire high-tech...
                                         </a>
                                     </h2>
                                 </div>
@@ -129,8 +129,8 @@ export default function Blog() {
                     </div>
                 </div>
                 <div className="xb-btn pt-60 text-center">
-                    <a className="thm-btn" href="blog.html">
-                        More Campus News
+                    <a className="thm-btn" href="#">
+                        Voir plus d'actualités
                         <span className="icon">
                             <svg width={21} height={21} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path

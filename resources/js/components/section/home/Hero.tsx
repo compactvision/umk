@@ -2,7 +2,7 @@ export default function Hero() {
     return (
         <>
             <section className="hero o-hidden pos-rel">
-                <div className="bg_img" data-background="/assets/img/bg/hero_bg.jpg">
+                <div className="bg_img hero" data-background="/assets/img/bg/hero_bg.jpg">
                     <div className="container">
                         <div className="hero__content-wrap pt-55 text-center">
                             <div className="section-title clr-white">
@@ -14,7 +14,7 @@ export default function Hero() {
                                 </h1>
                             </div>
                             <div className="xb-hero-img">
-                                <img src="assets/img/hero/hero_img01.png" alt="" />
+                                <img src="assets/img/hero/hero1.png" width={700} alt="" />
                             </div>
                         </div>
                     </div>
