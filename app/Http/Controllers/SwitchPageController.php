@@ -17,4 +17,10 @@ class SwitchPageController extends Controller
     {
         return Inertia::render('Admissionpage');
     }
+
+    public function courses()
+    {
+        return Inertia::render('Coursespage');
+    }
+    
 }

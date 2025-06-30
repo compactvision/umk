@@ -170,7 +170,7 @@ export default function Header() {
                                                 <Link href={route('admission')}>Admission</Link>
                                             </li>
                                             <li className="menu-item-has-children">
-                                                <Link href="#">Cours</Link>
+                                                <Link href={route('courses')}>Cours</Link>
                                             </li>
                                             <li>
                                                 <Link href="#">Contact</Link>
@@ -203,7 +203,7 @@ export default function Header() {
                                                             <Link href={route('admission')}>Admission</Link>
                                                         </li>
                                                         <li className="menu-item">
-                                                            <Link href="#!">Cours</Link>
+                                                            <Link href={route('courses')}>Cours</Link>
                                                         </li>
                                                         <li className="menu-item">
                                                             <Link href="#">Contact</Link>

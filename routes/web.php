@@ -6,6 +6,7 @@ use App\Http\Controllers\SwitchPageController;
 
 Route::get('/', [SwitchPageController::class, 'home'])->name('home');
 Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admission');
+Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
