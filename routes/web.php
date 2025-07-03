@@ -9,11 +9,9 @@ Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admi
 Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses');
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-});
+Route::get('/dashboard', function () {
+    return Inertia::render('dashboard/Index');
+})->name('dashboard');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

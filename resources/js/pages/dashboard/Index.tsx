@@ -1,7 +1,10 @@
-import React from 'react'
+import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import Presentation from '@/components/section/dashboard/index/Presentation';
 
 export default function Index() {
-  return (
-    <div>Index</div>
-  )
+    return (
+        <Dashboard>
+            <Presentation />
+        </Dashboard>
+    );
 }

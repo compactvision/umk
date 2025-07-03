@@ -1,0 +1,186 @@
+@import url('./dash.css');
+@import url('./ui.css');
+
+:root {
+    --color-primary: #4f46e5;
+    --color-primary-light: #6366f1;
+    --color-primary-dark: #3730a3;
+    --color-secondary: #10b981;
+    --color-secondary-dark: #059669;
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-secondary: #f1f5f9;
+    --color-text-primary: #1e293b;
+    --color-text-secondary: #64748b;
+    --color-text-muted: #94a3b8;
+    --color-border: #e2e8f0;
+    --color-sidebar: #1e293b;
+    --color-sidebar-light: #334155;
+    --color-sidebar-text: #cbd5e1;
+    --color-sidebar-text-active: #ffffff;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --sidebar-width: 80px;
+    --sidebar-expanded-width: 80px;
+    --header-height: 64px;
+    --z-overlay: 1000;
+    --z-sidebar: 900;
+    --z-header: 800;
+}
+
+body {
+    font-family:
+        'Inter',
+        system-ui,
+        -apple-system,
+        sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    font-size: 14px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ============================================
+                         RESPONSIVE DESIGN
+                      ============================================ */
+@media (max-width: 1024px) {
+    .header__search-input {
+        width: 200px;
+    }
+
+    .header__nav {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        /* --sidebar-width: 0; */
+        --header-height: 60px;
+    }
+
+    .sidebar {
+        width: var(--sidebar-expanded-width);
+        transform: translateX(-100%);
+        transition: transform var(--transition-normal);
+        z-index: var(--z-overlay);
+    }
+
+    .sidebar--mobile-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-menu {
+        left: var(--sidebar-expanded-width);
+        z-index: calc(var(--z-overlay) + 2);
+    }
+
+    .header {
+        left: 0;
+    }
+
+    .header__menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .header__nav {
+        display: none;
+    }
+
+    .header__search-input {
+        width: 160px;
+        font-size: 0.8rem;
+    }
+
+    .header__right {
+        gap: 0.5rem;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .main__title {
+        font-size: 1.5rem;
+    }
+
+    .main__section {
+        padding: 1.5rem;
+    }
+
+    /* États d'ouverture mobile */
+    .sidebar--mobile-open ~ .main {
+        transform: translateX(var(--sidebar-expanded-width));
+    }
+
+    .sidebar-menu--active ~ .header ~ .main {
+        transform: translateX(calc(var(--sidebar-expanded-width) + 220px));
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    .sidebar-menu {
+        width: 230px;
+        left: 80px;
+    }
+
+    .sidebar--mobile-open ~ .main {
+        transform: translateX(250px);
+    }
+
+    .sidebar-menu--active ~ .header ~ .main {
+        transform: translateX(450px);
+    }
+
+    .header {
+        padding: 0 0.75rem;
+    }
+
+    .header__search {
+        display: none;
+    }
+
+    .header__button--primary {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .main {
+        padding: 0.75rem;
+    }
+
+    .main__section {
+        padding: 1rem;
+    }
+}
+
+/* Desktop menu states */
+@media (min-width: 769px) {
+    .sidebar-menu--active ~ .header {
+        left: calc(var(--sidebar-width) + 220px);
+    }
+
+    .sidebar-menu--active ~ .header ~ .main {
+        margin-left: calc(var(--sidebar-width) + 220px);
+        width: calc(100% - var(--sidebar-width) - 220px);
+    }
+}
