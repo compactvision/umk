@@ -10,8 +10,16 @@ Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses'
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('dashboard/Index');
+    return Inertia::render('dashboard/index/Index');
 })->name('dashboard');
+
+Route::get('/dashboard/auth/login', function () {
+    return Inertia::render('dashboard/auth/Login');
+})->name('dashboard.auth.login');
+
+Route::get('/dashboard/auth/signup', function () {
+    return Inertia::render('dashboard/auth/Signup');
+})->name('dashboard.auth.signup');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

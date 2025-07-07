@@ -1,0 +1,117 @@
+/* ============================================
+                         LOGIN PAGE
+                      ============================================ */
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+}
+
+.login__box {
+    background: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+.login__title {
+    margin-bottom: 1rem;
+}
+
+.login__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.login__label {
+    text-align: left;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.login__input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.login__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.login__button {
+    background: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.login__forgot {
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: #666;
+}
+
+.login__divider {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.login__socials {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.login__social {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.login__social--facebook {
+    background: #3b5998;
+}
+
+.login__social--twitter {
+    background: #1da1f2;
+}
+
+.login__social--google {
+    background: #dd4b39;
+}
+
+.footer {
+    text-align: center;
+    padding: 1rem;
+    background: #f0f2f5;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2rem;
+}
+
+.footer__logo {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.footer__links a {
+    color: #666;
+    text-decoration: none;
+    margin: 0 0.25rem;
+}
