@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 const Sidebar = ({ onButtonClick, isMobileSidebarOpen, currentActiveMenu }: { 
@@ -39,6 +40,13 @@ const Sidebar = ({ onButtonClick, isMobileSidebarOpen, currentActiveMenu }: {
             }
         }
     }, [isMobile, isMobileSidebarOpen]);
+
+    const handleLogout = () => {
+        // TODO: Implementer la déconnexion
+        router.visit('/logout', {
+            method: 'post',
+        });
+    };
 
     return (
       <>
@@ -130,6 +138,22 @@ const Sidebar = ({ onButtonClick, isMobileSidebarOpen, currentActiveMenu }: {
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-2 12H6v-2h12zm0-3H6V9h12zm0-3H6V6h12z"/></svg>
                 </span>
                 <span className="sidebar__label">Paramètres</span>
+              </button>
+            </div>
+
+            <div className="sidebar__separator"></div>
+
+            <div className="sidebar__item">
+              <button
+                className={`sidebar__button ${currentActiveMenu === 'logout' ? 'sidebar__button--active' : ''}`}
+                data-menu="logout"
+                aria-label="Se deconnecter"
+                aria-expanded={currentActiveMenu === 'logout'}
+                onClick={handleLogout}
+              >
+                <span className="sidebar__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z"/></svg></span>
+                <span className="sidebar__label">Se deconnecter</span>
               </button>
             </div>
           </div>
