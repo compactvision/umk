@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('dashboard/auth/Signup');
     }
 
     /**
@@ -30,14 +31,26 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            throw ValidationException::withMessages([
+                'email' => 'Cet email est deja utilisé'
+            ]);
+        }
+
         $request->validate([
-            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'first_name' => $request->first_name,
+            'gender' => $request->gender,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

@@ -11,7 +11,7 @@ Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact'
 
 Route::get('/dashboard', function () {
     return Inertia::render('dashboard/index/Index');
-})->name('dashboard');
+})->name('dashboard')->middleware('auth');
 
 Route::get('/dashboard/auth/login', function () {
     return Inertia::render('dashboard/auth/Login');

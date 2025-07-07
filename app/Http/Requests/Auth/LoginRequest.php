@@ -80,6 +80,17 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
+    }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'Veuillez entrer votre adresse email',
+            'email.email' => 'Cette adresse email n\'est pas valide',
+            'email.exists' => 'Aucun compte trouvé avec cet email',
+            'password.required' => 'Le mot de passe est requis',
+            'password.min' => 'Le mot de passe doit contenir au moins :min caractères',
+        ];
     }
 }
