@@ -1,3 +1,5 @@
+import { Link } from "@inertiajs/react";
+
 export default function Hero() {
     return (
         <>
@@ -23,7 +25,7 @@ export default function Hero() {
 
             <div className="hero-btns">
                 <div className="btns ul_li_center">
-                    <a className="thm-btn thm-btn--stroke-white sec-btn" href="courses.html">
+                    <Link className="thm-btn thm-btn--stroke-white sec-btn" href={route('courses')}>
                         Explorer les programmes
                         <span>
                             <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +39,7 @@ export default function Hero() {
                                 />
                             </svg>
                         </span>
-                    </a>
+                    </Link>
                     <a className="thm-btn thm-btn--stroke-white sec-btn" href="contact.html">
                         Postulez maintenant
                         <span>
