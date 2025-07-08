@@ -48,6 +48,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         $request->authenticate();
+        $user->recordLoginInfo($request);
 
         $request->session()->regenerate();
 

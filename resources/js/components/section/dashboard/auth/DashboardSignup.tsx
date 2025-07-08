@@ -1,9 +1,10 @@
 import { Link } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import Alert from '@/utils/sweetAlert';
 
 const DashboardSignup = () => {
-    const { data, setData, errors: formErrors, post } = useForm({
+    const { data, setData, errors: formErrors, post, processing } = useForm({
         last_name: '',
         first_name: '',
         email: '',
@@ -12,8 +13,6 @@ const DashboardSignup = () => {
         gender: '',
     });
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [loginStatus, setLoginStatus] = useState('idle');
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,25 +25,14 @@ const DashboardSignup = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsLoading(true);
-        setLoginStatus('loading');
+        Alert.loading('Inscription en cours...');
 
         post(route('register.store'), {
             onSuccess: () => {
-                setIsLoading(false);
-                setLoginStatus('success');
-                setTimeout(() => {
-                    setLoginStatus('success');
-                    setIsLoading(false);
-    
-                    setTimeout(() => {
-                        setLoginStatus('idle');
-                    }, 2000);
-                }, 2000);
+                Alert.success('Inscription réussie !');
             },
             onError: () => {
-                setIsLoading(false);
-                setLoginStatus('error');
+                Alert.error('Une erreur est survenue lors de l\'inscription.');
             },
         });
     };
@@ -67,16 +55,16 @@ const DashboardSignup = () => {
     }, []);
 
     const getButtonText = () => {
-        switch (loginStatus) {
-            case 'loading':
+        switch (processing) {
+            case true:
                 return (
                     <>
                         <span className="login-form__submit-spinner">⟳</span>
                         Incription en cours...
                     </>
                 );
-            case 'success':
-                return '✓ Incription réussie !';
+            case false:
+                return 'S\'inscrire';
             default:
                 return 'S\'inscrire';
         }
@@ -84,8 +72,7 @@ const DashboardSignup = () => {
 
     const getButtonClass = () => {
         let baseClass = 'login-form__submit';
-        if (loginStatus === 'loading') baseClass += ' login-form__submit--loading';
-        if (loginStatus === 'success') baseClass += ' login-form__submit--success';
+        if (processing) baseClass += ' login-form__submit--loading';
         return baseClass;
     };
 
@@ -204,7 +191,7 @@ const DashboardSignup = () => {
                     </div>
                     {formErrors.password_confirmation && <p className="login-form__error">{formErrors.password_confirmation}</p>}
 
-                    <button type="submit" className={getButtonClass()} disabled={isLoading}>
+                    <button type="submit" className={getButtonClass()} disabled={processing}>
                         {getButtonText()}
                     </button>
                 </form>

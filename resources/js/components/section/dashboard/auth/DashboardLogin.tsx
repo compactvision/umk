@@ -1,15 +1,14 @@
 import { Link, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import Alert from '@/utils/sweetAlert';
 
 const DashboardLogin = () => {
-    const { data, setData, post, processing, errors: formErrors, reset } = useForm({
+    const { data, setData, post, processing, errors: formErrors } = useForm({
         email: '',
         password: '',
         remember: false,
     });
     
-    const [isLoading, setIsLoading] = useState(false);
-    const [loginStatus, setLoginStatus] = useState('idle');
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,25 +21,14 @@ const DashboardLogin = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsLoading(true);
-        setLoginStatus('loading');
+        Alert.loading('Connexion en cours...');
 
         post(route('login.store'), {
             onSuccess: () => {
-                setIsLoading(false);
-                setLoginStatus('success');
-                setTimeout(() => {
-                    setLoginStatus('success');
-                    setIsLoading(false);
-        
-                    setTimeout(() => {
-                        setLoginStatus('idle');
-                    }, 2000);
-                }, 2000);
+                Alert.success('Connexion réussie !');
             },
             onError: () => {
-                setIsLoading(false);
-                setLoginStatus('error');
+                Alert.error('Une erreur est survenue lors de la connexion.');
             },
         });
 
@@ -64,16 +52,14 @@ const DashboardLogin = () => {
     }, []);
 
     const getButtonText = () => {
-        switch (loginStatus) {
-            case 'loading':
+        switch (processing) {
+            case true:
                 return (
                     <>
                         <span className="login-form__submit-spinner">⟳</span>
                         Connexion en cours...
                     </>
                 );
-            case 'success':
-                return '✓ Connexion réussie !';
             default:
                 return 'Se connecter';
         }
@@ -81,8 +67,7 @@ const DashboardLogin = () => {
 
     const getButtonClass = () => {
         let baseClass = 'login-form__submit';
-        if (loginStatus === 'loading') baseClass += ' login-form__submit--loading';
-        if (loginStatus === 'success') baseClass += ' login-form__submit--success';
+        if (processing) baseClass += ' login-form__submit--loading';
         return baseClass;
     };
 
@@ -143,7 +128,7 @@ const DashboardLogin = () => {
                         </a>
                     </div>
 
-                    <button type="submit" className={getButtonClass()} disabled={isLoading}>
+                    <button type="submit" className={getButtonClass()} disabled={processing}>
                         {getButtonText()}
                     </button>
                 </form>

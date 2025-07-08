@@ -53,7 +53,11 @@ class RegisteredUserController extends Controller
             'gender' => $request->gender,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'last_login_at' => now(),
+            'last_login_ip' => $request->ip(),
         ]);
+
+        $user->assignRole('student');
 
         event(new Registered($user));
 

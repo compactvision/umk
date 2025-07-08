@@ -51,11 +51,11 @@ class RolePermissionSeeder extends Seeder
 
         // Rôles
         $roles = [
-            'Étudiant' => ['view dashboard', 'view courses', 'submit assignments', 'view grades'],
-            'Candidat' => ['apply to programs', 'view application status'],
-            'Professeur' => ['view dashboard', 'manage courses', 'grade assignments', 'manage students'],
-            'Administrateur' => ['view dashboard', 'manage users', 'manage content', 'configure settings'],
-            'Super Admin' => Permission::pluck('name')->toArray()
+            'student' => ['view dashboard', 'view courses', 'submit assignments', 'view grades'],
+            'candidate' => ['apply to programs', 'view application status'],
+            'professor' => ['view dashboard', 'manage courses', 'grade assignments', 'manage students'],
+            'admin' => ['view dashboard', 'manage users', 'manage content', 'configure settings'],
+            'super admin' => Permission::pluck('name')->toArray()
         ];
 
         foreach ($roles as $role => $rolePermissions) {
