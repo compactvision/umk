@@ -21,5 +21,9 @@ Route::get('/dashboard/auth/signup', function () {
     return Inertia::render('dashboard/auth/Signup');
 })->name('dashboard.auth.signup');
 
+Route::get('/dashboard/faculty', function () {
+    return Inertia::render('dashboard/faculty/Faculty');
+})->name('dashboard.faculty');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
