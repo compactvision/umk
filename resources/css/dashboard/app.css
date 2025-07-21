@@ -184,3 +184,133 @@ body {
         width: calc(100% - var(--sidebar-width) - 220px);
     }
 }
+
+.content {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: auto;
+    background: #f9f9f9;
+}
+
+/* Main area */
+.courses {
+    flex: 1;
+}
+
+.courses__section {
+    margin-bottom: 2rem;
+}
+
+.courses__title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.courses__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.course-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    padding: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.course-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.course-card__image {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.course-card__name {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Overlay on hover */
+.course-card__overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #333;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.course-card:hover .course-card__overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Right sidebar */
+.filters {
+    width: 250px;
+    flex-shrink: 0;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.05);
+    height: fit-content;
+    position: sticky;
+    top: 1rem;
+}
+
+.filters__title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.filters__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.filters__list li {
+    margin-bottom: 0.5rem;
+}
+
+.filters__list input {
+    margin-right: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .filters {
+        width: 100%;
+        order: -1;
+        position: relative;
+    }
+
+    .courses__grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}

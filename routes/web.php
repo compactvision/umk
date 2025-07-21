@@ -25,5 +25,33 @@ Route::get('/dashboard/faculty', function () {
     return Inertia::render('dashboard/faculty/Faculty');
 })->name('dashboard.faculty');
 
+Route::get('faculties/active', [FacultyController::class, 'active'])
+    ->name('faculties.active');
+
+// Routes protégées
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+
+    // CRUD standard
+    Route::apiResource('faculties', FacultyController::class);
+
+    // Routes supplémentaires
+    Route::patch('faculties/{faculty}/toggle-status', [FacultyController::class, 'toggleStatus'])
+        ->name('faculties.toggle-status');
+
+    Route::get('faculties-stats', [FacultyController::class, 'stats'])
+        ->name('faculties.stats');
+});
+
+// Si vous utilisez des routes web (Blade)
+// routes/web.php
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::resource('faculties', \App\Http\Controllers\Web\FacultyController::class);
+
+    Route::patch('faculties/{faculty}/toggle-status', [\App\Http\Controllers\Web\FacultyController::class, 'toggleStatus'])
+        ->name('faculties.toggle-status');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
