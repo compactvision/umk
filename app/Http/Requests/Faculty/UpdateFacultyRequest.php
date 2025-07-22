@@ -3,12 +3,14 @@
 namespace App\Http\Requests\Faculty;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
 
 class UpdateFacultyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->user()->can('update', $this->route('faculty'));
+        return true;
     }
 
     public function rules(): array

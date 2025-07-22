@@ -37,7 +37,7 @@ interface AlertMethods {
     info: (message: string, title?: string) => Promise<SweetAlertResult>;
   };
   confirm: (message: string, title?: string) => Promise<SweetAlertResult>;
-  deleteConfirm: (message?: string, title?: string) => Promise<SweetAlertResult>;
+  deleteConfirm: (message?: string, title?: string) => Promise<Boolean>;
   loading: (message?: string) => void;
   close: () => void;
 }
@@ -130,20 +130,24 @@ export const Alert: AlertMethods = {
   },
 
   // Confirmation de suppression
-  deleteConfirm: (message = 'Cette action ne peut pas être annulée!', title = 'Êtes-vous sûr?') => {
-    return Swal.fire({
-      ...defaultOptions,
-      title: title,
-      text: message,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimer!',
-      cancelButtonText: 'Annuler'
-    });
-  },
+    deleteConfirm: async (message = 'Cette action ne peut pas être annulée!', title = 'Êtes-vous sûr?') => {
+        const result = await Swal.fire({
+            ...defaultOptions,
+            title: title,
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: 'blue',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, supprimer!',
+            cancelButtonText: 'Annuler'
+        });
 
-  // Loading
+        return result.isConfirmed;
+    },
+
+
+    // Loading
   loading: (message = 'Traitement en cours...') => {
     Swal.fire({
       title: message,

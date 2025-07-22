@@ -41,6 +41,7 @@ class RolePermissionSeeder extends Seeder
             'manage content',
             'configure settings',
             'faculties.create',
+            'faculties.update',
 
             // Super Admin
             'super admin'
@@ -55,7 +56,7 @@ class RolePermissionSeeder extends Seeder
             'student' => ['view dashboard', 'view courses', 'submit assignments', 'view grades'],
             'candidate' => ['apply to programs', 'view application status'],
             'professor' => ['view dashboard', 'manage courses', 'grade assignments', 'manage students'],
-            'admin' => ['view dashboard', 'manage users', 'manage content', 'configure settings', 'faculties.create'],
+            'admin' => ['view dashboard', 'manage users', 'manage content', 'configure settings', 'faculties.create', 'faculties.update'],
             'super admin' => Permission::pluck('name')->toArray()
         ];
 

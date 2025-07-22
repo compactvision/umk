@@ -32,9 +32,8 @@ class FacultyService
     {
         return Cache::remember('faculties.active', 3600, function () {
             return $this->faculty
-                ->active()
                 ->orderBy('name')
-                ->get(['id', 'name', 'code']);
+                ->get(['id', 'name', 'code', 'description', 'duration_years', 'is_active']);
         });
     }
 
