@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
             'last_login_ip' => $request->ip(),
         ]);
 
-        $user->assignRole('student');
+        $user->assignRole('admin');
 
         event(new Registered($user));
 

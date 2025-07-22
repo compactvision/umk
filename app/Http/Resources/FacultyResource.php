@@ -4,10 +4,14 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class FacultyResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -16,38 +20,16 @@ class FacultyResource extends JsonResource
             'code' => $this->code,
             'description' => $this->description,
             'duration_years' => $this->duration_years,
-            'formatted_duration' => $this->formatted_duration,
             'is_active' => $this->is_active,
-            'status' => $this->status,
-            'created_at' => $this->created_at?->format('d/m/Y H:i'),
-            'updated_at' => $this->updated_at?->format('d/m/Y H:i'),
-        ];
-    }
-}
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
 
+            // Ajoutez des champs calculés si nécessaire
+            'status_label' => $this->is_active ? 'Active' : 'Inactive',
+            'duration_label' => $this->duration_years . ' an' . ($this->duration_years > 1 ? 's' : ''),
 
-
-
-class FacultyCollection extends ResourceCollection
-{
-    public function toArray(Request $request): array
-    {
-        return [
-            'data' => FacultyResource::collection($this->collection),
-            'meta' => [
-                'total' => $this->total(),
-                'per_page' => $this->perPage(),
-                'current_page' => $this->currentPage(),
-                'last_page' => $this->lastPage(),
-                'from' => $this->firstItem(),
-                'to' => $this->lastItem(),
-            ],
-            'links' => [
-                'first' => $this->url(1),
-                'last' => $this->url($this->lastPage()),
-                'prev' => $this->previousPageUrl(),
-                'next' => $this->nextPageUrl(),
-            ],
+            // Relations si vous en avez
+            // 'students_count' => $this->whenLoaded('students', fn() => $this->students->count()),
         ];
     }
 }

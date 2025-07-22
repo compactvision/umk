@@ -1,16 +1,19 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm, router, usePage } from '@inertiajs/react';
+import ErrorText from '@/components/UI/ErrorText';
 
-const Faculty = () => {
-    const [faculties, setFaculties] = useState([]);
+const Faculty = () => { // Récupérer les facultés depuis les props
+    const { faculties } = usePage().props;
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formData, setFormData] = useState({
+
+    const { data, setData, errors, post, processing, reset } = useForm({
         name: '',
         code: '',
-        levels: [],
+        description: '',
+        duration_years: '',
     });
-
-    const levelsOptions = ['L1', 'L2', 'L3', 'M1', 'M2', 'D1', 'D2', 'D3'];
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -20,72 +23,36 @@ const Faculty = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         document.body.style.overflow = 'auto';
-        setFormData({
-            name: '',
-            code: '',
-            levels: [],
-        });
-    };
-
-    const handleInputChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: value,
-        }));
-    };
-
-    const handleLevelsChange = (e) => {
-        const { value, checked } = e.target;
-        setFormData((prev) => {
-            if (checked) {
-                return {
-                    ...prev,
-                    levels: [...prev.levels, value],
-                };
-            } else {
-                return {
-                    ...prev,
-                    levels: prev.levels.filter((level) => level !== value),
-                };
-            }
-        });
+        reset();
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const { name, code, levels } = formData;
-
-        if (!name || !code) {
-            alert('Veuillez remplir tous les champs requis');
-            return;
-        }
-
-        if (levels.length === 0) {
-            alert("Veuillez sélectionner au moins un niveau d'études");
-            return;
-        }
-
-        if (faculties.some((f) => f.code === code.toUpperCase())) {
-            alert('Ce code de faculté existe déjà');
-            return;
-        }
-
-        const newFaculty = {
-            id: Date.now(),
-            name: name,
-            code: code.toUpperCase(),
-            levels: levels,
-        };
-
-        setFaculties((prev) => [...prev, newFaculty]);
-        closeModal();
+        // Option 1: Utiliser post avec l'URL directe
+        post('/faculties', {
+            onSuccess: () => {
+                reset();
+                closeModal();
+            },
+            onError: (errors) => {
+                console.error('Erreurs:', errors);
+            },
+        });
     };
 
     const deleteFaculty = (id) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette faculté ?')) {
-            setFaculties((prev) => prev.filter((f) => f.id !== id));
+            // Utiliser router.delete pour la suppression
+            router.delete(`/faculties/${id}`, {
+                onSuccess: () => {
+                    setFaculties((prev) => prev.filter((f) => f.id !== id));
+                },
+                onError: (errors) => {
+                    console.error('Erreur lors de la suppression:', errors);
+                    alert('Erreur lors de la suppression');
+                }
+            });
         }
     };
 
@@ -97,21 +64,31 @@ const Faculty = () => {
                     <p>Créez et gérez les facultés avec leurs niveaux d'études</p>
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <button className="create-btn" onClick={openModal}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeDasharray="16" strokeDashoffset="16" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"><path d="M5 12h14"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="16;0"/></path><path d="M12 5v14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="16;0"/></path></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <g fill="none" stroke="currentColor" strokeDasharray="16" strokeDashoffset="16" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                                <path d="M5 12h14">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="16;0"/>
+                                </path>
+                                <path d="M12 5v14">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="16;0"/>
+                                </path>
+                            </g>
+                        </svg>
                         <p>Créer une nouvelle faculté</p>
                     </button>
                 </div>
 
                 <div className="faculties-grid">
-                    {faculties.length === 0 ? (
+                    {Array.isArray(faculties?.data) && faculties.data.length === 0 ? (
                         <div className="empty-state">
                             <h3>Aucune faculté créée</h3>
                             <p>Cliquez sur "Créer une nouvelle faculté" pour commencer</p>
                         </div>
                     ) : (
-                        faculties.map((faculty) => (
+                        Array.isArray(faculties?.data) &&
+                        faculties.data.map((faculty) => (
                             <div className="faculty-card" key={faculty.id}>
                                 <div className="faculty-header">
                                     <div>
@@ -122,15 +99,9 @@ const Faculty = () => {
                                         🗑️
                                     </button>
                                 </div>
-                                <div className="levels-section">
-                                    <div className="levels-title">Niveaux d'études</div>
-                                    <div className="levels-grid">
-                                        {faculty.levels.map((level) => (
-                                            <span className="level-badge" key={level}>
-                                                {level}
-                                            </span>
-                                        ))}
-                                    </div>
+                                <div className="faculty-description">
+                                    <p>{faculty.description}</p>
+                                    <span className="duration">Durée: {faculty.duration_years} ans</span>
                                 </div>
                             </div>
                         ))
@@ -148,46 +119,69 @@ const Faculty = () => {
 
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group">
-                                    <label htmlFor="facultyName">Nom de la faculté</label>
+                                    <label htmlFor="name">Nom de la faculté</label>
                                     <input
                                         type="text"
                                         id="name"
+                                        name="name"
                                         placeholder="Ex: Faculté de Médecine"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
+                                        value={data.name}
+                                        onChange={(e) => setData('name', e.target.value)}
                                         required
                                     />
+                                    <ErrorText error={errors.name} />
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="facultyCode">Code de la faculté</label>
-                                    <input type="text" id="code" placeholder="Ex: MED" value={formData.code} onChange={handleInputChange} required />
+                                    <label htmlFor="code">Code de la faculté</label>
+                                    <input
+                                        type="text"
+                                        id="code"
+                                        name="code"
+                                        placeholder="Ex: MED"
+                                        value={data.code}
+                                        onChange={(e) => setData('code', e.target.value.toUpperCase())}
+                                        maxLength={10}
+                                        required
+                                    />
+                                    <ErrorText error={errors.code} />
                                 </div>
 
-                                <div className="levels-selection">
-                                    <label>Niveaux d'études disponibles</label>
-                                    <div className="levels-checkboxes">
-                                        {levelsOptions.map((level) => (
-                                            <div className="checkbox-item" key={level}>
-                                                <input
-                                                    type="checkbox"
-                                                    id={level}
-                                                    value={level}
-                                                    checked={formData.levels.includes(level)}
-                                                    onChange={handleLevelsChange}
-                                                />
-                                                <label htmlFor={level}>{level}</label>
-                                            </div>
-                                        ))}
-                                    </div>
+                                <div className="form-group">
+                                    <label htmlFor="duration_years">Durée de la faculté (en années)</label>
+                                    <input
+                                        type="number"
+                                        id="duration_years"
+                                        name="duration_years"
+                                        placeholder="4"
+                                        min="1"
+                                        max="10"
+                                        value={data.duration_years}
+                                        onChange={(e) => setData('duration_years', e.target.value)}
+                                        required
+                                    />
+                                    <ErrorText error={errors.duration_years} />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="description">Description</label>
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        placeholder="Courte présentation de la faculté"
+                                        rows={7}
+                                        value={data.description}
+                                        onChange={(e) => setData('description', e.target.value)}
+                                    ></textarea>
+                                    <ErrorText error={errors.description} />
                                 </div>
 
                                 <div className="modal-actions">
-                                    <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                                    <button type="button" className="btn btn-secondary" onClick={closeModal} disabled={processing}>
                                         Annuler
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
-                                        Créer la faculté
+                                    <button type="submit" className="btn btn-primary" disabled={processing}>
+                                        {processing ? 'Création...' : 'Créer la faculté'}
                                     </button>
                                 </div>
                             </form>
@@ -195,20 +189,21 @@ const Faculty = () => {
                     </div>
                 )}
 
+                {/* Styles identiques à votre code original */}
                 <style jsx>{`
-                    .header {
+                    .headerr {
                         text-align: center;
                         margin-bottom: 40px;
                     }
 
-                    .header h1 {
+                    .headerr h1 {
                         font-size: 2.5rem;
                         color: #2d3748;
                         margin-bottom: 10px;
                         font-weight: 700;
                     }
 
-                    .header p {
+                    .headerr p {
                         color: #718096;
                         font-size: 1.1rem;
                     }
@@ -229,6 +224,7 @@ const Faculty = () => {
                         align-items: center;
                         justify-content: center;
                         gap: 10px;
+                        margin: 0 auto;
                     }
 
                     .create-btn:hover {
@@ -281,31 +277,20 @@ const Faculty = () => {
                         font-weight: 600;
                     }
 
-                    .levels-section {
-                        margin-top: 20px;
+                    .faculty-description p {
+                        color: #718096;
+                        margin-bottom: 10px;
+                        font-size: 0.95rem;
+                        line-height: 1.5;
                     }
 
-                    .levels-title {
-                        font-size: 1.1rem;
-                        font-weight: 600;
+                    .duration {
+                        background: #f7fafc;
                         color: #4a5568;
-                        margin-bottom: 12px;
-                    }
-
-                    .levels-grid {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 8px;
-                    }
-
-                    .level-badge {
-                        background: linear-gradient(135deg, #38b2ac, #4299e1);
-                        color: white;
-                        padding: 8px 16px;
-                        border-radius: 20px;
-                        font-size: 0.9rem;
+                        padding: 4px 10px;
+                        border-radius: 12px;
+                        font-size: 0.85rem;
                         font-weight: 500;
-                        text-transform: uppercase;
                     }
 
                     .delete-btn {
@@ -381,47 +366,26 @@ const Faculty = () => {
                         color: #4a5568;
                     }
 
-                    .form-group input {
+                    .form-group input,
+                    .form-group textarea {
                         width: 100%;
                         padding: 12px 16px;
                         border: 2px solid #e2e8f0;
                         border-radius: 10px;
                         font-size: 1rem;
                         transition: border-color 0.3s ease;
+                        box-sizing: border-box;
                     }
 
-                    .form-group input:focus {
+                    .form-group input:focus,
+                    .form-group textarea:focus {
                         outline: none;
                         border-color: #4f46e5;
                     }
 
-                    .levels-selection {
-                        margin-top: 20px;
-                    }
-
-                    .levels-checkboxes {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                        gap: 10px;
-                        margin-top: 15px;
-                    }
-
-                    .checkbox-item {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    }
-
-                    .checkbox-item input[type='checkbox'] {
-                        width: 18px;
-                        height: 18px;
-                        accent-color: #4f46e5;
-                    }
-
-                    .checkbox-item label {
-                        font-weight: 500;
-                        color: #2d3748;
-                        cursor: pointer;
+                    .form-group textarea {
+                        resize: vertical;
+                        min-height: 120px;
                     }
 
                     .modal-actions {
@@ -441,12 +405,17 @@ const Faculty = () => {
                         transition: all 0.3s ease;
                     }
 
+                    .btn:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+
                     .btn-primary {
                         background: linear-gradient(135deg, #4f46e5, #7c3aed);
                         color: white;
                     }
 
-                    .btn-primary:hover {
+                    .btn-primary:hover:not(:disabled) {
                         transform: translateY(-2px);
                         box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
                     }
@@ -456,7 +425,7 @@ const Faculty = () => {
                         color: #4a5568;
                     }
 
-                    .btn-secondary:hover {
+                    .btn-secondary:hover:not(:disabled) {
                         background: #cbd5e0;
                     }
 

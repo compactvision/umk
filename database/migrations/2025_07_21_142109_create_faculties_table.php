@@ -16,8 +16,13 @@ return new class extends Migration
             $table->string('name', 255)->index();
             $table->string('code', 10)->unique();
             $table->string('description')->nullable();
-            $table->integer('duration_years')->default(3);
+            $table->unsignedTinyInteger('duration_years')->default(3);
             $table->boolean('is_active')->default(true)->index();
+
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+
+            $table->timestamp('deleted_at');
             $table->timestamps();
 
             $table->index(['is_active', 'created_at']);

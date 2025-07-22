@@ -3,62 +3,34 @@
 namespace App\Http\Requests\Faculty;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreFacultyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->user()->can('create', Faculty::class);
+        return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'name' => [
-                'required',
-                'string',
-                'min:3',
-                'max:255',
-                Rule::unique('faculties', 'name')
-            ],
-            'code' => [
-                'required',
-                'string',
-                'min:2',
-                'max:10',
-                'alpha_num',
-                Rule::unique('faculties', 'code')
-            ],
-            'description' => [
-                'nullable',
-                'string',
-                'max:5000'
-            ],
-            'duration_years' => [
-                'required',
-                'integer',
-                'min:1',
-                'max:10'
-            ],
-            'is_active' => [
-                'boolean'
-            ]
+            'name' => 'required|string|max:255|unique:faculties,name',
+            'code' => 'required|string|max:10|unique:faculties,code',
+            'description' => 'nullable|string|max:1000',
+            'duration_years' => 'required|integer|min:1|max:10',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
             'name.required' => 'Le nom de la faculté est obligatoire.',
-            'name.min' => 'Le nom doit contenir au moins 3 caractères.',
-            'name.max' => 'Le nom ne peut pas dépasser 255 caractères.',
-            'name.unique' => 'Cette faculté existe déjà.',
-            'code.required' => 'Le code est obligatoire.',
-            'code.unique' => 'Ce code est déjà utilisé.',
-            'code.alpha_num' => 'Le code ne peut contenir que des lettres et des chiffres.',
+            'name.unique' => 'Ce nom de faculté existe déjà.',
+            'code.required' => 'Le code de la faculté est obligatoire.',
+            'code.unique' => 'Ce code de faculté existe déjà.',
             'duration_years.required' => 'La durée est obligatoire.',
-            'duration_years.min' => 'La durée minimum est de 1 an.',
-            'duration_years.max' => 'La durée maximum est de 10 ans.',
+            'duration_years.integer' => 'La durée doit être un nombre entier.',
         ];
     }
 
