@@ -79,4 +79,9 @@ class Faculty extends Model
     {
         $this->attributes['name'] = trim($value);
     }
+
+    public function levels()
+    {
+        return $this->hasMany(Level::class);
+    }
 }
