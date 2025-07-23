@@ -38,7 +38,7 @@ class FacultyController extends Controller
             $allFaculties = $this->facultyService->getActive();
 
             // Sinon, retourner la vue Inertia avec toutes les facultés
-            return Inertia::render('dashboard/faculty/FacultyShow', [
+            return Inertia::render('dashboard/faculty/Faculty', [
                 'faculties' => FacultyResource::collection($allFaculties),
                 'pagination' => [
                     'total' => $faculties->total(),

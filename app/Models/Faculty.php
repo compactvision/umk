@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Faculty extends Model
 {
@@ -80,8 +81,19 @@ class Faculty extends Model
         $this->attributes['name'] = trim($value);
     }
 
-    public function levels()
+    /**
+     * Relation avec les niveaux
+     */
+    public function levels(): HasMany
     {
         return $this->hasMany(Level::class);
+    }
+
+    /**
+     * Récupérer les niveaux ordonnés
+     */
+    public function orderedLevels(): HasMany
+    {
+        return $this->hasMany(Level::class)->orderBy('level_name');
     }
 }

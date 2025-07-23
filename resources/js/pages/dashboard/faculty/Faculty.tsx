@@ -1,12 +1,12 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import { useForm, router, usePage } from '@inertiajs/react';
 import ErrorText from '@/components/UI/ErrorText';
 import Alert from '@/utils/sweetAlert';
 
 const Faculty = () => {
     const { faculties } = usePage().props;
-    console.log(faculties)
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -70,7 +70,7 @@ const Faculty = () => {
 
         if(isEdit){
             Alert.loading('Mise à jour en cours...');
-            put(route('faculties.update', data.id), {
+            put(route('dashboard.faculties.update', data.id), {
                 onSuccess: () => {
                     Alert.success("Faculté mise à jour avec succès!")
                     closeModal();
@@ -78,13 +78,14 @@ const Faculty = () => {
                 onError: (errors) => {
                     console.error('Erreurs:', errors)
                     Alert.error("Une erreur s'est produite");
+                    Alert.close();
                 },
                 onFinish: () => {
                     Alert.close();
                 }
             })
         } else {
-            post('/faculties', {
+            post(route('dashboard.faculties.store'), {
                 onSuccess: () => {
                     Alert.success("Faculté créée avec succès!")
                     reset();
@@ -103,7 +104,7 @@ const Faculty = () => {
         if (!confirmed) return;
 
         Alert.loading('Suppression en cours...');
-        router.delete(`/faculties/${id}`, {
+        router.delete(`/dashboard/faculties/${id}`, {
             onSuccess: () => {
                 Alert.success('Faculté supprimée avec succès.');
             },
@@ -174,7 +175,7 @@ const Faculty = () => {
                                     <div className={`faculty-card ${hoveredCard === faculty.id ? 'hovered' : ''}`}>
                                         <div className="faculty-header">
                                             <div>
-                                                <div className="faculty-name">{faculty.name}</div>
+                                                <Link href={route('dashboard.levels.index')} className="faculty-name">{faculty.name}</Link>
                                                 <div className="faculty-code">{faculty.code}</div>
                                             </div>
                                             <div style={{display: "flex", gap: "10px"}}>
@@ -349,7 +350,7 @@ const Faculty = () => {
                     </div>
                 )}
 
-                <style jsx>{`
+                <style>{`
                     .headerr {
                         text-align: center;
                         margin-bottom: 40px;
@@ -449,6 +450,7 @@ const Faculty = () => {
                     }
 
                     .faculty-name {
+                        text-decoration: none;
                         font-size: 1.4rem;
                         font-weight: 700;
                         color: #2d3748;
