@@ -37,7 +37,8 @@ class StoreLevelRequest extends FormRequest
     public function messages()
     {
         return [
-          'name.required' => 'Le nom du niveau est obligatoire.'
+          'name.required' => 'Le nom du niveau est obligatoire.',
+
         ];
     }
 }

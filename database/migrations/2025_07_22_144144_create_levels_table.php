@@ -18,6 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('level_code', 10);
             $table->string('level_name', 100);
+            $table->string('tag');
             $table->text('description')->nullable();
             $table->integer('student_number');
             $table->integer('credit_required');

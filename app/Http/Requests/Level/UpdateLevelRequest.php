@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Level;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateLevelRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateLevelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,11 @@ class UpdateLevelRequest extends FormRequest
      */
     public function rules(): array
     {
+        $levelId  = $this->route('level')->id;
         return [
             //
+            'level_name' => ['required', 'string']
+
         ];
     }
 }

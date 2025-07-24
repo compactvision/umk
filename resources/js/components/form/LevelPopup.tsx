@@ -1,38 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import ErrorText from '@/components/UI/ErrorText';
+import Alert from '@/utils/sweetAlert';
 
-export default function LevelPopup({ isOpen, onClose, faculties }) {
-    const [imagePreview, setImagePreview] = useState(null);
+export default function LevelPopup({ isOpen, onClose, faculties, level = null }) {
+    const isEditMode = !!level;
 
-    const { data, setData, post, processing, reset, errors } = useForm({
-        faculty_id: '',
-        level_name: '',
-        level_code: '',
-        duration_years: '1',
-        description: '',
-        student_number: '',
-        courses_number: '',
-        credit_required: '',
+    const [imagePreview, setImagePreview] = useState(() => {
+        return level?.image ? `/storage/${level.image}` : null;
+    });
+    console.log("Here", isEditMode)
+
+    const { data, setData, post, put, processing, reset, errors } = useForm({
+        faculty_id: level?.faculty_id || '',
+        level_name: level?.level_name || '',
+        level_code: level?.level_code || '',
+        duration_years: level?.duration_years?.toString() || '1',
+        description: level?.description || '',
+        student_number: level?.student_number || '',
+        courses_number: level?.courses_number || '',
+        credit_required: level?.credit_required || '',
         image: null
     });
 
     useEffect(() => {
-        if (!data.faculty_id && faculties?.data?.length > 0) {
+        if (!data.faculty_id && faculties?.data?.length > 0 && !isEditMode) {
             setData('faculty_id', faculties.data[0].id);
         }
-    }, [faculties, data.faculty_id]);
+    }, [faculties, data.faculty_id, isEditMode]);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setData(id, value);
-    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setData('image', file);
-
             const reader = new FileReader();
             reader.onload = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
@@ -42,19 +43,25 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
     const saveLevel = (e) => {
         e.preventDefault();
 
-        post(route('dashboard.levels.store'), {
+        const options = {
             onSuccess: () => {
-                alert(`✅ Niveau "${data.name}" enregistré avec succès !`);
+                Alert.success(isEditMode ? "Niveau modifié avec succès !" : "Niveau créé avec succès !");
                 reset();
                 setImagePreview(null);
                 onClose();
             },
-            onError: (errors) => {
-                alert('❌ Une erreur est survenue lors de l’enregistrement.');
-                console.log(errors)
-            }
-        });
+            onError: () => {
+                Alert.error("Une erreur s'est produite");
+            },
+        };
+
+        if (isEditMode) {
+            put(route('dashboard.levels.update', level.id), options);
+        } else {
+            post(route('dashboard.levels.store'), options);
+        }
     };
+
 
     if (!isOpen) return null;
 
@@ -62,7 +69,7 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
         <div className="popup-overlay">
             <div className="popup__container">
                 <div className="popup__header">
-                    <h2 className="popup__title">🎓 Ajouter un Niveau</h2>
+                    <h2 className="popup__title">🎓 {isEditMode ? "Modifier ce niveau" : "Ajouter un Niveau"}</h2>
                     <button className="popup__close" onClick={onClose}>×</button>
                 </div>
 
@@ -70,7 +77,7 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
                     <div className="popup__sidebar">
                         <div className="form__group">
                             <label htmlFor="faculty_id">Faculté</label>
-                            <select id="faculty_id" value={data.faculty_id} onChange={(e) => setData('faculty_id', e.target.value)}>
+                            <select id="faculty_id" value={data.faculty_id} onChange={(e) => setData('faculty_id', e.target.value)} disabled={isEditMode}>
                                 <option value="">-- Choisis la faculté --</option>
                                 {faculties?.data?.map(f => (
                                     <option key={f.id} value={f.id}>{f.name}</option>
@@ -135,7 +142,7 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
                         </div>
 
                         <button className="btn btn--primary" onClick={saveLevel} disabled={processing}>
-                            {processing ? '⏳ Enregistrement...' : '💾 Enregistrer'}
+                            {processing ? (isEditMode ? '⏳ Modification...' : '⏳ Enregistrement...') : (isEditMode ? '💾 Modifier' : '💾 Enregistrer')}
                         </button>
                     </div>
                 </div>

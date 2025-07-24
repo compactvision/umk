@@ -4,12 +4,15 @@ import { Link } from '@inertiajs/react';
 import { useForm, router, usePage } from '@inertiajs/react';
 import ErrorText from '@/components/UI/ErrorText';
 import Alert from '@/utils/sweetAlert';
+import LevelPopup from '@/components/form/LevelPopup';
 
 const Faculty = () => {
     const { faculties } = usePage().props;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const [levelEdit, setLevelEdit] = useState(false)
+    const [selectedLevel, setSelectedLevel] = useState(null)
     const [hoveredCard, setHoveredCard] = useState(null);
 
     const { data, setData, errors, post, put, processing, reset } = useForm({
@@ -41,6 +44,7 @@ const Faculty = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         setIsEdit(false)
+        setLevelEdit(false)
         document.body.style.overflow = 'auto';
         reset();
     };
@@ -102,6 +106,14 @@ const Faculty = () => {
         console.log('Viewing level:', levelId);
         // Implement view level logic
     };
+
+    const editLevel = (level) => {
+        setLevelEdit(true)
+        setSelectedLevel(level)
+
+        console.log('Editing level:', level);
+        // Implement edit level logic
+    }
 
     const deleteLevel = async (levelId) => {
         const confirmed = await Alert.deleteConfirm('ce niveau');
@@ -207,12 +219,19 @@ const Faculty = () => {
                                                         </div>
                                                         <div className="level-actions">
                                                             <button
+                                                                className="level-btn edit-btn"
+                                                                onClick={() => editLevel(level)}
+                                                                title="Voir le niveau"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16"><path fill="currentColor" d="M14.236 1.764a2.62 2.62 0 0 0-3.707 0L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l7.872-7.872a2.62 2.62 0 0 0 0-3.707m-3 .707a1.621 1.621 0 1 1 2.293 2.293l-.779.779l-2.293-2.293zM9.75 3.957l2.293 2.293l-6.386 6.386a1.95 1.95 0 0 1-.896.51l-2.567.66l.66-2.567a1.94 1.94 0 0 1 .51-.896z"/></svg>
+                                                            </button>
+                                                            <button
                                                                 className="level-btn view-btn"
                                                                 onClick={() => viewLevel(level.id)}
                                                                 title="Voir le niveau"
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/>
+                                                                    <path fill="#fff" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/>
                                                                 </svg>
                                                             </button>
                                                             <button
@@ -304,15 +323,18 @@ const Faculty = () => {
                                     <ErrorText error={errors.description} />
                                 </div>
 
-                                <label className="toggle-switch">
-                                    <input
-                                        type="checkbox"
-                                        className="toggle-switch__checkbox"
-                                        checked={data.is_active}
-                                        onChange={(e) => setData('is_active', e.target.checked)}
-                                    />
-                                    <span className="toggle-switch__slider"></span>
-                                </label>
+                                <div className="form-group">
+                                    <label htmlFor="name">Status</label>
+                                    <label className="toggle-switch">
+                                        <input
+                                            type="checkbox"
+                                            className="toggle-switch__checkbox"
+                                            checked={data.is_active}
+                                            onChange={(e) => setData('is_active', e.target.checked)}
+                                        />
+                                        <span className="toggle-switch__slider"></span>
+                                    </label>
+                                </div>
 
                                 <div className="modal-actions">
                                     <button type="button" className="btn btn-secondary" onClick={closeModal}
@@ -328,6 +350,10 @@ const Faculty = () => {
                             </form>
                         </div>
                     </div>
+                )}
+
+                {levelEdit && (
+                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel}/>
                 )}
 
                 <style>{`

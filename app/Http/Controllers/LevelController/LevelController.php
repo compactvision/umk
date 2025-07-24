@@ -9,10 +9,14 @@ use App\Http\Resources\FacultyResource;
 use App\Http\Resources\LevelResource;
 use App\Models\Level;
 use App\Services\FacultyService;
+use App\Services\ImageService;
 use App\Services\LevelService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class LevelController extends Controller
 {
@@ -87,71 +91,89 @@ class LevelController extends Controller
     /**
      * Enregistrer un niveau
      */
-    public function store(StoreLevelRequest $request)
+    public function store(StoreLevelRequest $request, ImageService $imageService)
     {
         try {
+            // 📝 Log de la tentative (aucun fichier ici)
             \Log::info('Tentative de création de niveau', [
-               'data' => $request->validated(),
-               'user_id' => auth()->id()
+                'data' => $request->except('image'),
+                'user_id' => auth()->id(),
             ]);
 
+            // ✅ Données validées (ne contient pas l’image si tu la valides séparément)
             $validated = $request->validated();
 
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('images/levels', 'public');
-                $validated['image'] = $path;
-            }
+            // 📸 Traitement de l’image
+            $imagePath = $imageService->resizeAndStore(
+                $request->file('image'),
+                'levels',
+                820,
+                460
+            );
 
+            // 💾 Ajout de l’image dans les données
+            $validated['image'] = $imagePath;
+
+            // 📚 Création du niveau
             $level = $this->levelService->create($validated);
 
-            \Log::info('Niveau crée avec succès', [
+            // ✅ Log succès
+            \Log::info('Niveau créé avec succès', [
                 'level_id' => $level->id,
-                'level_name' => $level->level_name
+                'level_name' => $level->level_name,
             ]);
 
-            if($request->expectsJson()){
+            // 📦 Réponse JSON si API
+            if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Niveau créé avec succès',
-                    'data' => new LevelResource($level)
+                    'data' => new LevelResource($level),
                 ], 201);
             }
 
+            // 🔁 Réponse HTML
             return redirect()->back()->with([
-                'success' => 'Niveaux créé avec succès',
-                'level' => new LevelResource($level)
+                'success' => 'Niveau créé avec succès',
+                'level' => new LevelResource($level),
             ]);
-        }  catch (\Illuminate\Validation\ValidationException $e) {
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // ⚠️ Log des erreurs (sans fichier)
             \Log::warning('Erreur de validation lors de la création', [
                 'errors' => $e->errors(),
-                'data' => $request->all()
+                'data' => $request->except('image'),
             ]);
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Erreurs de validation',
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
                 ], 422);
             }
 
-            return back()->withErrors($e->errors())->withInput();
+            // 🔁 Retour formulaire sans image
+            return back()->withErrors($e->errors())->withInput($request->except('image'));
 
         } catch (\Exception $e) {
+            // 🧨 Log de l’erreur sans sérialiser le fichier
             \Log::error('Erreur lors de la création du niveau', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'data' => $request->all()
+                'data' => $request->except('image'),
             ]);
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erreur lors de la création du niveau'
+                    'message' => 'Erreur lors de la création du niveau',
                 ], 500);
             }
 
-            return back()->withInput()->with('error', 'Erreur lors de la création du niveau.');
+            // 🔁 Retour formulaire sans image
+            return back()->withInput($request->except('image'))
+                ->with('error', 'Erreur lors de la création du niveau.');
         }
     }
 

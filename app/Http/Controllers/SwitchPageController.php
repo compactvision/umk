@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FacultyResource;
+use App\Services\FacultyService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SwitchPageController extends Controller
 {
+    public function __construct(
+        private FacultyService $facultyService
+    ) {}
     //
     public function home()
     {
@@ -18,9 +23,13 @@ class SwitchPageController extends Controller
         return Inertia::render('Admissionpage');
     }
 
-    public function courses()
+    public function courses(Request $request)
     {
-        return Inertia::render('Coursespage');
+        $allFaculties = $this->facultyService->getWithLevels();
+
+        return Inertia::render('courses/Coursespage', [
+            'faculties' => FacultyResource::collection($allFaculties),
+        ]);
     }
     public function contact()
     {

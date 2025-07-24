@@ -61,6 +61,8 @@ class LevelService
     public function create(array $data): Level
     {
         return DB::transaction(function () use ($data) {
+            $faculty = Faculty::findOrFail($data['faculty_id']);
+            $data['tag'] = $faculty->code;
             $level = $this->level->create($data);
 
             // Invalider le cache
