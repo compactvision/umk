@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import { usePage } from '@inertiajs/react';
 import LevelPopup from '@/components/form/LevelPopup';
 
 export default function FacultyShow() {
     const { faculties } = usePage().props;
-    const allFaculties = faculties?.data || [];
+    const allFaculties = useMemo(() => faculties?.data || [], [faculties]);
 
     const [selectedFaculties, setSelectedFaculties] = useState(['all']);
     const [filteredFaculties, setFilteredFaculties] = useState(allFaculties);
@@ -53,14 +53,14 @@ export default function FacultyShow() {
                             <section key={faculty.id} className="courses__section">
                                 <h2 className="courses__title">{faculty.name}</h2>
                                 <div className="courses__grid">
-                                    {faculty.levels.length === 0 ? (
+                                    {Array.isArray(faculty.levels) && faculty.levels.length === 0 ? (
                                         <p className="course-card__name">Pas de niveau pour cette faculté</p>
                                     ) : (
-                                        faculty.levels.map((level) => (
+                                        (faculty.levels || []).map((level) => (
                                             <div key={level.id} className="course-card">
-                                                <img src="mailchimp.png" alt="Newsletter Design" className="course-card__image" />
-                                                <h3 className="course-card__name">{level.name}</h3>
-                                                <div className="course-card__overlay">12 leçons</div>
+                                                <img src={`/storage/${level.image}`} alt={level.level_code} className="course-card__image" />
+                                                <h3 className="course-card__name">{level.level_name}</h3>
+                                                <div className="course-card__overlay">{level.courses_number} cours</div>
                                             </div>
                                         ))
                                     )}
@@ -72,7 +72,7 @@ export default function FacultyShow() {
 
                 <aside className="filters">
                     <div>
-                        <button className="create-btn" onClick={(e) => setIsOpen(true)}>
+                        <button className="create-btn" onClick={openPopup}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <g fill="none" stroke="currentColor" strokeDasharray="16" strokeDashoffset="16" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
                                     <path d="M5 12h14">

@@ -35,7 +35,7 @@ class FacultyController extends Controller
             }
 
             // Pour la première charge, récupérer toutes les facultés (pas de pagination côté client)
-            $allFaculties = $this->facultyService->getActive();
+            $allFaculties = $this->facultyService->getWithLevels();
 
             // Sinon, retourner la vue Inertia avec toutes les facultés
             return Inertia::render('dashboard/faculty/Faculty', [

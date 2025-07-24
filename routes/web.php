@@ -30,8 +30,8 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
     })->name('index');
 
     // Page principale des facultés - IMPORTANT: Cette route doit charger les données
-    Route::get('/faculty', [FacultyController::class, 'index'])
-        ->name('dashboard.faculty');
+//    Route::get('/faculty', [FacultyController::class, 'index'])
+//        ->name('dashboard.faculty');
 
     // CRUD standard des facultés
     Route::resource('faculties', FacultyController::class)->except(['create', 'edit']);

@@ -20,26 +20,6 @@ const Faculty = () => {
         is_active: true,
     });
 
-    // Mock data for levels - replace with real data
-    const getLevelsForFaculty = (facultyId) => {
-        // This should be replaced with real data from your backend
-        const mockLevels = {
-            1: [
-                { id: 1, name: "Licence 1", code: "L1", students_count: 245 },
-                { id: 2, name: "Licence 2", code: "L2", students_count: 198 },
-                { id: 3, name: "Licence 3", code: "L3", students_count: 156 },
-                { id: 4, name: "Master 1", code: "M1", students_count: 89 },
-                { id: 5, name: "Master 2", code: "M2", students_count: 67 }
-            ],
-            2: [
-                { id: 6, name: "1ère année", code: "1A", students_count: 180 },
-                { id: 7, name: "2ème année", code: "2A", students_count: 165 },
-                { id: 8, name: "3ème année", code: "3A", students_count: 142 }
-            ]
-        };
-        return mockLevels[facultyId] || [];
-    };
-
     const openModal = () => {
         setIsModalOpen(true);
         document.body.style.overflow = 'hidden';
@@ -164,7 +144,7 @@ const Faculty = () => {
                     ) : (
                         Array.isArray(faculties?.data) &&
                         faculties.data.map((faculty) => {
-                            const levels = getLevelsForFaculty(faculty.id);
+                            const levels = faculty.levels || [];
                             return (
                                 <div
                                     className="faculty-card-container"
@@ -218,11 +198,11 @@ const Faculty = () => {
                                                         style={{ animationDelay: `${index * 0.1}s` }}
                                                     >
                                                         <div className="level-info">
-                                                            <div className="level-name">{level.name}</div>
-                                                            <div className="level-code">{level.code}</div>
+                                                            <div className="level-name">{level.level_name}</div>
+                                                            <div className="level-code">{level.level_code}</div>
                                                             <div className="level-students">
                                                                 <span className="student-icon">👥</span>
-                                                                {level.students_count} étudiants
+                                                                {level.student_number} étudiants
                                                             </div>
                                                         </div>
                                                         <div className="level-actions">

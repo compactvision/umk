@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import ErrorText from '@/components/UI/ErrorText';
 
@@ -7,15 +7,21 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
 
     const { data, setData, post, processing, reset, errors } = useForm({
         faculty_id: '',
-        name: '',
-        code: '',
-        duration: '1',
+        level_name: '',
+        level_code: '',
+        duration_years: '1',
         description: '',
-        students: '',
-        courses: '',
-        credits: '',
+        student_number: '',
+        courses_number: '',
+        credit_required: '',
         image: null
     });
+
+    useEffect(() => {
+        if (!data.faculty_id && faculties?.data?.length > 0) {
+            setData('faculty_id', faculties.data[0].id);
+        }
+    }, [faculties, data.faculty_id]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -43,8 +49,9 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
                 setImagePreview(null);
                 onClose();
             },
-            onError: () => {
+            onError: (errors) => {
                 alert('❌ Une erreur est survenue lors de l’enregistrement.');
+                console.log(errors)
             }
         });
     };
@@ -63,7 +70,7 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
                     <div className="popup__sidebar">
                         <div className="form__group">
                             <label htmlFor="faculty_id">Faculté</label>
-                            <select id="faculty_id" value={data.faculty_id} onChange={handleChange}>
+                            <select id="faculty_id" value={data.faculty_id} onChange={(e) => setData('faculty_id', e.target.value)}>
                                 <option value="">-- Choisis la faculté --</option>
                                 {faculties?.data?.map(f => (
                                     <option key={f.id} value={f.id}>{f.name}</option>
@@ -74,42 +81,42 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
 
                         <div className="form__group">
                             <label htmlFor="name">Nom du niveau</label>
-                            <input id="name" type="text" value={data.name} onChange={handleChange} />
-                            <ErrorText error={errors.name} />
+                            <input id="name" type="text" value={data.level_name} onChange={(e) => setData('level_name', e.target.value)} />
+                            <ErrorText error={errors.level_name} />
                         </div>
 
                         <div className="form__group">
                             <label htmlFor="code">Code</label>
-                            <input id="code" type="text" value={data.code} onChange={handleChange} />
-                            <ErrorText error={errors.code}/>
+                            <input id="code" type="text" value={data.level_code} onChange={(e) => setData('level_code', e.target.value)} />
+                            <ErrorText error={errors.level_code}/>
                         </div>
 
                         <div className="form__group">
                             <label htmlFor="duration">Durée (en années)</label>
-                            <select id="duration" value={data.duration} onChange={handleChange}>
+                            <select id="duration" value={data.duration_years} onChange={(e) => setData('duration_years', e.target.value)}>
                                 {[1, 2, 3, 4].map(y => (
                                     <option key={y} value={y}>{y} an{y > 1 && 's'}</option>
                                 ))}
                             </select>
-                            <ErrorText error={errors.duration} />
+                            <ErrorText error={errors.duration_years} />
                         </div>
 
                         <div className="form__group">
                             <label htmlFor="students">Nombre d'étudiants</label>
-                            <input id="students" type="number" value={data.students} onChange={handleChange} />
-                            <ErrorText error={errors.students} />
+                            <input id="students" type="number" value={data.student_number} onChange={(e) => setData('student_number', e.target.value)} />
+                            <ErrorText error={errors.student_number} />
                         </div>
 
                         <div className="form__group">
                             <label htmlFor="courses">Nombre de cours</label>
-                            <input id="courses" type="number" value={data.courses} onChange={handleChange} />
-                            <ErrorText error={errors.courses} />
+                            <input id="courses" type="number" value={data.courses_number} onChange={(e) => setData('courses_number', e.target.value)} />
+                            <ErrorText error={errors.courses_number} />
                         </div>
 
                         <div className="form__group">
                             <label htmlFor="credits">Crédits</label>
-                            <input id="credits" type="number" value={data.credits} onChange={handleChange} />
-                            <ErrorText error={errors.credits} />
+                            <input id="credits" type="number" value={data.credit_required} onChange={(e) => setData('credit_required', e.target.value)} />
+                            <ErrorText error={errors.credit_required} />
                         </div>
 
                         <div className="form__group">
@@ -123,7 +130,7 @@ export default function LevelPopup({ isOpen, onClose, faculties }) {
                     <div className="popup__main">
                         <div className="form__group">
                             <label htmlFor="description">Description</label>
-                            <textarea id="description" rows="10" value={data.description} onChange={handleChange}></textarea>
+                            <textarea id="description" rows="10" value={data.description} onChange={(e) => setData('description', e.target.value)}></textarea>
                             <ErrorText error={errors.description}/>
                         </div>
 

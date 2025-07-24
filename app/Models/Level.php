@@ -19,7 +19,11 @@ class Level extends Model
         'level_code',
         'level_name',
         'description',
-        'duration',
+        'duration_years',
+        'student_number',
+        'credit_required',
+        'courses_number',
+        'is_active',
         'image',
     ];
 

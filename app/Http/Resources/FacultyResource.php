@@ -30,6 +30,7 @@ class FacultyResource extends JsonResource
 
             // Relations si vous en avez
             // 'students_count' => $this->whenLoaded('students', fn() => $this->students->count()),
+            'levels' => LevelResource::collection($this->whenLoaded('levels')),
         ];
     }
 }

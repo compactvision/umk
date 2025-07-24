@@ -24,7 +24,7 @@ export interface Level extends Timestamps {
     code: string;
     description?: string;
     faculty_id: number;
-    duration_years: number;
+    duration: number;
     credits_required?: number;
     is_active: boolean;
     level_type: 'undergraduate' | 'graduate' | 'postgraduate' | 'doctorate';
@@ -78,7 +78,7 @@ export interface LevelFormData {
     code: string;
     description?: string;
     faculty_id: number;
-    duration_years: number;
+    duration: number;
     credits_required?: number;
     is_active: boolean;
     level_type: 'undergraduate' | 'graduate' | 'postgraduate' | 'doctorate';

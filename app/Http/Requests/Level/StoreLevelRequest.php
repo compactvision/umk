@@ -22,13 +22,15 @@ class StoreLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'faculty_id' => 'required',
             'level_name' => 'required|string',
             'level_code' => 'required|string',
             'description' => 'nullable|string',
             'student_number' => 'required|integer',
             'credit_required' => 'required|integer',
             'courses_number' => 'required|integer',
-            'image' => 'required|string'
+            'duration_years' => 'required',
+            'image' => 'required|image|max:3020'
         ];
     }
 

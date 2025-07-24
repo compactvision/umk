@@ -8,6 +8,7 @@ use App\Http\Requests\Level\UpdateLevelRequest;
 use App\Http\Resources\FacultyResource;
 use App\Http\Resources\LevelResource;
 use App\Models\Level;
+use App\Services\FacultyService;
 use App\Services\LevelService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ use Inertia\Response;
 class LevelController extends Controller
 {
     public function __construct(
-        private LevelService $levelService
+        private LevelService $levelService, private FacultyService $facultyService
     ){}
     /**
      * Afficher tous les niveaux avec leur faculté
@@ -24,25 +25,20 @@ class LevelController extends Controller
     public function index(Request $request)
     {
         try {
-            $levels = $this->levelService->getPaginated(
-                filters: $request->only(['search', 'status', 'duration_years', 'sort_by', 'sort_direction']),
-                perPage: $request->get('per_page', 15)
-            );
+            $facultiesWithLevels = $this->facultyService->getWithLevels();
 
             if($request->expectsJson()) {
-                return LevelResource::collection($levels);
+                return LevelResource::collection($facultiesWithLevels);
             }
 
-            $allLevels = $this->levelService->getActive();
-
             return Inertia::render('dashboard/faculty/FacultyShow', [
-                'levels' => FacultyResource::collection($allLevels),
-                'pagination' => [
-                    'total' => $levels->total(),
-                    'per_page' => $levels->perPage(),
-                    'current_page' => $levels->currentPage(),
-                    'last_page' => $levels->lastPage(),
-                ],
+                'faculties' => FacultyResource::collection($facultiesWithLevels),
+//                'pagination' => [
+//                    'total' => $levels->total(),
+//                    'per_page' => $levels->perPage(),
+//                    'current_page' => $levels->currentPage(),
+//                    'last_page' => $levels->lastPage(),
+//                ],
                 'filters' => $request->only(['search', 'status', 'duration_years']),
             ]);
         } catch (\Exception $e) {
@@ -99,7 +95,14 @@ class LevelController extends Controller
                'user_id' => auth()->id()
             ]);
 
-            $level = $this->levelService->create($request->validated());
+            $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/levels', 'public');
+                $validated['image'] = $path;
+            }
+
+            $level = $this->levelService->create($validated);
 
             \Log::info('Niveau crée avec succès', [
                 'level_id' => $level->id,

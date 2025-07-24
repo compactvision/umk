@@ -174,7 +174,7 @@ class LevelService
                 'total' => $this->level->count(),
                 'active' => $this->level->active()->count(),
                 'inactive' => $this->level->inactive()->count(),
-                'avg_duration' => $this->level->avg('duration_years'),
+                'avg_duration_years' => $this->level->avg('duration_years'),
                 'recent' => $this->level->where('created_at', '>=', now()->subMonth())->count(),
             ];
         });
