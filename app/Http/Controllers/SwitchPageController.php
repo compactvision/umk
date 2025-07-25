@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\FacultyResource;
+use App\Models\Level;
 use App\Services\FacultyService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,6 +30,15 @@ class SwitchPageController extends Controller
 
         return Inertia::render('courses/Coursespage', [
             'faculties' => FacultyResource::collection($allFaculties),
+        ]);
+    }
+
+    public function courseShow($id) {
+        $course = Level::findOrFail($id);
+        $course->load('faculty');
+
+        return Inertia::render('courses/CourseShow', [
+            'course' => $course
         ]);
     }
     public function contact()

@@ -89,6 +89,11 @@ class Faculty extends Model
         return $this->hasMany(Level::class);
     }
 
+    public function admissionConditions()
+    {
+        return $this->hasMany(AdmissionConditions::class);
+    }
+
     /**
      * Récupérer les niveaux ordonnés
      */

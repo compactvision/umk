@@ -37,6 +37,21 @@ class Level extends Model
         return $this->belongsTo(Faculty::class);
     }
 
+    public function details()
+    {
+        return $this->hasOne(LevelDetails::class);
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(Courses::class);
+    }
+
+    public function admissionConditions()
+    {
+        return $this->hasMany(AdmissionConditions::class);
+    }
+
     /**
      * Scope pour filtrer par code de niveau
      */

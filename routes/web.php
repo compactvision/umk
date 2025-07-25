@@ -11,6 +11,7 @@ use App\Http\Controllers\LevelController\LevelController;
 Route::get('/', [SwitchPageController::class, 'home'])->name('home');
 Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admission');
 Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses');
+Route::get('/course/{id}', [SwitchPageController::class, 'courseShow'])->name('courseShow');
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 
 // Routes d'authentification

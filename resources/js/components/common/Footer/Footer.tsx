@@ -1,16 +1,16 @@
 export default function Footer() {
   return (
-      <footer className="footer bg_img pos-rel pt-20" data-background="assets/img/bg/footer.jpg">
+      <footer className="footer bg_img pos-rel pt-20" data-background="/assets/img/bg/footer.jpg">
           <div className="xb-footer-wrap">
               <div className="container">
                   <div className="footer-cta ul_li_between mb-35">
                       <div className="xb-item--holder ul_li mt-30">
                           <div className="xb-item--icon-avatar ul_li">
                               <span>
-                                  <img src="assets/img/icon/calling-icon01.png" alt="Icône d'appel" />
+                                  <img src="/assets/img/icon/calling-icon01.png" alt="Icône d'appel" />
                               </span>
                               <div className="xb-item--avatar">
-                                  <img src="assets/img/footer/footer-avatar.png" alt="Avatar conseiller" />
+                                  <img src="/assets/img/footer/footer-avatar.png" alt="Avatar conseiller" />
                               </div>
                           </div>
                           <div className="xb-item--content">
@@ -30,7 +30,7 @@ export default function Footer() {
                               <div className="footer-widget mt-10">
                                   <div className="xb-item--logo mb-30">
                                       <a href="#!">
-                                          <img src="assets/img/logo/logo_white.svg" alt="Logo UMK" />
+                                          <img src="/assets/img/logo/logo_white.svg" alt="Logo UMK" />
                                       </a>
                                   </div>
                                   <span className="xb-item--details">

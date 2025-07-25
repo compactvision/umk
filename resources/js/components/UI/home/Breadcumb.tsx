@@ -4,7 +4,7 @@ export default function Breadcumb({ title, desc }: { title: string; desc: string
     return (
         <section
             className="breadcrumb bg_img ul_li"
-            data-background="assets/img/bg/hero.jpg"
+            data-background="/assets/img/bg/hero.jpg"
         >
             <div className="container">
                 <div className="breadcrumb__content text-center">

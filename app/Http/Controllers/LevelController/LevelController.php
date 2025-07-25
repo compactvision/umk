@@ -88,6 +88,11 @@ class LevelController extends Controller
         ]);
     }
 
+    public function show()
+    {
+        return Inertia::render('dashboard/faculty/level/LevelShow');
+    }
+
     /**
      * Enregistrer un niveau
      */

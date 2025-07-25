@@ -1,5 +1,6 @@
 import Isotope from 'isotope-layout';
 import { useEffect, useRef, useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function Courses({ faculties }) {
     const isotope = useRef();
@@ -64,7 +65,7 @@ export default function Courses({ faculties }) {
                                 >
                                     <div className="xb-program__wrapper mt-30">
                                         <div className="xb-item--img text-center">
-                                            <a href="#">
+                                            <a href={route('courseShow', level.id)}>
                                                 <img src={`/storage/${level.image}`} alt={level.level_code} />
                                             </a>
                                         </div>
@@ -77,7 +78,7 @@ export default function Courses({ faculties }) {
                                                 </div>
                                             </div>
                                             <h2 className="xb-item--title border-effect-2">
-                                                <a href="#">{level.level_name}</a>
+                                                <Link href="#">{level.level_name}</Link>
                                             </h2>
                                             <ul className="xb-item--meta ul_li">
                                                 <li>

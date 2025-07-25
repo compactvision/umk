@@ -29,7 +29,7 @@ export default function Preloader() {
       <div id="loader" className="loader">
         <div className="loader-container">
           <div className="loader-icon">
-            <img src="assets/img/logo/logo.png" alt="logo" style={{ width: '50px' }} />
+            <img src="/assets/img/logo/logo.png" alt="logo" style={{ width: '50px' }} />
           </div>
         </div>
       </div>
