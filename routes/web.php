@@ -39,6 +39,7 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
 
     // Faculty Level Show
     Route::resource('levels', LevelController::class);
+    Route::put('/dashboard/levels/details/{id}', [LevelController::class, 'updateLevelDetails'])->name('levels.update.details');
 });
 
 Route::get('/test', function() {

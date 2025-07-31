@@ -50,9 +50,10 @@ export default function LevelPopup({ isOpen, onClose, faculties, level = null })
                 setImagePreview(null);
                 onClose();
             },
-            onError: () => {
-                Alert.error("Une erreur s'est produite");
-            },
+            onError: (errors) => {
+                console.error(errors);
+                Alert.error("Erreur: " + JSON.stringify(errors));
+            }
         };
 
         if (isEditMode) {
@@ -99,34 +100,6 @@ export default function LevelPopup({ isOpen, onClose, faculties, level = null })
                         </div>
 
                         <div className="form__group">
-                            <label htmlFor="duration">Durée (en années)</label>
-                            <select id="duration" value={data.duration_years} onChange={(e) => setData('duration_years', e.target.value)}>
-                                {[1, 2, 3, 4].map(y => (
-                                    <option key={y} value={y}>{y} an{y > 1 && 's'}</option>
-                                ))}
-                            </select>
-                            <ErrorText error={errors.duration_years} />
-                        </div>
-
-                        <div className="form__group">
-                            <label htmlFor="students">Nombre d'étudiants</label>
-                            <input id="students" type="number" value={data.student_number} onChange={(e) => setData('student_number', e.target.value)} />
-                            <ErrorText error={errors.student_number} />
-                        </div>
-
-                        <div className="form__group">
-                            <label htmlFor="courses">Nombre de cours</label>
-                            <input id="courses" type="number" value={data.courses_number} onChange={(e) => setData('courses_number', e.target.value)} />
-                            <ErrorText error={errors.courses_number} />
-                        </div>
-
-                        <div className="form__group">
-                            <label htmlFor="credits">Crédits</label>
-                            <input id="credits" type="number" value={data.credit_required} onChange={(e) => setData('credit_required', e.target.value)} />
-                            <ErrorText error={errors.credit_required} />
-                        </div>
-
-                        <div className="form__group">
                             <label htmlFor="image">Image</label>
                             <input id="image" type="file" accept="image/*" onChange={handleImageChange} />
                             {imagePreview && <img src={imagePreview} alt="Aperçu" className="form__preview" />}
@@ -147,183 +120,220 @@ export default function LevelPopup({ isOpen, onClose, faculties, level = null })
                     </div>
                 </div>
             </div>
-            <style>{`
+            <style jsx>{`
+                .popup-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    backdrop-filter: blur(10px);
+                    z-index: 1000;
+                    opacity: 0;
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
 
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    opacity: 0;
-    animation: fadeIn 0.3s ease-out forwards;
-}
+                @keyframes fadeIn {
+                    to { opacity: 1; }
+                }
 
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
-}
+                .popup__container {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0.95);
+                    width: 95vw;
+                    height: 90vh;
+                    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+                    border-radius: 20px;
+                    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+                    animation: popIn 0.4s ease-out 0.1s forwards;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                }
 
-.popup__container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.95);
-    width: 95vw;
-    height: 90vh;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    border-radius: 20px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    animation: popIn 0.4s ease-out 0.1s forwards;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
+                @keyframes popIn {
+                    to { transform: translate(-50%, -50%) scale(1); }
+                }
 
-@keyframes popIn {
-    to {
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
+                .popup__header {
+                    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                    color: white;
+                    padding: 20px 30px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                }
 
-.popup__header {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: white;
-    padding: 20px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+                .popup__title {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
 
-.popup__title {
-    font-size: 24px;
-    font-weight: bold;
-}
+                .popup__close {
+                    background: transparent;
+                    border: none;
+                    color: white;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 5px;
+                }
 
-.popup__close {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-}
+                .popup__close:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                }
 
-.popup__content {
-    display: flex;
-    height: 100%;
-    flex-direction: row;
-}
+                .popup__content {
+                    display: flex;
+                    height: 100%;
+                    flex-direction: row;
+                }
 
-.popup__sidebar {
-    width: 300px;
-    background: linear-gradient(180deg, #f8fafc, #e2e8f0);
-    border-right: 2px solid #e2e8f0;
-    padding: 20px;
-    overflow-y: auto;
-    box-sizing: border-box;
-}
+                .popup__sidebar {
+                    width: 350px;
+                    background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+                    border-right: 2px solid #e2e8f0;
+                    padding: 20px;
+                    overflow-y: auto;
+                    box-sizing: border-box;
+                }
 
-.popup__main {
-    flex: 1;
-    background: #ffffff;
-    padding: 30px;
-    overflow-y: auto;
-    box-sizing: border-box;
-}
+                .popup__main {
+                    flex: 1;
+                    background: #ffffff;
+                    padding: 30px;
+                    overflow-y: auto;
+                    box-sizing: border-box;
+                }
 
-.form__group {
-    margin-bottom: 20px;
-    box-sizing: border-box;
-}
+                .form__group {
+                    margin-bottom: 20px;
+                    box-sizing: border-box;
+                }
 
-.form__group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #374151;
-}
+                .form__row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 15px;
+                    margin-bottom: 20px;
+                }
 
-.form__group input,
-.form__group select,
-.form__group textarea {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 14px;
-    background: white;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
+                .form__group label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: #374151;
+                }
 
-.form__group input:focus,
-.form__group select:focus,
-.form__group textarea:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
+                .form__group input,
+                .form__group select,
+                .form__group textarea {
+                    display: block;
+                    width: 100%;
+                    padding: 12px;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 10px;
+                    font-size: 14px;
+                    background: white;
+                    transition: all 0.3s ease;
+                    box-sizing: border-box;
+                }
 
-.form__group textarea {
-    resize: vertical;
-    min-height: 80px;
-}
+                .form__group input:focus,
+                .form__group select:focus,
+                .form__group textarea:focus {
+                    outline: none;
+                    border-color: #4f46e5;
+                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+                }
 
-.form__preview {
-    margin-top: 10px;
-    width: 100%;
-    max-height: 150px;
-    object-fit: contain;
-    border-radius: 10px;
-    border: 2px solid #cbd5e1;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+                .form__group textarea {
+                    resize: vertical;
+                    min-height: 120px;
+                }
 
-.btn {
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-}
+                .form__preview {
+                    margin-top: 10px;
+                    width: 100%;
+                    max-height: 150px;
+                    object-fit: contain;
+                    border-radius: 10px;
+                    border: 2px solid #cbd5e1;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
 
-.btn--primary {
-    background: linear-gradient(145deg, #10b981, #059669);
-    color: white;
-}
+                .form__actions {
+                    display: flex;
+                    gap: 15px;
+                    justify-content: flex-end;
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 2px solid #e5e7eb;
+                }
 
-.btn--primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+                .btn {
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 10px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-size: 16px;
+                    box-sizing: border-box;
+                }
 
-@media screen and (max-width: 768px) {
-    .popup__content {
-        flex-direction: column;
-    }
+                .btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
 
-    .popup__sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 2px solid #e2e8f0;
-    }
+                .btn--primary {
+                    background: linear-gradient(145deg, #10b981, #059669);
+                    color: white;
+                }
 
-    .form__preview {
-        max-height: 200px;
-    }
-}
+                .btn--primary:hover:not(:disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                }
 
-        `}</style>
+                .btn--secondary {
+                    background: #6b7280;
+                    color: white;
+                }
+
+                .btn--secondary:hover:not(:disabled) {
+                    background: #4b5563;
+                }
+
+                @media screen and (max-width: 768px) {
+                    .popup__content {
+                        flex-direction: column;
+                    }
+
+                    .popup__sidebar {
+                        width: 100%;
+                        border-right: none;
+                        border-bottom: 2px solid #e2e8f0;
+                    }
+
+                    .form__row {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .form__actions {
+                        flex-direction: column;
+                    }
+
+                    .form__preview {
+                        max-height: 200px;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

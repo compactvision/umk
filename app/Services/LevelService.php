@@ -85,9 +85,7 @@ class LevelService
     {
         return DB::transaction(function () use ($level, $data) {
             $oldData = $level->toArray();
-
             $level->update($data);
-
             // Invalider le cache
             $this->clearCache();
 

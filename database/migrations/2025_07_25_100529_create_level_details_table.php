@@ -20,13 +20,15 @@ return new class extends Migration
             $table->decimal('price', 10, 2)->nullable();     // Prix du niveau
             $table->boolean('has_certificate')->default(false); // Offre une certification ?
             $table->string('language', 50)->nullable();      // Langue d'enseignement
-            $table->unsignedTinyInteger('duration_months')->nullable(); // Durée en mois
+            $table->unsignedTinyInteger('duration_years')->default(1); // Durée en mois
+            $table->integer('student_number')->nullable();
+            $table->integer('credit_required')->nullable();
 
             $table->integer('courses_number')->nullable();   // Nombre de cours
             $table->string('illustration_image')->nullable(); // Image explicative
 
             $table->text('course_objective')->nullable();    // Objectif du cours
-            $table->json('options')->nullable();
+            $table->json('options')->default([]);
             $table->timestamps();
         });
     }

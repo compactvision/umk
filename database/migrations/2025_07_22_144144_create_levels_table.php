@@ -20,10 +20,6 @@ return new class extends Migration
             $table->string('level_name', 100);
             $table->string('tag');
             $table->text('description')->nullable();
-            $table->integer('student_number');
-            $table->integer('credit_required');
-            $table->integer('courses_number');
-            $table->unsignedTinyInteger('duration_years')->default(1);
             $table->boolean('is_active')->default(true);
             $table->string('image')->nullable();
 

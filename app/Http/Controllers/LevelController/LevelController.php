@@ -5,9 +5,11 @@ namespace App\Http\Controllers\LevelController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Level\StoreLevelRequest;
 use App\Http\Requests\Level\UpdateLevelRequest;
+use App\Http\Requests\Level\UpdateLevelDetailsRequest;
 use App\Http\Resources\FacultyResource;
 use App\Http\Resources\LevelResource;
 use App\Models\Level;
+use App\Models\LevelDetails;
 use App\Services\FacultyService;
 use App\Services\ImageService;
 use App\Services\LevelService;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
@@ -88,9 +91,16 @@ class LevelController extends Controller
         ]);
     }
 
-    public function show()
+    public function show(Level $level)
     {
-        return Inertia::render('dashboard/faculty/level/LevelShow');
+        // Charger les relations nécessaires
+        $level->load(['faculty', 'details', 'admissionConditions', 'courses']);
+
+//        dd($level);
+
+        return Inertia::render('dashboard/faculty/level/LevelShow', [
+            'level' => $level
+        ]);
     }
 
     /**
@@ -196,10 +206,27 @@ class LevelController extends Controller
     /**
      * Mettre à jour un niveau
      */
-    public function update(UpdateLevelRequest $request, Level $level)
+    public function update(UpdateLevelRequest $request, Level $level, ImageService $imageService)
     {
         try {
-            $updatedLevel = $this->levelService->update($level, $request->validated());
+            $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+
+                if ($level->image && Storage::disk('public')->exists($level->image)) {
+                    Storage::disk('public')->delete($level->image);
+                }
+
+                $validated['image'] = $imageService->resizeAndStore(
+                    $request->file('image'),
+                    'levels',
+                    820,
+                    460
+                );
+            }
+
+            // ✅ On passe les données complètes avec image au service
+            $updatedLevel = $this->levelService->update($level, $validated);
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -209,10 +236,7 @@ class LevelController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with([
-                'success' => 'Niveau mis à jour avec succès.',
-                'faculty' => new FacultyResource($updatedLevel)
-            ]);
+            return redirect()->back()->with('success', 'Niveau mis à jour avec succès.');
 
         } catch (\Exception $e) {
             \Log::error('Erreur lors de la mise à jour du niveau', [
@@ -221,16 +245,56 @@ class LevelController extends Controller
                 'data' => $request->validated()
             ]);
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Erreur lors de la mise à jour.'
-                ], 500);
-            }
-
             return back()->withInput()->with('error', 'Erreur lors de la mise à jour.');
         }
     }
+
+
+
+
+    public function updateLevelDetails(UpdateLevelDetailsRequest $request, $id)
+    {
+        try {
+            $details = LevelDetails::findOrFail($id);
+            $validated = $request->validated();
+
+            $data = $validated['details'] ?? []; // ✅ On prend seulement la partie details
+
+            \Log::info('Tentative de mise à jour LevelDetails', [
+                'id'    => $details->id,
+                'avant' => $details->toArray(),
+                'après' => $data
+            ]);
+
+            $details->fill($data);
+
+            if ($details->isDirty()) {
+                $details->save();
+
+                \Log::info('LevelDetails mis à jour', [
+                    'id'    => $details->id,
+                    'après' => $details->toArray()
+                ]);
+
+                return redirect()->back()->with('success', 'Détails mis à jour avec succès.');
+            }
+
+            return redirect()->back()->with('info', 'Aucune modification détectée.');
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la mise à jour des LevelDetails', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour des détails.');
+        }
+    }
+
+
 
     /**
      * Supprimer un niveau

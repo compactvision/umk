@@ -20,10 +20,6 @@ class Level extends Model
         'level_name',
         'description',
         'tag',
-        'duration_years',
-        'student_number',
-        'credit_required',
-        'courses_number',
         'is_active',
         'image',
     ];

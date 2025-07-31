@@ -102,26 +102,36 @@ const Faculty = () => {
         });
     };
 
-    const viewLevel = (levelId) => {
-        console.log('Viewing level:', levelId);
-        // Implement view level logic
+    const viewLevel = (level) => {
+        router.visit(route('dashboard.levels.show', level))
     };
 
     const editLevel = (level) => {
         setLevelEdit(true)
         setSelectedLevel(level)
-
-        console.log('Editing level:', level);
-        // Implement edit level logic
     }
 
     const deleteLevel = async (levelId) => {
         const confirmed = await Alert.deleteConfirm('ce niveau');
         if (!confirmed) return;
 
-        console.log('Deleting level:', levelId);
-        // Implement delete level logic
+        Alert.loading('Suppression en cours...');
+        router.delete(`/dashboard/levels/${levelId}`, {
+            onSuccess: () => {
+                Alert.success('Niveau supprimé avec succès.');
+                closeModal();
+            },
+            onError: (errors) => {
+                console.error(errors);
+                Alert.error('Une erreur est survenue.');
+                closeModal();
+            },
+            onFinish: () => {
+                Alert.close();
+            }
+        });
     };
+
 
     return (
         <Dashboard>
@@ -227,7 +237,7 @@ const Faculty = () => {
                                                             </button>
                                                             <button
                                                                 className="level-btn view-btn"
-                                                                onClick={() => viewLevel(level.id)}
+                                                                onClick={() => viewLevel(level)}
                                                                 title="Voir le niveau"
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
@@ -257,7 +267,7 @@ const Faculty = () => {
 
                 {/* Modal */}
                 {isModalOpen && (
-                    <div className="modal" onClick={(e) => e.target.className === 'modal' && closeModal()}>
+                    <div className="modall" onClick={(e) => e.target.className === 'modal' && closeModal()}>
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h2>{isEdit ? data.name : "🏛️ Nouvelle Faculté"}</h2>
@@ -730,7 +740,7 @@ const Faculty = () => {
                     }
 
                     /* Modal Styles */
-                    .modal {
+                    .modall {
                         position: fixed;
                         top: 0;
                         left: 0;

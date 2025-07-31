@@ -25,7 +25,7 @@ class UpdateLevelRequest extends FormRequest
         $levelId  = $this->route('level')->id;
         return [
             //
-            'level_name' => ['required', 'string']
+//            'level_name' => ['required', 'string']
 
         ];
     }

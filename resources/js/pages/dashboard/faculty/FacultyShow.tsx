@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { usePage } from '@inertiajs/react';
+import { usePage, router } from '@inertiajs/react';
 import LevelPopup from '@/components/form/LevelPopup';
 
 export default function FacultyShow() {
@@ -57,10 +57,10 @@ export default function FacultyShow() {
                                         <p className="course-card__name">Pas de niveau pour cette faculté</p>
                                     ) : (
                                         (faculty.levels || []).map((level) => (
-                                            <div key={level.id} className="course-card">
+                                            <div key={level.id} className="course-card" onClick={() => router.visit(route('dashboard.levels.show', level))}>
                                                 <img src={`/storage/${level.image}`} alt={level.level_code} className="course-card__image" />
                                                 <h3 className="course-card__name">{level.level_name}</h3>
-                                                <div className="course-card__overlay">{level.courses_number} cours</div>
+                                                <div className="course-card__overlay">Voir</div>
                                             </div>
                                         ))
                                     )}
