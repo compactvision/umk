@@ -29,6 +29,8 @@ export default function Courses({ faculties }) {
         isotope.current?.arrange({ filter });
     };
 
+    console.log(faculties)
+
     return (
         <section className="courses pt-120 pb-120">
             <div className="container">
@@ -65,16 +67,16 @@ export default function Courses({ faculties }) {
                                 >
                                     <div className="xb-program__wrapper mt-30">
                                         <div className="xb-item--img text-center">
-                                            <a href={route('courseShow', level.id)}>
+                                            <Link href={route('courseShow', level.id)}>
                                                 <img src={`/storage/${level.image}`} alt={level.level_code} />
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="xb-item--holder">
                                             <div className="xb-item--deprt ul_li_between">
                                                 <span className="xb-item--group"># {faculty.name}</span>
                                                 <div className="xb-item--rating">
                                                     <span>.</span>
-                                                    <img src="assets/img/icon/rating.png" alt="Note" />
+                                                    <img src="/assets/img/icon/rating.png" alt="Note" />
                                                 </div>
                                             </div>
                                             <h2 className="xb-item--title border-effect-2">
@@ -83,15 +85,15 @@ export default function Courses({ faculties }) {
                                             <ul className="xb-item--meta ul_li">
                                                 <li>
                                                     <img src="assets/img/icon/meta-icon01.png" alt="Places disponibles" />
-                                                    {level.student_number ?? 0} places
+                                                    {level.details.student_number ?? 0} places
                                                 </li>
                                                 <li>
                                                     <img src="assets/img/icon/clock.png" alt="Durée" />
-                                                    {level.duration_years} an(s)
+                                                    {level.details.duration_years} an(s)
                                                 </li>
                                             </ul>
                                             <div className="xb-item--dep-btn">
-                                                <a href="#">S'inscrire</a>
+                                                <Link href={route('courseShow', level.id)}>Voir</Link>
                                             </div>
                                         </div>
                                     </div>

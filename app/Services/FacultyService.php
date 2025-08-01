@@ -39,10 +39,17 @@ class FacultyService
 
     public function getWithLevels()
     {
-        return Faculty::with(['levels' => function ($query) {
-            $query->orderBy('level_code'); // ou autre tri personnalisé
-        }])->where('is_active', true)->get();
+        return Faculty::with([
+            'levels' => function ($query) {
+                $query->orderBy('level_code')
+                    ->with('details'); // 🔥 Charger details à ce niveau
+            }
+        ])
+            ->where('is_active', true)
+            ->get();
     }
+
+
 
     /**
      * Trouve une faculté par ID

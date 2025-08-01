@@ -30,6 +30,11 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
         return Inertia::render('dashboard/index/Index');
     })->name('index');
 
+    //Subscription
+    Route::get('/subscription', function () {
+        return Inertia::render('dashboard/subscription/Subscription');
+    });
+
     // Page principale des facultés - IMPORTANT: Cette route doit charger les données
 //    Route::get('/faculty', [FacultyController::class, 'index'])
 //        ->name('dashboard.faculty');
@@ -39,7 +44,12 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
 
     // Faculty Level Show
     Route::resource('levels', LevelController::class);
-    Route::put('/dashboard/levels/details/{id}', [LevelController::class, 'updateLevelDetails'])->name('levels.update.details');
+    Route::put('levels/details/{id}', [LevelController::class, 'updateLevelDetails'])->name('levels.update.details');
+
+    //Faculty Level admission
+    Route::post('admission/store', [LevelController::class, 'admissionStore'])->name('admission.store');
+    Route::put('admission/update/{id}', [LevelController::class, 'admissionUpdate'])->name('admission.update');
+    Route::delete('admission/destroy/{id}', [LevelController::class, 'admissionDestroy'])->name('admission.destroy');
 });
 
 Route::get('/test', function() {

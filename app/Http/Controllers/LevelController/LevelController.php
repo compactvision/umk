@@ -8,6 +8,8 @@ use App\Http\Requests\Level\UpdateLevelRequest;
 use App\Http\Requests\Level\UpdateLevelDetailsRequest;
 use App\Http\Resources\FacultyResource;
 use App\Http\Resources\LevelResource;
+use App\Models\AdmissionConditions;
+use App\Models\Faculty;
 use App\Models\Level;
 use App\Models\LevelDetails;
 use App\Services\FacultyService;
@@ -110,7 +112,7 @@ class LevelController extends Controller
     {
         try {
             // 📝 Log de la tentative (aucun fichier ici)
-            \Log::info('Tentative de création de niveau', [
+            Log::info('Tentative de création de niveau', [
                 'data' => $request->except('image'),
                 'user_id' => auth()->id(),
             ]);
@@ -133,7 +135,7 @@ class LevelController extends Controller
             $level = $this->levelService->create($validated);
 
             // ✅ Log succès
-            \Log::info('Niveau créé avec succès', [
+            Log::info('Niveau créé avec succès', [
                 'level_id' => $level->id,
                 'level_name' => $level->level_name,
             ]);
@@ -155,7 +157,7 @@ class LevelController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             // ⚠️ Log des erreurs (sans fichier)
-            \Log::warning('Erreur de validation lors de la création', [
+            Log::warning('Erreur de validation lors de la création', [
                 'errors' => $e->errors(),
                 'data' => $request->except('image'),
             ]);
@@ -173,7 +175,7 @@ class LevelController extends Controller
 
         } catch (\Exception $e) {
             // 🧨 Log de l’erreur sans sérialiser le fichier
-            \Log::error('Erreur lors de la création du niveau', [
+            Log::error('Erreur lors de la création du niveau', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'data' => $request->except('image'),
@@ -239,7 +241,7 @@ class LevelController extends Controller
             return redirect()->back()->with('success', 'Niveau mis à jour avec succès.');
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la mise à jour du niveau', [
+            Log::error('Erreur lors de la mise à jour du niveau', [
                 'level_id' => $level->id,
                 'message' => $e->getMessage(),
                 'data' => $request->validated()
@@ -252,26 +254,49 @@ class LevelController extends Controller
 
 
 
-    public function updateLevelDetails(UpdateLevelDetailsRequest $request, $id)
+    public function updateLevelDetails(UpdateLevelDetailsRequest $request, $id, ImageService $imageService)
     {
         try {
             $details = LevelDetails::findOrFail($id);
             $validated = $request->validated();
 
+
             $data = $validated['details'] ?? []; // ✅ On prend seulement la partie details
 
-            \Log::info('Tentative de mise à jour LevelDetails', [
+            if (isset($data['options']) && is_string($data['options'])) {
+                $data['options'] = array_map('trim', explode(',', $data['options']));
+            }
+
+//            dd($data);
+            Log::info('Tentative de mise à jour LevelDetails', [
                 'id'    => $details->id,
                 'avant' => $details->toArray(),
                 'après' => $data
             ]);
+
+            // 🖼️ Si une nouvelle image est envoyée
+            if ($request->hasFile('details.illustration_image')) {
+
+                // Supprimer l'ancienne si elle existe
+                if ($details->illustration_image && Storage::disk('public')->exists($details->illustration_image)) {
+                    Storage::disk('public')->delete($details->illustration_image);
+                }
+
+                // Stocker avec ton ImageService
+                $data['illustration_image'] = $imageService->resizeAndStore(
+                    $request->file('details.illustration_image'),
+                    'level_illustrations',
+                    1290,
+                    515
+                );
+            }
 
             $details->fill($data);
 
             if ($details->isDirty()) {
                 $details->save();
 
-                \Log::info('LevelDetails mis à jour', [
+                Log::info('LevelDetails mis à jour', [
                     'id'    => $details->id,
                     'après' => $details->toArray()
                 ]);
@@ -282,7 +307,7 @@ class LevelController extends Controller
             return redirect()->back()->with('info', 'Aucune modification détectée.');
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la mise à jour des LevelDetails', [
+            Log::error('Erreur lors de la mise à jour des LevelDetails', [
                 'id'      => $id,
                 'message' => $e->getMessage(),
                 'trace'   => $e->getTraceAsString()
@@ -291,6 +316,129 @@ class LevelController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Une erreur est survenue lors de la mise à jour des détails.');
+        }
+    }
+
+    public function admissionStore(Request $request)
+    {
+        try {
+            // ✅ Validation
+            $validated = $request->validate([
+                'faculty_id'   => ['required', 'exists:faculties,id'],
+                'level_id'     => ['required', 'exists:levels,id'],
+                'title'        => ['required', 'string', 'max:255'],
+                'description'  => ['required', 'string'],
+            ]);
+
+            // ✅ Création de la condition d'admission
+            $condition = AdmissionConditions::create($validated);
+
+            Log::info('Nouvelle condition d\'admission créée', [
+                'condition_id' => $condition->id,
+                'faculty_id'   => $condition->faculty_id,
+                'level_id'     => $condition->level_id,
+                'title'        => $condition->title
+            ]);
+
+            // 🔁 Réponse Inertia / JSON
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Condition d\'admission ajoutée avec succès.',
+                    'data'    => $condition
+                ], 201);
+            }
+
+            return redirect()->back()->with('success', 'Condition d\'admission ajoutée avec succès.');
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la création de la condition d\'admission', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString()
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de l\'ajout de la condition d\'admission.'
+                ], 500);
+            }
+
+            return redirect()->back()->withInput()
+                ->with('error', 'Erreur lors de l\'ajout de la condition d\'admission.');
+        }
+    }
+
+    public function admissionUpdate(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'faculty_id'   => ['required', 'exists:faculties,id'],
+                'level_id'     => ['required', 'exists:levels,id'],
+                'title'        => ['required', 'string', 'max:255'],
+                'description'  => ['required', 'string'],
+            ]);
+
+            $condition = AdmissionConditions::findOrFail($id);
+            $condition->update($validated);
+
+            Log::info('Condition d\'admission mise à jour', [
+                'id' => $condition->id,
+                'title' => $condition->title
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Condition mise à jour avec succès',
+                    'data' => $condition
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Condition mise à jour avec succès');
+
+        } catch (\Exception $e) {
+            Log::error('Erreur update condition', ['message' => $e->getMessage()]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la mise à jour de la condition'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de la mise à jour de la condition');
+        }
+    }
+
+    public function admissionDestroy($id)
+    {
+        try {
+            $condition = AdmissionConditions::findOrFail($id);
+            $condition->delete();
+
+            Log::info('Condition d\'admission supprimée', ['id' => $id]);
+
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Condition supprimée avec succès'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Condition supprimée avec succès');
+
+        } catch (\Exception $e) {
+            Log::error('Erreur suppression condition', ['message' => $e->getMessage()]);
+
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la suppression de la condition'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de la suppression de la condition');
         }
     }
 

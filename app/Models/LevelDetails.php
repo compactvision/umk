@@ -12,12 +12,20 @@ class LevelDetails extends Model
         'price',
         'has_certificate',
         'language',
-        'duration_months',
+        'duration_years',
+        'credit_required',
+        'student_number',
         'courses_number',
         'illustration_image',
         'course_objective',
         'options',
     ];
+
+    protected $casts = [
+        'options' => 'array',
+        'has_certificate' => 'boolean'
+    ];
+
     /**
      * Relation avec le niveau
      */

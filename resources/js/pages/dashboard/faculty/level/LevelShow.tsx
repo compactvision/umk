@@ -1,6 +1,7 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import './test.css';
 import { useState, useEffect } from 'react';
+import Alert from '@/utils/sweetAlert';
 import {
     Edit3,
     Plus,
@@ -17,9 +18,13 @@ import {
     User,
     GraduationCap,
     Building,
-    DollarSign
+    DollarSign,
+    Target,
+    Image as ImageIcon,
+    Eye,
+    Upload
 } from 'lucide-react';
-import { usePage, useForm } from '@inertiajs/react';
+import { usePage, useForm, router } from '@inertiajs/react';
 
 export default function LevelShow() {
     const [activeTab, setActiveTab] = useState('infos');
@@ -29,7 +34,10 @@ export default function LevelShow() {
     const [conditionMode, setConditionMode] = useState('add');
     const [editIndex, setEditIndex] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
     const { level } = usePage().props;
+
+    console.log(level)
 
     // Fonction utilitaire pour parser les données JSON de manière sécurisée
     const safeJsonParse = (data, fallback = []) => {
@@ -74,8 +82,11 @@ export default function LevelShow() {
             courses_number: level?.details?.courses_number || 0,
             price: level?.details?.price || 0,
             language: level?.details?.language || 'Non spécifiée',
-            certificate: level?.details?.certificate || false,
-            options: safeJsonParse(level?.details?.options, [])
+            student_number: level?.details?.student_number || 0,
+            has_certificate: level?.details?.has_certificate || false,
+            illustration_image: level?.details?.illustration_image || '',
+            course_objective: level?.details?.course_objective || '',
+            options: safeJsonParse(level?.details?.options, []),
         }
     });
 
@@ -84,18 +95,17 @@ export default function LevelShow() {
         data: conditionData,
         setData: setConditionData,
         post: postCondition,
+        put: putCondition, // Add PUT method
         processing: conditionProcessing,
         reset: resetCondition
     } = useForm({
-        condition: '',
-        conditions: (level?.conditions && Array.isArray(level.conditions) && level.conditions.length > 0)
-            ? level.conditions
-            : [
-                "Avoir un diplôme d'État",
-                "Avoir au moins 12/20 en mathématiques",
-                "Passer un test d'entrée"
-            ]
+        faculty_id: level?.faculty?.id || '',
+        level_id: level?.id || '',
+        title: '',
+        description: '',
+        id: null // Add ID field for edit mode
     });
+
 
     // Données statiques pour les professeurs
     const faculty = {
@@ -144,61 +154,120 @@ export default function LevelShow() {
     const saveEdit = (e) => {
         e.preventDefault();
 
-        // Préparer les données selon la structure attendue par le serveur
+        // ✅ S'assurer que les options sont bien formatées en tableau
+        const processedOptions = processOptionsValue(levelData.details.options);
+
         const dataToSend = {
             image: levelData.image,
-            // Aplatir la structure details
-            credit_required: levelData.details.credit_required,
-            duration_years: levelData.details.duration_years,
-            courses_number: levelData.details.courses_number,
-            price: levelData.details.price,
-            language: levelData.details.language,
-            certificate: levelData.details.certificate,
-            options: Array.isArray(levelData.details.options)
-                ? JSON.stringify(levelData.details.options)
-                : levelData.details.options
+            details: {
+                credit_required: levelData.details.credit_required,
+                duration_years: levelData.details.duration_years,
+                courses_number: levelData.details.courses_number,
+                price: levelData.details.price,
+                language: levelData.details.language,
+                has_certificate: levelData.details.has_certificate,
+                student_number: levelData.details.student_number,
+                illustration_image: levelData.details.illustration_image,
+                course_objective: levelData.details.course_objective,
+                options: processedOptions, // ✅ Toujours un tableau propre
+            }
         };
 
-        console.log('Données envoyées:', dataToSend);
+        console.log('Données à envoyer:', dataToSend);
+        console.log('Options formatées:', processedOptions);
 
-        put(route('dashboard.levels.update.details', level.id), dataToSend, {
-            onSuccess: (response) => {
-                setIsEditModalOpen(false);
-                console.log('Niveau mis à jour avec succès', response);
+        // Fermer le modal immédiatement après l'envoi
+        setIsEditModalOpen(false);
+
+        put(route('dashboard.levels.update.details', level.id), {
+            data: dataToSend,
+            onSuccess: () => {
+                Alert.success("Niveau mis à jour avec succès");
             },
             onError: (errors) => {
+                Alert.error("Erreur lors de la mise à jour");
                 console.error('Erreur lors de la mise à jour:', errors);
             }
         });
     };
-
     // Gestion des conditions
-    const openConditionModal = (mode, index = null, value = '') => {
+    const openConditionModal = (mode, conditionId = null, condition = null) => {
         setConditionMode(mode);
-        setEditIndex(index);
-        setConditionData('condition', value);
+        setEditIndex(conditionId);
+
+        if (mode === 'edit' && condition) {
+            setConditionData({
+                faculty_id: level?.faculty?.id || '',
+                level_id: level?.id || '',
+                title: condition.title || '',
+                description: condition.description || '',
+                id: condition.id
+            });
+        } else {
+            // Reset form for add mode
+            resetCondition();
+            setConditionData({
+                faculty_id: level?.faculty?.id || '',
+                level_id: level?.id || '',
+                title: '',
+                description: '',
+                id: null
+            });
+        }
+
         setIsConditionModalOpen(true);
     };
 
     const saveCondition = (e) => {
         e.preventDefault();
 
-        let updatedConditions = [...conditionData.conditions];
-
         if (conditionMode === 'add') {
-            updatedConditions.push(conditionData.condition);
-        } else if (conditionMode === 'edit' && editIndex !== null) {
-            updatedConditions[editIndex] = conditionData.condition;
+            postCondition(route('dashboard.admission.store'), {
+                onSuccess: () => {
+                    Alert.success("Condition d'admission ajoutée avec succès");
+                    setIsConditionModalOpen(false);
+                    resetCondition();
+                    // Optionally refresh the page data
+                    // router.reload({ only: ['level'] });
+                },
+                onError: (errors) => {
+                    Alert.error("Erreur lors de l'ajout de la condition d'admission");
+                    console.error('Erreur lors de l\'ajout de la condition d\'admission:', errors);
+                }
+            });
         }
-
-        setConditionData('conditions', updatedConditions);
-        setIsConditionModalOpen(false);
-        resetCondition('condition');
+        else if (conditionMode === 'edit' && conditionData.id) {
+            // 🔄 Use putCondition instead of router.put
+            putCondition(route('dashboard.admission.update', conditionData.id), {
+                onSuccess: () => {
+                    Alert.success("Condition d'admission mise à jour avec succès");
+                    setIsConditionModalOpen(false);
+                    resetCondition();
+                    // Optionally refresh the page data
+                    // router.reload({ only: ['level'] });
+                },
+                onError: (errors) => {
+                    Alert.error("Erreur lors de la mise à jour de la condition d'admission");
+                    console.error('Erreur lors de la mise à jour de la condition d\'admission:', errors);
+                }
+            });
+        }
     };
 
-    const deleteCondition = (index) => {
-        const updatedConditions = conditionData.conditions.filter((_, i) => i !== index);
-        setConditionData('conditions', updatedConditions);
+    const deleteCondition = async (conditionId) => {
+        const confirmed = await Alert.deleteConfirm('cette faculté');
+        if (!confirmed) return;
+
+        Alert.loading('Suppression en cours...');
+        router.delete(route('dashboard.admission.destroy', conditionId), {
+            onSuccess: () => {
+                Alert.success("Condition d'admission supprimée avec succès");
+            },
+            onError: (errors) => {
+                Alert.error("Erreur lors de la suppression de la condition d'admission");
+                console.error('Erreur lors de la suppression de la condition d\'admission:', errors);
+            }
+        });
     };
 
     // Fonctions utilitaires
@@ -207,13 +276,16 @@ export default function LevelShow() {
             level_code: "Code du niveau",
             level_name: "Nom du niveau",
             description: "Description",
+            'details.illustration_image': "Image d'illustration",
             'details.credit_required': "Crédits requis",
             'details.duration_years': "Durée (années)",
             'details.courses_number': "Nombre de cours",
+            'details.student_number': "Nombre d'etudiants",
             'details.price': "Prix",
             'details.language': "Langue",
-            'details.certificate': "Certificat",
-            'details.options': "Options/Opportunités"
+            'details.has_certificate': "Certificat",
+            'details.options': "Options/Opportunités",
+            'details.course_objective': "Objectifs du cours"
         };
         return labels[field] || field;
     };
@@ -222,13 +294,58 @@ export default function LevelShow() {
     const updateNestedField = (field, value) => {
         if (field.startsWith('details.')) {
             const detailField = field.replace('details.', '');
-            setLevelData('details', {
-                ...levelData.details,
-                [detailField]: value
-            });
+
+            // ✅ Traitement spécial pour les options
+            if (detailField === 'options') {
+                const processedValue = processOptionsValue(value);
+                setLevelData('details', {
+                    ...levelData.details,
+                    [detailField]: processedValue
+                });
+            } else {
+                setLevelData('details', {
+                    ...levelData.details,
+                    [detailField]: value
+                });
+            }
         } else {
             setLevelData(field, value);
         }
+    };
+
+    // 1. Fonction utilitaire pour traiter les options
+    const processOptionsValue = (value) => {
+        if (!value) return [];
+
+        if (Array.isArray(value)) {
+            // Si c'est déjà un tableau, nettoyer chaque élément
+            return value.map(item => item.toString().trim()).filter(item => item !== '');
+        }
+
+        if (typeof value === 'string') {
+            // Diviser par virgule, nettoyer et filtrer les éléments vides
+            return value
+                .split(',')
+                .map(item => item.trim())
+                .filter(item => item !== '');
+        }
+
+        return [];
+    };
+
+// 2. Fonction utilitaire pour convertir tableau en chaîne pour l'affichage
+    const formatOptionsForDisplay = (options) => {
+        if (!options) return '';
+
+        if (Array.isArray(options)) {
+            return options.join(', ');
+        }
+
+        if (typeof options === 'string') {
+            return options;
+        }
+
+        return '';
     };
 
     // Configuration des statistiques
@@ -272,6 +389,12 @@ export default function LevelShow() {
                 : 'Prix non fixé',
             icon: <DollarSign size={24} />,
             color: 'green'
+        },
+        {
+            field: 'details.student_number',
+            value: formatValue(levelData.details.student_number),
+            icon: <MapPin size={24} />,
+            color: 'blue'
         }
     ];
 
@@ -279,10 +402,18 @@ export default function LevelShow() {
     const getFieldValue = (field) => {
         if (field.startsWith('details.')) {
             const detailField = field.replace('details.', '');
-            return levelData.details[detailField];
+            const value = levelData.details[detailField];
+
+            // ✅ Traitement spécial pour les options
+            if (detailField === 'options') {
+                return formatOptionsForDisplay(value);
+            }
+
+            return value;
         }
         return levelData[field];
     };
+
 
     // Fonction pour formater les options/opportunités
     const formatOptions = () => {
@@ -298,6 +429,7 @@ export default function LevelShow() {
                     return 'Aucune opportunité définie';
                 }
 
+                // Si c'est du JSON, parser
                 if (options.startsWith('[') || options.startsWith('{')) {
                     const parsed = JSON.parse(options);
                     if (Array.isArray(parsed)) {
@@ -306,7 +438,9 @@ export default function LevelShow() {
                     return parsed.toString() || 'Aucune opportunité définie';
                 }
 
-                return options;
+                // Si c'est une chaîne normale, traiter comme des éléments séparés par virgule
+                const processedArray = processOptionsValue(options);
+                return processedArray.length > 0 ? processedArray.join(', ') : 'Aucune opportunité définie';
             }
 
             return 'Aucune opportunité définie';
@@ -381,7 +515,6 @@ export default function LevelShow() {
                                         <div
                                             key={stat.field}
                                             className={`stat-card stat-card--${stat.color}`}
-                                            onClick={() => openEditModal(stat.field, stat.value)}
                                             style={{ animationDelay: `${index * 100}ms` }}
                                         >
                                             <div className={`stat-card__icon stat-card__icon--${stat.color}`}>
@@ -389,13 +522,78 @@ export default function LevelShow() {
                                             </div>
                                             <div className="stat-card__label">{getFieldLabel(stat.field)}</div>
                                             <div className="stat-card__value">{stat.value}</div>
-                                            <button className="stat-card__edit">
+                                            <button className="detail-item__edit" onClick={() => openEditModal(stat.field, stat.value)}>
                                                 <Edit3 size={16} />
                                                 Modifier
                                             </button>
                                         </div>
                                     ))}
                                 </div>
+
+                                {/* Illustration Image Section */}
+                                {levelData.details.illustration_image && (
+                                    <div className="illustration-section">
+                                        <div className="illustration-section__header">
+                                            <h3 className="illustration-section__title">
+                                                <ImageIcon size={24} />
+                                                Illustration du programme
+                                            </h3>
+                                            <div className="illustration-section__actions">
+                                                <button
+                                                    onClick={() => setIsImagePreviewOpen(true)}
+                                                    className="illustration-section__btn illustration-section__btn--view"
+                                                >
+                                                    <Eye size={16} />
+                                                    Aperçu complet
+                                                </button>
+                                                <button
+                                                    onClick={() => openEditModal('illustration_image', levelData.illustration_image)}
+                                                    className="illustration-section__btn illustration-section__btn--edit"
+                                                >
+                                                    <Edit3 size={16} />
+                                                    Modifier
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="illustration-container">
+                                            <div className="illustration-wrapper">
+                                                <img
+                                                    src={`/storage/${levelData.illustration_image}`}
+                                                    alt="Illustration du programme"
+                                                    className="illustration-image"
+                                                />
+                                                <div className="illustration-overlay">
+                                                    <div className="illustration-overlay__content">
+                                                        <ImageIcon size={32} />
+                                                        <span>Cliquez pour voir en grand</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* No Illustration Placeholder */}
+                                {!levelData.details.illustration_image && (
+                                    <div className="illustration-placeholder">
+                                        <div className="illustration-placeholder__content">
+                                            <div className="illustration-placeholder__icon">
+                                                <ImageIcon size={48} />
+                                            </div>
+                                            <h3 className="illustration-placeholder__title">Aucune illustration</h3>
+                                            <p className="illustration-placeholder__description">
+                                                Ajoutez une image d'illustration pour enrichir la présentation de votre programme
+                                            </p>
+                                            <button
+                                                onClick={() => openEditModal('illustration_image', '')}
+                                                className="illustration-placeholder__btn"
+                                            >
+                                                <Upload size={18} />
+                                                Ajouter une illustration
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Details Section */}
                                 <div className="details-section">
@@ -409,9 +607,9 @@ export default function LevelShow() {
                                                 icon: <Building size={20} />
                                             },
                                             {
-                                                field: 'details.certificate',
+                                                field: 'details.has_certificate',
                                                 label: 'Délivrance de certificat',
-                                                value: levelData.details.certificate ? 'Oui' : 'Non',
+                                                value: levelData.details.has_certificate ? 'Oui' : 'Non',
                                                 icon: <Award size={20} />
                                             },
                                             {
@@ -419,6 +617,12 @@ export default function LevelShow() {
                                                 label: 'Opportunités professionnelles',
                                                 value: formatOptions(),
                                                 icon: <User size={20} />
+                                            },
+                                            {
+                                                field: 'details.course_objective',
+                                                label: 'Objectifs du cours',
+                                                value: levelData.details.course_objective || 'Aucun objectif défini',
+                                                icon: <Target size={20} />
                                             }
                                         ].map((item) => (
                                             <div key={item.field} className="detail-item">
@@ -483,24 +687,27 @@ export default function LevelShow() {
                                     </button>
                                 </div>
                                 <ul className="conditions-list">
-                                    {conditionData.conditions && conditionData.conditions.length > 0 ? (
-                                        conditionData.conditions.map((condition, index) => (
-                                            <li key={index} className="condition-item">
+                                    {level.admission_conditions && level.admission_conditions.length > 0 ? (
+                                        level.admission_conditions.map((condition) => (
+                                            <li key={condition.id} className="condition-item">
                                                 <div className="condition-item__content">
                                                     <div className="condition-item__icon"></div>
-                                                    <span className="condition-item__text">{condition}</span>
+                                                    <div className="condition-item__details">
+                                                        <span className="condition-item__title" style={{fontWeight: "bold"}}>{condition.title}</span>
+                                                        <p className="condition-item__description">{condition.description}</p>
+                                                    </div>
                                                 </div>
                                                 <div className="condition-item__actions">
                                                     <button
                                                         className="condition-item__btn condition-item__btn--edit"
-                                                        onClick={() => openConditionModal('edit', index, condition)}
+                                                        onClick={() => openConditionModal('edit', condition.id, condition)}
                                                     >
                                                         <Edit3 size={14} />
                                                         Modifier
                                                     </button>
                                                     <button
                                                         className="condition-item__btn condition-item__btn--delete"
-                                                        onClick={() => deleteCondition(index)}
+                                                        onClick={() => deleteCondition(condition.id)}
                                                     >
                                                         <Trash2 size={14} />
                                                         Supprimer
@@ -511,9 +718,9 @@ export default function LevelShow() {
                                     ) : (
                                         <li className="condition-item condition-item--empty">
                                             <div className="condition-item__content">
-                                                <span className="condition-item__text" style={{ color: '#64748b', fontStyle: 'italic' }}>
-                                                    Aucune condition d'admission définie pour le moment.
-                                                </span>
+                    <span className="condition-item__text" style={{ color: '#64748b', fontStyle: 'italic' }}>
+                        Aucune condition d'admission définie pour le moment.
+                    </span>
                                             </div>
                                         </li>
                                     )}
@@ -530,6 +737,30 @@ export default function LevelShow() {
                             </div>
                         )}
                     </div>
+
+                    {/* Image Preview Modal */}
+                    {isImagePreviewOpen && levelData.illustration_image && (
+                        <div className="image-preview-overlay" onClick={() => setIsImagePreviewOpen(false)}>
+                            <div className="image-preview-modal" onClick={(e) => e.stopPropagation()}>
+                                <div className="image-preview-header">
+                                    <h3 className="image-preview-title">Illustration du programme</h3>
+                                    <button
+                                        className="image-preview-close"
+                                        onClick={() => setIsImagePreviewOpen(false)}
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="image-preview-content">
+                                    <img
+                                        src={`/storage/${levelData.illustration_image}`}
+                                        alt="Illustration du programme"
+                                        className="image-preview-img"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Edit Modal */}
                     {isEditModalOpen && (
@@ -551,25 +782,65 @@ export default function LevelShow() {
                                             <label className="modal__label">
                                                 {getFieldLabel(editField)}
                                             </label>
-                                            {editField === 'description' || editField === 'details.options' ? (
-                                                <textarea
-                                                    className="modal__textarea"
-                                                    value={getFieldValue(editField) || ''}
-                                                    onChange={(e) => updateNestedField(editField, e.target.value)}
-                                                    placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
-                                                />
+                                            {editField === 'description' || editField === 'details.options' || editField === 'details.course_objective' ? (
+                                                    <>
+                                                        {editField === 'details.options' && (
+                                                            <div className="modal__hint">
+                                                                💡 <strong>Exemples d'opportunités :</strong><br/>
+                                                                • Ingénieur logiciel, DevOps, Consultant IT<br/>
+                                                                • Développeur web, Architecte système, Chef de projet<br/>
+                                                                • Data Scientist, Cybersécurité, IA/Machine Learning<br/>
+                                                                <em>Séparez chaque opportunité par une virgule</em>
+                                                            </div>
+                                                        )}
+
+                                                        <textarea
+                                                            className="modal__textarea"
+                                                            value={getFieldValue(editField) || ''}
+                                                            onChange={(e) => updateNestedField(editField, e.target.value)}
+                                                            placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
+                                                            rows={editField === 'details.course_objective' ? 6 : 4}
+                                                        />
+                                                    </>
+                                            ) : editField === 'illustration_image' ? (
+                                                <div className="modal__file-field">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="modal__file-input"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                updateNestedField(editField, file);
+                                                            }
+                                                        }}
+                                                    />
+                                                    <div className="modal__file-info">
+                                                        <ImageIcon size={20} />
+                                                        <span>Sélectionnez une nouvelle image d'illustration</span>
+                                                    </div>
+                                                    {levelData.details.illustration_image && (
+                                                        <div className="modal__current-image">
+                                                            <img
+                                                                src={`/storage/${levelData.details.illustration_image}`}
+                                                                alt="Image actuelle"
+                                                                className="modal__preview-img"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             ) : (
                                                 <input
                                                     type={
-                                                        editField === 'details.certificate' ? 'checkbox' :
+                                                        editField === 'details.has_certificate' ? 'checkbox' :
                                                             ['details.credit_required', 'details.duration_years', 'details.courses_number', 'details.price'].includes(editField) ? 'number' :
                                                                 'text'
                                                     }
                                                     className="modal__input"
                                                     value={getFieldValue(editField) || ''}
-                                                    checked={editField === 'details.certificate' ? getFieldValue(editField) : undefined}
+                                                    checked={editField === 'details.has_certificate' ? getFieldValue(editField) : undefined}
                                                     onChange={(e) => {
-                                                        const value = editField === 'details.certificate'
+                                                        const value = editField === 'details.has_certificate'
                                                             ? e.target.checked
                                                             : ['details.credit_required', 'details.duration_years', 'details.courses_number', 'details.price'].includes(editField)
                                                                 ? parseInt(e.target.value) || 0
@@ -626,14 +897,26 @@ export default function LevelShow() {
                                         </button>
                                     </div>
                                     <div className="modal__body">
+                                        {/* 🔹 Titre */}
                                         <div className="modal__field">
-                                            <label className="modal__label">
-                                                Condition d'admission
-                                            </label>
+                                            <label className="modal__label">Titre</label>
+                                            <input
+                                                type="text"
+                                                className="modal__input"
+                                                value={conditionData.title || ''}
+                                                onChange={(e) => setConditionData('title', e.target.value)}
+                                                placeholder="Exemple : Diplôme requis"
+                                                required
+                                            />
+                                        </div>
+
+                                        {/* 🔹 Description */}
+                                        <div className="modal__field">
+                                            <label className="modal__label">Description</label>
                                             <textarea
                                                 className="modal__textarea"
-                                                value={conditionData.condition || ''}
-                                                onChange={(e) => setConditionData('condition', e.target.value)}
+                                                value={conditionData.description || ''}
+                                                onChange={(e) => setConditionData('description', e.target.value)}
                                                 placeholder="Exemple : Avoir un diplôme d'État avec mention"
                                                 required
                                             />
@@ -653,11 +936,20 @@ export default function LevelShow() {
                                         <button
                                             type="submit"
                                             className="modal__btn modal__btn--primary"
-                                            disabled={!conditionData.condition?.trim() || conditionProcessing}
+                                            disabled={
+                                                !conditionData.title?.trim() ||
+                                                !conditionData.description?.trim() ||
+                                                conditionProcessing
+                                            }
                                         >
                                             <Save size={16} />
-                                            {conditionProcessing ? 'Traitement...' : conditionMode === 'add' ? 'Ajouter' : 'Modifier'}
+                                            {conditionProcessing
+                                                ? 'Traitement...'
+                                                : conditionMode === 'add'
+                                                    ? 'Ajouter'
+                                                    : 'Modifier'}
                                         </button>
+
                                     </div>
                                 </form>
                             </div>
