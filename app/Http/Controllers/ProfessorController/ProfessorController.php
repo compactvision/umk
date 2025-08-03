@@ -5,6 +5,8 @@ namespace App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Professor\StoreProfessorRequest;
 use App\Http\Resources\ProfessorResource;
+use App\Models\Faculty;
+use App\Models\Level;
 use App\Services\ProfessorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +20,17 @@ class ProfessorController extends Controller
     //
     public function index()
     {
-        return Inertia::render('dashboard/professor/Professor');
+        return Inertia::render('dashboard/professor/Index');
+    }
+
+    public function create()
+    {
+        $faculties = Faculty::all();
+        $levels = Level::all();
+        return Inertia::render('dashboard/professor/Professor', [
+            'faculties' => $faculties,
+            'levels' => $levels,
+        ]);
     }
 
 

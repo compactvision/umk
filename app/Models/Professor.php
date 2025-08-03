@@ -14,19 +14,25 @@ class Professor extends Model
         'photo', 'faculty_id', 'level_id', 'speciality', 'biography', 'hire_date', 'is_active'
     ];
 
-    public function faculty()
+    public function faculties()
     {
-        return $this->belongsTo(Faculty::class);
+        return $this->belongsToMany(Faculty::class, 'faculty_professor');
     }
 
-    public function level()
+    public function levels()
     {
-        return $this->belongsTo(Level::class);
+        return $this->belongsToMany(Level::class, 'level_professor');
     }
 
     public function courses()
     {
         return $this->belongsToMany(Courses::class, 'course_professor');
+    }
+
+    // ✅ Full name utile pour l'affichage
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 }
 

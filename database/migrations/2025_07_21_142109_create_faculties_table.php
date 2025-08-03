@@ -26,6 +26,14 @@ return new class extends Migration
 
             $table->index(['is_active', 'created_at']);
         });
+
+        Schema::create('faculty_professor', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('faculty_id')->constrained('faculties')->onDelete('cascade');
+            $table->foreignId('professor_id')->constrained('professors')->onDelete('cascade');
+            $table->timestamps();
+        });
+        
     }
 
     /**
@@ -34,5 +42,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('faculties');
+        Schema::dropIfExists('faculty_professor');
     }
 };
