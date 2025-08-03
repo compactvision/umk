@@ -1,6 +1,7 @@
 @import url('./dash.css');
 @import url('./ui.css');
 @import url('./faculty.css');
+@import url('./professor.css');
 
 :root {
     --color-primary: #4f46e5;

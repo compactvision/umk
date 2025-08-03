@@ -5,7 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
 use App\Http\Controllers\FacultyController\FacultyController;
 use App\Http\Controllers\LevelController\LevelController;
-
+use App\Http\Controllers\ProfessorController\ProfessorController;
 
 // Routes statiques
 Route::get('/', [SwitchPageController::class, 'home'])->name('home');
@@ -42,6 +42,9 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
     // Faculty Level Show
     Route::resource('levels', LevelController::class);
     Route::put('levels/details/{id}', [LevelController::class, 'updateLevelDetails'])->name('levels.update.details');
+
+    // CRUD standard des professeurs
+    Route::resource('professors', ProfessorController::class);
 
     //Faculty Level admission
     Route::post('admission/store', [LevelController::class, 'admissionStore'])->name('admission.store');
