@@ -19,6 +19,7 @@ class LevelDetails extends Model
         'illustration_image',
         'course_objective',
         'options',
+        'fees',
     ];
 
     protected $casts = [

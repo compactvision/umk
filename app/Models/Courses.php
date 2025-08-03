@@ -12,4 +12,9 @@ class Courses extends Model
     {
         return $this->belongsTo(Level::class);
     }
+
+    public function professors()
+    {
+        return $this->belongsToMany(Professor::class, 'course_professor');
+    }
 }

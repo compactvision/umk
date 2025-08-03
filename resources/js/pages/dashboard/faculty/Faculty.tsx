@@ -419,6 +419,12 @@ const Faculty = () => {
                     .faculty-card-container {
                         position: relative;
                         height: fit-content;
+                        z-index: 1;
+                        transition: z-index 0s;
+                    }
+
+                    .faculty-card-container:hover {
+                        z-index: 1000;
                     }
 
                     .faculty-card {
@@ -538,7 +544,7 @@ const Faculty = () => {
                         overflow: hidden;
                         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                         box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-                        z-index: 1;
+                        z-index: 10;
                         opacity: 0;
                         transform: translateY(-20px);
                     }
@@ -548,6 +554,7 @@ const Faculty = () => {
                         padding: 20px;
                         opacity: 1;
                         transform: translateY(0);
+                        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.4);
                     }
 
                     .submenu-header {
@@ -935,6 +942,7 @@ const Faculty = () => {
 
                         .levels-submenu.show {
                             padding: 15px;
+                            z-index: 5;
                         }
 
                         .level-item {

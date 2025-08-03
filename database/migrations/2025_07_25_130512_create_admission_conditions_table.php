@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('level_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('title'); // ex: "Avoir un diplôme d'Etat"
-            $table->text('description')->nullable(); // détails supplémentaires
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->enum('section', ['personal_info', 'academic_info', 'other']);
             $table->timestamps();
         });
     }

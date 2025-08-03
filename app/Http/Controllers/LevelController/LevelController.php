@@ -26,8 +26,9 @@ use Intervention\Image\Drivers\Gd\Driver;
 class LevelController extends Controller
 {
     public function __construct(
-        private LevelService $levelService, private FacultyService $facultyService
-    ){}
+        private LevelService $levelService,
+        private FacultyService $facultyService
+    ) {}
     /**
      * Afficher tous les niveaux avec leur faculté
      */
@@ -36,22 +37,22 @@ class LevelController extends Controller
         try {
             $facultiesWithLevels = $this->facultyService->getWithLevels();
 
-            if($request->expectsJson()) {
+            if ($request->expectsJson()) {
                 return LevelResource::collection($facultiesWithLevels);
             }
 
             return Inertia::render('dashboard/faculty/FacultyShow', [
                 'faculties' => FacultyResource::collection($facultiesWithLevels),
-//                'pagination' => [
-//                    'total' => $levels->total(),
-//                    'per_page' => $levels->perPage(),
-//                    'current_page' => $levels->currentPage(),
-//                    'last_page' => $levels->lastPage(),
-//                ],
+                //                'pagination' => [
+                //                    'total' => $levels->total(),
+                //                    'per_page' => $levels->perPage(),
+                //                    'current_page' => $levels->currentPage(),
+                //                    'last_page' => $levels->lastPage(),
+                //                ],
                 'filters' => $request->only(['search', 'status', 'duration_years']),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Erreur lors du chargement des niveaux', [
+            Log::error('Erreur lors du chargement des niveaux', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -98,7 +99,7 @@ class LevelController extends Controller
         // Charger les relations nécessaires
         $level->load(['faculty', 'details', 'admissionConditions', 'courses']);
 
-//        dd($level);
+        //        dd($level);
 
         return Inertia::render('dashboard/faculty/level/LevelShow', [
             'level' => $level
@@ -154,7 +155,6 @@ class LevelController extends Controller
                 'success' => 'Niveau créé avec succès',
                 'level' => new LevelResource($level),
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             // ⚠️ Log des erreurs (sans fichier)
             Log::warning('Erreur de validation lors de la création', [
@@ -172,7 +172,6 @@ class LevelController extends Controller
 
             // 🔁 Retour formulaire sans image
             return back()->withErrors($e->errors())->withInput($request->except('image'));
-
         } catch (\Exception $e) {
             // 🧨 Log de l’erreur sans sérialiser le fichier
             Log::error('Erreur lors de la création du niveau', [
@@ -239,7 +238,6 @@ class LevelController extends Controller
             }
 
             return redirect()->back()->with('success', 'Niveau mis à jour avec succès.');
-
         } catch (\Exception $e) {
             Log::error('Erreur lors de la mise à jour du niveau', [
                 'level_id' => $level->id,
@@ -257,60 +255,81 @@ class LevelController extends Controller
     public function updateLevelDetails(UpdateLevelDetailsRequest $request, $id, ImageService $imageService)
     {
         try {
-            $details = LevelDetails::findOrFail($id);
             $validated = $request->validated();
+            $data = $validated['details'] ?? [];
 
+            
 
-            $data = $validated['details'] ?? []; // ✅ On prend seulement la partie details
-
+            // ✅ Conversion options en tableau si c'est une string
             if (isset($data['options']) && is_string($data['options'])) {
                 $data['options'] = array_map('trim', explode(',', $data['options']));
             }
 
-//            dd($data);
-            Log::info('Tentative de mise à jour LevelDetails', [
-                'id'    => $details->id,
-                'avant' => $details->toArray(),
-                'après' => $data
-            ]);
-
-            // 🖼️ Si une nouvelle image est envoyée
+            // ✅ Gestion de l'image si uploadée
             if ($request->hasFile('details.illustration_image')) {
+                Log::info("Nouvelle image détectée pour LevelDetails", [
+                    'level_id' => $id,
+                    'file'     => $request->file('details.illustration_image')->getClientOriginalName(),
+                    'size'     => $request->file('details.illustration_image')->getSize() . ' bytes'
+                ]);
 
-                // Supprimer l'ancienne si elle existe
-                if ($details->illustration_image && Storage::disk('public')->exists($details->illustration_image)) {
-                    Storage::disk('public')->delete($details->illustration_image);
+                $existing = LevelDetails::where('level_id', $id)->first();
+                if ($existing && $existing->illustration_image && Storage::disk('public')->exists($existing->illustration_image)) {
+                    Log::info("Suppression de l'ancienne image", [
+                        'level_id' => $id,
+                        'ancienne_image' => $existing->illustration_image
+                    ]);
+
+                    Storage::disk('public')->delete($existing->illustration_image);
                 }
 
-                // Stocker avec ton ImageService
                 $data['illustration_image'] = $imageService->resizeAndStore(
                     $request->file('details.illustration_image'),
                     'level_illustrations',
                     1290,
                     515
                 );
+
+                Log::info("Nouvelle image sauvegardée", [
+                    'level_id' => $id,
+                    'nouvelle_image' => $data['illustration_image']
+                ]);
             }
 
-            $details->fill($data);
 
-            if ($details->isDirty()) {
+            // ✅ Récupérer l'existant ou préparer un nouveau
+            $details = LevelDetails::firstOrNew(['level_id' => $id]);
+
+            Log::info('Tentative de mise à jour/création LevelDetails', [
+                'level_id' => $id,
+                'avant'    => $details->exists ? $details->toArray() : 'Nouveau record',
+                'après'    => $data
+            ]);
+
+            // ✅ Remplir les champs et forcer level_id pour la création
+            $details->fill($data);
+            $details->level_id = $id;
+
+            if ($details->isDirty() || !$details->exists) {
                 $details->save();
 
-                Log::info('LevelDetails mis à jour', [
-                    'id'    => $details->id,
-                    'après' => $details->toArray()
+                Log::info('LevelDetails sauvegardé', [
+                    'level_id' => $id,
+                    'après'    => $details->toArray(),
+                    'type'     => $details->wasRecentlyCreated ? 'Création' : 'Mise à jour'
                 ]);
 
-                return redirect()->back()->with('success', 'Détails mis à jour avec succès.');
+                return redirect()->back()->with('success', $details->wasRecentlyCreated
+                    ? 'Détails créés avec succès.'
+                    : 'Détails mis à jour avec succès.');
             }
 
             return redirect()->back()->with('info', 'Aucune modification détectée.');
-
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la mise à jour des LevelDetails', [
-                'id'      => $id,
-                'message' => $e->getMessage(),
-                'trace'   => $e->getTraceAsString()
+            Log::error('Erreur lors de la mise à jour/création des LevelDetails', [
+                'level_id' => $id,
+                'message'  => $e->getMessage(),
+                'trace'    => $e->getTraceAsString()
             ]);
 
             return redirect()->back()
@@ -318,6 +337,7 @@ class LevelController extends Controller
                 ->with('error', 'Une erreur est survenue lors de la mise à jour des détails.');
         }
     }
+
 
     public function admissionStore(Request $request)
     {
@@ -350,7 +370,6 @@ class LevelController extends Controller
             }
 
             return redirect()->back()->with('success', 'Condition d\'admission ajoutée avec succès.');
-
         } catch (\Exception $e) {
             Log::error('Erreur lors de la création de la condition d\'admission', [
                 'message' => $e->getMessage(),
@@ -396,7 +415,6 @@ class LevelController extends Controller
             }
 
             return redirect()->back()->with('success', 'Condition mise à jour avec succès');
-
         } catch (\Exception $e) {
             Log::error('Erreur update condition', ['message' => $e->getMessage()]);
 
@@ -427,7 +445,6 @@ class LevelController extends Controller
             }
 
             return redirect()->back()->with('success', 'Condition supprimée avec succès');
-
         } catch (\Exception $e) {
             Log::error('Erreur suppression condition', ['message' => $e->getMessage()]);
 
@@ -460,7 +477,6 @@ class LevelController extends Controller
             }
 
             return redirect()->back()->with('success', 'Niveau supprimé avec succès.');
-
         } catch (\Exception $e) {
             \Log::error('Erreur lors de la suppression du niveau', [
                 'level_id' => $level->id,

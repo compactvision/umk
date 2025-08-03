@@ -29,7 +29,7 @@ export default function Courses({ faculties }) {
         isotope.current?.arrange({ filter });
     };
 
-    console.log(faculties)
+    console.log("faculties",faculties)
 
     return (
         <section className="courses pt-120 pb-120">
@@ -50,7 +50,7 @@ export default function Courses({ faculties }) {
                                     className={activeFilter === `.${faculty.code}` ? 'active' : ''}
                                     onClick={() => handleFilter(`.${faculty.code}`)}
                                 >
-                                    {faculty.name}
+                                    {faculty.name || 'N/A'}
                                 </button>
                             ))}
                     </div>
@@ -63,33 +63,36 @@ export default function Courses({ faculties }) {
                             return levels.map((level) => (
                                 <div
                                     key={level.id}
-                                    className={`col-lg-4 col-md-6 col-sm-6 grid-item ${faculty.code}`}
+                                    className={`col-lg-4 col-md-6 col-sm-6 grid-item ${faculty.code || ''}`}
                                 >
                                     <div className="xb-program__wrapper mt-30">
                                         <div className="xb-item--img text-center">
                                             <Link href={route('courseShow', level.id)}>
-                                                <img src={`/storage/${level.image}`} alt={level.level_code} />
+                                                <img 
+                                                    src={level.image ? `/storage/${level.image}` : '/assets/img/default-course.png'} 
+                                                    alt={level.level_code || 'Course'} 
+                                                />
                                             </Link>
                                         </div>
                                         <div className="xb-item--holder">
                                             <div className="xb-item--deprt ul_li_between">
-                                                <span className="xb-item--group"># {faculty.name}</span>
+                                                <span className="xb-item--group"># {faculty.name || 'N/A'}</span>
                                                 <div className="xb-item--rating">
                                                     <span>.</span>
                                                     <img src="/assets/img/icon/rating.png" alt="Note" />
                                                 </div>
                                             </div>
                                             <h2 className="xb-item--title border-effect-2">
-                                                <Link href="#">{level.level_name}</Link>
+                                                <Link href="#">{level.level_name || 'N/A'}</Link>
                                             </h2>
                                             <ul className="xb-item--meta ul_li">
                                                 <li>
                                                     <img src="assets/img/icon/meta-icon01.png" alt="Places disponibles" />
-                                                    {level.details.student_number ?? 0} places
+                                                    {level.details?.student_number || 0} places
                                                 </li>
                                                 <li>
                                                     <img src="assets/img/icon/clock.png" alt="Durée" />
-                                                    {level.details.duration_years} an(s)
+                                                    {level.details?.duration_years || 'N/A'} an(s)
                                                 </li>
                                             </ul>
                                             <div className="xb-item--dep-btn">

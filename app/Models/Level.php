@@ -48,6 +48,11 @@ class Level extends Model
         return $this->hasMany(AdmissionConditions::class);
     }
 
+    public function professors()
+    {
+        return $this->hasMany(Professor::class);
+    }
+
     /**
      * Scope pour filtrer par code de niveau
      */

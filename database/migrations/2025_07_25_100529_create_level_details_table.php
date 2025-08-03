@@ -28,7 +28,8 @@ return new class extends Migration
             $table->string('illustration_image')->nullable(); // Image explicative
 
             $table->text('course_objective')->nullable();    // Objectif du cours
-            $table->json('options')->default([]);
+            $table->integer('fees')->nullable()->default(0);
+            $table->json('options')->nullable();
             $table->timestamps();
         });
     }

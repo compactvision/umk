@@ -23,7 +23,8 @@ class UpdateLevelDetailsRequest extends FormRequest
             'details.has_certificate' => ['required', 'boolean'],
             'details.options'         => ['nullable', 'array'],
             'details.course_objective'=> ['nullable', 'string', 'max:255'],
-            'details.illustration_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048']
+            'details.illustration_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'details.fees'            => ['nullable', 'integer', 'min:0'],
         ];
     }
 

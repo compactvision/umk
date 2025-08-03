@@ -35,9 +35,6 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
         return Inertia::render('dashboard/subscription/Subscription');
     });
 
-    // Page principale des facultés - IMPORTANT: Cette route doit charger les données
-//    Route::get('/faculty', [FacultyController::class, 'index'])
-//        ->name('dashboard.faculty');
 
     // CRUD standard des facultés
     Route::resource('faculties', FacultyController::class)->except(['create', 'edit']);
@@ -55,5 +52,6 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
 Route::get('/test', function() {
     return Inertia::render('dashboard/faculty/test');
 });
+
 require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';

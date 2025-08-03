@@ -11,7 +11,8 @@ class AdmissionConditions extends Model
         'faculty_id',
         'level_id',
         'title',
-        'description'
+        'description',
+        'section',
     ];
 
 
