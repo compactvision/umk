@@ -7,8 +7,10 @@ use App\Http\Requests\Faculty\StoreFacultyRequest;
 use App\Http\Requests\Faculty\UpdateFacultyRequest;
 use App\Http\Resources\FacultyResource;
 use App\Models\Faculty;
+use App\Models\LevelCode;
 use App\Services\FacultyService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,10 +38,12 @@ class FacultyController extends Controller
 
             // Pour la première charge, récupérer toutes les facultés (pas de pagination côté client)
             $allFaculties = $this->facultyService->getWithLevels();
+            $levelCodes = LevelCode::paginate(15);
 
             // Sinon, retourner la vue Inertia avec toutes les facultés
             return Inertia::render('dashboard/faculty/Faculty', [
                 'faculties' => FacultyResource::collection($allFaculties),
+                'levelCodes' => $levelCodes,
                 'pagination' => [
                     'total' => $faculties->total(),
                     'per_page' => $faculties->perPage(),
@@ -50,7 +54,7 @@ class FacultyController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors du chargement des facultés', [
+            Log::error('Erreur lors du chargement des facultés', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -83,14 +87,14 @@ class FacultyController extends Controller
     public function store(StoreFacultyRequest $request)
     {
         try {
-            \Log::info('Tentative de création de faculté', [
+            Log::info('Tentative de création de faculté', [
                 'data' => $request->validated(),
                 'user_id' => auth()->id()
             ]);
 
             $faculty = $this->facultyService->create($request->validated());
 
-            \Log::info('Faculté créée avec succès', [
+            Log::info('Faculté créée avec succès', [
                 'faculty_id' => $faculty->id,
                 'name' => $faculty->name
             ]);
@@ -111,7 +115,7 @@ class FacultyController extends Controller
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::warning('Erreur de validation lors de la création', [
+            Log::warning('Erreur de validation lors de la création', [
                 'errors' => $e->errors(),
                 'data' => $request->all()
             ]);
@@ -127,7 +131,7 @@ class FacultyController extends Controller
             return back()->withErrors($e->errors())->withInput();
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la création de la faculté', [
+            Log::error('Erreur lors de la création de la faculté', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'data' => $request->all()
@@ -190,7 +194,7 @@ class FacultyController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la mise à jour de la faculté', [
+            Log::error('Erreur lors de la mise à jour de la faculté', [
                 'faculty_id' => $faculty->id,
                 'message' => $e->getMessage(),
                 'data' => $request->validated()
@@ -225,7 +229,7 @@ class FacultyController extends Controller
             return redirect()->back()->with('success', 'Faculté supprimée avec succès.');
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la suppression de la faculté', [
+            Log::error('Erreur lors de la suppression de la faculté', [
                 'faculty_id' => $faculty->id,
                 'message' => $e->getMessage()
             ]);
@@ -272,7 +276,7 @@ class FacultyController extends Controller
             return redirect()->back()->with('success', $message);
 
         } catch (\Exception $e) {
-            \Log::error('Erreur lors du changement de statut', [
+            Log::error('Erreur lors du changement de statut', [
                 'faculty_id' => $faculty->id,
                 'message' => $e->getMessage()
             ]);

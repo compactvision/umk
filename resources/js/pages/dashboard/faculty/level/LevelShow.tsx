@@ -37,6 +37,8 @@ export default function LevelShow() {
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
     const { level } = usePage().props;
 
+    console.log(level)
+
     // Fonction utilitaire pour parser les données JSON de manière sécurisée
     const safeJsonParse = (data, fallback = []) => {
         if (!data) return fallback;
@@ -377,7 +379,7 @@ export default function LevelShow() {
     const stats = [
         {
             field: 'level_code',
-            value: formatValue(levelData.level_code),
+            value: formatValue(levelData.level_code.code),
             icon: <Award size={24} />,
             color: 'purple',
         },

@@ -35,7 +35,7 @@ class SwitchPageController extends Controller
 
     public function courseShow($id) {
         $course = Level::findOrFail($id);
-        $course->load(['faculty', 'admissionConditions', 'details', 'courses' ]);
+        $course->load(['faculty', 'admissionConditions', 'details', 'courses', 'levelCode']);
 
         $mayLike = Level::where('id', '!=', $course->id)
             ->with(['details', 'faculty'])

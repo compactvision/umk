@@ -12,6 +12,7 @@ use App\Models\AdmissionConditions;
 use App\Models\Faculty;
 use App\Models\Level;
 use App\Models\LevelDetails;
+use App\Models\LevelCode;
 use App\Services\FacultyService;
 use App\Services\ImageService;
 use App\Services\LevelService;
@@ -36,6 +37,7 @@ class LevelController extends Controller
     {
         try {
             $facultiesWithLevels = $this->facultyService->getWithLevels();
+            $levelCodes = LevelCode::paginate(15);
 
             if ($request->expectsJson()) {
                 return LevelResource::collection($facultiesWithLevels);
@@ -43,6 +45,7 @@ class LevelController extends Controller
 
             return Inertia::render('dashboard/faculty/FacultyShow', [
                 'faculties' => FacultyResource::collection($facultiesWithLevels),
+                'levelCodes' => $levelCodes,
                 //                'pagination' => [
                 //                    'total' => $levels->total(),
                 //                    'per_page' => $levels->perPage(),
@@ -65,7 +68,8 @@ class LevelController extends Controller
             }
 
             return Inertia::render('dashboard/faculty/FacultyShow', [
-                'levels' => [],
+                'faculties' => [],
+                'levelCodes' => [],
                 'error' => 'Erreur lors du chargement des facultés.'
             ]);
         }
@@ -97,7 +101,7 @@ class LevelController extends Controller
     public function show(Level $level)
     {
         // Charger les relations nécessaires
-        $level->load(['faculty', 'details', 'admissionConditions', 'courses']);
+        $level->load(['faculty', 'details', 'admissionConditions', 'courses', 'levelCode']);
 
         //        dd($level);
 
@@ -212,6 +216,7 @@ class LevelController extends Controller
         try {
             $validated = $request->validated();
 
+
             if ($request->hasFile('image')) {
 
                 if ($level->image && Storage::disk('public')->exists($level->image)) {
@@ -239,6 +244,7 @@ class LevelController extends Controller
 
             return redirect()->back()->with('success', 'Niveau mis à jour avec succès.');
         } catch (\Exception $e) {
+            
             Log::error('Erreur lors de la mise à jour du niveau', [
                 'level_id' => $level->id,
                 'message' => $e->getMessage(),
@@ -257,8 +263,6 @@ class LevelController extends Controller
         try {
             $validated = $request->validated();
             $data = $validated['details'] ?? [];
-
-            
 
             // ✅ Conversion options en tableau si c'est une string
             if (isset($data['options']) && is_string($data['options'])) {

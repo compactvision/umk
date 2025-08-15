@@ -4,9 +4,13 @@ namespace App\Http\Controllers\ProfessorController;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Professor\StoreProfessorRequest;
+use App\Http\Resources\FacultyResource;
+use App\Http\Resources\LevelResource;
 use App\Http\Resources\ProfessorResource;
 use App\Models\Faculty;
 use App\Models\Level;
+use App\Services\FacultyService;
+use App\Services\ImageService;
 use App\Services\ProfessorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +19,8 @@ use Inertia\Inertia;
 class ProfessorController extends Controller
 {
     public function __construct(
-        private ProfessorService $professorService
+        private ProfessorService $professorService,
+        private FacultyService $facultyService
     ) {}
     //
     public function index()
@@ -23,18 +28,31 @@ class ProfessorController extends Controller
         return Inertia::render('dashboard/professor/Index');
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $faculties = Faculty::all();
-        $levels = Level::all();
+        $faculties = $this->facultyService->getPaginated(
+            filters: $request->only(['search', 'status', 'duration_years', 'sort_by', 'sort_direction']),
+            perPage: $request->get('per_page', 15)
+        );
+
+        $levels = Level::paginate(15);
+
+        // Si c'est une requête AJAX/API, retourner JSON
+        if ($request->expectsJson()) {
+            return FacultyResource::collection($faculties);
+        }
+
+        // Pour la première charge, récupérer toutes les facultés (pas de pagination côté client)
+        $allFaculties = $this->facultyService->getWithLevels();
+
         return Inertia::render('dashboard/professor/Professor', [
-            'faculties' => $faculties,
-            'levels' => $levels,
+            'faculties' => FacultyResource::collection($allFaculties),
+            'levels' => LevelResource::collection($levels),
         ]);
     }
 
 
-    public function store(StoreProfessorRequest $request)
+    public function store(StoreProfessorRequest $request, ImageService $imageService)
     {
         try {
             Log::info('Tentative de création de professeur', [
@@ -42,7 +60,20 @@ class ProfessorController extends Controller
                 'user_id' => auth()->id()
             ]);
 
-            $professor = $this->professorService->create($request->validated());
+            $validated = $request->validated();
+
+            $imagePath = $imageService->resizeAndStore(
+                $request->file('photo'),
+                'professors',
+                820,
+                460
+            );
+
+            $validated['photo'] = $imagePath;
+
+            dd($validated);
+
+            $professor = $this->professorService->create($validated);
 
             Log::info('Professeur créée avec succès', [
                 'professor_id' => $professor->id,

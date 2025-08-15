@@ -6,7 +6,7 @@ import { Check, Play, Star } from 'lucide-react';
 export default function CoursShow() {
     const { course, mayLike } = usePage().props;
 
-    console.log(mayLike);
+    console.log(course)
     return (
         <App>
             <Breadcumb title={course?.faculty?.name || 'N/A'} desc={course?.level_name || 'N/A'} />
@@ -139,7 +139,7 @@ export default function CoursShow() {
                                     </div>
                                     <div className="course-meta-item mt-30">
                                         <span className="xb-item--title">Code niveau</span>
-                                        <h3 className="xb-item--desig">{course?.level_code || 'N/A'}</h3>
+                                        <h3 className="xb-item--desig">{course?.level_code.code || 'N/A'}</h3>
                                     </div>
                                     <div className="course-meta-item mt-30">
                                         <span className="xb-item--title">Avis</span>

@@ -16,7 +16,7 @@ class Level extends Model
 
     protected $fillable = [
         'faculty_id',
-        'level_code',
+        'level_code_id',
         'level_name',
         'description',
         'tag',
@@ -53,12 +53,18 @@ class Level extends Model
         return $this->hasMany(Professor::class);
     }
 
+    public function levelCode()
+{
+    return $this->belongsTo(LevelCode::class, 'level_code_id');
+}
+
+
     /**
      * Scope pour filtrer par code de niveau
      */
     public function scopeByCode($query, string $code)
     {
-        return $query->where('level_code', $code);
+        return $query->where('level_code_id', $code);
     }
 
     /**
@@ -66,7 +72,7 @@ class Level extends Model
      */
     public function scopeLicence($query)
     {
-        return $query->where('level_code', 'LIKE', 'L%');
+        return $query->where('level_code_id', 'LIKE', 'L%');
     }
 
     /**
@@ -74,7 +80,7 @@ class Level extends Model
      */
     public function scopeMaster($query)
     {
-        return $query->where('level_code', 'LIKE', 'M%');
+        return $query->where('level_code_id', 'LIKE', 'M%');
     }
 
     public function getImageUrlAttribute(): string

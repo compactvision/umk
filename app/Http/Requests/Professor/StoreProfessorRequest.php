@@ -22,19 +22,21 @@ class StoreProfessorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'unique:professors,email'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'gender' => ['nullable', 'string', 'in:M,F'],
-            'birth_date' => ['nullable', 'date'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'faculty_id' => ['required', 'exists:faculties,id'],
-            'level_id' => ['required', 'exists:levels,id'],
-            'speciality' => ['nullable', 'string', 'max:255'],
-            'biography' => ['nullable', 'string'],
-            'hire_date' => ['nullable', 'date'],
-            'is_active' => ['required', 'boolean'],
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email' => 'required|email|unique:professors,email',
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|in:M,F',
+            'birth_date' => 'nullable|date',
+            'hire_date' => 'nullable|date',
+            'biography' => 'nullable|string',
+            'photo' => 'nullable|image|max:10240', // 10MB max
+            'is_active' => 'boolean',
+            'faculty_level_courses' => 'required|array|min:1',
+            'faculty_level_courses.*.faculty_id' => 'required|exists:faculties,id',
+            'faculty_level_courses.*.level_id' => 'required|string', // L1, L2, etc.
+            'faculty_level_courses.*.course_ids' => 'required|array|min:1',
+            'faculty_level_courses.*.course_ids.*' => 'exists:courses,id',
         ];
     }
 
@@ -54,7 +56,7 @@ class StoreProfessorRequest extends FormRequest
             'photo.mimes' => 'La photo doit être une image.',
             'photo.max' => 'La photo ne peut contenir que 2048 caractères.',
             'faculty_id.exists' => 'Le faculty_id doit exister.',
-            'level_id.exists' => 'Le level_id doit exister.',
+            'level_code_id.exists' => 'Le level_code_id doit exister.',
             'speciality.string' => 'La spécialité doit être une chaîne de caractères.',
             'speciality.max' => 'La spécialité ne peut contenir que 255 caractères.',
             'biography.string' => 'La biographie doit être une chaîne de caractères.',

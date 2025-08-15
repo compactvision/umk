@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('levels', function (Blueprint $table) {
@@ -16,7 +13,11 @@ return new class extends Migration
             $table->foreignId('faculty_id')
                 ->constrained('faculties')
                 ->onDelete('cascade');
-            $table->string('level_code', 10);
+
+            $table->foreignId('level_code_id')
+                ->constrained('level_codes')
+                ->onDelete('cascade');
+
             $table->string('level_name', 100);
             $table->string('tag');
             $table->text('description')->nullable();
@@ -25,18 +26,14 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Index unique pour éviter les doublons de niveau par faculté
-            $table->unique(['faculty_id', 'level_code'], 'unique_level_per_faculty');
+            // ✅ Utilise bien level_code_id
+            $table->unique(['faculty_id', 'level_code_id'], 'unique_level_per_faculty');
 
-            // Index pour améliorer les performances des requêtes
             $table->index('faculty_id');
-            $table->index('level_code');
+            $table->index('level_code_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('levels');

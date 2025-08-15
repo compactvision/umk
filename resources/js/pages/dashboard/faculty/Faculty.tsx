@@ -7,8 +7,9 @@ import Alert from '@/utils/sweetAlert';
 import LevelPopup from '@/components/form/LevelPopup';
 
 const Faculty = () => {
-    const { faculties } = usePage().props;
+    const { faculties, levelCodes } = usePage().props;
 
+    console.log(faculties, levelCodes);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [levelEdit, setLevelEdit] = useState(false)
@@ -363,7 +364,7 @@ const Faculty = () => {
                 )}
 
                 {levelEdit && (
-                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel}/>
+                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel} levelCodes={levelCodes?.data}/>
                 )}
 
                 <style>{`

@@ -41,7 +41,7 @@ class FacultyService
     {
         return Faculty::with([
             'levels' => function ($query) {
-                $query->orderBy('level_code')
+                $query->orderBy('level_name')
                     ->with('details'); // 🔥 Charger details à ce niveau
             }
         ])

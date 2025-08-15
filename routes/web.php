@@ -34,6 +34,9 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
     Route::get('/subscription', function () {
         return Inertia::render('dashboard/subscription/Subscription');
     });
+    Route::get('/subscription/index', function () {
+        return Inertia::render('dashboard/subscription/Index');
+    });
 
 
     // CRUD standard des facultés

@@ -29,6 +29,12 @@ class Professor extends Model
         return $this->belongsToMany(Courses::class, 'course_professor');
     }
 
+    public function levelCodes()
+{
+    return $this->belongsToMany(LevelCode::class, 'level_code_professor');
+}
+
+
     // ✅ Full name utile pour l'affichage
     public function getFullNameAttribute(): string
     {

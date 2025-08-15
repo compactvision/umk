@@ -15,33 +15,26 @@ export default function Professor() {
         photo: null,
         hire_date: '',
         biography: '',
-        faculty_id: [], // Changé en array
-        level_id: [], // Changé en array
-        courses: [],
+        is_active: true,
+        faculty_level_courses: [], // Nouveau: tableau d'objets {faculty_id, level_id, course_ids}
     });
 
     const [dragActive, setDragActive] = useState(false);
     const [photoPreview, setPhotoPreview] = useState(null);
-    const [showCourseDropdown, setShowCourseDropdown] = useState(false);
-    const [showFacultyDropdown, setShowFacultyDropdown] = useState(false); // Nouveau state
-    const [showLevelDropdown, setShowLevelDropdown] = useState(false); // Nouveau state
     const fileInputRef = useRef(null);
 
-    // const faculties = [
-    //     { value: '1', label: 'Sciences Économiques' },
-    //     { value: '2', label: 'Informatique' },
-    //     { value: '3', label: 'Droit et Sciences Politiques' },
-    //     { value: '4', label: 'Sciences de la Santé' },
-    //     { value: '5', label: 'Lettres et Sciences Humaines' },
-    // ];
-
-    // const levels = [
-    //     { value: '1', label: 'L1 - Première année' },
-    //     { value: '2', label: 'L2 - Deuxième année' },
-    //     { value: '3', label: 'L3 - Troisième année' },
-    //     { value: '4', label: 'M1 - Master première année' },
-    //     { value: '5', label: 'M2 - Master deuxième année' },
-    // ];
+    // Extraction des données paginées
+    const facultiesData = faculties?.data || [];
+    const levelsData = levels?.data || [];
+    const defaultLevels = [
+        { id: 'L1', level_name: 'Première Licence' },
+        { id: 'L2', level_name: 'Deuxième Licence' },
+        { id: 'L3', level_name: 'Troisième Licence' },
+        { id: 'M1', level_name: 'Master 1' },
+        { id: 'M2', level_name: 'Master 2' },
+        { id: 'D1', level_name: 'Doctorat 1' },
+        { id: 'D2', level_name: 'Doctorat 2' },
+    ];
 
     const courses = [
         { value: '1', label: 'Mathématiques Appliquées' },
@@ -54,31 +47,51 @@ export default function Professor() {
         { value: '8', label: 'Statistiques' },
     ];
 
-    // Fonction pour gérer la sélection des facultés
-    const handleFacultyToggle = (facultyValue) => {
-        const currentFaculties = data.faculty_id;
-        const updatedFaculties = currentFaculties.includes(facultyValue)
-            ? currentFaculties.filter((f) => f !== facultyValue)
-            : [...currentFaculties, facultyValue];
-
-        setData('faculty_id', updatedFaculties);
+    // Ajouter une nouvelle affectation faculté-niveau-cours
+    const addFacultyLevelCourse = () => {
+        setData('faculty_level_courses', [
+            ...data.faculty_level_courses,
+            { faculty_id: '', level_id: '', course_ids: [] }
+        ]);
     };
 
-    // Fonction pour gérer la sélection des niveaux
-    const handleLevelToggle = (levelValue) => {
-        const currentLevels = data.level_id;
-        const updatedLevels = currentLevels.includes(levelValue) ? currentLevels.filter((l) => l !== levelValue) : [...currentLevels, levelValue];
-
-        setData('level_id', updatedLevels);
+    // Supprimer une affectation
+    const removeFacultyLevelCourse = (index) => {
+        const updatedAssignments = data.faculty_level_courses.filter((_, i) => i !== index);
+        setData('faculty_level_courses', updatedAssignments);
     };
 
-    const handleCourseToggle = (courseValue) => {
-        const currentCourses = data.courses;
-        const updatedCourses = currentCourses.includes(courseValue)
-            ? currentCourses.filter((c) => c !== courseValue)
-            : [...currentCourses, courseValue];
+    // Modifier une affectation
+    const updateFacultyLevelCourse = (index, field, value) => {
+        const updatedAssignments = [...data.faculty_level_courses];
+        
+        // Si on change la faculté ou le niveau, on réinitialise les courses
+        if (field === 'faculty_id' || field === 'level_id') {
+            updatedAssignments[index] = {
+                ...updatedAssignments[index],
+                [field]: value,
+                course_ids: field === 'faculty_id' || field === 'level_id' ? [] : updatedAssignments[index].course_ids
+            };
+        } else {
+            updatedAssignments[index] = {
+                ...updatedAssignments[index],
+                [field]: value
+            };
+        }
+        
+        setData('faculty_level_courses', updatedAssignments);
+    };
 
-        setData('courses', updatedCourses);
+    // Gérer la sélection des cours pour une affectation spécifique
+    const handleCourseToggleForAssignment = (assignmentIndex, courseId) => {
+        const updatedAssignments = [...data.faculty_level_courses];
+        const currentCourses = updatedAssignments[assignmentIndex].course_ids;
+        
+        updatedAssignments[assignmentIndex].course_ids = currentCourses.includes(courseId)
+            ? currentCourses.filter(id => id !== courseId)
+            : [...currentCourses, courseId];
+
+        setData('faculty_level_courses', updatedAssignments);
     };
 
     const handleDrag = (e) => {
@@ -120,53 +133,81 @@ export default function Professor() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Envoi des données vers Laravel via Inertia
+    
+        // Transformer les données pour correspondre à la structure de la base de données
+        const transformedData = {
+            // Données de base du professeur
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+            phone: data.phone,
+            gender: data.gender,
+            birth_date: data.birth_date,
+            photo: data.photo,
+            hire_date: data.hire_date,
+            biography: data.biography,
+            is_active: data.is_active,
+            
+            // Relations transformées
+            faculties: [...new Set(data.faculty_level_courses.map(assignment => assignment.faculty_id))],
+            level_codes: [...new Set(data.faculty_level_courses.map(assignment => assignment.level_id))],
+            courses: data.faculty_level_courses.flatMap(assignment => assignment.course_ids)
+        };
+    
+        console.log('Données transformées:', transformedData);
+    
         post(route('dashboard.professors.store'), {
-            forceFormData: true, // Important pour l'upload de fichiers
+            forceFormData: true,
+            data: transformedData, // Utiliser les données transformées
             onSuccess: () => {
-                // Succès - redirection automatique gérée par Inertia
                 Alert.success('Professeur créé avec succès!');
-                reset(); // Réinitialise le formulaire
+                reset();
                 setPhotoPreview(null);
             },
             onError: (errors) => {
-                // Les erreurs sont automatiquement gérées par Inertia
                 console.log('Erreurs de validation:', errors);
                 Alert.error("Une erreur s'est produite");
             },
         });
     };
-
-    // Fonction pour obtenir les labels des facultés sélectionnées
-    const getSelectedFacultyLabels = () => {
-        const selectedIds = (Array.isArray(data.faculty_id) ? data.faculty_id : [data.faculty_id])
-            .map((id) => Number(id));
     
-        console.log("SelectedIds après conversion =>", selectedIds);
-    
-        return faculties
-            .filter((faculty) => {
-                console.log("Compare faculty.id =", faculty.id, "avec", selectedIds);
-                return selectedIds.includes(Number(faculty.id));
-            })
-            .map((faculty) => faculty.name);
+    // Ajoutez également cette fonction pour la validation côté client
+    const validateAssignments = () => {
+        const errors = {};
+        
+        data.faculty_level_courses.forEach((assignment, index) => {
+            if (!assignment.faculty_id) {
+                errors[`faculty_level_courses.${index}.faculty_id`] = 'La faculté est requise';
+            }
+            if (!assignment.level_id) {
+                errors[`faculty_level_courses.${index}.level_id`] = 'Le niveau est requis';
+            }
+            if (assignment.course_ids.length === 0) {
+                errors[`faculty_level_courses.${index}.course_ids`] = 'Au moins un cours est requis';
+            }
+        });
+        
+        return errors;
     };
-    
-
-    console.log("data.faculty_id =>", data.faculty_id, Array.isArray(data.faculty_id));
-    console.log("faculties =>", faculties, Array.isArray(faculties));
-
-    console.log(faculties);
-    console.log(getSelectedFacultyLabels());
-
-    // Fonction pour obtenir les labels des niveaux sélectionnés
-    const getSelectedLevelLabels = () => {
-        return levels.filter((level) => data.level_id.includes(level.level_name)).map((level) => level.name);
-    };
-
     const getSelectedCourseLabels = () => {
         return courses.filter((course) => data.courses.includes(course.value)).map((course) => course.label);
+    };
+
+    // Obtenir le nom de la faculté par son ID
+    const getFacultyName = (facultyId) => {
+        const faculty = facultiesData.find(f => f.id === facultyId);
+        return faculty ? faculty.name : '';
+    };
+
+    // Obtenir le nom du niveau par son ID
+    const getLevelName = (levelId) => {
+        const level = defaultLevels.find(l => l.id === levelId);
+        return level ? level.level_name : '';
+    };
+
+    // Obtenir les noms des cours sélectionnés pour une affectation
+    const getSelectedCourseNamesForAssignment = (courseIds) => {
+        return courses.filter(course => courseIds.includes(course.value)).map(course => course.label);
     };
 
     return (
@@ -332,7 +373,6 @@ export default function Professor() {
                                             id="birth_date"
                                             name="birth_date"
                                             className={`professor-register__input ${errors.birth_date ? 'professor-register__input--error' : ''}`}
-                                            placeholder="+243 XXX XXX XXX"
                                             value={data.birth_date}
                                             onChange={(e) => setData('birth_date', e.target.value)}
                                         />
@@ -364,7 +404,6 @@ export default function Professor() {
                                             id="hire_date"
                                             name="hire_date"
                                             className={`professor-register__input ${errors.hire_date ? 'professor-register__input--error' : ''}`}
-                                            placeholder="+243 XXX XXX XXX"
                                             value={data.hire_date}
                                             onChange={(e) => setData('hire_date', e.target.value)}
                                         />
@@ -393,193 +432,185 @@ export default function Professor() {
                                         {errors.biography && <span className="professor-register__error">{errors.biography}</span>}
                                     </div>
                                 </div>
-
-                                {/* Facultés - Multiple Select */}
-                                <div className="professor-register__group">
-                                    <label className="professor-register__label">
-                                        <svg className="professor-register__label-icon" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.75 2.524z" />
-                                        </svg>
-                                        Facultés *
-                                    </label>
-                                    <div className="professor-register__courses">
-                                        <div
-                                            className={`professor-register__courses-selected ${showFacultyDropdown ? 'professor-register__courses-selected--active' : ''} ${errors.faculty_id ? 'professor-register__courses-selected--error' : ''}`}
-                                            onClick={() => setShowFacultyDropdown(!showFacultyDropdown)}
-                                        >
-                                            {!data.faculty_id || data.faculty_id.length === 0 ? (
-                                                <span className="professor-register__courses-placeholder">Sélectionnez des facultés...</span>
-                                            ) : (
-                                                <div className="professor-register__courses-tags">
-                                                    {getSelectedFacultyLabels().map((facultyName, index) => (
-                                                        <span key={index} className="professor-register__course-tag">
-                                                            {facultyName}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            <svg className="professor-register__courses-arrow" viewBox="0 0 20 20" fill="currentColor">
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </div>
-
-                                        {showFacultyDropdown && (
-                                            <div className="professor-register__courses-dropdown">
-                                                {faculties.map((faculty) => (
-                                                    <label key={faculty.value} className="professor-register__course-option">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="professor-register__course-checkbox"
-                                                            checked={data.faculty_id.includes(faculty.value)}
-                                                            onChange={() => handleFacultyToggle(faculty.value)}
-                                                        />
-                                                        <span className="professor-register__course-checkmark">
-                                                            <svg viewBox="0 0 20 20" fill="currentColor">
-                                                                <path
-                                                                    fillRule="evenodd"
-                                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                    clipRule="evenodd"
-                                                                />
-                                                            </svg>
-                                                        </span>
-                                                        <span className="professor-register__course-label">{faculty.label}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {errors.faculty_id && <span className="professor-register__error">{errors.faculty_id}</span>}
-                                    </div>
-                                </div>
-
-                                {/* Niveaux - Multiple Select */}
-                                <div className="professor-register__group">
-                                    <label className="professor-register__label">
-                                        <svg className="professor-register__label-icon" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        Niveaux *
-                                    </label>
-                                    <div className="professor-register__courses">
-                                        <div
-                                            className={`professor-register__courses-selected ${showLevelDropdown ? 'professor-register__courses-selected--active' : ''} ${errors.level_id ? 'professor-register__courses-selected--error' : ''}`}
-                                            onClick={() => setShowLevelDropdown(!showLevelDropdown)}
-                                        >
-                                            {data.level_id.length === 0 ? (
-                                                <span className="professor-register__courses-placeholder">Sélectionnez des niveaux...</span>
-                                            ) : (
-                                                <div className="professor-register__courses-tags">
-                                                    {getSelectedLevelLabels().map((levelName, index) => (
-                                                        <span key={index} className="professor-register__course-tag">
-                                                            {levelName}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-                                            <svg className="professor-register__courses-arrow" viewBox="0 0 20 20" fill="currentColor">
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </div>
-
-                                        {showLevelDropdown && (
-                                            <div className="professor-register__courses-dropdown">
-                                                {levels.map((level) => (
-                                                    <label key={level.value} className="professor-register__course-option">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="professor-register__course-checkbox"
-                                                            checked={data.level_id.includes(level.value)}
-                                                            onChange={() => handleLevelToggle(level.value)}
-                                                        />
-                                                        <span className="professor-register__course-checkmark">
-                                                            <svg viewBox="0 0 20 20" fill="currentColor">
-                                                                <path
-                                                                    fillRule="evenodd"
-                                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                    clipRule="evenodd"
-                                                                />
-                                                            </svg>
-                                                        </span>
-                                                        <span className="professor-register__course-label">{level.label}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {errors.level_id && <span className="professor-register__error">{errors.level_id}</span>}
-                                    </div>
-                                </div>
                             </div>
 
-                            {/* Cours assignés */}
+                            {/* Section Affectations Faculté-Niveau-Cours */}
                             <div className="professor-register__group professor-register__group--full">
-                                <label className="professor-register__label">
-                                    <svg className="professor-register__label-icon" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                                    </svg>
-                                    Cours assignés *
-                                </label>
-                                <div className="professor-register__courses">
-                                    <div
-                                        className={`professor-register__courses-selected ${showCourseDropdown ? 'professor-register__courses-selected--active' : ''} ${errors.courses ? 'professor-register__courses-selected--error' : ''}`}
-                                        onClick={() => setShowCourseDropdown(!showCourseDropdown)}
-                                    >
-                                        {data.courses.length === 0 ? (
-                                            <span className="professor-register__courses-placeholder">Sélectionnez des cours...</span>
-                                        ) : (
-                                            <div className="professor-register__courses-tags">
-                                                {getSelectedCourseLabels().map((courseName, index) => (
-                                                    <span key={index} className="professor-register__course-tag">
-                                                        {courseName}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                        <svg className="professor-register__courses-arrow" viewBox="0 0 20 20" fill="currentColor">
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
+                                <div className="professor-register__faculty-assignments">
+                                    <div className="professor-register__faculty-assignments-header">
+                                        <label className="professor-register__label">
+                                            <svg className="professor-register__label-icon" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.75 2.524z" />
+                                            </svg>
+                                            Affectations Faculté, Niveau & Cours *
+                                        </label>
+                                        <button
+                                            type="button"
+                                            className="professor-register__add-assignment-btn"
+                                            onClick={addFacultyLevelCourse}
+                                        >
+                                            <svg className="professor-register__add-icon" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                                            </svg>
+                                            Ajouter une affectation
+                                        </button>
                                     </div>
 
-                                    {showCourseDropdown && (
-                                        <div className="professor-register__courses-dropdown">
-                                            {courses.map((course) => (
-                                                <label key={course.value} className="professor-register__course-option">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="professor-register__course-checkbox"
-                                                        checked={data.courses.includes(course.value)}
-                                                        onChange={() => handleCourseToggle(course.value)}
-                                                    />
-                                                    <span className="professor-register__course-checkmark">
-                                                        <svg viewBox="0 0 20 20" fill="currentColor">
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    <span className="professor-register__course-label">{course.label}</span>
-                                                </label>
-                                            ))}
+                                    {data.faculty_level_courses.length === 0 && (
+                                        <div className="professor-register__no-assignments">
+                                            <svg className="professor-register__no-assignments-icon" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
+                                            </svg>
+                                            <p>Aucune affectation définie. Cliquez sur "Ajouter une affectation" pour commencer.</p>
                                         </div>
                                     )}
-                                    {errors.courses && <span className="professor-register__error">{errors.courses}</span>}
-                                </div>
-                            </div>
 
-                            {/* Photo de profil */}
+                                    {data.faculty_level_courses.map((assignment, index) => (
+                                        <div key={index} className="professor-register__assignment-card">
+                                            <div className="professor-register__assignment-header">
+                                                <h4 className="professor-register__assignment-title">
+                                                    Affectation {index + 1}
+                                                </h4>
+                                                {data.faculty_level_courses.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        className="professor-register__remove-assignment-btn"
+                                                        onClick={() => removeFacultyLevelCourse(index)}
+                                                    >
+                                                        <svg viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            <div className="professor-register__assignment-content">
+                                                {/* ÉTAPE 1: Sélection de la faculté */}
+                                                <div className="professor-register__assignment-step">
+                                                    <div className="professor-register__step-header">
+                                                        <div className="professor-register__step-number">1</div>
+                                                        <h5 className="professor-register__step-title">Choisir la faculté</h5>
+                                                    </div>
+                                                    <div className="professor-register__assignment-faculty">
+                                                        <select
+                                                            className={`professor-register__assignment-select ${errors[`faculty_level_courses.${index}.faculty_id`] ? 'professor-register__assignment-select--error' : ''}`}
+                                                            value={assignment.faculty_id}
+                                                            onChange={(e) => updateFacultyLevelCourse(index, 'faculty_id', e.target.value)}
+                                                        >
+                                                            <option value="">Sélectionner une faculté</option>
+                                                            {facultiesData.map((faculty) => (
+                                                                <option key={faculty.id} value={faculty.id}>
+                                                                    {faculty.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        {errors[`faculty_level_courses.${index}.faculty_id`] && (
+                                                            <span className="professor-register__error">
+                                                                {errors[`faculty_level_courses.${index}.faculty_id`]}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* ÉTAPE 2: Sélection du niveau (seulement si faculté sélectionnée) */}
+                                                {assignment.faculty_id && (
+                                                    <div className="professor-register__assignment-step">
+                                                        <div className="professor-register__step-header">
+                                                            <div className="professor-register__step-number">2</div>
+                                                            <h5 className="professor-register__step-title">Choisir le niveau</h5>
+                                                        </div>
+                                                        <div className="professor-register__assignment-level">
+                                                            <select
+                                                                className={`professor-register__assignment-select ${errors[`faculty_level_courses.${index}.level_id`] ? 'professor-register__assignment-select--error' : ''}`}
+                                                                value={assignment.level_id}
+                                                                onChange={(e) => updateFacultyLevelCourse(index, 'level_id', e.target.value)}
+                                                            >
+                                                                <option value="">Sélectionner un niveau</option>
+                                                                {defaultLevels.map((level) => (
+                                                                    <option key={level.id} value={level.id}>
+                                                                        {level.level_name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors[`faculty_level_courses.${index}.level_id`] && (
+                                                                <span className="professor-register__error">
+                                                                    {errors[`faculty_level_courses.${index}.level_id`]}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* ÉTAPE 3: Sélection des cours (seulement si faculté et niveau sélectionnés) */}
+                                                {assignment.faculty_id && assignment.level_id && (
+                                                    <div className="professor-register__assignment-step">
+                                                        <div className="professor-register__step-header">
+                                                            <div className="professor-register__step-number">3</div>
+                                                            <h5 className="professor-register__step-title">Choisir les cours</h5>
+                                                        </div>
+                                                        <div className="professor-register__assignment-courses">
+                                                            <div className="professor-register__course-grid">
+                                                                {courses.map((course) => (
+                                                                    <label key={course.value} className="professor-register__course-option">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="professor-register__course-checkbox"
+                                                                            checked={assignment.course_ids.includes(course.value)}
+                                                                            onChange={() => handleCourseToggleForAssignment(index, course.value)}
+                                                                        />
+                                                                        <span className="professor-register__course-checkmark">
+                                                                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                                                                <path
+                                                                                    fillRule="evenodd"
+                                                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                                                    clipRule="evenodd"
+                                                                                />
+                                                                            </svg>
+                                                                        </span>
+                                                                        <span className="professor-register__course-label">{course.label}</span>
+                                                                    </label>
+                                                                ))}
+                                                            </div>
+                                                            {errors[`faculty_level_courses.${index}.course_ids`] && (
+                                                                <span className="professor-register__error">
+                                                                    {errors[`faculty_level_courses.${index}.course_ids`]}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Résumé de l'affectation */}
+                                                {assignment.faculty_id && assignment.level_id && assignment.course_ids.length > 0 && (
+                                                    <div className="professor-register__assignment-summary">
+                                                        <h5 className="professor-register__assignment-summary-title">
+                                                            <svg className="professor-register__summary-icon" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                            </svg>
+                                                            Résumé complet:
+                                                        </h5>
+                                                        <div className="professor-register__assignment-summary-content">
+                                                            <div className="professor-register__assignment-summary-item">
+                                                                <strong>Faculté:</strong> {getFacultyName(assignment.faculty_id)}
+                                                            </div>
+                                                            <div className="professor-register__assignment-summary-item">
+                                                                <strong>Niveau:</strong> {getLevelName(assignment.level_id)}
+                                                            </div>
+                                                            <div className="professor-register__assignment-summary-item">
+                                                                <strong>Cours:</strong> {getSelectedCourseNamesForAssignment(assignment.course_ids).join(', ')}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {errors.faculty_level_courses && (
+                                        <span className="professor-register__error">{errors.faculty_level_courses}</span>
+                                    )}
+                                </div>
+                            </div>                            {/* Photo de profil */}
                             <div className="professor-register__group professor-register__group--full">
                                 <label className="professor-register__label">
                                     <svg className="professor-register__label-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -729,28 +760,60 @@ export default function Professor() {
                                         <div className="professor-register__summary-stat-number">
                                             {Object.keys(data).filter(
                                                 (key) =>
-                                                    key !== 'courses' && key !== 'photo' && key !== 'faculty_id' && key !== 'level_id' && data[key],
+                                                    key !== 'faculty_level_courses' && 
+                                                    key !== 'photo' && 
+                                                    data[key],
                                             ).length +
-                                                (data.courses.length > 0 ? 1 : 0) +
-                                                (data.faculty_id.length > 0 ? 1 : 0) +
-                                                (data.level_id.length > 0 ? 1 : 0) +
+                                                (data.faculty_level_courses.length > 0 ? 1 : 0) +
                                                 (data.photo ? 1 : 0)}
                                         </div>
                                         <div className="professor-register__summary-stat-label">Champs remplis</div>
                                     </div>
                                     <div className="professor-register__summary-stat">
-                                        <div className="professor-register__summary-stat-number">{data.faculty_id.length}</div>
-                                        <div className="professor-register__summary-stat-label">Facultés sélectionnées</div>
+                                        <div className="professor-register__summary-stat-number">{data.faculty_level_courses.length}</div>
+                                        <div className="professor-register__summary-stat-label">Affectations créées</div>
                                     </div>
                                     <div className="professor-register__summary-stat">
-                                        <div className="professor-register__summary-stat-number">{data.level_id.length}</div>
-                                        <div className="professor-register__summary-stat-label">Niveaux sélectionnés</div>
+                                        <div className="professor-register__summary-stat-number">
+                                            {data.faculty_level_courses.filter(assignment => 
+                                                assignment.faculty_id && assignment.level_id
+                                            ).length}
+                                        </div>
+                                        <div className="professor-register__summary-stat-label">Affectations complètes</div>
                                     </div>
                                     <div className="professor-register__summary-stat">
-                                        <div className="professor-register__summary-stat-number">{data.courses.length}</div>
-                                        <div className="professor-register__summary-stat-label">Cours sélectionnés</div>
+                                        <div className="professor-register__summary-stat-number">
+                                            {data.faculty_level_courses.reduce((total, assignment) => total + assignment.course_ids.length, 0)}
+                                        </div>
+                                        <div className="professor-register__summary-stat-label">Cours total</div>
                                     </div>
                                 </div>
+
+                                {/* Affichage des affectations dans le résumé */}
+                                {data.faculty_level_courses.length > 0 && (
+                                    <div className="professor-register__summary-assignments">
+                                        <h4 className="professor-register__summary-assignments-title">Affectations actuelles:</h4>
+                                        <div className="professor-register__summary-assignments-list">
+                                            {data.faculty_level_courses.map((assignment, index) => (
+                                                assignment.faculty_id && assignment.level_id && assignment.course_ids.length > 0 && (
+                                                    <div key={index} className="professor-register__summary-assignment">
+                                                        <div className="professor-register__summary-assignment-header">
+                                                            <span className="professor-register__summary-assignment-faculty">
+                                                                {getFacultyName(assignment.faculty_id)}
+                                                            </span>
+                                                            <span className="professor-register__summary-assignment-level">
+                                                                {getLevelName(assignment.level_id)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="professor-register__summary-assignment-courses">
+                                                            <strong>Cours:</strong> {getSelectedCourseNamesForAssignment(assignment.course_ids).join(', ')}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

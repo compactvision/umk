@@ -4,9 +4,9 @@ import { usePage, router } from '@inertiajs/react';
 import LevelPopup from '@/components/form/LevelPopup';
 
 export default function FacultyShow() {
-    const { faculties } = usePage().props;
+    const { faculties, levelCodes } = usePage().props;
     const allFaculties = useMemo(() => faculties?.data || [], [faculties]);
-
+    
     const [selectedFaculties, setSelectedFaculties] = useState(['all']);
     const [filteredFaculties, setFilteredFaculties] = useState(allFaculties);
     const [isOpen, setIsOpen] = useState(false);
@@ -115,7 +115,7 @@ export default function FacultyShow() {
                 </aside>
 
                 {isOpen && (
-                    <LevelPopup isOpen={isOpen} onClose={closePopup} faculties={faculties}/>
+                    <LevelPopup isOpen={isOpen} onClose={closePopup} faculties={faculties} levelCodes={levelCodes?.data}/>
                 )}
             </div>
         </Dashboard>
