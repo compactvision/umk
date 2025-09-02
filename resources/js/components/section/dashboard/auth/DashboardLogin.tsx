@@ -23,7 +23,7 @@ const DashboardLogin = () => {
         e.preventDefault();
         Alert.loading('Connexion en cours...');
 
-        post(route('login.store'), {
+        post(route('login'), {
             onSuccess: () => {
                 Alert.success('Connexion réussie !');
             },
@@ -123,9 +123,9 @@ const DashboardLogin = () => {
                             <span className="login-form__checkbox-custom"></span>
                             Se souvenir de moi
                         </label>
-                        <a href="#" className="login-form__forgot">
+                        <Link href={route('password.request')} className="login-form__forgot">
                             Mot de passe oublié ?
-                        </a>
+                        </Link>
                     </div>
 
                     <button type="submit" className={getButtonClass()} disabled={processing}>

@@ -7,6 +7,7 @@ const DashboardSignup = () => {
     const { data, setData, errors: formErrors, post, processing } = useForm({
         last_name: '',
         first_name: '',
+        post_name: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -27,7 +28,7 @@ const DashboardSignup = () => {
         e.preventDefault();
         Alert.loading('Inscription en cours...');
 
-        post(route('register.store'), {
+        post(route('register'), {
             onSuccess: () => {
                 Alert.success('Inscription réussie !');
             },
@@ -123,6 +124,23 @@ const DashboardSignup = () => {
                         </div>
                     </div>
                     {formErrors.first_name && <p className="login-form__error">{formErrors.first_name}</p>}
+
+                    <div className="login-form__group">
+                        <input
+                            type="text"
+                            name="post_name"
+                            value={data.post_name}
+                            onChange={handleInputChange}
+                            onFocus={() => setFocusedField('post_name')}
+                            onBlur={() => setFocusedField(null)}
+                            className={`login-form__input ${focusedField === 'post_name' ? 'login-form__input--focused' : ''}`}
+                            placeholder="Postnom"
+                        />
+                        <div className="login-form__input-icon">
+                            <svg style={{marginTop: '10px'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><circle cx="24" cy="11" r="7" fill="#2f88ff"/><path d="M4 41C4 32.1634 12.0589 25 22 25"/><path fill="#2f88ff" d="M31 42L41 32L37 28L27 38V42H31Z"/></g></svg>
+                        </div>
+                    </div>
+                    {formErrors.post_name && <p className="login-form__error">{formErrors.post_name}</p>}
 
                     <div className="login-form__group">
                         <select className='login-form__input' name="gender" value={data.gender} onChange={handleSelectChange} >
