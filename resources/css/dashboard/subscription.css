@@ -213,7 +213,7 @@
     margin-top: auto;
 }
 
-.btn {
+/* .btn {
     padding: 16px 32px;
     border: none;
     border-radius: 10px;
@@ -222,7 +222,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     min-width: 140px;
-}
+} */
 
 .btn:disabled {
     cursor: not-allowed;

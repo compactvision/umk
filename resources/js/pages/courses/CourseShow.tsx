@@ -78,7 +78,7 @@ export default function CoursShow() {
                                     </li>
                                 </ul>
                                 <div className="sidebar-btn mt-35">
-                                    <a className="thm-btn" href="#!">
+                                    <Link className="thm-btn" href={route('dashboard.enrollments.process', { facultyId: course?.faculty?.id, levelId: course?.level_id })}>
                                         S'inscrire maintenant
                                         <span>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,7 +92,7 @@ export default function CoursShow() {
                                                 ></path>
                                             </svg>
                                         </span>
-                                    </a>
+                                    </Link>
                                 </div>
                                 <div className="course-sidebar__social-wrap ul_li mt-25">
                                     <h4>Partager sur : </h4>

@@ -4,6 +4,7 @@
 @import url('./professor.css');
 @import url('./popup.css');
 @import url('./subscription.css');
+@import url('./enrollement.css');
 
 :root {
     --color-primary: #4f46e5;
@@ -78,6 +79,7 @@ body {
         transform: translateX(-100%);
         transition: transform var(--transition-normal);
         z-index: var(--z-overlay);
+        overflow-y: auto;
     }
 
     .sidebar--mobile-open {

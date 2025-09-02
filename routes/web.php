@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EnrollmentController\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
@@ -31,12 +32,12 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
     })->name('index');
 
     //Subscription
-    Route::get('/subscription', function () {
-        return Inertia::render('dashboard/subscription/Subscription');
-    });
-    Route::get('/subscription/index', function () {
-        return Inertia::render('dashboard/subscription/Index');
-    });
+    // Route::get('/enrollments', function () {
+    //     return Inertia::render('dashboard/enrollments/Enrollment');
+    // });
+    // Route::get('/enrollments/index', function () {
+    //     return Inertia::render('dashboard/enrollments/Index');
+    // });
 
 
     // CRUD standard des facultés
@@ -53,6 +54,16 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth'])->group(func
     Route::post('admission/store', [LevelController::class, 'admissionStore'])->name('admission.store');
     Route::put('admission/update/{id}', [LevelController::class, 'admissionUpdate'])->name('admission.update');
     Route::delete('admission/destroy/{id}', [LevelController::class, 'admissionDestroy'])->name('admission.destroy');
+
+    // Enrollments
+    Route::get('/enrollments', [EnrollmentController::class,'index'])->name('enrollments.index');
+    Route::post('/enrollments', [EnrollmentController::class,'store'])->name('enrollments.store');
+    Route::get('/enrollments/students/{facultyId?}/{levelId?}', [EnrollmentController::class, 'enrollmentsProcess'])->name('enrollments.process');
+    Route::get('/enrollments/{enrollment}', [EnrollmentController::class,'show'])->name('enrollments.show');
+    Route::patch('/enrollments/{enrollment}', [EnrollmentController::class,'update'])->name('enrollments.update');
+    Route::post('/enrollments/{enrollment}/submit', [EnrollmentController::class,'submit'])->name('enrollments.submit');
+
+    Route::post('/enrollments/{enrollment}/documents', [EnrollmentController::class,'uploadDoc'])->name('enrollments.docs.upload');
 });
 
 Route::get('/test', function() {
