@@ -11,13 +11,13 @@ final class User
         private ?string $postName,
         private ?string $gender,
         private string $email,
-        private string $password,
+        private string $passwordHash,
         private ?\DateTimeImmutable $verifiedAt = null
     ) {}
 
-    public static function register(string $lastName, string $firstName, ?string $postName, ?string $gender, string $email, string $hashedPassword): self
+    public static function register(string $lastName, string $firstName, ?string $postName, ?string $gender, string $email, string $passwordHash): self
     {
-        return new self(null, $lastName, $firstName, $postName, $gender, $email, $hashedPassword, null);
+        return new self(null, $lastName, $firstName, $postName, $gender, $email, $passwordHash);
     }
 
     public function verifiedAt(): ?\DateTimeImmutable { return $this->verifiedAt; }
@@ -29,7 +29,7 @@ final class User
     public function postName(): ?string { return $this->postName; }
     public function gender(): ?string { return $this->gender; }
     public function email(): string { return $this->email; }
-    public function password(): string { return $this->password; }
+    public function passwordHash(): string { return $this->passwordHash; }
     
     public function isVerified(): bool
     {

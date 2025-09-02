@@ -5,6 +5,8 @@ namespace App\Modules\Identity\Infrastructure\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Identity\Application\UseCases\RegisterUser;
 use App\Modules\Identity\Application\UseCases\LoginUser;
+use App\Modules\Identity\Domain\Exceptions\InvalidCredentialsException;
+use App\Modules\Identity\Domain\Exceptions\UserNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,18 +41,17 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'email'    => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string',
         ]);
 
-        $userId = $useCase->execute($validated['email'], $validated['password']);
+        try {
+            $userId = $useCase->execute($validated['email'], $validated['password']);
+            Auth::loginUsingId($userId);
 
-        if (!$userId) {
-            return back()->withErrors(['email' => 'Identifiants invalides']);
+            return redirect()->route('dashboard.index');
+        } catch (UserNotFoundException|InvalidCredentialsException $e) {
+            return back()->withErrors(['email' => $e->getMessage()]);
         }
-
-        Auth::loginUsingId($userId);
-
-        return redirect()->route('dashboard.index');
     }
 
     public function logout()

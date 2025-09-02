@@ -3,13 +3,13 @@
 namespace App\Modules\Identity\Application\UseCases;
 
 use App\Modules\Identity\Domain\Repositories\UserRepository;
-use App\Modules\Identity\Domain\Services\EmailVerificationNotifier;
+use App\Modules\Identity\Domain\Services\UserEmailVerificationService;
 
 final class SendVerificationEmail
 {
     public function __construct(
         private UserRepository $repo,
-        private EmailVerificationNotifier $notifier
+        private UserEmailVerificationService $notifier
     ) {}
 
     public function execute(int $userId): void
