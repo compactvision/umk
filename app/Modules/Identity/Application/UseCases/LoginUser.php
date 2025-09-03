@@ -32,6 +32,11 @@ final class LoginUser
         throw new InvalidCredentialsException("Identifiants invalides");
     }
 
+    if ($user->role() === null) {
+        $user->assignRole('user');
+        $this->repo->save($user);
+    }
+
     // ✅ Succès → reset
     $this->limiter->clear($email);
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\FacultyController\FacultyController;
 use App\Http\Controllers\LevelController\LevelController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
+use App\Modules\Identity\Infrastructure\Http\Controllers\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -116,10 +117,8 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'form'])
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     ->middleware('guest')->name('password.update');
 
-
-
-
-
+    Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect']);
+    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback']);
 
 // Dashboard accessible uniquement si email vérifié
 Route::middleware(['auth', 'verified'])->group(function () {

@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Alert from '@/utils/sweetAlert';
 
@@ -35,7 +35,7 @@ const DashboardLogin = () => {
     };
 
     const handleSocialLogin = (provider: string) => {
-        console.log(`Connexion avec ${provider}`);
+        router.get(route('auth.' + provider + '.redirect'));
     };
 
     useEffect(() => {

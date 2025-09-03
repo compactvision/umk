@@ -25,6 +25,7 @@ final class RegisterUser
     ): User {
         $hash = $this->hasher->hash($password);
         $user = User::register($lastName, $firstName, $postName, $gender, $email, $hash);
+        $user->assignRole('user');
         $saved = $this->repo->save($user);
 
         $this->notifier->sendVerificationLink($saved);

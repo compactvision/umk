@@ -53,6 +53,7 @@ class RolePermissionSeeder extends Seeder
 
         // Rôles
         $roles = [
+            'user' => ['view dashboard'],
             'student' => ['view dashboard', 'view courses', 'submit assignments', 'view grades'],
             'candidate' => ['apply to programs', 'view application status'],
             'professor' => ['view dashboard', 'manage courses', 'grade assignments', 'manage students'],

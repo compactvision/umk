@@ -25,13 +25,13 @@ return new class extends Migration
         });
 
         // Create level_codes table for predefined levels
-        Schema::create('level_codes', function (Blueprint $table) {
-            $table->id();
-            $table->string('code', 10)->unique(); // L1, L2, L3, M1, M2, D1, D2
-            $table->string('name', 100); // Première Licence, etc.
-            $table->integer('order')->default(0); // Pour l'ordre d'affichage
-            $table->timestamps();
-        });
+        // Schema::create('level_codes', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('code', 10)->unique(); // L1, L2, L3, M1, M2, D1, D2
+        //     $table->string('name', 100); // Première Licence, etc.
+        //     $table->integer('order')->default(0); // Pour l'ordre d'affichage
+        //     $table->timestamps();
+        // });
 
         // Create professor assignments table (relation ternaire)
         Schema::create('professor_assignments', function (Blueprint $table) {
@@ -70,7 +70,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('assignment_courses');
         Schema::dropIfExists('professor_assignments');
-        Schema::dropIfExists('level_codes');
+        // Schema::dropIfExists('level_codes');
         Schema::dropIfExists('professors');
     }
 };

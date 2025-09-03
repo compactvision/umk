@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Auth\MustVerifyEmail; // le trait ajoute hasVerifiedEmail(), markEmailAsVerified()...
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use Notifiable, MustVerifyEmail;
+    use Notifiable, MustVerifyEmail, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -54,5 +55,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),
         ]);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->hasRole($role);
     }
 }

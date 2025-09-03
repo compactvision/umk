@@ -22,8 +22,13 @@ final class EloquentUserRepository implements UserRepository
             'email' => $user->email(),
             'password' => $user->passwordHash(),
             'email_verified_at' => $user->isVerified() ? now() : null,
+            'role' => $user->role(),
         ]);
         $model->save();
+
+        if (!$user->id()) {
+            $model->assignRole('user');
+        }
 
         return $this->mapToEntity($model);
     }
@@ -50,7 +55,8 @@ final class EloquentUserRepository implements UserRepository
             $model->gender,
             $model->email,
             $model->password,
-            $model->email_verified_at ? new \DateTimeImmutable($model->email_verified_at) : null
+            $model->email_verified_at ? new \DateTimeImmutable($model->email_verified_at) : null,
+            $model->role ?? 'user'
         );
     }
 }
