@@ -4,25 +4,38 @@ namespace App\Modules\Identity\Application\UseCases;
 
 use App\Modules\Identity\Domain\Repositories\UserRepository;
 use App\Modules\Identity\Domain\Services\PasswordHasher;
+use App\Modules\Identity\Domain\Services\LoginRateLimiter;
 use App\Modules\Identity\Domain\Exceptions\UserNotFoundException;
 use App\Modules\Identity\Domain\Exceptions\InvalidCredentialsException;
 
 final class LoginUser
 {
-    public function __construct(private UserRepository $repo, private PasswordHasher $hasher) {}
+    public function __construct(
+        private UserRepository $repo,
+        private PasswordHasher $hasher,
+        private LoginRateLimiter $limiter
+    ) {}
 
     public function execute(string $email, string $password): int
-    {
-        $user = $this->repo->findByEmail($email);
+{
+    // 🔎 Vérifie si bloqué
+    $this->limiter->ensureIsNotLimited($email);
 
-        if (!$user) {
-            throw new UserNotFoundException("Utilisateur introuvable");
-        }
-
-        if (!$this->hasher->verify($password, $user->passwordHash())) {
-            throw new InvalidCredentialsException("Mot de passe incorrecte");
-        }
-
-        return $user->id();
+    $user = $this->repo->findByEmail($email);
+    if (!$user) {
+        $this->limiter->hit($email);
+        throw new UserNotFoundException("Utilisateur introuvable");
     }
+
+    if (!$this->hasher->verify($password, $user->passwordHash())) {
+        $this->limiter->hit($email);
+        throw new InvalidCredentialsException("Identifiants invalides");
+    }
+
+    // ✅ Succès → reset
+    $this->limiter->clear($email);
+
+    return $user->id();
+}
+
 }

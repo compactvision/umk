@@ -11,6 +11,8 @@ use App\Modules\Identity\Infrastructure\Notifications\LaravelEmailVerificationNo
 use App\Modules\Identity\Infrastructure\Notifications\LaravelPasswordResetNotifier;
 use App\Modules\Identity\Infrastructure\Security\BcryptPasswordHasher;
 use App\Modules\Identity\Domain\Services\PasswordHasher;
+use App\Modules\Identity\Domain\Services\LoginRateLimiter;
+use App\Modules\Identity\Infrastructure\Security\CacheLoginRateLimiter;
 
 class IdentityServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class IdentityServiceProvider extends ServiceProvider
         $this->app->bind(UserEmailVerificationService::class, LaravelEmailVerificationNotifier::class);
         $this->app->bind(PasswordResetNotifier::class, LaravelPasswordResetNotifier::class);
         $this->app->bind(PasswordHasher::class, BcryptPasswordHasher::class);
+        $this->app->bind(LoginRateLimiter::class, CacheLoginRateLimiter::class);
     }
 
     public function boot(): void

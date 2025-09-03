@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Identity\Application\UseCases\RegisterUser;
 use App\Modules\Identity\Application\UseCases\LoginUser;
 use App\Modules\Identity\Domain\Exceptions\InvalidCredentialsException;
+use App\Modules\Identity\Domain\Exceptions\TooManyLoginAttemptsException;
 use App\Modules\Identity\Domain\Exceptions\UserNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,10 @@ class AuthController extends Controller
             Auth::loginUsingId($userId);
 
             return redirect()->route('dashboard.index');
+        } catch (TooManyLoginAttemptsException $e) {
+            return back()->withErrors([
+                'email' => $e->getMessage()
+            ]);
         } catch (UserNotFoundException|InvalidCredentialsException $e) {
             return back()->withErrors(['email' => $e->getMessage()]);
         }
