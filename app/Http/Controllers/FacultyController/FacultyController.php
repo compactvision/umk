@@ -41,7 +41,7 @@ class FacultyController extends Controller
             $levelCodes = LevelCode::paginate(15);
 
             // Sinon, retourner la vue Inertia avec toutes les facultés
-            return Inertia::render('dashboard/faculty/Faculty', [
+            return Inertia::render('dashboard/faculties/Index', [
                 'faculties' => FacultyResource::collection($allFaculties),
                 'levelCodes' => $levelCodes,
                 'pagination' => [

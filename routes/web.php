@@ -3,11 +3,11 @@
 use App\Modules\Identity\Infrastructure\Http\Controllers\AuthController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\EmailVerificationController;
 use App\Modules\AcademicYear\Infrastructure\Http\Controllers\AcademicYearController;
+use App\Modules\Faculty\Infrastructure\Http\Controllers\FacultyController;
 use App\Http\Controllers\EnrollmentController\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
-use App\Http\Controllers\FacultyController\FacultyController;
 use App\Http\Controllers\LevelController\LevelController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
@@ -127,12 +127,24 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         ->name('index');
 
     Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
-        Route::get('/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');
-        Route::get('/academic-years/{id}', [AcademicYearController::class, 'show'])->name('academic-years.show');
-        Route::post('/academic-years', [AcademicYearController::class, 'store'])->name('academic-years.store');
-        Route::put('/academic-years/{id}', [AcademicYearController::class, 'update'])->name('academic-years.update');
-        Route::patch('/academic-years/{id}/open', [AcademicYearController::class, 'open'])->name('academic-years.open');
-        Route::patch('/academic-years/{id}/close', [AcademicYearController::class, 'close'])->name('academic-years.close');
+        Route::prefix('/academic-years')->name('academic-years.')->group(function () {
+            Route::get('/', [AcademicYearController::class, 'index'])->name('index');
+            Route::get('/{id}', [AcademicYearController::class, 'show'])->name('show');
+            Route::post('/', [AcademicYearController::class, 'store'])->name('store');
+            Route::put('/{id}', [AcademicYearController::class, 'update'])->name('update');
+            Route::patch('/{id}/open', [AcademicYearController::class, 'open'])->name('open');
+            Route::patch('/{id}/close', [AcademicYearController::class, 'close'])->name('close');
+        });
+
+        Route::prefix('/faculties')->name('faculties.')->group(function () {
+            Route::get('/', [FacultyController::class, 'index'])->name('index');
+            Route::get('/{id}', [FacultyController::class, 'show'])->name('show');
+            Route::post('/', [FacultyController::class, 'store'])->name('store');
+            Route::put('/{id}', [FacultyController::class, 'update'])->name('update');
+            Route::patch('/{id}/open', [FacultyController::class, 'open'])->name('open');
+            Route::patch('/{id}/close', [FacultyController::class, 'close'])->name('close');
+            Route::delete('/{id}', [FacultyController::class, 'destroy'])->name('destroy');
+        });
     });
 
 });

@@ -283,18 +283,9 @@ const Sidebar = ({
                         <Link href={route('dashboard.admin.academic-years.index')} className="sidebar-menu__link" role="menuitem">
                             Années Académiques
                         </Link>
-                        <a href="#" className="sidebar-menu__link" role="menuitem">
-                            Rapports mensuels
-                        </a>
-                        <a href="#" className="sidebar-menu__link" role="menuitem">
-                            Performance
-                        </a>
-                        <a href="#" className="sidebar-menu__link" role="menuitem">
-                            Tendances
-                        </a>
-                        <a href="#" className="sidebar-menu__link" role="menuitem">
-                            Export données
-                        </a>
+                        <Link href={route('dashboard.admin.faculties.index')} className="sidebar-menu__link" role="menuitem">
+                            Facultés
+                        </Link>
                     </nav>
                 </div>
             )}
