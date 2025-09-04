@@ -2,6 +2,7 @@
 
 use App\Modules\Identity\Infrastructure\Http\Controllers\AuthController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\EmailVerificationController;
+use App\Modules\AcademicYear\Infrastructure\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\EnrollmentController\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -121,9 +122,19 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback']);
 
 // Dashboard accessible uniquement si email vérifié
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', fn() => inertia('dashboard/index/Index'))
-        ->name('dashboard.index');
+Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', fn() => inertia('dashboard/index/Index'))
+        ->name('index');
+
+    Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
+        Route::get('/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');
+        Route::get('/academic-years/{id}', [AcademicYearController::class, 'show'])->name('academic-years.show');
+        Route::post('/academic-years', [AcademicYearController::class, 'store'])->name('academic-years.store');
+        Route::put('/academic-years/{id}', [AcademicYearController::class, 'update'])->name('academic-years.update');
+        Route::patch('/academic-years/{id}/open', [AcademicYearController::class, 'open'])->name('academic-years.open');
+        Route::patch('/academic-years/{id}/close', [AcademicYearController::class, 'close'])->name('academic-years.close');
+    });
+
 });
 
 

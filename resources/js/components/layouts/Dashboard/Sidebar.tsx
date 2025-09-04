@@ -1,5 +1,5 @@
 import Alert from '@/utils/sweetAlert';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 // Types pour les rôles
@@ -79,7 +79,7 @@ const Sidebar = ({
 
     // Fonction pour vérifier si un menu est accessible
     const hasPermission = (menuId: string): boolean => {
-        return rolePermissions[userRole]?.includes(menuId) || false;
+        return rolePermissions[userRole as UserRole]?.includes(menuId) || false;
     };
 
     // Configuration des menus avec leurs informations
@@ -195,7 +195,7 @@ const Sidebar = ({
                     })}
 
                     {/* Séparateur avant logout si au moins un menu est affiché */}
-                    {rolePermissions[userRole].length > 0 && <div className="sidebar__separator"></div>}
+                    {rolePermissions[userRole as UserRole].length > 0 && <div className="sidebar__separator"></div>}
 
                     {/* Bouton de déconnexion - toujours visible */}
                     <div className="sidebar__item">
@@ -280,6 +280,9 @@ const Sidebar = ({
                 >
                     <h3 className="sidebar-menu__title">Rapports</h3>
                     <nav className="sidebar-menu__nav">
+                        <Link href={route('dashboard.admin.academic-years.index')} className="sidebar-menu__link" role="menuitem">
+                            Années Académiques
+                        </Link>
                         <a href="#" className="sidebar-menu__link" role="menuitem">
                             Rapports mensuels
                         </a>
@@ -348,6 +351,8 @@ const Sidebar = ({
                     </nav>
                 </div>
             )}
+
+
         </>
     );
 };

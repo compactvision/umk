@@ -2,12 +2,17 @@ import DashboardHeader from '@/components/layouts/Dashboard/DashboardHeader';
 import Sidebar from '@/components/layouts/Dashboard/Sidebar';
 import { useEffect, useRef, useState } from 'react';
 import '../../../../css/dashboard/app.css';
+import { usePage } from '@inertiajs/react';
 
 // Composant Dashboard principal
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
     const [currentActiveMenu, setCurrentActiveMenu] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const { props } = usePage();
+    const user = props.auth?.user;
+
+    console.log("R", user?.roles)
 
     useEffect(() => {
         const handleResize = () => {
@@ -66,7 +71,7 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
             {/* Overlay pour mobile */}
             <div className={`overlay ${isMobileSidebarOpen ? 'overlay--active' : ''}`} id="overlay" onClick={closeAllMenus}></div>
 
-            <Sidebar onButtonClick={handleButtonClick} isMobileSidebarOpen={isMobileSidebarOpen} currentActiveMenu={currentActiveMenu || ''} />
+            <Sidebar onButtonClick={handleButtonClick} isMobileSidebarOpen={isMobileSidebarOpen} currentActiveMenu={currentActiveMenu || ''} userRole={user?.roles} />
 
             <DashboardHeader onMobileToggle={toggleMobileSidebar} />
 
