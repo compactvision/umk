@@ -1,6 +1,5 @@
 import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import ErrorText from '@/components/UI/ErrorText';
 import Alert from '@/utils/sweetAlert';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
@@ -9,8 +8,6 @@ import CreateFacultyPopup from '@/components/form/CreateFacultyPopup';
 
 const Faculty = () => {
     const { faculties = { data: [] }, levelCodes = { data: [] } } = usePage().props;
-
-    console.log('faculties', faculties);
 
     // Données fictives si rien ne vient du backend
     const fakeLevelCodes = [
@@ -146,7 +143,7 @@ const Faculty = () => {
                                     <div className={`faculty-card ${hoveredCard === faculty.id ? 'hovered' : ''}`}>
                                         <div className="faculty-header">
                                             <div>
-                                                <Link href="#" className="faculty-name">
+                                                <Link href={route('dashboard.admin.faculties.show', faculty.id)} className="faculty-name">
                                                     {faculty.name}
                                                 </Link>
                                                 <div className="faculty-code">{faculty.code}</div>
@@ -226,7 +223,7 @@ const Faculty = () => {
                 )}
 
                 {levelEdit && (
-                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel} levelCodes={codesToUse} />
+                    <LevelPopup faculties={faculties} onClose={closeModal} level={selectedLevel} levelCodes={codesToUse} />
                 )}
             </div>
         </Dashboard>

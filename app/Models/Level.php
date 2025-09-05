@@ -5,98 +5,40 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Level extends Model
 {
-    use HasFactory;
-    //
-    protected $table = 'levels';
-
-
     protected $fillable = [
         'faculty_id',
-        'level_code_id',
-        'level_name',
+        'title',
+        'code',
         'description',
         'tag',
-        'is_active',
         'image',
+        'is_active',
     ];
 
+    /**
+     * Détails du niveau (relation 1-1).
+     */
+    public function detail(): HasOne
+    {
+        return $this->hasOne(LevelDetail::class);
+    }
 
     /**
-     * Relation avec la faculté
+     * Conditions d'admission pour ce niveau (relation 1-n).
      */
-    public function faculty(): BelongsTo
+    public function admissionConditions(): HasMany
+    {
+        return $this->hasMany(AdmissionCondition::class);
+    }
+
+    public function faculty()
     {
         return $this->belongsTo(Faculty::class);
     }
 
-    public function details()
-    {
-        return $this->hasOne(LevelDetails::class);
-    }
-
-    public function courses()
-    {
-        return $this->hasMany(Courses::class);
-    }
-
-    public function admissionConditions()
-    {
-        return $this->hasMany(AdmissionConditions::class);
-    }
-
-    public function professors()
-    {
-        return $this->hasMany(Professor::class);
-    }
-
-    public function levelCode()
-{
-    return $this->belongsTo(LevelCode::class, 'level_code_id');
-}
-
-
-    /**
-     * Scope pour filtrer par code de niveau
-     */
-    public function scopeByCode($query, string $code)
-    {
-        return $query->where('level_code_id', $code);
-    }
-
-    /**
-     * Scope pour les niveaux de licence
-     */
-    public function scopeLicence($query)
-    {
-        return $query->where('level_code_id', 'LIKE', 'L%');
-    }
-
-    /**
-     * Scope pour les niveaux de master
-     */
-    public function scopeMaster($query)
-    {
-        return $query->where('level_code_id', 'LIKE', 'M%');
-    }
-
-    public function getImageUrlAttribute(): string
-    {
-        return $this->image
-            ? asset('storage/' . $this->image)
-            : asset('images/default-level.png');
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeInactive(Builder $query): Builder
-    {
-        return $query->where('is_active', false);
-    }
 }

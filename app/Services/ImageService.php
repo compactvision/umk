@@ -30,6 +30,11 @@ class ImageService
         };
     }
 
+    public function delete(string $path): void
+    {
+        Storage::disk('public')->delete($path);
+    }
+
     public function resizeAndStore(
         UploadedFile $image,
         string $path,

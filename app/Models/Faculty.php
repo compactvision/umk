@@ -91,7 +91,7 @@ class Faculty extends Model
 
     public function admissionConditions()
     {
-        return $this->hasMany(AdmissionConditions::class);
+        return $this->hasMany(AdmissionCondition::class);
     }
 
     public function professors()

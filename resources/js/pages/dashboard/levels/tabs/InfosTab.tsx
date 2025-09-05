@@ -1,0 +1,26 @@
+import StatsGrid from '../sections/StatsGrid';
+import IllustrationSection from '../sections/IllustrationSection';
+import DetailsSection from '../sections/DetailsSection';
+
+export default function InfosTab({ levelDataHook, modalsHook }) {
+    return (
+        <div>
+            <StatsGrid 
+                levelData={levelDataHook.levelData}
+                onEdit={modalsHook.openEditModal}
+            />
+            
+            <IllustrationSection
+                levelData={levelDataHook.levelData}
+                onEdit={modalsHook.openEditModal}
+                onPreview={() => modalsHook.setIsImagePreviewOpen(true)}
+            />
+            
+            <DetailsSection
+                levelData={levelDataHook.levelData}
+                onEdit={modalsHook.openEditModal}
+                getFieldValue={levelDataHook.getFieldValue}
+            />
+        </div>
+    );
+}

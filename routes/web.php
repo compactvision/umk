@@ -4,14 +4,16 @@ use App\Modules\Identity\Infrastructure\Http\Controllers\AuthController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\EmailVerificationController;
 use App\Modules\AcademicYear\Infrastructure\Http\Controllers\AcademicYearController;
 use App\Modules\Faculty\Infrastructure\Http\Controllers\FacultyController;
+use App\Modules\Level\Infrastructure\Http\Controllers\LevelController;
 use App\Http\Controllers\EnrollmentController\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
-use App\Http\Controllers\LevelController\LevelController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\SocialAuthController;
+use App\Modules\Level\Infrastructure\Http\Controllers\LevelController as ControllersLevelController;
+use App\Modules\LevelDetail\Infrastructure\Http\Controllers\LevelDetailController;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -141,9 +143,22 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
             Route::get('/{id}', [FacultyController::class, 'show'])->name('show');
             Route::post('/', [FacultyController::class, 'store'])->name('store');
             Route::put('/{id}', [FacultyController::class, 'update'])->name('update');
-            Route::patch('/{id}/open', [FacultyController::class, 'open'])->name('open');
-            Route::patch('/{id}/close', [FacultyController::class, 'close'])->name('close');
             Route::delete('/{id}', [FacultyController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('/levels')->name('levels.')->group(function () {
+            Route::get('/', [LevelController::class, 'index'])->name('index');
+            Route::get('/{id}', [LevelController::class, 'show'])->name('show');
+            Route::post('/', [LevelController::class, 'store'])->name('store');
+            Route::put('/{id}', [LevelController::class, 'update'])->name('update');
+            Route::delete('/{id}', [LevelController::class, 'destroy'])->name('destroy');
+            
+            Route::prefix('/details')->name('details.')->group(function () {
+                Route::get('/{id}', [LevelDetailController::class, 'show'])->name('show');
+                Route::post('/', [LevelDetailController::class, 'store'])->name('store');
+                Route::put('/{id}', [LevelDetailController::class, 'update'])->name('update');
+                Route::delete('/{id}', [LevelDetailController::class, 'destroy'])->name('destroy');
+            });
         });
     });
 

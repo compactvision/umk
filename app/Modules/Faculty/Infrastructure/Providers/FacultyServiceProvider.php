@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Faculty\Providers;
+namespace App\Modules\Faculty\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Modules\Faculty\Domain\Repositories\FacultyRepository;

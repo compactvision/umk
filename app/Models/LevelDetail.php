@@ -3,36 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class LevelDetails extends Model
+class LevelDetail extends Model
 {
-    //
     protected $fillable = [
         'level_id',
         'price',
         'has_certificate',
         'language',
         'duration_years',
-        'credit_required',
         'student_number',
+        'credit_required',
         'courses_number',
         'illustration_image',
         'course_objective',
-        'options',
         'fees',
+        'options',
     ];
 
     protected $casts = [
-        'options' => 'array',
-        'has_certificate' => 'boolean'
+        'has_certificate' => 'boolean',
+        'options' => 'array', // JSON transformé en tableau
     ];
 
     /**
-     * Relation avec le niveau
+     * Le niveau auquel appartiennent ces détails.
      */
-    public function level()
+    public function level(): BelongsTo
     {
         return $this->belongsTo(Level::class);
     }
-
 }

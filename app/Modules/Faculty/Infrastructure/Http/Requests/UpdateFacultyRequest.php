@@ -16,8 +16,8 @@ class UpdateFacultyRequest extends FormRequest
         $facultyId = $this->route('faculty'); // récupère l'id depuis la route
 
         return [
-            'name'           => "required|string|max:255|unique:faculties,name,$facultyId",
-            'code'           => "required|string|max:10|unique:faculties,code,$facultyId",
+            'name'           => "required|string|max:255",
+            'code'           => "required|string|max:10",
             'description'    => 'nullable|string|max:1000',
             'duration_years' => 'required|integer|min:1|max:10',
             'is_active'      => 'boolean',

@@ -42,17 +42,21 @@ final class FacultyController extends Controller
 
     public function update(UpdateFacultyRequest $request, int $id, UpdateFaculty $updateFaculty)
     {
-        $updateFaculty->execute(
-            $id,
-            $request->validated()['name'],
-            $request->validated()['code'],
-            $request->validated()['description'],
+        try {
+            $updateFaculty->execute(
+                $id,
+                $request->validated()['name'],
+                $request->validated()['code'],
+                $request->validated()['description'],
             (int) $request->validated()['duration_years'],
             (bool) $request->validated()['is_active']
         );
 
-        return redirect()->route('dashboard.faculties.index')
+        return redirect()->route('dashboard.admin.faculties.index')
             ->with('success', 'Faculté mise à jour avec succès.');
+        } catch (DuplicateFacultyException $e) {
+            return back()->withErrors(['general' => $e->getMessage()]);
+        }
     }
 
 
@@ -69,5 +73,20 @@ final class FacultyController extends Controller
         return redirect()
             ->route('dashboard.admin.faculties.index')
             ->with('success', 'Faculté supprimée avec succès.');
+    }
+
+    public function show(int $id, FacultyRepository $repository)
+    {
+        $faculty = $repository->findById($id);
+        $faculties = $repository->paginate(6);
+
+        if (!$faculty) {
+            return back()->withErrors(['general' => 'Faculté introuvable.']);
+        }
+
+        return Inertia::render('dashboard/faculties/Show', [
+            'faculty' => $faculty,
+            'faculties' => $faculties,
+        ]);
     }
 }

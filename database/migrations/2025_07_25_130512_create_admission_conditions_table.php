@@ -13,13 +13,20 @@ return new class extends Migration
     {
         Schema::create('admission_conditions', function (Blueprint $table) {
             $table->id();
+        
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('level_id')->nullable()->constrained()->onDelete('cascade');
+        
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('section', ['personal_info', 'academic_info', 'other']);
+        
+            $table->enum('section', ['personal_info', 'academic_info', 'other']); 
+        
+            $table->boolean('is_required')->default(true);
+        
             $table->timestamps();
         });
+        
     }
 
     /**
