@@ -4,6 +4,7 @@ import {
 import { formatValue, getFieldLabel } from '../utils/levelUtils';
 
 export default function StatsGrid({ levelData, onEdit }) {
+    console.log("...",levelData)
     const stats = [
         {
             field: 'level_code',
@@ -13,48 +14,48 @@ export default function StatsGrid({ levelData, onEdit }) {
         },
         {
             field: 'details.credit_required',
-            value: formatValue(levelData.details.credit_required),
+            value: formatValue(levelData.credit_required),
             icon: <BookOpen size={24} />,
             color: 'blue',
         },
         {
             field: 'semestres',
-            value: levelData.details.duration_years && levelData.details.duration_years > 0 
-                ? levelData.details.duration_years * 2 
+            value: levelData.duration_years && levelData.duration_years > 0 
+                ? levelData.duration_years * 2 
                 : 'Non défini',
             icon: <Clock size={24} />,
             color: 'green',
         },
         {
             field: 'details.duration_years',
-            value: formatValue(levelData.details.duration_years),
+            value: formatValue(levelData.duration_years),
             icon: <Clock size={24} />,
             color: 'orange',
         },
         {
             field: 'details.courses_number',
-            value: formatValue(levelData.details.courses_number),
+            value: formatValue(levelData.courses_number),
             icon: <GraduationCap size={24} />,
             color: 'red',
         },
         {
             field: 'details.price',
-            value: levelData.details.price && levelData.details.price > 0 
-                ? `${levelData.details.price} $` 
+            value: levelData.price && levelData.price > 0 
+                ? `${levelData.price} $` 
                 : 'Prix non fixé',
             icon: <DollarSign size={24} />,
             color: 'green',
         },
         {
             field: 'details.student_number',
-            value: formatValue(levelData.details.student_number),
+            value: formatValue(levelData.student_number),
             icon: <MapPin size={24} />,
             color: 'blue',
         },
         {
             field: 'details.fees',
-            value: levelData.details.fees && levelData.details.fees > 0 
-                ? `${levelData.details.fees} $` 
+            value: levelData.fees && levelData.fees > 0 
+                ? `${levelData.fees} $` 
                 : 'Frais non fixé',
             icon: <DollarSign size={24} />,
             color: 'green',

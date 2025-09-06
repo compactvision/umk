@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Level;
+namespace App\Modules\Level\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,22 +22,23 @@ class StoreLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'faculty_id' => 'required',
-            'title' => 'required|string',
-            'code' => 'required|exists:level_codes,id',
-            'description' => 'nullable|string',
-            'image' => 'required|image|max:3020'
+            'faculty_id'   => 'required|exists:faculties,id',
+            'title'        => 'required|string|max:255',
+            'code'         => 'required|string|max:10',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tag'          => 'nullable|string|max:50',
+            'description'  => 'nullable|string',
+            'is_active'    => 'nullable|boolean',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
           'faculty_id.required' => 'La faculté est obligatoire.',
           'title.required' => 'Le nom du niveau est obligatoire.',
           'code.required' => 'Le code du niveau est obligatoire.',
           'code.exists' => 'Le code du niveau n\'existe pas.',
-          'image.required' => 'L\'image est obligatoire.',
           'image.image' => 'L\'image doit être une image.',
           'image.max' => 'L\'image doit peser moins de 3 Mo.',
         ];

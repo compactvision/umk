@@ -1,10 +1,9 @@
 import { Building, Award, User, Target, Edit3 } from 'lucide-react';
-import { formatOptionsForDisplay } from '../utils/levelUtils';
 
 export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
     const formatOptions = () => {
         try {
-            const options = levelData.details.options;
+            const options = levelData.options;
             if (!options) return 'Aucune opportunité définie';
             
             if (typeof options === 'string') {
@@ -30,7 +29,7 @@ export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
             return 'Aucune opportunité définie';
         } catch (error) {
             console.warn('Erreur lors du parsing des options:', error);
-            return levelData.details.options?.toString() || 'Aucune opportunité définie';
+            return levelData.options?.toString() || 'Aucune opportunité définie';
         }
     };
 
@@ -38,13 +37,13 @@ export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
         {
             field: 'details.language',
             label: "Langue d'enseignement",
-            value: levelData.details.language || 'Non spécifiée',
+            value: levelData.language || 'Non spécifiée',
             icon: <Building size={20} />,
         },
         {
             field: 'details.has_certificate',
             label: 'Délivrance de certificat',
-            value: levelData.details.has_certificate ? 'Oui' : 'Non',
+            value: levelData.has_certificate ? 'Oui' : 'Non',
             icon: <Award size={20} />,
         },
         {
@@ -56,7 +55,7 @@ export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
         {
             field: 'details.course_objective',
             label: 'Objectifs du cours',
-            value: levelData.details.course_objective || 'Aucun objectif défini',
+            value: levelData.course_objective || 'Aucun objectif défini',
             icon: <Target size={20} />,
         },
     ];

@@ -34,6 +34,7 @@ final class LevelDetailController extends Controller
                 // Relations
                 'level_title' => $levelDetail->levelTitle(),
                 'level_code' => $levelDetail->levelCode(),
+                'level_description' => $levelDetail->levelDescription(),
                 'faculty_name' => $levelDetail->facultyName(),
                 'faculty_code' => $levelDetail->facultyCode(),
             ],
@@ -60,9 +61,9 @@ final class LevelDetailController extends Controller
         $createDetail->execute(
             $validated['level_id'],
             $validated['price'] ?? null,
-            $validated['has_certificate'],
+            $validated['has_certificate'] ?? true,
             $validated['language'] ?? null,
-            $validated['duration_years'],
+            $validated['duration_years'] ?? null,
             $validated['student_number'] ?? null,
             $validated['credit_required'] ?? null,
             $validated['courses_number'] ?? null,
@@ -76,29 +77,32 @@ final class LevelDetailController extends Controller
     }
 
     public function update(Request $request, int $id, UpdateLevelDetail $updateDetail)
-    {
+    { 
+        // dd($request->all());
         $validated = $request->validate([
-            'level_id'        => ['required', 'exists:levels,id'],
-            'price'           => ['nullable', 'numeric'],
-            'has_certificate' => ['required', 'boolean'],
-            'language'        => ['nullable', 'string', 'max:50'],
-            'duration_years'  => ['required', 'integer'],
-            'student_number'  => ['nullable', 'integer'],
-            'credit_required' => ['nullable', 'integer'],
-            'courses_number'  => ['nullable', 'integer'],
-            'illustration_image' => ['nullable', 'string'],
-            'course_objective'=> ['nullable', 'string'],
-            'fees'            => ['nullable', 'integer'],
-            'options'         => ['nullable', 'array'],
+            'level_id'               => ['nullable', 'exists:levels,id'],
+            'details.price'          => ['nullable', 'numeric'],
+            'details.has_certificate'=> ['nullable'],
+            'details.language'       => ['nullable', 'string', 'max:50'],
+            'details.duration_years' => ['nullable', 'integer'],
+            'details.student_number' => ['nullable', 'integer'],
+            'details.credit_required'=> ['nullable', 'integer'],
+            'details.courses_number' => ['nullable', 'integer'],
+            'details.illustration_image' => ['nullable', 'string'],
+            'details.course_objective'=> ['nullable', 'string'],
+            'details.fees'           => ['nullable', 'integer'],
+            'details.options'        => ['nullable', 'array'],
         ]);
+        
 
+        
         $updateDetail->execute(
             $id,
             $validated['level_id'],
             $validated['price'] ?? null,
-            $validated['has_certificate'],
+            $validated['has_certificate'] ?? null,
             $validated['language'] ?? null,
-            $validated['duration_years'],
+            $validated['duration_years'] ?? null,
             $validated['student_number'] ?? null,
             $validated['credit_required'] ?? null,
             $validated['courses_number'] ?? null,

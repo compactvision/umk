@@ -6,18 +6,18 @@ export default function InfosTab({ levelDataHook, modalsHook }) {
     return (
         <div>
             <StatsGrid 
-                levelData={levelDataHook.levelData}
+                levelData={levelDataHook.detailsData}
                 onEdit={modalsHook.openEditModal}
             />
             
             <IllustrationSection
-                levelData={levelDataHook.levelData}
+                levelData={levelDataHook.detailsData}
                 onEdit={modalsHook.openEditModal}
                 onPreview={() => modalsHook.setIsImagePreviewOpen(true)}
             />
             
             <DetailsSection
-                levelData={levelDataHook.levelData}
+                levelData={levelDataHook.detailsData}
                 onEdit={modalsHook.openEditModal}
                 getFieldValue={levelDataHook.getFieldValue}
             />

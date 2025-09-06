@@ -21,6 +21,7 @@ final class LevelDetail
         // relations
         private ?string $levelTitle = null,
         private ?string $levelCode = null,
+        private ?string $levelDescription = null,
         private ?string $facultyName = null,
         private ?string $facultyCode = null
     ) {}
@@ -42,4 +43,5 @@ final class LevelDetail
     public function levelTitle(): ?string { return $this->levelTitle; }
     public function levelCode(): ?string { return $this->levelCode; }
     public function facultyCode(): ?string { return $this->facultyCode; }
+    public function levelDescription(): ?string { return $this->levelDescription; }
 }

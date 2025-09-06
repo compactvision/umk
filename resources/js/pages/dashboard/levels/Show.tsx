@@ -13,8 +13,10 @@ export default function LevelShow() {
     const [isAnimating, setIsAnimating] = useState(false);
     const { level, levelDetail } = usePage().props;
 
-    const levelDataHook = useLevelData(level);
-    const modalsHook = useLevelModals(level);
+    console.log("Com", levelDetail)
+
+    const levelDataHook = useLevelData(levelDetail);
+    const modalsHook = useLevelModals(levelDetail);
 
     useEffect(() => {
         setIsAnimating(true);
@@ -26,7 +28,7 @@ export default function LevelShow() {
         <Dashboard>
             <div className="level-page">
                 <LevelHero 
-                    levelData={levelDataHook.levelData} 
+                    levelData={levelDataHook.detailsData} 
                     levelDetail={levelDetail} 
                 />
                 

@@ -13,6 +13,7 @@ use App\Modules\AcademicYear\Application\UseCases\UpdateAcademicYear;
 use App\Modules\AcademicYear\Domain\Exceptions\DuplicateAcademicYearException;
 use App\Modules\AcademicYear\Domain\Repositories\AcademicYearRepository;
 use App\Modules\AcademicYear\Infrastructure\Http\Requests\CreateAcademicYearRequest;
+use App\Modules\AcademicYear\Infrastructure\Http\Requests\UpdateAcademicYearRequest;
 use App\Modules\AcademicYear\Infrastructure\Http\Resources\AcademicYearResource;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -63,25 +64,21 @@ class AcademicYearController extends Controller
         }
     }
 
-    public function update(int $id, Request $request, UpdateAcademicYear $updateAcademicYear)
+    public function update(int $id, UpdateAcademicYearRequest $request, UpdateAcademicYear $updateAcademicYear)
     {
         try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255|unique:academic_years,title,' . $id,
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
-            ]);
+            $validated = $request->validated(); 
 
-        $updateAcademicYear->execute(
-            $id,
-            $validated['title'],
-            new \DateTimeImmutable($validated['start_date']),
-            new \DateTimeImmutable($validated['end_date'])
-        );
+            $updateAcademicYear->execute(
+                $id,
+                $validated['title'],
+                new \DateTimeImmutable($validated['start_date']),
+                new \DateTimeImmutable($validated['end_date'])
+            );
 
-        return redirect()
-            ->route('dashboard.admin.academic-years.index')
-            ->with('success', 'Année académique mise à jour avec succès.');
+            return redirect()
+                ->route('dashboard.admin.academic-years.index')
+                ->with('success', 'Année académique mise à jour avec succès.');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
         }

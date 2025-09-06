@@ -1,3 +1,6 @@
+import Alert from "@/utils/sweetAlert";
+import { router } from "@inertiajs/react";
+
 export const safeJsonParse = (data, fallback = []) => {
     if (!data) return fallback;
     if (Array.isArray(data)) return data;
@@ -111,3 +114,28 @@ export const CONDITION_TYPES = [
     { value: 'academic_info', label: 'Informations académiques' },
     { value: 'other', label: 'Autre' }
 ];
+
+export function saveLevel(levelId, levelDataHook) {
+    const formData = new FormData();
+  
+    Object.entries(levelDataHook.data).forEach(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([k, v]) => {
+          // pour les fichiers
+          if (v instanceof File) {
+            formData.append(`${key}[${k}]`, v);
+          } else {
+            formData.append(`${key}[${k}]`, v ?? '');
+          }
+        });
+      } else {
+        formData.append(key, value ?? '');
+      }
+    });
+  
+    router.post(route('dashboard.admin.levels.details.update', levelId), formData, {
+      forceFormData: true,
+      onSuccess: () => Alert.success('Mise à jour réussie'),
+      onError: () => Alert.error('Erreur lors de la mise à jour'),
+    });
+  }

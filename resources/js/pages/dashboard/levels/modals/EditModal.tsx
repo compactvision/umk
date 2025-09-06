@@ -10,8 +10,10 @@ export default function EditModal({
 }) {
     if (!isOpen) return null;
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(levelDataHook);
         onSave(levelDataHook);
     };
 
@@ -37,7 +39,7 @@ export default function EditModal({
                     <textarea
                         className="modal__textarea"
                         value={levelDataHook.getFieldValue(editField) || ''}
-                        onChange={(e) => levelDataHook.updateNestedField(editField, e.target.value)}
+                        onChange={(e) => levelDataHook.updateField(editField, e.target.value)}
                         placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
                         rows={editField === 'details.course_objective' ? 6 : 4}
                     />
@@ -55,7 +57,7 @@ export default function EditModal({
                         onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                                levelDataHook.updateNestedField(editField, file);
+                                levelDataHook.updateField(editField, file);
                             }
                         }}
                     />
@@ -105,7 +107,7 @@ export default function EditModal({
                             : numericFields.includes(editField)
                               ? parseInt(e.target.value) || 0
                               : e.target.value;
-                    levelDataHook.updateNestedField(editField, value);
+                    levelDataHook.updateField(editField, value);
                 }}
                 placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
                 min={numericFields.includes(editField) ? '0' : undefined}

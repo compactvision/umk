@@ -1,7 +1,7 @@
 import { ImageIcon as ImageIcon, Eye, Edit3, Upload } from 'lucide-react';
 
 export default function IllustrationSection({ levelData, onEdit, onPreview }) {
-    if (levelData.details.illustration_image) {
+    if (levelData.illustration_image) {
         return (
             <div className="illustration-section">
                 <div className="illustration-section__header">
@@ -18,7 +18,7 @@ export default function IllustrationSection({ levelData, onEdit, onPreview }) {
                             Aperçu complet
                         </button>
                         <button
-                            onClick={() => onEdit('details.illustration_image', levelData.details.illustration_image)}
+                            onClick={() => onEdit('details.illustration_image', levelData.illustration_image)}
                             className="illustration-section__btn illustration-section__btn--edit"
                         >
                             <Edit3 size={16} />
@@ -29,7 +29,7 @@ export default function IllustrationSection({ levelData, onEdit, onPreview }) {
                 <div className="illustration-container">
                     <div className="illustration-wrapper">
                         <img
-                            src={`/storage/${levelData.details.illustration_image}`}
+                            src={`/storage/${levelData.illustration_image}`}
                             alt="Illustration du programme"
                             className="illustration-image"
                         />

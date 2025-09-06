@@ -33,9 +33,45 @@ export function useLevelModals(level) {
     };
 
     const saveEdit = (levelDataHook) => {
-        setIsEditModalOpen(false);
-        return levelDataHook.saveEdit(editField);
+        if (!levelDataHook || !levelDataHook.levelData) {
+            console.error("❌ levelDataHook ou levelData est undefined !");
+            return;
+        }
+    
+        const formData = new FormData();
+    
+        Object.entries(levelDataHook.levelData).forEach(([key, value]) => {
+            if (typeof value === "object" && value !== null && !(value instanceof File)) {
+                Object.entries(value).forEach(([k, v]) => {
+                    formData.append(`${key}[${k}]`, v ?? "");
+                });
+            } else {
+                formData.append(key, value ?? "");
+            }
+        });
+    
+        // debug pour vérifier
+        for (const [key, value] of formData.entries()) {
+            console.log("✅", key, value);
+        }
+    
+        // ⚡ bien utiliser POST + _method=PUT
+        formData.append("_method", "PUT");
+    
+        router.post(route("dashboard.admin.levels.details.update", level.id), formData, {
+            forceFormData: true,
+            onSuccess: () => {
+                Alert.success("Niveau mis à jour avec succès");
+                setIsEditModalOpen(false);
+            },
+            onError: (errors) => {
+                Alert.error("Erreur lors de la mise à jour du niveau");
+                console.error("Erreur update level:", errors);
+            },
+        });
     };
+    
+    
 
     const openConditionModal = (mode, conditionId = null, condition = null) => {
         setConditionMode(mode);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Level;
+namespace App\Modules\Level\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,29 +22,28 @@ class UpdateLevelRequest extends FormRequest
      */
     public function rules(): array
     {
-        $levelId  = $this->route('level')->id;
         return [
             //
-            'level_name' => ['required', 'string'],
-            'level_code_id' => ['required', Rule::exists('level_codes', 'id')->where('id', '!=', $levelId)],
-            'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'image', 'max:3020'],
-            'faculty_id' => ['required', Rule::exists('faculties', 'id')->where('id', '!=', $levelId)],
-            'tag' => ['nullable', 'string'],
+            'faculty_id'   => 'required|exists:faculties,id',
+            'title'        => 'required|string|max:255',
+            'code'         => 'required|string|max:10',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tag'          => 'nullable|string|max:50',
+            'description'  => 'nullable|string',
+            'is_active'    => 'nullable|boolean',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'level_name.required' => 'Le nom du niveau est requis',
-            'level_code_id.required' => 'Le code du niveau est requis',
-            'description.string' => 'La description doit être une chaîne de caractères',
-            'image.image' => 'Le fichier doit être une image',
-            'image.max' => 'La taille de l\'image ne peut pas excéder 3020 kilobytes',
             'faculty_id.required' => 'La faculté est requise',
             'faculty_id.exists' => 'La faculté n\'existe pas',
-            'tag.string' => 'Le tag doit être une chaîne de caractères',
+            'title.required' => 'Le nom du niveau est obligatoire.',
+            'code.required' => 'Le code du niveau est obligatoire.',
+            'code.unique' => 'Le code du niveau existe déjà.',
+            'image.image' => 'L\'image doit être une image.',
+            'image.max' => 'L\'image doit peser moins de 3 Mo.',
         ];
     }
 }

@@ -39,27 +39,27 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
     }
 
     public function findByLevelId(int $levelId): ?LevelDetail
-{
-    $model = LevelDetailModel::with(['level.faculty'])
-        ->firstOrCreate(
-            ['level_id' => $levelId],
-            [
-                'price' => 0,
-                'has_certificate' => false,
-                'language' => null,
-                'duration_years' => 1,
-                'student_number' => 0,
-                'credit_required' => null,
-                'courses_number' => 0,
-                'illustration_image' => null,
-                'course_objective' => null,
-                'fees' => 0,
-                'options' => null,
-            ]
-        );
+    {
+        $model = LevelDetailModel::with(['level.faculty'])
+            ->firstOrCreate(
+                ['level_id' => $levelId],
+                [
+                    'price' => 0,
+                    'has_certificate' => false,
+                    'language' => null,
+                    'duration_years' => 1,
+                    'student_number' => 0,
+                    'credit_required' => null,
+                    'courses_number' => 0,
+                    'illustration_image' => null,
+                    'course_objective' => null,
+                    'fees' => 0,
+                    'options' => null,
+                ]
+            );
 
-    return $this->mapToEntity($model);
-}
+        return $this->mapToEntity($model);
+    }
 
 
     public function delete(int $id): void
@@ -68,27 +68,28 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
     }
 
     private function mapToEntity(LevelDetailModel $model): LevelDetail
-{
-    return new LevelDetail(
-        $model->id,
-        $model->level_id,
-        $model->price,
-        (bool) $model->has_certificate,
-        $model->language,
-        $model->duration_years,
-        $model->student_number,
-        $model->credit_required,
-        $model->courses_number,
-        $model->illustration_image,
-        $model->course_objective,
-        $model->fees,
-        $model->options ? json_decode($model->options, true) : [],
-        // Relations
-        $model->level?->title,
-        $model->level?->code,
-        $model->level?->faculty?->name,
-        $model->level?->faculty?->code,
-    );
-}
+    {
+        return new LevelDetail(
+            $model->id,
+            $model->level_id,
+            $model->price,
+            (bool) $model->has_certificate,
+            $model->language,
+            $model->duration_years,
+            $model->student_number,
+            $model->credit_required,
+            $model->courses_number,
+            $model->illustration_image,
+            $model->course_objective,
+            $model->fees,
+            $model->options ? json_decode($model->options, true) : [],
+            // Relations
+            $model->level?->title,
+            $model->level?->code,
+            $model->level?->description,
+            $model->level?->faculty?->name,
+            $model->level?->faculty?->code,
+        );
+    }
 
 }

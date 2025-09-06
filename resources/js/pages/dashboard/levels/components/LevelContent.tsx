@@ -62,11 +62,12 @@ export default function LevelContent({
                 onClose={() => modalsHook.setIsConditionModalOpen(false)}
                 onSave={modalsHook.saveCondition}
                 setConditionData={modalsHook.setConditionData}
+                conditionProcessing={modalsHook.conditionProcessing}
             />
 
             <ImagePreviewModal
                 isOpen={modalsHook.isImagePreviewOpen}
-                imageSrc={levelDataHook.levelData.details.illustration_image}
+                imageSrc={levelDataHook.detailsData.illustration_image}
                 onClose={() => modalsHook.setIsImagePreviewOpen(false)}
             />
         </>

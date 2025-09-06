@@ -3,6 +3,8 @@
 namespace App\Modules\Level\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Level\Infrastructure\Http\Requests\UpdateLevelRequest;
+use App\Modules\Level\Infrastructure\Http\Requests\StoreLevelRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Modules\Level\Application\UseCases\CreateLevel;
@@ -28,17 +30,9 @@ final class LevelController extends Controller
         ]);
     }
 
-    public function store(Request $request, CreateLevel $createLevel)
+    public function store(StoreLevelRequest $request, CreateLevel $createLevel)
     {
-        $validated = $request->validate([
-            'faculty_id'   => 'required|exists:faculties,id',
-            'title'        => 'required|string|max:255',
-            'code'         => 'required|string|max:10',
-            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'tag'          => 'nullable|string|max:50',
-            'description'  => 'nullable|string',
-            'is_active'    => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         try {
             $createLevel->execute(
@@ -64,17 +58,9 @@ final class LevelController extends Controller
         }
     }
 
-    public function update(Request $request, int $id, UpdateLevel $updateLevel)
+    public function update(UpdateLevelRequest $request, int $id, UpdateLevel $updateLevel)
     {
-        $validated = $request->validate([
-            'faculty_id'   => 'required|exists:faculties,id',
-            'title'        => 'required|string|max:255',
-            'code'         => 'required|string|max:10',
-            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'tag'          => 'nullable|string|max:50',
-            'description'  => 'nullable|string',
-            'is_active'    => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         try {
             $updateLevel->execute(

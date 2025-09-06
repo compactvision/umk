@@ -29,18 +29,16 @@ export default function LevelPopup({ onClose, faculties, level = null, levelCode
     const handleImageChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
-            // ✅ Vérifier la taille du fichier (2MB max)
             if (file.size > 2048 * 1024) {
                 Alert.error("L'image ne doit pas dépasser 2MB");
-                e.target.value = ''; // Reset input
+                e.target.value = ''; 
                 return;
             }
 
-            // ✅ Vérifier le type de fichier
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
                 Alert.error("Seuls les fichiers JPG, PNG et WebP sont autorisés");
-                e.target.value = ''; // Reset input
+                e.target.value = ''; 
                 return;
             }
 
@@ -71,54 +69,72 @@ export default function LevelPopup({ onClose, faculties, level = null, levelCode
     const saveLevel = (e) => {
         e.preventDefault();
 
-        // ✅ Préparer les données pour l'envoi
-        const payload = { ...data };
-        
-        // Si pas d'image uploadée, ne pas envoyer le champ image
-        if (!data.image) {
-            delete payload.image;
-        }
-
-        // ✅ Options pour Inertia
-        const options = {
-            forceFormData: true, // Important pour les fichiers
-            onSuccess: (response) => {
-                console.log('Réponse de succès:', response);
-                
-                // Afficher le message de succès
-                Alert.success(isEditMode ? "Niveau modifié avec succès !" : "Niveau créé avec succès !");
-                
-                // Reset du formulaire
-                reset();
-                clearErrors();
-                setImagePreview(null);
-                
-                // Fermer le popup
-                onClose();
-                
-                // Recharger la liste des niveaux
-                router.reload({ only: ['levels'] });
-            },
-            onError: (errors) => {
-                console.error('Erreurs de validation:', errors);
-                
-                // Si c'est une erreur de validation Laravel
-                if (errors && typeof errors === 'object') {
-                    // Les erreurs sont déjà gérées par useForm
-                    Alert.error("Veuillez corriger les erreurs du formulaire");
-                } else {
-                    Alert.error(isEditMode ? "Impossible de modifier ce niveau" : "Impossible de créer ce niveau");
-                }
-            },
-            onFinish: () => {
-                console.log('Requête terminée');
-            }
-        };
-
         if (isEditMode) {
-            put(route('dashboard.admin.levels.update', level.id), options);
+            const formData = new FormData();
+            
+            formData.append('faculty_id', data.faculty_id);
+            formData.append('title', data.title);
+            formData.append('code', data.code);
+            formData.append('tag', data.code || '');
+            formData.append('description', data.description);
+            formData.append('is_active', data.is_active ? '1' : '0');
+            
+            if (data.image instanceof File) {
+                formData.append('image', data.image);
+            }
+            
+            formData.append('_method', 'PUT');
+
+            console.log('🔍 FormData pour UPDATE:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+
+            router.post(route('dashboard.admin.levels.update', level.id), formData, {
+                forceFormData: true,
+                onSuccess: (response) => {
+                    Alert.success("Niveau modifié avec succès !");
+                    reset();
+                    clearErrors();
+                    setImagePreview(null);
+                    onClose();
+                    router.reload({ only: ['levels'] });
+                },
+                onError: (errors) => {
+                    console.error('❌ Erreurs UPDATE:', errors);
+                    Alert.error(errors.code);
+                },
+                onFinish: () => {
+                    console.log('🏁 Update terminé');
+                }
+            });
+
         } else {
-            post(route('dashboard.admin.levels.store'), options);
+            const payload = { ...data };
+            
+            if (!data.image) {
+                delete payload.image;
+            }
+
+            post(route('dashboard.admin.levels.store'), {
+                forceFormData: true,
+                data: payload,
+                onSuccess: (response) => {
+                    Alert.success("Niveau créé avec succès !");
+                    reset();
+                    clearErrors();
+                    setImagePreview(null);
+                    onClose();
+                    router.reload({ only: ['levels'] });
+                },
+                onError: (errors) => {
+                    console.error('❌ Erreurs CREATE:', errors);
+                    Alert.error("Veuillez corriger les erreurs du formulaire");
+                },
+                onFinish: () => {
+                    console.log('🏁 Create terminé');
+                }
+            });
         }
     };
 
@@ -129,6 +145,10 @@ export default function LevelPopup({ onClose, faculties, level = null, levelCode
                     <h2 className="popup__title">🎓 {isEditMode ? "Modifier ce niveau" : "Ajouter un Niveau"}</h2>
                     <button className="popup__close" onClick={handleClose}>×</button>
                 </div>
+
+                {errors.code && (
+                    <ErrorText error={errors.code} />
+                )}
 
                 <form onSubmit={saveLevel} className="popup__content">
                     <div className="popup__sidebar">

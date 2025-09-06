@@ -1,6 +1,7 @@
 import { Building } from 'lucide-react';
 
 export default function LevelHero({ levelData, levelDetail }) {
+    console.log(levelData, levelDetail)
     return (
         <div className="level-hero">
             <div className="level-hero__overlay"></div>
@@ -16,10 +17,10 @@ export default function LevelHero({ levelData, levelDetail }) {
                         <span>{levelDetail?.faculty_name || levelDetail.faculty_name}</span>
                     </div>
                     <h1 className="level-hero__title">
-                        {levelData.level_name || 'Nom du niveau non défini'}
+                        {levelDetail.level_title || 'Nom du niveau non défini'}
                     </h1>
                     <p className="level-hero__description">
-                        {levelData.description || 'Description non disponible'}
+                        {levelDetail.level_description || 'Description non disponible'}
                     </p>
                 </div>
             </div>

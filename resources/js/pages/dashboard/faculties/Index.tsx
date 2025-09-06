@@ -64,7 +64,7 @@ const Faculty = () => {
     };
 
     const viewLevel = (level: any) => {
-        // router.visit(route('dashboard.levels.show', level))
+        router.visit(route('dashboard.admin.levels.show', level))
     };
 
     const editLevel = (level: any) => {
@@ -77,7 +77,7 @@ const Faculty = () => {
         if (!confirmed) return;
 
         Alert.loading('Suppression en cours...');
-        router.delete(`/dashboard/levels/${levelId}`, {
+        router.delete(route('dashboard.admin.levels.destroy', levelId), {
             onSuccess: () => {
                 Alert.success('Niveau supprimé avec succès.');
                 closeModal();
