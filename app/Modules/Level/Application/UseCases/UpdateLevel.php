@@ -56,8 +56,8 @@ final class UpdateLevel
                 $imagePath = $this->imageService->resizeAndStore(
                     $image,
                     'levels',
-                    600,
-                    400
+                    820,
+                    460
                 );
             } catch (\Exception $e) {
                 Log::error('Erreur upload image niveau (update):', [

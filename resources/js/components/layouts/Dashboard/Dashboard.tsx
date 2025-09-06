@@ -12,8 +12,6 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
     const { props } = usePage();
     const user = props.auth?.user;
 
-    console.log("R", user?.roles)
-
     useEffect(() => {
         const handleResize = () => {
             const newIsMobile = window.innerWidth <= 768;

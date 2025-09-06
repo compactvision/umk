@@ -1,6 +1,7 @@
 import { Building, Award, User, Target, Edit3 } from 'lucide-react';
 
 export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
+    console.log("detailssect", levelData)
     const formatOptions = () => {
         try {
             const options = levelData.options;
@@ -35,25 +36,25 @@ export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
 
     const details = [
         {
-            field: 'details.language',
+            field: 'language',
             label: "Langue d'enseignement",
             value: levelData.language || 'Non spécifiée',
             icon: <Building size={20} />,
         },
         {
-            field: 'details.has_certificate',
+            field: 'has_certificate',
             label: 'Délivrance de certificat',
             value: levelData.has_certificate ? 'Oui' : 'Non',
             icon: <Award size={20} />,
         },
         {
-            field: 'details.options',
+            field: 'options',
             label: 'Opportunités professionnelles',
             value: formatOptions(),
             icon: <User size={20} />,
         },
         {
-            field: 'details.course_objective',
+            field: 'course_objective',
             label: 'Objectifs du cours',
             value: levelData.course_objective || 'Aucun objectif défini',
             icon: <Target size={20} />,

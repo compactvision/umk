@@ -82,7 +82,7 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
             $model->illustration_image,
             $model->course_objective,
             $model->fees,
-            $model->options ? json_decode($model->options, true) : [],
+            $model->options ??  [],
             // Relations
             $model->level?->title,
             $model->level?->code,

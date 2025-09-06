@@ -9,14 +9,14 @@ export default function CoursShow() {
     console.log(course)
     return (
         <App>
-            <Breadcumb title={course?.faculty?.name || 'N/A'} desc={course?.level_name || 'N/A'} />
+            <Breadcumb title={course?.faculty?.name || 'N/A'} desc={course?.name || 'N/A'} />
 
             <section className="course-single pt-120 pb-120">
                 <div className="container">
                     <div className="course-single-image">
                         <img 
                             src={course?.details?.illustration_image ? `/storage/${course.details.illustration_image}` : '/assets/img/default-course.png'} 
-                            alt={course?.level_name || 'Course'} 
+                            alt={course?.name || 'Course'} 
                         />
                     </div>
                     <div className="row mt-none-30 flex-row-reverse">
@@ -25,7 +25,7 @@ export default function CoursShow() {
                                 <div className="course-sidebar__video pos-rel">
                                     <img 
                                         src={course?.image ? `/storage/${course.image}` : '/assets/img/default-course.png'} 
-                                        alt={course?.level_name || 'Course'} 
+                                        alt={course?.name || 'Course'} 
                                     />
                                     <a className="btn-video btn-video-center popup-video" href="https://www.youtube.com/watch?v=cRXm1p-CNyk">
                                         <Play size={16} />
@@ -139,7 +139,7 @@ export default function CoursShow() {
                                     </div>
                                     <div className="course-meta-item mt-30">
                                         <span className="xb-item--title">Code niveau</span>
-                                        <h3 className="xb-item--desig">{course?.level_code.code || 'N/A'}</h3>
+                                        <h3 className="xb-item--desig">{course?.code.code || 'N/A'}</h3>
                                     </div>
                                     <div className="course-meta-item mt-30">
                                         <span className="xb-item--title">Avis</span>
@@ -163,7 +163,7 @@ export default function CoursShow() {
                                     </div>
                                 </div>
                                 <h2>
-                                    {course?.level_name || 'N/A'}, {course?.faculty?.name || 'N/A'}
+                                    {course?.name || 'N/A'}, {course?.faculty?.name || 'N/A'}
                                 </h2>
                                 <h3>Description du cours</h3>
                                 <p>{course?.faculty?.description || 'Aucune description disponible.'}</p>
@@ -248,7 +248,7 @@ export default function CoursShow() {
                                                 <Link href={route('courseShow', l?.id)}>
                                                     <img 
                                                         src={l?.image ? `/storage/${l.image}` : '/assets/img/default-course.png'} 
-                                                        alt={l?.level_name || 'Course'} 
+                                                        alt={l?.name || 'Course'} 
                                                     />
                                                 </Link>
                                             </div>
@@ -260,7 +260,7 @@ export default function CoursShow() {
                                                     </div>
                                                 </div>
                                                 <h2 className="xb-item--title border-effect-2">
-                                                    <Link href={route('courseShow', l?.id)}>{l?.level_name || 'N/A'}</Link>
+                                                    <Link href={route('courseShow', l?.id)}>{l?.name || 'N/A'}</Link>
                                                 </h2>
                                                 <ul className="xb-item--meta ul_li">
                                                     <li>

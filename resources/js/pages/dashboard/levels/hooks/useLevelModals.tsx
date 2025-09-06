@@ -40,15 +40,37 @@ export function useLevelModals(level) {
     
         const formData = new FormData();
     
-        Object.entries(levelDataHook.levelData).forEach(([key, value]) => {
-            if (typeof value === "object" && value !== null && !(value instanceof File)) {
+        Object.entries(levelDataHook.detailsData).forEach(([key, value]) => {
+            if (value instanceof File) {
+                formData.append(key, value);
+            } else if (key === "illustration_image") {
+                // on saute l'ancien chemin (string) → pas envoyé
+                return;
+            } else if (key === "has_certificate") {
+                // on force en entier 1 ou 0
+                formData.append(key, value ? 1 : 0);
+            } else if (typeof value === "object" && value !== null) {
                 Object.entries(value).forEach(([k, v]) => {
                     formData.append(`${key}[${k}]`, v ?? "");
                 });
+            } else if (key === "options") {
+                // Si c'est une string => on la découpe en tableau
+                if (typeof value === "string") {
+                    const arr = value.split(",").map((v) => v.trim());
+                    arr.forEach((opt, i) => {
+                        formData.append(`options[${i}]`, opt);
+                    });
+                } else if (Array.isArray(value)) {
+                    value.forEach((opt, i) => {
+                        formData.append(`options[${i}]`, opt);
+                    });
+                }
             } else {
                 formData.append(key, value ?? "");
             }
         });
+        
+        
     
         // debug pour vérifier
         for (const [key, value] of formData.entries()) {
@@ -63,6 +85,7 @@ export function useLevelModals(level) {
             onSuccess: () => {
                 Alert.success("Niveau mis à jour avec succès");
                 setIsEditModalOpen(false);
+                router.reload({ only: ['level_details'] });
             },
             onError: (errors) => {
                 Alert.error("Erreur lors de la mise à jour du niveau");

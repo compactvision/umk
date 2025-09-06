@@ -13,7 +13,7 @@ export default function LevelShow() {
     const [isAnimating, setIsAnimating] = useState(false);
     const { level, levelDetail } = usePage().props;
 
-    console.log("Com", levelDetail)
+    console.log("levelshow", levelDetail)
 
     const levelDataHook = useLevelData(levelDetail);
     const modalsHook = useLevelModals(levelDetail);

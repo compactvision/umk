@@ -1,12 +1,11 @@
 import { Building } from 'lucide-react';
 
-export default function LevelHero({ levelData, levelDetail }) {
-    console.log(levelData, levelDetail)
+export default function LevelHero({ levelData, levelDetail }: { levelData: any; levelDetail: any }) {
     return (
         <div className="level-hero">
             <div className="level-hero__overlay"></div>
             <img
-                src={levelData.image ? `/storage/${levelData.image}` : '/default-hero.jpg'}
+                src={levelData.image ? `/storage/${levelData.image}` : '/assets/img/bg/hero.jpg'}
                 alt={levelData.level_name || 'Niveau'}
                 className="level-hero__banner"
             />

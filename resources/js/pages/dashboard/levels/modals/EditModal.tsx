@@ -7,23 +7,28 @@ export default function EditModal({
     levelDataHook, 
     onClose, 
     onSave 
+}: {
+    isOpen: boolean;
+    editField: string;
+    levelDataHook: any;
+    onClose: () => void;
+    onSave: (levelDataHook: any) => void;
 }) {
     if (!isOpen) return null;
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(levelDataHook);
         onSave(levelDataHook);
     };
 
     const renderInputField = () => {
         if (editField === 'description' ||
-            editField === 'details.options' ||
-            editField === 'details.course_objective') {
+            editField === 'options' ||
+            editField === 'course_objective') {
             return (
                 <>
-                    {editField === 'details.options' && (
+                    {editField === 'options' && (
                         <div className="modal__hint">
                             💡 <strong>Exemples d'opportunités :</strong>
                             <br />
@@ -41,13 +46,13 @@ export default function EditModal({
                         value={levelDataHook.getFieldValue(editField) || ''}
                         onChange={(e) => levelDataHook.updateField(editField, e.target.value)}
                         placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
-                        rows={editField === 'details.course_objective' ? 6 : 4}
+                        rows={editField === 'course_objective' ? 6 : 4}
                     />
                 </>
             );
         }
 
-        if (editField === 'details.illustration_image') {
+        if (editField === 'illustration_image') {
             return (
                 <div className="modal__file-field">
                     <input
@@ -65,11 +70,11 @@ export default function EditModal({
                         <ImageIcon size={20} />
                         <span>Sélectionnez une nouvelle image d'illustration</span>
                     </div>
-                    {levelDataHook.levelData.details.illustration_image &&
-                        typeof levelDataHook.levelData.details.illustration_image === 'string' && (
+                    {levelDataHook.levelData.illustration_image &&
+                        typeof levelDataHook.levelData.illustration_image === 'string' && (
                             <div className="modal__current-image">
                                 <img
-                                    src={`/storage/${levelDataHook.levelData.details.illustration_image}`}
+                                    src={`/storage/${levelDataHook.levelData.illustration_image}`}
                                     alt="Image actuelle"
                                     className="modal__preview-img"
                                 />
@@ -80,29 +85,29 @@ export default function EditModal({
         }
 
         const numericFields = [
-            'details.credit_required',
-            'details.duration_years',
-            'details.courses_number',
-            'details.price',
-            'details.fees',
-            'details.student_number',
+            'credit_required',
+            'duration_years',
+            'courses_number',
+            'price',
+            'fees',
+            'student_number',
         ];
 
         return (
             <input
                 type={
-                    editField === 'details.has_certificate'
+                    editField === 'has_certificate'
                         ? 'checkbox'
                         : numericFields.includes(editField)
                           ? 'number'
                           : 'text'
                 }
                 className="modal__input"
-                value={editField === 'details.has_certificate' ? undefined : levelDataHook.getFieldValue(editField) || ''}
-                checked={editField === 'details.has_certificate' ? levelDataHook.getFieldValue(editField) : undefined}
+                value={editField === 'has_certificate' ? undefined : levelDataHook.getFieldValue(editField) || ''}
+                checked={editField === 'has_certificate' ? levelDataHook.getFieldValue(editField) : undefined}
                 onChange={(e) => {
                     const value =
-                        editField === 'details.has_certificate'
+                        editField === 'has_certificate'
                             ? e.target.checked
                             : numericFields.includes(editField)
                               ? parseInt(e.target.value) || 0

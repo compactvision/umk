@@ -44,7 +44,7 @@ const Sidebar = ({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    console.log(userRole);
+    
 
     // Gestion de l'état ouvert/fermé du sidebar
     useEffect(() => {
@@ -155,7 +155,7 @@ const Sidebar = ({
     // if (rolePermissions[userRole].length === 0) {
     //     return null;
     // }
-
+    console.log(userRole);
     return (
         <>
             <nav className="sidebar" id="sidebar" aria-label="Navigation principale" ref={sidebarRef}>
@@ -278,13 +278,16 @@ const Sidebar = ({
                     role="menu"
                     aria-hidden={currentActiveMenu !== 'reports'}
                 >
-                    <h3 className="sidebar-menu__title">Rapports</h3>
+                    <h3 className="sidebar-menu__title">Configuration</h3>
                     <nav className="sidebar-menu__nav">
                         <Link href={route('dashboard.admin.academic-years.index')} className="sidebar-menu__link" role="menuitem">
                             Années Académiques
                         </Link>
                         <Link href={route('dashboard.admin.faculties.index')} className="sidebar-menu__link" role="menuitem">
                             Facultés
+                        </Link>
+                        <Link href={route('dashboard.admin.faculties.show', 1)} className="sidebar-menu__link" role="menuitem">
+                            Niveaux
                         </Link>
                     </nav>
                 </div>

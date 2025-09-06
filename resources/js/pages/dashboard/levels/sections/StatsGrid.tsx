@@ -3,8 +3,8 @@ import {
 } from 'lucide-react';
 import { formatValue, getFieldLabel } from '../utils/levelUtils';
 
-export default function StatsGrid({ levelData, onEdit }) {
-    console.log("...",levelData)
+export default function StatsGrid({ levelData, onEdit }: { levelData: any; onEdit: any }) {
+    console.log("statgrid",levelData)
     const stats = [
         {
             field: 'level_code',
@@ -13,7 +13,7 @@ export default function StatsGrid({ levelData, onEdit }) {
             color: 'purple',
         },
         {
-            field: 'details.credit_required',
+            field: 'credit_required',
             value: formatValue(levelData.credit_required),
             icon: <BookOpen size={24} />,
             color: 'blue',
@@ -27,19 +27,19 @@ export default function StatsGrid({ levelData, onEdit }) {
             color: 'green',
         },
         {
-            field: 'details.duration_years',
+            field: 'duration_years',
             value: formatValue(levelData.duration_years),
             icon: <Clock size={24} />,
             color: 'orange',
         },
         {
-            field: 'details.courses_number',
+            field: 'courses_number',
             value: formatValue(levelData.courses_number),
             icon: <GraduationCap size={24} />,
             color: 'red',
         },
         {
-            field: 'details.price',
+            field: 'price',
             value: levelData.price && levelData.price > 0 
                 ? `${levelData.price} $` 
                 : 'Prix non fixé',
@@ -47,16 +47,16 @@ export default function StatsGrid({ levelData, onEdit }) {
             color: 'green',
         },
         {
-            field: 'details.student_number',
+            field: 'student_number',
             value: formatValue(levelData.student_number),
             icon: <MapPin size={24} />,
             color: 'blue',
         },
         {
-            field: 'details.fees',
+            field: 'fees',
             value: levelData.fees && levelData.fees > 0 
                 ? `${levelData.fees} $` 
-                : 'Frais non fixé',
+                : 'Pas de frais',
             icon: <DollarSign size={24} />,
             color: 'green',
         },
@@ -77,13 +77,15 @@ export default function StatsGrid({ levelData, onEdit }) {
                         {getFieldLabel(stat.field)}
                     </div>
                     <div className="stat-card__value">{stat.value}</div>
-                    <button 
-                        className="detail-item__edit" 
-                        onClick={() => onEdit(stat.field, stat.value)}
-                    >
-                        <Edit3 size={16} />
-                        Modifier
-                    </button>
+                    {stat.field !== 'level_code' && (
+                        <button 
+                            className="detail-item__edit" 
+                            onClick={() => onEdit(stat.field, stat.value)}
+                        >
+                            <Edit3 size={16} />
+                            Modifier
+                        </button>
+                    )}
                 </div>
             ))}
         </div>

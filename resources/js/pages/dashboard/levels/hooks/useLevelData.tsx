@@ -10,18 +10,21 @@ export function useLevelData(level) {
         processing,
         errors,
         reset,
+        clearErrors,
     } = useForm({
-        credit_required: level?.details?.credit_required || 0,
-        duration_years: level?.details?.duration_years || 0,
-        courses_number: level?.details?.courses_number || 0,
-        price: level?.details?.price || 0,
-        language: level?.details?.language || 'Non spécifiée',
-        student_number: level?.details?.student_number || 0,
-        has_certificate: level?.details?.has_certificate || false,
-        illustration_image: level?.details?.illustration_image || '',
-        course_objective: level?.details?.course_objective || '',
-        options: safeJsonParse(level?.details?.options, []),
-        fees: level?.details?.fees || 0,
+        level_id: level?.level_id || '',
+        credit_required: level?.credit_required || 0,
+        duration_years: level?.duration_years || 0,
+        courses_number: level?.courses_number || 0,
+        price: level?.price || 0,
+        language: level?.language || 'Non spécifiée',
+        student_number: level?.student_number || 0,
+        has_certificate: level?.has_certificate || false,
+        illustration_image: level?.illustration_image || '',
+        course_objective: level?.course_objective || '',
+        options: safeJsonParse(level?.options, []),
+        fees: level?.fees || 0,
+        level_code: level?.level_code || '',
     });
 
     const {
@@ -45,12 +48,11 @@ export function useLevelData(level) {
         setDetailsData(field, value);
     };
 
-    const saveEdit = (levelDetailId) => {
+    const saveEdit = (levelDetailId) => {        
         const processedOptions = processOptionsValue(detailsData.options);
 
         const formData = new FormData();
-        formData.append('_method', 'PUT');
-
+        
         formData.append('credit_required', detailsData.credit_required || 0);
         formData.append('duration_years', detailsData.duration_years || 0);
         formData.append('courses_number', detailsData.courses_number || 0);
@@ -61,19 +63,23 @@ export function useLevelData(level) {
         formData.append('course_objective', detailsData.course_objective || '');
         formData.append('fees', detailsData.fees || 0);
 
+        if (detailsData.illustration_image instanceof File) {
+            formData.append('illustration_image', detailsData.illustration_image);
+        }
+
         processedOptions.forEach((option, index) => {
             formData.append(`options[${index}]`, option);
         });
 
-        if (detailsData.illustration_image instanceof File) {
-            formData.append('illustration_image', detailsData.illustration_image);
-        }
+        formData.append('_method', 'PUT');
 
         return router.post(route('dashboard.admin.levels.details.update', levelDetailId), formData, {
             forceFormData: true,
             onSuccess: () => {
                 Alert.success('Détails du niveau mis à jour avec succès');
-                router.reload({ only: ['level'] });
+                reset();
+                clearErrors();
+                router.reload({ only: ['levels'] });
             },
             onError: (errors) => {
                 Alert.error('Erreur lors de la mise à jour des détails');

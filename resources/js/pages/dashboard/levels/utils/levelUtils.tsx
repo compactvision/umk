@@ -34,18 +34,18 @@ export const getFieldLabel = (field) => {
         level_code: 'Code du niveau',
         level_name: 'Nom du niveau',
         description: 'Description',
-        'details.illustration_image': "Image d'illustration",
-        'details.credit_required': 'Crédits requis',
-        'details.duration_years': 'Durée (années)',
-        'details.courses_number': 'Nombre de cours',
-        'details.student_number': "Nombre d'etudiants",
-        'details.price': 'Prix',
-        'details.language': 'Langue',
-        'details.has_certificate': 'Certificat',
-        'details.options': 'Options/Opportunités',
-        'details.course_objective': 'Objectifs du cours',
-        'details.fees': 'Frais',
-        'semestres': 'Semestres'
+        illustration_image: "Image d'illustration",
+        credit_required: 'Crédits requis',
+        duration_years: 'Durée (années)',
+        courses_number: 'Nombre de cours',
+        student_number: "Nombre d'etudiants",
+        price: 'Prix',
+        language: 'Langue',
+        has_certificate: 'Certificat',
+        options: 'Options/Opportunités',
+        course_objective: 'Objectifs du cours',
+        fees: 'Frais',
+        semestres: 'Semestres'
     };
     return labels[field] || field;
 };

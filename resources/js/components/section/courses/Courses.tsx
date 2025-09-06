@@ -70,7 +70,7 @@ export default function Courses({ faculties }) {
                                             <Link href={route('courseShow', level.id)}>
                                                 <img 
                                                     src={level.image ? `/storage/${level.image}` : '/assets/img/default-course.png'} 
-                                                    alt={level.level_code || 'Course'} 
+                                                    alt={level.code || 'Course'} 
                                                 />
                                             </Link>
                                         </div>
@@ -83,7 +83,7 @@ export default function Courses({ faculties }) {
                                                 </div>
                                             </div>
                                             <h2 className="xb-item--title border-effect-2">
-                                                <Link href="#">{level.level_name || 'N/A'}</Link>
+                                                <Link href="#">{level.name || 'N/A'}</Link>
                                             </h2>
                                             <ul className="xb-item--meta ul_li">
                                                 <li>

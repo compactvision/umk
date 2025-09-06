@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use App\Modules\LevelDetail\Application\UseCases\CreateLevelDetail;
 use App\Modules\LevelDetail\Application\UseCases\UpdateLevelDetail;
 use App\Modules\LevelDetail\Application\UseCases\GetLevelDetailByLevel;
+use App\Modules\LevelDetail\Infrastructure\Http\Requests\UpdateLevelDetailsRequest;
+use App\Modules\LevelDetail\Infrastructure\Http\Requests\CreateLevelDetailsRequest;
 
 final class LevelDetailController extends Controller
 {
@@ -19,6 +21,7 @@ final class LevelDetailController extends Controller
         return Inertia::render('dashboard/levels/Show', [
             'levelDetail' => [
                 'id' => $levelDetail->id(),
+                'level_id' => $levelDetail->levelId(),
                 'price' => $levelDetail->price(),
                 'has_certificate' => $levelDetail->hasCertificate(),
                 'language' => $levelDetail->language(),
@@ -41,22 +44,9 @@ final class LevelDetailController extends Controller
         ]);
     }
 
-    public function store(Request $request, CreateLevelDetail $createDetail)
+    public function store(CreateLevelDetailsRequest $request, CreateLevelDetail $createDetail)
     {
-        $validated = $request->validate([
-            'level_id'        => ['required', 'exists:levels,id'],
-            'price'           => ['nullable', 'numeric'],
-            'has_certificate' => ['required', 'boolean'],
-            'language'        => ['nullable', 'string', 'max:50'],
-            'duration_years'  => ['required', 'integer'],
-            'student_number'  => ['nullable', 'integer'],
-            'credit_required' => ['nullable', 'integer'],
-            'courses_number'  => ['nullable', 'integer'],
-            'illustration_image' => ['nullable', 'string'],
-            'course_objective'=> ['nullable', 'string'],
-            'fees'            => ['nullable', 'integer'],
-            'options'         => ['nullable', 'array'],
-        ]);
+        $validated = $request->validated();
 
         $createDetail->execute(
             $validated['level_id'],
@@ -76,37 +66,21 @@ final class LevelDetailController extends Controller
         return back()->with('success', 'Détails du niveau créés avec succès.');
     }
 
-    public function update(Request $request, int $id, UpdateLevelDetail $updateDetail)
-    { 
-        // dd($request->all());
-        $validated = $request->validate([
-            'level_id'               => ['nullable', 'exists:levels,id'],
-            'details.price'          => ['nullable', 'numeric'],
-            'details.has_certificate'=> ['nullable'],
-            'details.language'       => ['nullable', 'string', 'max:50'],
-            'details.duration_years' => ['nullable', 'integer'],
-            'details.student_number' => ['nullable', 'integer'],
-            'details.credit_required'=> ['nullable', 'integer'],
-            'details.courses_number' => ['nullable', 'integer'],
-            'details.illustration_image' => ['nullable', 'string'],
-            'details.course_objective'=> ['nullable', 'string'],
-            'details.fees'           => ['nullable', 'integer'],
-            'details.options'        => ['nullable', 'array'],
-        ]);
-        
-
+    public function update(UpdateLevelDetailsRequest $request, int $id, UpdateLevelDetail $updateDetail)
+    {
+        $validated = $request->validated();
         
         $updateDetail->execute(
             $id,
             $validated['level_id'],
             $validated['price'] ?? null,
-            $validated['has_certificate'] ?? null,
+            $validated['has_certificate'] ?? true,
             $validated['language'] ?? null,
             $validated['duration_years'] ?? null,
             $validated['student_number'] ?? null,
             $validated['credit_required'] ?? null,
             $validated['courses_number'] ?? null,
-            $validated['illustration_image'] ?? null,
+            $request->file('illustration_image') ?? null,
             $validated['course_objective'] ?? null,
             $validated['fees'] ?? null,
             $validated['options'] ?? null

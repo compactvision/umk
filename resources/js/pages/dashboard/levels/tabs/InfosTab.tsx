@@ -3,6 +3,7 @@ import IllustrationSection from '../sections/IllustrationSection';
 import DetailsSection from '../sections/DetailsSection';
 
 export default function InfosTab({ levelDataHook, modalsHook }) {
+    console.log("infostab", levelDataHook)
     return (
         <div>
             <StatsGrid 

@@ -18,7 +18,7 @@ export default function IllustrationSection({ levelData, onEdit, onPreview }) {
                             Aperçu complet
                         </button>
                         <button
-                            onClick={() => onEdit('details.illustration_image', levelData.illustration_image)}
+                            onClick={() => onEdit('illustration_image', levelData.illustration_image)}
                             className="illustration-section__btn illustration-section__btn--edit"
                         >
                             <Edit3 size={16} />
@@ -56,7 +56,7 @@ export default function IllustrationSection({ levelData, onEdit, onPreview }) {
                     Ajoutez une image d'illustration pour enrichir la présentation de votre programme
                 </p>
                 <button
-                    onClick={() => onEdit('details.illustration_image', '')}
+                    onClick={() => onEdit('illustration_image', '')}
                     className="illustration-placeholder__btn"
                 >
                     <Upload size={18} />
