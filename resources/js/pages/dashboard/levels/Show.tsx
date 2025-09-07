@@ -11,9 +11,9 @@ import './Level.css';
 export default function LevelShow() {
     const [activeTab, setActiveTab] = useState('infos');
     const [isAnimating, setIsAnimating] = useState(false);
-    const { level, levelDetail } = usePage().props;
+    const { levelDetail, admissionConditions } = usePage().props;
 
-    console.log("levelshow", levelDetail)
+    console.log("levelCondi Show", admissionConditions)
 
     const levelDataHook = useLevelData(levelDetail);
     const modalsHook = useLevelModals(levelDetail);
@@ -43,7 +43,7 @@ export default function LevelShow() {
                         isAnimating={isAnimating}
                         levelDataHook={levelDataHook}
                         modalsHook={modalsHook}
-                        level={level}
+                        levelConditions={admissionConditions}
                     />
                 </div>
             </div>

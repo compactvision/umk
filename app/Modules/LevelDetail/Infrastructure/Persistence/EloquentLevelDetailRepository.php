@@ -6,7 +6,7 @@ use App\Modules\LevelDetail\Domain\Entities\LevelDetail;
 use App\Modules\LevelDetail\Domain\Repositories\LevelDetailRepository;
 use App\Models\LevelDetail as LevelDetailModel;
 
-final class EloquentLevelDetailRepository implements LevelDetailRepository
+final class EloquentLevelDetailRepository implements LevelDetailRepository 
 {
     public function save(LevelDetail $detail): LevelDetail
     {
@@ -89,6 +89,7 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
             $model->level?->description,
             $model->level?->faculty?->name,
             $model->level?->faculty?->code,
+            $model->level?->faculty?->id,
         );
     }
 

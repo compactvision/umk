@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
+use App\Modules\AdmissionCondition\Infrastructure\Http\Controllers\AdmissionConditionController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\SocialAuthController;
 use App\Modules\Level\Infrastructure\Http\Controllers\LevelController as ControllersLevelController;
@@ -158,6 +159,12 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
                 Route::post('/', [LevelDetailController::class, 'store'])->name('store');
                 Route::put('/{id}', [LevelDetailController::class, 'update'])->name('update');
                 Route::delete('/{id}', [LevelDetailController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('/admission-conditions')->name('admission-conditions.')->group(function () {
+                Route::post('/', [AdmissionConditionController::class, 'store'])->name('store');
+                Route::put('/{id}', [AdmissionConditionController::class, 'update'])->name('update');
+                Route::delete('/{id}', [AdmissionConditionController::class, 'destroy'])->name('destroy');
             });
         });
     });

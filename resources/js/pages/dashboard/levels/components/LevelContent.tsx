@@ -11,8 +11,9 @@ export default function LevelContent({
     isAnimating, 
     levelDataHook, 
     modalsHook, 
-    level 
+    levelConditions 
 }) {
+    console.log("LevelCOntent", levelConditions)
     const renderActiveTab = () => {
         switch (activeTab) {
             case 'infos':
@@ -27,7 +28,7 @@ export default function LevelContent({
             case 'conditions':
                 return (
                     <ConditionsTab 
-                        level={level} 
+                        levelConditions={levelConditions} 
                         modalsHook={modalsHook} 
                     />
                 );

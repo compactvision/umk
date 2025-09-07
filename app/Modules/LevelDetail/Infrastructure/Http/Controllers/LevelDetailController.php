@@ -3,6 +3,7 @@
 namespace App\Modules\LevelDetail\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\AdmissionCondition\Application\DTOs\AdmissionConditionDTO;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Modules\LevelDetail\Application\UseCases\CreateLevelDetail;
@@ -10,13 +11,16 @@ use App\Modules\LevelDetail\Application\UseCases\UpdateLevelDetail;
 use App\Modules\LevelDetail\Application\UseCases\GetLevelDetailByLevel;
 use App\Modules\LevelDetail\Infrastructure\Http\Requests\UpdateLevelDetailsRequest;
 use App\Modules\LevelDetail\Infrastructure\Http\Requests\CreateLevelDetailsRequest;
+use App\Modules\AdmissionCondition\Application\UseCases\ListAdmissionCondition;
 
 final class LevelDetailController extends Controller
 {
 
-    public function show(int $levelId, GetLevelDetailByLevel $getLevelDetailByLevel)
+    public function show(int $levelId, GetLevelDetailByLevel $getLevelDetailByLevel, ListAdmissionCondition $listAdmissionCondition)
     {
         $levelDetail = $getLevelDetailByLevel->execute($levelId);
+        $admissionConditions = $listAdmissionCondition->execute($levelDetail->facultyId(), $levelDetail->levelId());
+        $conditionsArray = array_map(fn ($c) => AdmissionConditionDTO::fromEntity($c), $admissionConditions);
 
         return Inertia::render('dashboard/levels/Show', [
             'levelDetail' => [
@@ -40,7 +44,9 @@ final class LevelDetailController extends Controller
                 'level_description' => $levelDetail->levelDescription(),
                 'faculty_name' => $levelDetail->facultyName(),
                 'faculty_code' => $levelDetail->facultyCode(),
+                'faculty_id' => $levelDetail->facultyId(),
             ],
+            'admissionConditions' => $conditionsArray,
         ]);
     }
 

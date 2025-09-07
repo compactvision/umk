@@ -23,7 +23,8 @@ final class LevelDetail
         private ?string $levelCode = null,
         private ?string $levelDescription = null,
         private ?string $facultyName = null,
-        private ?string $facultyCode = null
+        private ?string $facultyCode = null,
+        private ?int $facultyId = null,
     ) {}
 
     public function id(): ?int { return $this->id; }
@@ -44,4 +45,5 @@ final class LevelDetail
     public function levelCode(): ?string { return $this->levelCode; }
     public function facultyCode(): ?string { return $this->facultyCode; }
     public function levelDescription(): ?string { return $this->levelDescription; }
+    public function facultyId(): ?int { return $this->facultyId; }
 }

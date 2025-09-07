@@ -1,7 +1,6 @@
 import { Building, Award, User, Target, Edit3 } from 'lucide-react';
 
 export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
-    console.log("detailssect", levelData)
     const formatOptions = () => {
         try {
             const options = levelData.options;

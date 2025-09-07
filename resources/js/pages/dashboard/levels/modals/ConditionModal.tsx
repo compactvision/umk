@@ -1,3 +1,4 @@
+import ErrorText from '@/components/UI/ErrorText';
 import { X, Save } from 'lucide-react';
 
 export default function ConditionModal({
@@ -74,6 +75,21 @@ export default function ConditionModal({
                                 <option value="academic_info">Informations académiques</option>
                                 <option value="other">Autre</option>
                             </select>
+                        </div>
+                        <div className="modal__field">
+                            <label className="modal__label">Statut</label>
+                            <label className="toggle-switch">
+                                <input
+                                    id="is_active"
+                                    type="checkbox"
+                                    checked={!!conditionData.is_required}
+                                    onChange={(e) => setConditionData('is_required', e.target.checked)}
+                                />
+                                <span className="toggle-switch__slider"></span>
+                            </label>
+                            <span className="toggle-label">
+                                {conditionData.is_required ? 'Requis' : 'Non requis'}
+                            </span>
                         </div>
                     </div>
                     <div className="modal__actions">

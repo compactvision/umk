@@ -4,7 +4,6 @@ import {
 import { formatValue, getFieldLabel } from '../utils/levelUtils';
 
 export default function StatsGrid({ levelData, onEdit }: { levelData: any; onEdit: any }) {
-    console.log("statgrid",levelData)
     const stats = [
         {
             field: 'level_code',

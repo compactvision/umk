@@ -19,13 +19,15 @@ export function useLevelModals(level) {
         processing: conditionProcessing,
         reset: resetCondition,
     } = useForm({
-        faculty_id: level?.faculty?.id || '',
-        level_id: level?.id || '',
+        faculty_id: level?.faculty_id || '',
+        level_id: level?.level_id || '',
         title: '',
         description: '',
         section: '',
         id: null,
     });
+
+    console.log("conditionData", conditionData)
 
     const openEditModal = (field, value) => {
         setEditField(field);
@@ -102,21 +104,23 @@ export function useLevelModals(level) {
         
         if (mode === 'edit' && condition) {
             setConditionData({
-                faculty_id: level?.faculty?.id || '',
-                level_id: level?.id || '',
+                faculty_id: level?.faculty_id || '',
+                level_id: level?.level_id || '',
                 title: condition.title || '',
                 description: condition.description || '',
                 section: condition.section || '',
+                is_required: condition.is_required || false,
                 id: condition.id,
             });
         } else {
             resetCondition();
             setConditionData({
-                faculty_id: level?.faculty?.id || '',
-                level_id: level?.id || '',
+                faculty_id: level?.faculty_id || '',
+                level_id: level?.level_id || '',
                 title: '',
                 description: '',
                 section: '',
+                is_required: false,
                 id: null,
             });
         }
@@ -127,8 +131,11 @@ export function useLevelModals(level) {
     const saveCondition = (e) => {
         e.preventDefault();
 
+        // alert(conditionMode)
+
         if (conditionMode === 'add') {
-            postCondition(route('dashboard.admission.store'), {
+            console.log("conditionDataForm", conditionData)
+            postCondition(route('dashboard.admin.levels.admission-conditions.store'), {
                 onSuccess: () => {
                     Alert.success("Condition d'admission ajoutée avec succès");
                     setIsConditionModalOpen(false);
@@ -140,7 +147,7 @@ export function useLevelModals(level) {
                 },
             });
         } else if (conditionMode === 'edit' && conditionData.id) {
-            putCondition(route('dashboard.admission.update', conditionData.id), {
+            putCondition(route('dashboard.admin.levels.admission-conditions.update', conditionData.id), {
                 onSuccess: () => {
                     Alert.success("Condition d'admission mise à jour avec succès");
                     setIsConditionModalOpen(false);
@@ -159,7 +166,7 @@ export function useLevelModals(level) {
         if (!confirmed) return;
 
         Alert.loading('Suppression en cours...');
-        router.delete(route('dashboard.admission.destroy', conditionId), {
+        router.delete(route('dashboard.admin.levels.admission-conditions.destroy', conditionId), {
             onSuccess: () => {
                 Alert.success("Condition d'admission supprimée avec succès");
             },

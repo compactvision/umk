@@ -1,7 +1,7 @@
 import { Plus, Edit3, Trash2 } from 'lucide-react';
 
-export default function ConditionsTab({ level, modalsHook }) {
-    console.log(level);
+export default function ConditionsTab({ levelConditions, modalsHook }) {
+    console.log("conditions",levelConditions);
     return (
         <div className="conditions-section">
             <div className="conditions-section__header">
@@ -15,8 +15,8 @@ export default function ConditionsTab({ level, modalsHook }) {
                 </button>
             </div>
             <ul className="conditions-list">
-                {level.admission_conditions && level.admission_conditions.length > 0 ? (
-                    level.admission_conditions.map((condition) => (
+                {levelConditions && levelConditions.length > 0 ? (
+                    levelConditions.map((condition) => (
                         <li key={condition.id} className="condition-item">
                             <div className="condition-item__content">
                                 <div className="condition-item__icon"></div>
