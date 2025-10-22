@@ -1,16 +1,19 @@
 <?php
 
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\AuthController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\EmailVerificationController;
 use App\Modules\AcademicYear\Infrastructure\Http\Controllers\AcademicYearController;
 use App\Modules\Faculty\Infrastructure\Http\Controllers\FacultyController;
 use App\Modules\Level\Infrastructure\Http\Controllers\LevelController;
-use App\Http\Controllers\EnrollmentController\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
+use App\Models\Enrollment;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Controllers\AdmissionConditionController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentDocumentController;
+use App\Modules\Enrollment\Interfaces\Http\Controllers\EnrollmentController as ControllersEnrollmentController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\SocialAuthController;
 use App\Modules\Level\Infrastructure\Http\Controllers\LevelController as ControllersLevelController;
@@ -76,7 +79,7 @@ Route::get('/dashboard/auth/signup', function () {
 //     Route::post('/enrollments/{enrollment}/documents', [EnrollmentController::class,'uploadDoc'])->name('enrollments.docs.upload');
 // });
 
-Route::get('/test', function() {
+Route::get('/test', function () {
     return Inertia::render('dashboard/faculty/test');
 });
 
@@ -97,7 +100,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
-    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
+Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
     ->middleware('auth')
     ->name('verification.notice');
 
@@ -109,7 +112,7 @@ Route::post('/email/verification-notification', [EmailVerificationController::cl
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
 
-    Route::get('/forgot-password', [PasswordResetController::class, 'request'])
+Route::get('/forgot-password', [PasswordResetController::class, 'request'])
     ->middleware('guest')->name('password.request');
 
 Route::post('/forgot-password', [PasswordResetController::class, 'send'])
@@ -121,8 +124,10 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'form'])
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     ->middleware('guest')->name('password.update');
 
-    Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect']);
-    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback']);
+Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect']);
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback']);
+
+
 
 // Dashboard accessible uniquement si email vérifié
 Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])->group(function () {
@@ -153,7 +158,7 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
             Route::post('/', [LevelController::class, 'store'])->name('store');
             Route::put('/{id}', [LevelController::class, 'update'])->name('update');
             Route::delete('/{id}', [LevelController::class, 'destroy'])->name('destroy');
-            
+
             Route::prefix('/details')->name('details.')->group(function () {
                 Route::get('/{id}', [LevelDetailController::class, 'show'])->name('show');
                 Route::post('/', [LevelDetailController::class, 'store'])->name('store');
@@ -169,6 +174,16 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         });
     });
 
+    Route::get('/enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
+    // Route::get('/enrollments/create', [EnrollmentController::class, 'create'])->name('enrollments.create');
+    Route::get('/enrollment/bootstrap', [EnrollmentController::class, 'bootstrap'])->name('enrollments.create');
+    Route::get('/enrollment/requirements', [EnrollmentController::class, 'requirements'])->name('enrollment.requirements');
+    Route::post('/enrollment/store', [EnrollmentController::class, 'store'])->name('enrollment.store');
+    Route::get('/enrollments/{enrollment:uuid}', [EnrollmentController::class, 'show'])->name('enrollment.show');
+    
+    Route::get('/enrollment/docs/{uuid}', [EnrollmentDocumentController::class, 'stream'])->name('enrollment.docs.stream');
+    Route::get('/enrollment/draft/show', [EnrollmentDocumentController::class, 'show'])->name('enrollment.draft.show');
+    Route::post('/enrollment/draft/save', [EnrollmentDocumentController::class, 'save'])->name('enrollment.draft.save');
+    Route::post('/enrollment/draft/upload', [EnrollmentDocumentController::class, 'upload'])->name('enrollment.draft.upload');
+    Route::delete('/enrollment/draft', [EnrollmentDocumentController::class, 'discard'])->name('enrollment.draft.discard');
 });
-
-

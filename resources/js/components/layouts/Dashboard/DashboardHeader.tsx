@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../../css/dashboard/app.css';
+import { Link } from '@inertiajs/react';
 
 const DashboardHeader = ({ onMobileToggle }: { onMobileToggle: (e: React.MouseEvent) => void }) => {
     return (
@@ -17,10 +18,10 @@ const DashboardHeader = ({ onMobileToggle }: { onMobileToggle: (e: React.MouseEv
           </button>
   
           <nav className="header__nav">
-            <a href="#" className="header__nav-link">Accueil</a>
-            <a href="#" className="header__nav-link">Projets</a>
-            <a href="#" className="header__nav-link">Équipe</a>
-            <a href="#" className="header__nav-link">Notifications</a>
+            <Link href={route('home')} className="header__nav-link">Accueil</Link>
+            <Link href="#" className="header__nav-link">Projets</Link>
+            <Link href="#" className="header__nav-link">Équipe</Link>
+            <Link href="#" className="header__nav-link">Notifications</Link>
           </nav>
         </div>
   

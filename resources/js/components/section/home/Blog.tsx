@@ -1,147 +1,270 @@
+import React, { useState } from 'react';
+import { Clock, User, MessageCircle, ChevronRight, Filter } from 'lucide-react';
+
 export default function Blog() {
-    return (
-        <section className="blog bg_img pt-115 pb-120" data-background="assets/img/bg/news_bg01.jpg">
-            <div className="container">
-                <div className="blog-sec-top ul_li_between">
-                    <div className="section-title mb-40">
-                        <span className="sub-title">Actualités récentes</span>
-                        <h1 className="title">L'actualité du campus</h1>
-                    </div>
-                    <div className="xb-topic">
-                        <select name="Topic" id="seelct">
-                            <option value={1}>Thématiques</option>
-                            <option value={2}>Arts, Lettres & Sciences Humaines</option>
-                            <option value={3}>Vie étudiante & Communauté</option>
-                            <option value={4}>Droit, Économie & Gestion</option>
-                            <option value={5}>Sciences de la Santé</option>
-                            <option value={5}>Sciences & Technologies</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="row justify-content-center">
-                    <div className="col-lg-3 col-md-8">
-                        <div className="xb-blog__left">
-                            <div className="xb-blog pos-rel mt-20">
-                                <div className="xb-item--img">
-                                    <a href="#!">
-                                        <img src="assets/img/blog/blog-img01.png" alt="" />
-                                    </a>
-                                </div>
-                                <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#!">
-                                        #Études
-                                    </a>
-                                    <h2 className="xb-item--title border-effect-2">
-                                        {' '}
-                                        <a href="#">Notre Université accueille un sommet international sur le climat...</a>
-                                    </h2>
-                                </div>
-                            </div>
-                            <div className="xb-blog pos-rel mt-20">
-                                <div className="xb-item--img">
-                                    <a href="#!">
-                                        <img src="assets/img/blog/blog-img02.png" alt="" />
-                                    </a>
-                                </div>
-                                <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#!">
-                                        #Distinctions
-                                    </a>
-                                    <h2 className="xb-item--title border-effect-2">
-                                        {' '}
-                                        <a href="#">Trente-et-un enseignants-chercheurs honorés par des chaires prestigieuses</a>
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-md-8">
-                        <div className="xb-blog chn-margin pos-rel mt-20">
-                            <div className="xb-item--img">
-                                <a href="#!">
-                                    <img src="assets/img/blog/blog-img03.png" alt="" />
-                                </a>
-                            </div>
-                            <div className="xb-item--holder">
-                                <a className="xb-item--cta" href="#!">
-                                    #Formations
-                                </a>
-                                <h2 className="xb-item--title border-effect">
-                                    {' '}
-                                    <a href="#">
-                                        Notre Université obtient un financement exceptionnel <br /> pour ses programmes STEM innovants...
-                                    </a>
-                                </h2>
-                                <div className="xb-item--meta ul_li">
-                                    <span>
-                                        <i className="far fa-user" />
-                                        Par Louis Saville
-                                    </span>
-                                    <span>
-                                        <i className="far fa-clock" />
-                                        15/10/2023
-                                    </span>
-                                    <span>
-                                        <i className="far fa-comment" />
-                                        15 commentaires
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-8">
-                        <div className="xb-blog__right">
-                            <div className="xb-blog mr-left pos-rel mt-20">
-                                <div className="xb-item--img">
-                                    <a href="#!">
-                                        <img src="assets/img/blog/blog-img04.png" alt="" />
-                                    </a>
-                                </div>
-                                <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#">
-                                        #Récompense
-                                    </a>
-                                    <h2 className="xb-item--title border-effect-2">
-                                        {' '}
-                                        <a href="#">Notre Université primée pour son engagement citoyen...</a>
-                                    </h2>
-                                </div>
-                            </div>
-                            <div className="xb-blog mr-left pos-rel mt-20">
-                                <div className="xb-item--img">
-                                    <a href="#!">
-                                        <img src="assets/img/blog/blog-img05.png" alt="" />
-                                    </a>
-                                </div>
-                                <div className="xb-item--holder">
-                                    <a className="xb-item--cta" href="#">
-                                        #Campus
-                                    </a>
-                                    <h2 className="xb-item--title border-effect-2">
-                                        {' '}
-                                        <a href="#">
-                                            Modernisation de nos infrastructures <br /> avec un nouveau laboratoire high-tech...
-                                        </a>
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="xb-btn pt-60 text-center">
-                    <a className="thm-btn" href="#">
-                        Voir plus d'actualités
-                        <span className="icon">
-                            <svg width={21} height={21} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10.4795 21C9.10959 21 7.81507 20.7539 6.59589 20.2617C5.37671 19.7695 4.30137 19.0962 3.36986 18.2417C2.43836 17.3872 1.67808 16.3857 1.08904 15.2373C0.486301 14.0752 0.123288 12.8311 0 11.5049V11.4639H8.56849V14.3145C8.56849 14.5742 8.66096 14.7998 8.84589 14.9912C9.03082 15.1826 9.25342 15.2783 9.5137 15.2783C9.65068 15.2783 9.7774 15.251 9.89384 15.1963C10.0103 15.1416 10.1096 15.0732 10.1918 14.9912L14.0137 11.1768C14.0959 11.0947 14.1644 10.9956 14.2192 10.8794C14.274 10.7632 14.3014 10.6367 14.3014 10.5C14.3014 10.3633 14.274 10.2368 14.2192 10.1206C14.1644 10.0044 14.0959 9.90527 14.0137 9.82324L10.1918 6.00879C10.1096 5.92676 10.0103 5.8584 9.89384 5.80371C9.7774 5.74902 9.65068 5.72168 9.5137 5.72168C9.25342 5.72168 9.0274 5.81738 8.83562 6.00879C8.64384 6.2002 8.54794 6.42578 8.54794 6.68555V9.53613H0C0.123288 8.19629 0.486301 6.94531 1.08904 5.7832C1.67808 4.62109 2.44178 3.61279 3.38014 2.7583C4.31849 1.90381 5.39041 1.23047 6.59589 0.738281C7.81507 0.246094 9.10959 0 10.4795 0C11.9315 0 13.2945 0.273439 14.5685 0.820312C15.8425 1.38086 16.9555 2.13623 17.9075 3.08643C18.8596 4.03662 19.6096 5.14746 20.1575 6.41895C20.7192 7.69043 21 9.05078 21 10.5C21 11.9492 20.7192 13.3096 20.1575 14.5811C19.6096 15.8662 18.8596 16.9839 17.9075 17.9341C16.9555 18.8843 15.8425 19.6328 14.5685 20.1797C13.2945 20.7266 11.9315 21 10.4795 21Z"
-                                    fill="#170006"
-                                />
-                            </svg>
-                        </span>
-                    </a>
-                </div>
+  const [selectedTopic, setSelectedTopic] = useState('all');
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const topics = [
+    { value: 'all', label: 'Toutes les thématiques' },
+    { value: 'arts', label: 'Arts, Lettres & Sciences Humaines' },
+    { value: 'student-life', label: 'Vie étudiante & Communauté' },
+    { value: 'law-economics', label: 'Droit, Économie & Gestion' },
+    { value: 'health', label: 'Sciences de la Santé' },
+    { value: 'science-tech', label: 'Sciences & Technologies' }
+  ];
+
+  const blogPosts = [
+    {
+      id: 1,
+      category: 'Études',
+      title: 'Notre Université accueille un sommet international sur le climat',
+      image: '/api/placeholder/400/300',
+      size: 'small',
+      gradient: 'from-emerald-500/20 to-teal-600/20'
+    },
+    {
+      id: 2,
+      category: 'Distinctions',
+      title: 'Trente-et-un enseignants-chercheurs honorés par des chaires prestigieuses',
+      image: '/api/placeholder/400/300',
+      size: 'small',
+      gradient: 'from-purple-500/20 to-indigo-600/20'
+    },
+    {
+      id: 3,
+      category: 'Formations',
+      title: 'Notre Université obtient un financement exceptionnel pour ses programmes STEM innovants',
+      image: '/api/placeholder/600/400',
+      author: 'Louis Saville',
+      date: '15/10/2023',
+      comments: 15,
+      size: 'large',
+      gradient: 'from-blue-500/20 to-cyan-600/20'
+    },
+    {
+      id: 4,
+      category: 'Récompense',
+      title: 'Notre Université primée pour son engagement citoyen',
+      image: '/api/placeholder/400/300',
+      size: 'small',
+      gradient: 'from-orange-500/20 to-red-600/20'
+    },
+    {
+      id: 5,
+      category: 'Campus',
+      title: 'Modernisation de nos infrastructures avec un nouveau laboratoire high-tech',
+      image: '/api/placeholder/400/300',
+      size: 'small',
+      gradient: 'from-violet-500/20 to-pink-600/20'
+    }
+  ];
+
+  const getCategoryColor = (category) => {
+    const colors = {
+      'Études': 'bg-emerald-500',
+      'Distinctions': 'bg-purple-500',
+      'Formations': 'bg-blue-500',
+      'Récompense': 'bg-orange-500',
+      'Campus': 'bg-violet-500'
+    };
+    return colors[category] || 'bg-gray-500';
+  };
+
+  return (
+    <section className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-20 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-indigo-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-teal-200/20 to-cyan-200/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-16">
+          <div className="mb-8 lg:mb-0">
+            <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/20 shadow-lg mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-600 font-semibold text-sm tracking-wider uppercase">
+                Actualités récentes
+              </span>
             </div>
-        </section>
-    );
+            <h1 className="text-5xl lg:text-6xl font-bold bg-clip-text text-slate-700 leading-tight">
+              L'actualité du
+              <span className="block bg-clip-text text-slate-600">
+                campus
+              </span>
+            </h1>
+          </div>
+
+          {/* Topic Filter */}
+          <div className="relative">
+            <div className="flex items-center gap-3 p-1 bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl">
+              <Filter className="w-5 h-5 text-slate-600 ml-3" />
+              <select 
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
+                className="bg-transparent text-slate-700 font-medium pr-8 pl-2 py-3 focus:outline-none cursor-pointer"
+              >
+                {topics.map((topic) => (
+                  <option key={topic.value} value={topic.value}>
+                    {topic.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Blog Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+          {/* Left Column */}
+          <div className="lg:col-span-3 space-y-8">
+            {blogPosts.filter(post => post.size === 'small').slice(0, 2).map((post) => (
+              <div 
+                key={post.id}
+                className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                onMouseEnter={() => setHoveredCard(post.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <div className="relative z-10 p-6">
+                  <div className="aspect-video mb-4 rounded-2xl overflow-hidden">
+                    <img 
+                      src={post.image} 
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor(post.category)} mb-4`}>
+                    #{post.category}
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-slate-800 leading-tight group-hover:text-slate-900 transition-colors">
+                    {post.title}
+                  </h3>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-3xl transition-colors duration-500"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Center Column - Featured Post */}
+          <div className="lg:col-span-6">
+            {blogPosts.filter(post => post.size === 'large').map((post) => (
+              <div 
+                key={post.id}
+                className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full"
+                onMouseEnter={() => setHoveredCard(post.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <div className="relative z-10 p-8">
+                  <div className="aspect-video mb-6 rounded-2xl overflow-hidden">
+                    <img 
+                      src={post.image} 
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  
+                  <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white ${getCategoryColor(post.category)} mb-6`}>
+                    #{post.category}
+                  </div>
+                  
+                  <h3 className="text-2xl lg:text-3xl font-bold text-slate-800 leading-tight mb-6 group-hover:text-slate-900 transition-colors">
+                    {post.title}
+                  </h3>
+
+                  <div className="flex flex-wrap items-center gap-6 text-slate-600">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">Par {post.author}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <span className="text-sm">{post.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="text-sm">{post.comments} commentaires</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-3xl transition-colors duration-500"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Right Column */}
+          <div className="lg:col-span-3 space-y-8">
+            {blogPosts.filter(post => post.size === 'small').slice(2, 4).map((post) => (
+              <div 
+                key={post.id}
+                className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                onMouseEnter={() => setHoveredCard(post.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <div className="relative z-10 p-6">
+                  <div className="aspect-video mb-4 rounded-2xl overflow-hidden">
+                    <img 
+                      src={post.image} 
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor(post.category)} mb-4`}>
+                    #{post.category}
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-slate-800 leading-tight group-hover:text-slate-900 transition-colors">
+                    {post.title}
+                  </h3>
+                </div>
+
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-3xl transition-colors duration-500"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <div className="text-center">
+          <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 to-yellow-600 text-white font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105">
+            <span>Voir plus d'actualités</span>
+            <div className="flex items-center justify-center w-10 h-10 bg-white/20 rounded-xl group-hover:bg-white/30 transition-colors duration-300">
+              <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </div>
+            
+            {/* Button glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10"></div>
+          </button>
+        </div>
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+    </section>
+  );
 }

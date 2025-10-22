@@ -1,67 +1,153 @@
+import { Link } from "@inertiajs/react";
+
 export default function Admission() {
-    return (
-        <section className="admission pt-120 pb-120">
-            <div className="container">
-                <div className="row align-items-center mt-none-30">
-                    <div className="col-xl-5 mt-30">
-                        <div className="section-title section-title--md">
-                            <span className="sub-title">Nos enseignants dévoués</span>
-                            <h2 className="title mb-20">Vivez l'expérience UMK avec une excellence académique et des opportunités infinies</h2>
-                            <p>En tant qu'institution publique, l'Université Moderne de Kinkole s'engage à favoriser des changements positifs à travers l'éducation. Nous sommes déterminés</p>
-                        </div>
-                        <div className="admission-btn mt-65">
-                            <a className="thm-btn" href="#">
-                                Postuler maintenant
-                                <span className="icon">
-                                    <svg width={21} height={21} viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M10.4795 21C9.10959 21 7.81507 20.7539 6.59589 20.2617C5.37671 19.7695 4.30137 19.0962 3.36986 18.2417C2.43836 17.3872 1.67808 16.3857 1.08904 15.2373C0.486301 14.0752 0.123288 12.8311 0 11.5049V11.4639H8.56849V14.3145C8.56849 14.5742 8.66096 14.7998 8.84589 14.9912C9.03082 15.1826 9.25342 15.2783 9.5137 15.2783C9.65068 15.2783 9.7774 15.251 9.89384 15.1963C10.0103 15.1416 10.1096 15.0732 10.1918 14.9912L14.0137 11.1768C14.0959 11.0947 14.1644 10.9956 14.2192 10.8794C14.274 10.7632 14.3014 10.6367 14.3014 10.5C14.3014 10.3633 14.274 10.2368 14.2192 10.1206C14.1644 10.0044 14.0959 9.90527 14.0137 9.82324L10.1918 6.00879C10.1096 5.92676 10.0103 5.8584 9.89384 5.80371C9.7774 5.74902 9.65068 5.72168 9.5137 5.72168C9.25342 5.72168 9.0274 5.81738 8.83562 6.00879C8.64384 6.2002 8.54794 6.42578 8.54794 6.68555V9.53613H0C0.123288 8.19629 0.486301 6.94531 1.08904 5.7832C1.67808 4.62109 2.44178 3.61279 3.38014 2.7583C4.31849 1.90381 5.39041 1.23047 6.59589 0.738281C7.81507 0.246094 9.10959 0 10.4795 0C11.9315 0 13.2945 0.273439 14.5685 0.820312C15.8425 1.38086 16.9555 2.13623 17.9075 3.08643C18.8596 4.03662 19.6096 5.14746 20.1575 6.41895C20.7192 7.69043 21 9.05078 21 10.5C21 11.9492 20.7192 13.3096 20.1575 14.5811C19.6096 15.8662 18.8596 16.9839 17.9075 17.9341C16.9555 18.8843 15.8425 19.6328 14.5685 20.1797C13.2945 20.7266 11.9315 21 10.4795 21Z"
-                                            fill="#170006"
-                                        />
-                                    </svg>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                    <div className="col-xl-6 offset-xl-1 mt-30">
-                        <div className="admission-iconbox">
-                            <div className="admission-iconbox-item ul_li">
-                                <div className="xb-item--icon">
-                                    <img src="assets/img/icon/am_01.svg" alt="" />
-                                </div>
-                                <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Choisissez parmi des centaines de programmes.</h3>
-                                    <p className="xb-item--content">
-                                        Notre large éventail de programmes académiques vous permet de trouver la formation qui correspond à vos aspirations.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="admission-iconbox-item ul_li">
-                                <div className="xb-item--icon">
-                                    <img src="assets/img/icon/am_02.svg" alt="" />
-                                </div>
-                                <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Personnalisez votre expérience universitaire.</h3>
-                                    <p className="xb-item--content">
-                                        Adaptez votre parcours universitaire selon vos besoins individuels et vos centres d'intérêt.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="admission-iconbox-item ul_li">
-                                <div className="xb-item--icon">
-                                    <img src="assets/img/icon/am_03.svg" alt="" />
-                                </div>
-                                <div className="xb-item--holder">
-                                    <h3 className="xb-item--title">Bénéficiez d'un accompagnement personnalisé.</h3>
-                                    <p className="xb-item--content">
-                                        Profitez d'un suivi individualisé par nos enseignants pour maximiser votre réussite académique.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <section className="relative bg-gradient-to-b from-white to-slate-50/60">
+      {/* décor haut doux */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-white/80 backdrop-blur-sm" />
+
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-24 lg:py-28">
+        <div className="grid items-start gap-12 lg:grid-cols-12">
+          {/* Col gauche : texte + CTA */}
+          <div className="lg:col-span-5 xl:col-span-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 shadow-sm">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+              Nos enseignants dévoués
             </div>
-        </section>
-    );
+
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Vivez l’expérience UMK avec une excellence académique et des opportunités infinies
+            </h2>
+
+            <p className="mt-4 text-slate-700">
+              En tant qu’institution publique, l’Université Moderne de Kinkole s’engage à favoriser des changements positifs à
+              travers l’éducation. Nous sommes déterminés.
+            </p>
+
+            <div className="mt-8">
+              <Link
+                href={route("dashboard.enrollments.index")}
+                className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-base font-semibold text-white shadow-sm ring-1 ring-amber-500/70 transition hover:bg-amber-600 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              >
+                Postuler maintenant
+                <span className="-mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 21 21"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden
+                  >
+                    <path
+                      d="M10.48 21c-1.37 0-2.67-.246-3.884-.738A10.51 10.51 0 0 1 1.09 15.237 10.52 10.52 0 0 1 0 11.504h8.568v2.81c0 .26.093.486.278.677.185.192.407.287.667.287.137 0 .263-.027.38-.082.116-.055.215-.123.297-.206l3.822-3.814a1.03 1.03 0 0 0 0-1.354L10.19 6.009a.78.78 0 0 0-.677-.287.86.86 0 0 0-.678.687v2.128H0c.124-1.34.487-2.59 1.089-3.752A10.52 10.52 0 0 1 14.568.82 10.48 10.48 0 0 1 21 10.5 10.48 10.48 0 0 1 14.568 20.18 10.42 10.42 0 0 1 10.48 21Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Col droite : étapes */}
+          <div className="lg:col-span-7 xl:col-span-6">
+            <ol className="space-y-5">
+              {/* Étape 1 */}
+              <li className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+                <div className="flex items-start gap-4">
+                  <div className="relative">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 ring-1 ring-indigo-100">
+                      <img
+                        src="/assets/img/icon/am_01.svg"
+                        alt="Créer un compte"
+                        className="h-6 w-6"
+                      />
+                    </div>
+                    <span className="pointer-events-none absolute -left-2 -top-2 rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white shadow-sm">
+                      1
+                    </span>
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Créez votre compte
+                    </h3>
+                    <p className="mt-1 text-slate-600">
+                      Ouvrez un compte étudiant avec votre adresse e-mail pour accéder à l’espace d’inscription et suivre votre dossier.
+                    </p>
+                  </div>
+                </div>
+              </li>
+
+              {/* Étape 2 */}
+              <li className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+                <div className="flex items-start gap-4">
+                  <div className="relative">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 ring-1 ring-sky-100">
+                      <img
+                        src="/assets/img/icon/am_02.svg"
+                        alt="Accéder à la page d’inscription"
+                        className="h-6 w-6"
+                      />
+                    </div>
+                    <span className="pointer-events-none absolute -left-2 -top-2 rounded-full bg-sky-600 px-2 py-0.5 text-xs font-semibold text-white shadow-sm">
+                      2
+                    </span>
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Accédez à la page d’inscription
+                    </h3>
+                    <p className="mt-1 text-slate-600">
+                      Depuis votre tableau de bord, ouvrez “Inscription” pour démarrer votre demande et choisir la faculté, le niveau et l’année
+                      académique.
+                    </p>
+                  </div>
+                </div>
+              </li>
+
+              {/* Étape 3 */}
+              <li className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+                <div className="flex items-start gap-4">
+                  <div className="relative">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 ring-1 ring-emerald-100">
+                      <img
+                        src="/assets/img/icon/am_03.svg"
+                        alt="Remplir les formulaires & téléverser"
+                        className="h-6 w-6"
+                      />
+                    </div>
+                    <span className="pointer-events-none absolute -left-2 -top-2 rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white shadow-sm">
+                      3
+                    </span>
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Remplissez les formulaires & téléversez les documents
+                    </h3>
+                    <p className="mt-1 text-slate-600">
+                      Complétez les informations (personnelles & académiques), puis téléversez les pièces demandées (PDF/JPG/PNG). Validez — et
+                      effectuez le paiement si nécessaire.
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ol>
+
+            {/* Note/astuce */}
+            <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-amber-900">
+              <p className="text-sm">
+                Astuce : vous pouvez sauvegarder un <span className="font-semibold">brouillon</span> et reprendre votre inscription plus tard.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Déco douce bas */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-white" />
+    </section>
+  );
 }

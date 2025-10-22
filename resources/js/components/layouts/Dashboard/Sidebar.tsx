@@ -7,7 +7,7 @@ type UserRole = 'user' | 'student' | 'instructor' | 'admin' | 'super_admin';
 
 // Configuration des permissions par rôle
 const rolePermissions: Record<UserRole, string[]> = {
-    user: [], // Aucun menu visible
+    user: ['enrollments'], // Aucun menu visible
     student: ['dashboard', 'settings'], // Seulement dashboard et paramètres
     instructor: ['analytics', 'reports', 'settings'], // Pas d'accès student
     admin: ['dashboard', 'analytics', 'reports', 'users', 'settings'], // Presque tout
@@ -145,6 +145,19 @@ const Sidebar = ({
                     <path
                         fill="currentColor"
                         d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-2 12H6v-2h12zm0-3H6V9h12zm0-3H6V6h12z"
+                    />
+                </svg>
+            )
+        },
+        {
+            id: 'enrollments',
+            label: 'Inscriptions',
+            ariaLabel: 'Gestion des inscriptions',
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                    <path
+                        fill="currentColor"
+                        d="M12 13q1.45 0 2.475-1.025T15.5 9.5t-1.025-2.475T12 6T9.525 7.025T8.5 9.5t1.025 2.475T12 13m-7 8q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14v-1.15q-1.35-1.325-3.137-2.087T12 15t-3.863.763T5 17.85z"
                     />
                 </svg>
             )
@@ -342,6 +355,22 @@ const Sidebar = ({
                         <a href="#" className="sidebar-menu__link" role="menuitem">
                             Support
                         </a>
+                    </nav>
+                </div>
+            )}
+
+            {hasPermission('enrollments') && (
+                <div
+                    id="enrollments"
+                    className={`sidebar-menu ${currentActiveMenu === 'enrollments' ? 'sidebar-menu--active animate-slide-in' : ''}`}
+                    role="menu"
+                    aria-hidden={currentActiveMenu !== 'enrollments'}
+                >
+                    <h3 className="sidebar-menu__title">Inscriptions</h3>
+                    <nav className="sidebar-menu__nav">
+                        <Link href={route('dashboard.enrollments.index')} className="sidebar-menu__link" role="menuitem">
+                            Mes inscriptions
+                        </Link>
                     </nav>
                 </div>
             )}

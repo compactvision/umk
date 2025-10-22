@@ -1,88 +1,124 @@
+import { Link } from "@inertiajs/react";
+
 export default function Cta() {
-    return (
-        <section className="cta pt-120 pb-120" data-bg-color="#F1F1E9">
-            <div className="container">
-                <div className="row mt-none-30">
-                    <div className="col-lg-6 mt-30">
-                        <div className="cta-item pos-rel" data-background="assets/img/cta/cta_img1.jpg">
-                            <div className="cta-inner">
-                                <div className="xb-item--icon">
-                                    <img src="assets/img/icon/cta_icon_01.svg" alt="Icône finances" />
-                                </div>
-                                <h3 className="xb-item--title">Coûts et aides financières</h3>
-                                <p className="xb-item--content">
-                                    Comprendre les frais de scolarité et les options d'aide financière est essentiel 
-                                    pour bien planifier votre budget étudiant.
-                                </p>
-                                <a className="thm-btn thm-btn--gray" href="#">
-                                    Postuler maintenant
-                                    <span>
-                                        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M16.25 19.4919V20.7499C16.25 21.1639 15.914 21.4999 15.5 21.4999C15.086 21.4999 14.75 21.1639 14.75 20.7499V19.4999H16C16.084 19.4999 16.167 19.4969 16.25 19.4919Z"
-                                                fill="#170006"
-                                            />
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M14.75 19.5H8C5.929 19.5 4.25 17.821 4.25 15.75V12.668L9.964 15.825C11.202 16.509 12.798 16.509 14.036 15.825L14.75 15.431V19.5ZM16.25 14.602L19.75 12.668V15.75C19.75 17.737 18.205 19.363 16.25 19.492V14.602Z"
-                                                fill="#170006"
-                                            />
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M14.75 14.2879L13.552 14.9499C12.608 15.4719 11.392 15.4719 10.448 14.9499L2.134 10.3559C1.568 10.0429 1.25 9.49495 1.25 8.92195C1.25 8.34795 1.568 7.79995 2.134 7.48795L10.448 2.89295C11.392 2.37195 12.608 2.37195 13.552 2.89295L21.866 7.48795C22.432 7.79995 22.75 8.34795 22.75 8.92195C22.75 9.49495 22.432 10.0429 21.866 10.3559L16.25 13.4589V12.7499C16.25 12.5509 16.171 12.3599 16.03 12.2199L12.53 8.71995C12.238 8.42695 11.762 8.42695 11.47 8.71995C11.177 9.01195 11.177 9.48795 11.47 9.77995L14.75 13.0609V14.2879Z"
-                                                fill="#170006"
-                                            />
-                                        </svg>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-6 mt-30">
-                        <div className="cta-item pos-rel" data-background="assets/img/cta/cta_img2.jpg">
-                            <div className="cta-inner">
-                                <div className="xb-item--icon">
-                                    <img src="assets/img/icon/cta_icon_02.svg" alt="Icône visite" />
-                                </div>
-                                <h3 className="xb-item--title">Visitez notre campus</h3>
-                                <p className="xb-item--content">
-                                    Venez découvrir notre environnement académique en personne. Une visite vous permettra 
-                                    d'apprécier notre cadre d'études exceptionnel.
-                                </p>
-                                <a className="thm-btn thm-btn--gray" href="#">
-                                    Réserver une visite
-                                    <span>
-                                        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M16.25 19.4919V20.7499C16.25 21.1639 15.914 21.4999 15.5 21.4999C15.086 21.4999 14.75 21.1639 14.75 20.7499V19.4999H16C16.084 19.4999 16.167 19.4969 16.25 19.4919Z"
-                                                fill="#170006"
-                                            />
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M14.75 19.5H8C5.929 19.5 4.25 17.821 4.25 15.75V12.668L9.964 15.825C11.202 16.509 12.798 16.509 14.036 15.825L14.75 15.431V19.5ZM16.25 14.602L19.75 12.668V15.75C19.75 17.737 18.205 19.363 16.25 19.492V14.602Z"
-                                                fill="#170006"
-                                            />
-                                            <path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M14.75 14.2879L13.552 14.9499C12.608 15.4719 11.392 15.4719 10.448 14.9499L2.134 10.3559C1.568 10.0429 1.25 9.49495 1.25 8.92195C1.25 8.34795 1.568 7.79995 2.134 7.48795L10.448 2.89295C11.392 2.37195 12.608 2.37195 13.552 2.89295L21.866 7.48795C22.432 7.79995 22.75 8.34795 22.75 8.92195C22.75 9.49495 22.432 10.0429 21.866 10.3559L16.25 13.4589V12.7499C16.25 12.5509 16.171 12.3599 16.03 12.2199L12.53 8.71995C12.238 8.42695 11.762 8.42695 11.47 8.71995C11.177 9.01195 11.177 9.48795 11.47 9.77995L14.75 13.0609V14.2879Z"
-                                                fill="#170006"
-                                            />
-                                        </svg>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+  return (
+    <section className="relative bg-slate-50 py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Carte 1 */}
+          <article className="group relative h-[420px] overflow-hidden rounded-3xl shadow-sm ring-1 ring-slate-200">
+            {/* Fond */}
+            <img
+              src="/assets/img/cta/cta_img1.jpg"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
+            {/* Contenu */}
+            <div className="absolute inset-0 p-6 sm:p-8 flex items-end">
+              <div className="w-full rounded-2xl bg-white/85 backdrop-blur-md p-5 sm:p-6 shadow-[0_6px_30px_rgba(15,23,42,0.08)] transition group-hover:bg-white/90">
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 ring-1 ring-indigo-100">
+                  <img
+                    src="/assets/img/icon/cta_icon_01.svg"
+                    alt=""
+                    className="h-6 w-6"
+                  />
                 </div>
+                <h3 className="text-xl font-semibold tracking-tight text-slate-900">
+                  Coûts et aides financières
+                </h3>
+                <p className="mt-2 text-[15px] leading-6 text-slate-600">
+                  Comprendre les frais de scolarité et les options d’aide
+                  financière est essentiel pour bien planifier votre budget
+                  étudiant.
+                </p>
+
+                <div className="mt-5">
+                  <Link
+                    href={route("dashboard.enrollments.index")}
+                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-indigo-600/10 transition hover:-translate-y-0.5 hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600/40"
+                    aria-label="Postuler maintenant"
+                  >
+                    Postuler maintenant
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M13 5l7 7-7 7M20 12H4"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
             </div>
-        </section>
-    );
+          </article>
+
+          {/* Carte 2 */}
+          <article className="group relative h-[420px] overflow-hidden rounded-3xl shadow-sm ring-1 ring-slate-200">
+            {/* Fond */}
+            <img
+              src="/assets/img/cta/cta_img2.jpg"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
+            {/* Contenu */}
+            <div className="absolute inset-0 p-6 sm:p-8 flex items-end">
+              <div className="w-full rounded-2xl bg-white/85 backdrop-blur-md p-5 sm:p-6 shadow-[0_6px_30px_rgba(15,23,42,0.08)] transition group-hover:bg-white/90">
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 ring-1 ring-amber-100">
+                  <img
+                    src="/assets/img/icon/cta_icon_02.svg"
+                    alt=""
+                    className="h-6 w-6"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold tracking-tight text-slate-900">
+                  Visitez notre campus
+                </h3>
+                <p className="mt-2 text-[15px] leading-6 text-slate-600">
+                  Découvrez notre environnement académique en personne et
+                  appréciez un cadre d’études exceptionnel.
+                </p>
+
+                <div className="mt-5">
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50"
+                    aria-label="Réserver une visite"
+                  >
+                    Réserver une visite
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M13 5l7 7-7 7M20 12H4"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
 }

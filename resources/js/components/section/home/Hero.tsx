@@ -1,87 +1,354 @@
-import { Link } from "@inertiajs/react";
+import { Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 export default function Hero() {
+    const [scrollY, setScrollY] = useState(0);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        const handleMouseMove = (e) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('mousemove', handleMouseMove);
+        
+        // Déclencher l'animation après le chargement
+        setTimeout(() => setIsLoaded(true), 100);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
     return (
-        <>
-            <section className="hero o-hidden pos-rel">
-                <div className="bg_img hero" data-background="/assets/img/bg/hero.jpg">
-                    <div className="container">
-                        <div className="hero__content-wrap pt-55 text-center">
-                            <div className="section-title clr-white">
-                                <span className="sub-title wow fadeInUp" data-wow-delay="0ms" data-wow-duration=".6s">
-                                    Bienvenue à l'Université
+        <section className="relative overflow-hidden min-h-screen flex flex-col">
+            {/* Background avec effets parallax améliorés */}
+            <div className="absolute inset-0 -z-10">
+                <img 
+                    src="/assets/img/bg/hero.jpg" 
+                    alt="" 
+                    className="h-full w-full object-cover"
+                    style={{
+                        transform: `scale(${1.05 - scrollY * 0.0005}) translateY(${scrollY * 0.3}px)`,
+                    }}
+                    fetchPriority="high" 
+                />
+                
+                {/* Overlay gradient sophistiqué avec effet de profondeur */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/85 via-indigo-700/80 to-purple-800/75" />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/95 via-blue-800/40 to-transparent" />
+                
+                {/* Effets de lumière animés avec suivi de souris */}
+                <div 
+                    className="absolute w-96 h-96 bg-amber-400/20 rounded-full blur-3xl transition-all duration-1000 ease-out"
+                    style={{
+                        left: `${mousePosition.x * 0.05}px`,
+                        top: `${mousePosition.y * 0.05}px`,
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                />
+                <div 
+                    className="absolute w-96 h-96 bg-purple-400/15 rounded-full blur-3xl transition-all duration-1000 ease-out"
+                    style={{
+                        right: `${-mousePosition.x * 0.03}px`,
+                        bottom: `${-mousePosition.y * 0.03}px`,
+                        transform: 'translate(50%, 50%)',
+                    }}
+                />
+                
+                {/* Effet de grille 3D */}
+                <div className="absolute inset-0 opacity-20">
+                    <div className="h-full w-full bg-grid-pattern"></div>
+                </div>
+            </div>
+
+            {/* Particules flottantes améliorées */}
+            <div className="absolute inset-0 -z-5">
+                {[...Array(20)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-300/30 rounded-full animate-float"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 5}s`,
+                            animationDuration: `${3 + Math.random() * 4}s`,
+                            width: `${Math.random() * 3 + 1}px`,
+                            height: `${Math.random() * 3 + 1}px`,
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Formes géométriques flottantes */}
+            <div className="absolute inset-0 overflow-hidden -z-5">
+                <div className="absolute top-20 left-10 w-32 h-32 border border-amber-300/20 rotate-45 animate-spin-slow"></div>
+                <div className="absolute bottom-20 right-10 w-24 h-24 border border-blue-300/20 rounded-full animate-pulse-slow"></div>
+                <div className="absolute top-1/2 left-1/4 w-16 h-16 border border-purple-300/20 rotate-12 animate-float-delayed"></div>
+            </div>
+
+            {/* CONTENU HERO */}
+            <div className="flex-1 flex flex-col">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 flex-1 flex flex-col">
+                    {/* Espacement intelligent pour le header */}
+                    <div className="pt-8 sm:pt-12 lg:pt-16" />
+
+                    <div className="flex-1 flex flex-col items-center justify-center text-center text-white max-w-6xl mx-auto">
+                        {/* Badge d'introduction avec animation améliorée */}
+                        <div className={`mb-4 sm:mb-6 group transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+                            <div className="inline-flex items-center gap-2 sm:gap-3 rounded-full border border-amber-300/30 bg-amber-400/10 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-300 hover:bg-amber-400/20 hover:border-amber-300/50 hover:scale-105 hover:shadow-lg hover:shadow-amber-400/20">
+                                <div className="flex h-2 w-2 items-center justify-center">
+                                    <div className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+                                    <div className="absolute h-1 w-1 rounded-full bg-amber-300" />
+                                </div>
+                                <span className="bg-gradient-to-r from-amber-200 to-yellow-200 bg-clip-text text-transparent font-semibold">
+                                    Bienvenue à l'Université d'Excellence
                                 </span>
-                                <h1 className="title wow fadeInUp" data-wow-delay="150ms" data-wow-duration=".6s">
-                                    Université Moderne de Kinkole votre <br /> Chemin vers le succès
-                                </h1>
+                                <svg width="14" height="14" viewBox="0 0 24 24" className="text-amber-300 transition-transform duration-300 group-hover:rotate-12 sm:w-4 sm:h-4">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                                </svg>
                             </div>
-                            <div className="xb-hero-img">
-                                <img src="assets/img/hero/hero1.png" width={700} alt="" />
+                        </div>
+
+                        {/* Titre principal avec animation responsive améliorée */}
+                        <h1 className={`mx-auto max-w-5xl text-3xl leading-tight font-bold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                            <span className="block bg-gradient-to-r from-white via-blue-50 to-amber-100 bg-clip-text text-transparent animate-gradient hover:animate-gradient-slow">
+                                Université Moderne
+                            </span>
+                            <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-200 bg-clip-text text-transparent animate-gradient delay-300">
+                                De Kinkole
+                            </span>
+                            <span className="block mt-2 sm:mt-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/95">
+                                Votre Chemin Vers Le
+                                <span className="relative ml-2 sm:ml-3 group">
+                                    Succès
+                                    <svg className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-2 sm:h-3 text-amber-400/60 transition-all duration-300 group-hover:text-amber-400/80" viewBox="0 0 200 12" preserveAspectRatio="none">
+                                        <path d="M0 8 Q50 2 100 8 T200 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                                    </svg>
+                                </span>
+                            </span>
+                        </h1>
+
+                        {/* Sous-titre élégant responsive avec animation améliorée */}
+                        <p className={`mt-4 sm:mt-6 lg:mt-8 max-w-2xl lg:max-w-3xl text-base sm:text-lg md:text-xl text-blue-100/90 font-medium leading-relaxed transition-all duration-1000 delay-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                            Forgez votre avenir avec une éducation de classe mondiale, 
+                            <span className="text-amber-200 font-semibold hover:text-amber-100 transition-colors duration-300"> des programmes innovants </span>
+                            et un accompagnement personnalisé vers l'excellence académique.
+                        </p>
+
+                        {/* Image étudiants avec effets responsive améliorés */}
+                        <div className={`mt-6 sm:mt-8 lg:mt-12 w-full max-w-3xl lg:max-w-5xl group transition-all duration-1000 delay-700 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent rounded-2xl sm:rounded-3xl group-hover:from-white/20 transition-all duration-500" />
+                                <img
+                                    src="/assets/img/hero/hero3.png"
+                                    alt="Diplômés UMK - Excellence Académique"
+                                    className="mx-auto h-auto w-full max-w-2xl lg:max-w-4xl object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-2xl"
+                                    loading="eager"
+                                />
+                                {/* Effets de brillance améliorés */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                                
+                                {/* Points d'intérêt interactifs */}
+                                <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-amber-400 rounded-full animate-pulse cursor-pointer group-hover:scale-125 transition-transform duration-300">
+                                    <div className="absolute inset-0 bg-amber-400 rounded-full animate-ping" />
+                                </div>
+                                <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-blue-400 rounded-full animate-pulse cursor-pointer group-hover:scale-125 transition-transform duration-300">
+                                    <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* CTA Bar Ultra Premium Responsive améliorée */}
+                    <div className={`pb-8 sm:pb-12 lg:pb-16 mt-4 transition-all duration-1000 delay-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <div className="mx-auto max-w-4xl lg:max-w-6xl">
+                            {/* Conteneur principal avec glassmorphism amélioré */}
+                            <div className="relative rounded-2xl sm:rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 p-1.5 sm:p-2 shadow-2xl shadow-blue-900/25 hover:shadow-3xl hover:shadow-blue-800/30 transition-all duration-500 group">
+                                {/* Effet de halo amélioré */}
+                                <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-400/20 via-transparent to-yellow-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                
+                                <div className="grid gap-1.5 sm:gap-2 grid-cols-1 sm:grid-cols-3">
+                                    {/* Explorer les programmes */}
+                                    <Link
+                                        href={route('courses')}
+                                        className="group/btn relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur border border-white/10 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-400/25"
+                                    >
+                                        <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" className="transition-all duration-300 group-hover/btn:rotate-12 group-hover/btn:scale-110 sm:w-5 sm:h-5">
+                                                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                            </svg>
+                                            <span className="relative z-10">
+                                                <span className="hidden sm:inline">Explorer les programmes</span>
+                                                <span className="sm:hidden">Programmes</span>
+                                            </span>
+                                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-pulse" />
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/20 to-amber-400/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+                                    </Link>
+
+                                    {/* Postuler - CTA Principal */}
+                                    <Link
+                                        href={route('dashboard.enrollments.index')}
+                                        className="group/btn relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-bold text-white shadow-lg shadow-amber-400/25 transition-all duration-300 hover:from-amber-500 hover:to-yellow-600 hover:scale-110 hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-400/40"
+                                    >
+                                        <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                            <span className="relative z-10">
+                                                <span className="hidden sm:inline">Postulez maintenant</span>
+                                                <span className="sm:hidden">Postuler</span>
+                                            </span>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" className="transition-all duration-300 group-hover/btn:translate-x-1 group-hover/btn:scale-110 sm:w-5 sm:h-5">
+                                                <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+                                            </svg>
+                                            <div className="absolute right-1 sm:right-2 top-1 sm:top-2 w-2 h-2 sm:w-3 sm:h-3 bg-white/30 rounded-full animate-ping" />
+                                        </div>
+                                        {/* Effet de brillance animé amélioré */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500" />
+                                        {/* Pulsation de bordure améliorée */}
+                                        <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/50 scale-100 group-hover/btn:scale-110 group-hover/btn:border-white/70 transition-all duration-300" />
+                                    </Link>
+
+                                    {/* Parler avec un conseiller */}
+                                    <Link
+                                        href={route('contact')}
+                                        className="group/btn relative overflow-hidden rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur border border-white/10 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-400/25"
+                                    >
+                                        <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" className="transition-all duration-300 group-hover/btn:scale-110 sm:w-5 sm:h-5">
+                                                <path
+                                                    d="M12 20c4.4 0 8-2.9 8-6.5S16.4 7 12 7 4 9.9 4 13.5c0 1.7.9 3.3 2.4 4.4L6 21l3.3-1.1c.8.1 1.4.1 2.7.1Z"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    fill="none"
+                                                />
+                                                <circle cx="9" cy="13" r="0.5" fill="currentColor" />
+                                                <circle cx="12" cy="13" r="0.5" fill="currentColor" />
+                                                <circle cx="15" cy="13" r="0.5" fill="currentColor" />
+                                            </svg>
+                                            <span className="relative z-10">
+                                                <span className="hidden sm:inline">Parler avec un conseiller</span>
+                                                <span className="sm:hidden">Conseiller</span>
+                                            </span>
+                                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse" />
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/20 to-blue-400/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <div className="hero-btns">
-                <div className="btns ul_li_center">
-                    <Link className="thm-btn thm-btn--stroke-white sec-btn" href={route('courses')}>
-                        Explorer les programmes
-                        <span>
-                            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22 4.84999V16.74C22 17.71 21.21 18.6 20.24 18.72L19.93 18.76C18.29 18.98 15.98 19.66 14.12 20.44C13.47 20.71 12.75 20.22 12.75 19.51V5.59999C12.75 5.22999 12.96 4.88999 13.29 4.70999C15.12 3.71999 17.89 2.83999 19.77 2.67999H19.83C21.03 2.67999 22 3.64999 22 4.84999Z"
-                                    fill="white"
-                                />
-                                <path
-                                    d="M10.71 4.70999C8.87999 3.71999 6.10999 2.83999 4.22999 2.67999H4.15999C2.95999 2.67999 1.98999 3.64999 1.98999 4.84999V16.74C1.98999 17.71 2.77999 18.6 3.74999 18.72L4.05999 18.76C5.69999 18.98 8.00999 19.66 9.86999 20.44C10.52 20.71 11.24 20.22 11.24 19.51V5.59999C11.24 5.21999 11.04 4.88999 10.71 4.70999ZM4.99999 7.73999H7.24999C7.65999 7.73999 7.99999 8.07999 7.99999 8.48999C7.99999 8.90999 7.65999 9.23999 7.24999 9.23999H4.99999C4.58999 9.23999 4.24999 8.90999 4.24999 8.48999C4.24999 8.07999 4.58999 7.73999 4.99999 7.73999ZM7.99999 12.24H4.99999C4.58999 12.24 4.24999 11.91 4.24999 11.49C4.24999 11.08 4.58999 10.74 4.99999 10.74H7.99999C8.40999 10.74 8.74999 11.08 8.74999 11.49C8.74999 11.91 8.40999 12.24 7.99999 12.24Z"
-                                    fill="white"
-                                />
-                            </svg>
-                        </span>
-                    </Link>
-                    <a className="thm-btn thm-btn--stroke-white sec-btn" href="contact.html">
-                        Postulez maintenant
-                        <span>
-                            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M16.25 19.492V20.75C16.25 21.164 15.914 21.5 15.5 21.5C15.086 21.5 14.75 21.164 14.75 20.75V19.5H16C16.084 19.5 16.167 19.497 16.25 19.492Z"
-                                    fill="white"
-                                />
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M14.75 19.5H8C5.929 19.5 4.25 17.821 4.25 15.75V12.668L9.964 15.825C11.202 16.509 12.798 16.509 14.036 15.825L14.75 15.431V19.5ZM16.25 14.602L19.75 12.668V15.75C19.75 17.737 18.205 19.363 16.25 19.492V14.602Z"
-                                    fill="white"
-                                />
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M14.75 14.288L13.552 14.95C12.608 15.472 11.392 15.472 10.448 14.95L2.134 10.356C1.568 10.043 1.25 9.49499 1.25 8.92199C1.25 8.34799 1.568 7.79999 2.134 7.48799L10.448 2.89299C11.392 2.37199 12.608 2.37199 13.552 2.89299L21.866 7.48799C22.432 7.79999 22.75 8.34799 22.75 8.92199C22.75 9.49499 22.432 10.043 21.866 10.356L16.25 13.459V12.75C16.25 12.551 16.171 12.36 16.03 12.22L12.53 8.71999C12.238 8.42699 11.762 8.42699 11.47 8.71999C11.177 9.01199 11.177 9.48799 11.47 9.77999L14.75 13.061V14.288Z"
-                                    fill="white"
-                                />
-                            </svg>
-                        </span>
-                    </a>
-                    <a className="thm-btn thm-btn--stroke-white sec-btn" href="contact.html">
-                        Parler avec un professeur
-                        <span>
-                            <svg width={22} height={22} viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M13.0364 2.63798C11.6702 1.79536 10.0512 1.33203 8.37891 1.33203C3.82654 1.33203 0 4.72368 0 9.06641C0 10.589 0.473 12.0486 1.37148 13.3092L0.116359 17.2497C-0.0162422 17.6659 0.295539 18.0898 0.730598 18.0898C0.83007 18.0898 0.930188 18.0669 1.02257 18.0198L4.83957 16.0791C4.99413 16.1456 5.15062 16.2076 5.3087 16.265C4.42496 14.8857 3.95312 13.3023 3.95312 11.6445C3.95312 6.70755 8.10726 2.91208 13.0364 2.63798Z"
-                                    fill="white"
-                                />
-                                <path
-                                    d="M20.6285 15.8873C21.527 14.6267 22 13.1671 22 11.6445C22 7.30022 18.1718 3.91016 13.6211 3.91016C9.06873 3.91016 5.24219 7.30181 5.24219 11.6445C5.24219 15.9888 9.07036 19.3789 13.6211 19.3789C14.8421 19.3789 16.0588 19.1301 17.1602 18.6571L20.9774 20.598C21.2091 20.7158 21.4889 20.6829 21.6869 20.5146C21.885 20.3463 21.9626 20.0755 21.8837 19.8278L20.6285 15.8873ZM11 12.2891C10.644 12.2891 10.3555 12.0005 10.3555 11.6445C10.3555 11.2886 10.644 11 11 11C11.356 11 11.6445 11.2886 11.6445 11.6445C11.6445 12.0005 11.356 12.2891 11 12.2891ZM13.5781 12.2891C13.2222 12.2891 12.9336 12.0005 12.9336 11.6445C12.9336 11.2886 13.2222 11 13.5781 11C13.9341 11 14.2227 11.2886 14.2227 11.6445C14.2227 12.0005 13.9341 12.2891 13.5781 12.2891ZM16.1562 12.2891C15.8003 12.2891 15.5117 12.0005 15.5117 11.6445C15.5117 11.2886 15.8003 11 16.1562 11C16.5122 11 16.8008 11.2886 16.8008 11.6445C16.8008 12.0005 16.5122 12.2891 16.1562 12.2891Z"
-                                    fill="white"
-                                />
-                            </svg>
-                        </span>
-                    </a>
-                </div>
             </div>
-        </>
+
+            {/* Indicateur de défilement */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M19 12l-7 7-7-7"/>
+                </svg>
+            </div>
+
+            {/* CSS Animations et Responsive améliorées */}
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
+                    50% { transform: translateY(-15px) rotate(180deg); opacity: 1; }
+                }
+                @keyframes gradient {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+                @keyframes gradient-slow {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 0.2; transform: scale(1); }
+                    50% { opacity: 0.4; transform: scale(1.05); }
+                }
+                @keyframes float-delayed {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(10deg); }
+                }
+                
+                .animate-float {
+                    animation: float ease-in-out infinite;
+                }
+                .animate-gradient {
+                    background-size: 200% 200%;
+                    animation: gradient 3s ease infinite;
+                }
+                .animate-gradient-slow {
+                    background-size: 200% 200%;
+                    animation: gradient-slow 8s ease infinite;
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 20s linear infinite;
+                }
+                .animate-pulse-slow {
+                    animation: pulse-slow 4s ease-in-out infinite;
+                }
+                .animate-float-delayed {
+                    animation: float-delayed 6s ease-in-out infinite;
+                }
+                
+                /* Pattern de grille */
+                .bg-grid-pattern {
+                    background-image: 
+                        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+                    background-size: 50px 50px;
+                }
+                
+                /* Responsive particules */
+                @media (max-width: 640px) {
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+                        50% { transform: translateY(-10px) rotate(90deg); opacity: 0.8; }
+                    }
+                }
+                
+                /* Effets hover mobile */
+                @media (hover: none) and (pointer: coarse) {
+                    .group:hover .group-hover\\:scale-105 {
+                        transform: scale(1.02);
+                    }
+                    
+                    .group:hover .group-hover\\:translate-x-1 {
+                        transform: translateX(2px);
+                    }
+                    
+                    .group:active .group-hover\\:scale-110 {
+                        transform: scale(1.05);
+                    }
+                }
+                
+                /* Optimisation performances mobiles */
+                @media (prefers-reduced-motion: reduce) {
+                    * {
+                        animation-duration: 0.01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: 0.01ms !important;
+                    }
+                    
+                    .animate-pulse,
+                    .animate-float,
+                    .animate-gradient,
+                    .animate-gradient-slow,
+                    .animate-spin-slow,
+                    .animate-pulse-slow,
+                    .animate-float-delayed {
+                        animation: none !important;
+                    }
+                }
+            `}</style>
+        </section>
     );
 }

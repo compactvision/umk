@@ -35,10 +35,10 @@ class SwitchPageController extends Controller
 
     public function courseShow($id) {
         $course = Level::findOrFail($id);
-        $course->load(['faculty', 'admissionConditions', 'details', 'courses', 'levelCode']);
+        $course->load(['faculty', 'admissionConditions', 'detail']);
 
         $mayLike = Level::where('id', '!=', $course->id)
-            ->with(['details', 'faculty'])
+            ->with(['detail', 'faculty'])
             ->inRandomOrder()
             ->take(4)
             ->get();
@@ -48,6 +48,7 @@ class SwitchPageController extends Controller
             'mayLike' => $mayLike
         ]);
     }
+    
     public function contact()
     {
         return Inertia::render('Contactpage');

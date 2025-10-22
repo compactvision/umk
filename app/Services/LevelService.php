@@ -34,8 +34,8 @@ class LevelService
     {
         return Cache::remember('levels.active', 3600, function () {
             return $this->level
-                ->orderBy('level_name')
-                ->get(['id', 'level_name', 'level_code', 'description', 'duration_years', 'is_active', 'student_number', 'credit_required', 'courses_number', 'image']);
+                ->orderBy('title')
+                ->get(['id', 'title', 'code', 'description', 'duration_years', 'is_active', 'image']);
         });
     }
 
@@ -70,7 +70,7 @@ class LevelService
 
             Log::info('Niveau créé', [
                 'faculty_id' => $level->id,
-                'level_name' => $level->level_name,
+                'title' => $level->title,
                 'user_id' => auth()->id()
             ]);
 

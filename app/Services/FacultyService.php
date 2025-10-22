@@ -41,8 +41,8 @@ class FacultyService
     {
         return Faculty::with([
             'levels' => function ($query) {
-                $query->orderBy('level_name')
-                    ->with('details'); // 🔥 Charger details à ce niveau
+                $query->orderBy('title')
+                    ->with('detail'); // 🔥 Charger details à ce niveau
             }
         ])
             ->where('is_active', true)
