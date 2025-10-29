@@ -1,0 +1,97 @@
+name: Deploy to Nitrohost
+
+on:
+  push:
+    branches: [ main ] # ta branche de prod
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_DIR: release-${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+
+      # ----- PHP (Composer) -----
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl, bcmath, gd, pdo_mysql
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-interaction
+
+      - name: Install PHP deps (no-dev)
+        run: composer install --prefer-dist --no-interaction --no-progress --no-dev --optimize-autoloader
+
+      # ----- Node (build Inertia/Vite) -----
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: 18 }
+
+      - name: Install JS deps & Build
+        run: |
+          npm ci
+          npm run build
+
+      # ----- Préparer une release prête à déposer -----
+      - name: Prepare release folder
+        run: |
+          mkdir -p $RELEASE_DIR
+          rsync -a --delete \
+            --exclude=".git" --exclude=".github" \
+            --exclude="node_modules" --exclude="storage" --exclude=".env" \
+            ./ $RELEASE_DIR/
+
+      # ----- Upload vers le serveur (SCP) -----
+      - name: Upload release via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.NITRO_HOST }}
+          port: ${{ secrets.NITRO_PORT }}
+          username: ${{ secrets.NITRO_USER }}
+          key: ${{ secrets.NITRO_SSH_KEY }}
+          # ou password: ${{ secrets.NITRO_PASS }}
+          source: "${{ env.RELEASE_DIR }}/"
+          target: "${{ secrets.NITRO_PATH }}/releases/${{ github.sha }}/"
+          overwrite: true
+
+      # ----- Activer la release (liens + caches + migration + bascule) -----
+      - name: Activate release
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.NITRO_HOST }}
+          port: ${{ secrets.NITRO_PORT }}
+          username: ${{ secrets.NITRO_USER }}
+          key: ${{ secrets.NITRO_SSH_KEY }}
+          # ou password: ${{ secrets.NITRO_PASS }}
+          script: |
+            set -e
+            BASE="${{ secrets.NITRO_PATH }}"
+            REL="${{ secrets.NITRO_PATH }}/releases/${{ github.sha }}"
+
+            # Lier éléments "shared"
+            ln -sfn $BASE/shared/.env $REL/.env
+            rm -rf $REL/storage
+            ln -sfn $BASE/shared/storage $REL/storage
+            ln -sfn $BASE/shared/bootstrap/cache $REL/bootstrap/cache
+
+            # Optimisations / migrations
+            cd $REL
+            ${{ secrets.PHP_CLI }} artisan key:generate --force || true
+            ${{ secrets.PHP_CLI }} artisan config:cache
+            ${{ secrets.PHP_CLI }} artisan route:cache || true
+            ${{ secrets.PHP_CLI }} artisan view:cache || true
+            ${{ secrets.PHP_CLI }} artisan migrate --force || true
+
+            # Bascule atomique
+            ln -sfn $REL $BASE/current
+
+            # Nettoyage (garde 5 releases)
+            cd $BASE/releases
+            ls -1t | tail -n +6 | xargs -r rm -rf

@@ -1,0 +1,37 @@
+# .cpanel.yml
+---
+deployment:
+  tasks:
+    - export APP_DIR=$HOME/apps/umk      # change le nom si tu veux
+    - export PATH="$HOME/bin:$PATH"
+
+    # Aller au dossier du repo cloné par cPanel
+    - /bin/echo "-> cd to $DEPLOYPATH"
+    - /bin/true
+
+    # Composer (o2switch: chemin composer cli)
+    - /opt/cpanel/composer/bin/composer install --no-dev --prefer-dist --optimize-autoloader
+
+    # Permissions
+    - /bin/chmod -R ug+rwx storage bootstrap/cache
+    - /bin/find storage -type d -exec chmod 775 {} \;
+    - /bin/find storage -type f -exec chmod 664 {} \;
+    - /bin/chmod -R 775 bootstrap/cache
+
+    # Clé app (1ère fois uniquement, safe si déjà présent)
+    - /usr/local/bin/php artisan key:generate --force
+
+    # Lien storage public
+    - /usr/local/bin/php artisan storage:link || /bin/true
+
+    # Migrations
+    - /usr/local/bin/php artisan migrate --force
+
+    # Caches
+    - /usr/local/bin/php artisan config:cache
+    - /usr/local/bin/php artisan route:cache
+    - /usr/local/bin/php artisan view:cache
+
+    # Build Vite (si Node dispo côté serveur, sinon voir Option B)
+    - /usr/local/bin/npm ci
+    - /usr/local/bin/npm run build
