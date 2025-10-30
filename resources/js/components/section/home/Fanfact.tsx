@@ -21,43 +21,43 @@ type Slide = {
 // ---------- Données ----------
 const SLIDES: Slide[] = [
   {
-    img: "/assets/img/feature/feature-img01.png",
-    imgAlt: "Centre de recherche UMK",
-    title: "Notre excellence académique sans égale",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/ULPGL%20GOMA%2C%20Campus%20Mo%C3%AFse%20vue%20de%20devant.jpg?width=1600",
+    imgAlt: "Campus universitaire à Goma (RDC)",
+    title: "Excellence académique au cœur du Congo",
     number: 15,
     suffix: "+",
     kpi: "Instituts de recherche",
-    content: "Des centres spécialisés dédiés à l'avancement des connaissances avec des laboratoires de pointe.",
+    content: "Des pôles d’excellence qui impulsent l’innovation et les solutions locales à fort impact.",
     accent: "amber",
   },
   {
-    img: "/assets/img/feature/feature-img03.png",
-    imgAlt: "Bibliothèques UMK",
-    title: "Ressources documentaires exceptionnelles",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Halle%20de%20la%20Rawbank%20%C3%A0%20l%27Universit%C3%A8%20de%20Kinshasa.jpg?width=1600",
+    imgAlt: "Hall académique de l’Université de Kinshasa",
+    title: "Ressources documentaires & espaces d’apprentissage",
     number: 10,
     suffix: "+",
-    kpi: "Bibliothèques spécialisées",
-    content: "Un réseau documentaire offrant des ressources variées et actualisées pour tous les domaines.",
+    kpi: "Bibliothèques & centres de ressources",
+    content: "Des espaces modernes, accessibles et connectés pour soutenir la réussite étudiante.",
     accent: "yellow",
   },
   {
-    img: "/assets/img/feature/feature-img02.png",
-    imgAlt: "Laboratoires UMK",
-    title: "Infrastructure de recherche de pointe",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ista%20kinshasa%20batiment%20vodacom.jpg?width=1600",
+    imgAlt: "Bâtiment d’ingénierie à Kinshasa (ISTA)",
+    title: "Laboratoires & pratiques de pointe",
     number: 25,
     suffix: "+",
     kpi: "Laboratoires modernes",
-    content: "Équipements technologiques avancés pour soutenir l'innovation et la découverte.",
+    content: "Des environnements techniques pour expérimenter, prototyper et apprendre par la pratique.",
     accent: "orange",
   },
   {
-    img: "/assets/img/feature/feature-img04.png",
-    imgAlt: "Partenariats UMK",
-    title: "Réseau international de partenaires",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Secretary%20Blinken%20at%20MOU%20Signing%20Ceremony%20with%20Democratic%20Republic%20of%20the%20Congo%20Foreign%20Minister%20Lutundula%20and%20Zambian%20Foreign%20Minister%20Kakubo%20(52562579804).jpg?width=1600",
+    imgAlt: "Cérémonie de signature avec la RDC",
+    title: "Un réseau de partenariats internationaux",
     number: 50,
     suffix: "+",
     kpi: "Institutions partenaires",
-    content: "Collaborations mondiales pour des opportunités d'échange et de recherche conjointe.",
+    content: "Des collaborations qui ouvrent des passerelles pour la recherche et la mobilité.",
     accent: "golden",
   },
 ];
@@ -94,11 +94,12 @@ const GRADIENTS: Record<NonNullable<Slide["accent"]>, string> = {
   golden: "from-amber-500 via-yellow-500 to-amber-600",
 };
 
+// ✅ Fix: ajouter les variantes manquantes ici
 const ringColor: Record<NonNullable<Slide["accent"]>, string> = {
   amber: "ring-amber-100",
-  violet: "ring-fuchsia-100",
-  sky: "ring-sky-100",
-  emerald: "ring-emerald-100",
+  yellow: "ring-yellow-100",
+  orange: "ring-orange-100",
+  golden: "ring-amber-100",
 };
 
 const bgGradient: Record<NonNullable<Slide["accent"]>, string> = {
@@ -174,11 +175,7 @@ export default function Fanfact(): JSX.Element {
                   ? false
                   : { delay: 5000, disableOnInteraction: false }
               }
-              pagination={{
-                clickable: true,
-                renderBullet: (index, className) =>
-                  `<span class="${className} aria-hidden" aria-label="Aller au slide ${index + 1}"></span>`,
-              }}
+              
               className="fanfact-swiper"
             >
               {SLIDES.map((slide, idx) => (

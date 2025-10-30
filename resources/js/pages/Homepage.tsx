@@ -13,8 +13,8 @@ export default function Homepage() {
         <Hero />
         <Blog />
         <Faculty />
-        <Fanfact />
-        <Courses />
+        {/* <Fanfact /> */}
+        {/* <Courses /> */}
         <Campus />
         <Testimonial />
         <Event />

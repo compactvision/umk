@@ -12,10 +12,10 @@ type CampusItem = {
 
 const ITEMS: CampusItem[] = [
   { 
-    img: "/assets/img/campus/campus-img01.png", 
-    title: "Expériences culturelles", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Acad%C3%A9mie%20Beaux%20Arts%20Kinshasa.JPG?width=1600",
+    title: "Expériences culturelles",
     link: "#",
-    description: "Découvrez notre riche vie culturelle avec des événements tout au long de l'année",
+    description: "Ateliers et expositions à l’Académie des Beaux-Arts de Kinshasa : sculpture, peinture, design…",
     icon: "theater",
     stats: [
       { label: "Événements/an", value: "50+" },
@@ -23,10 +23,10 @@ const ITEMS: CampusItem[] = [
     ]
   },
   { 
-    img: "/assets/img/campus/campus-img02.png", 
-    title: "Vie étudiante", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/EITI%20students%20meeting%20Universit%C3%A9%20protestante%20au%20Congo%20(16987503918).jpg?width=1600",
+    title: "Vie étudiante",
     link: "#",
-    description: "Une communauté dynamique avec des clubs et des activités pour tous",
+    description: "Rencontres, clubs et débats à l’UPC et sur les campus de Kinshasa : une communauté active et solidaire.",
     icon: "users",
     stats: [
       { label: "Étudiants", value: "15K+" },
@@ -34,10 +34,10 @@ const ITEMS: CampusItem[] = [
     ]
   },
   { 
-    img: "/assets/img/campus/campus-img03.png", 
-    title: "Activités sportives", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Stade%20des%20martyrs%200332%20Kinshasa%20(8756673901).jpg?width=1600",
+    title: "Activités sportives",
     link: "#",
-    description: "Des installations sportives de pointe pour votre bien-être",
+    description: "Compétitions et grands rendez-vous sportifs au Stade des Martyrs et sur nos terrains universitaires.",
     icon: "trophy",
     stats: [
       { label: "Équipes", value: "18" },
@@ -45,10 +45,10 @@ const ITEMS: CampusItem[] = [
     ]
   },
   { 
-    img: "/assets/img/campus/campus-img04.png", 
-    title: "Résidences étudiantes", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Parc%20de%20L%27Universit%C3%A9%20de%20Kinshasa%202.jpg?width=1600",
+    title: "Résidences & Vie de campus",
     link: "#",
-    description: "Des logements confortables et sécurisés à proximité des campus",
+    description: "Espaces verts et zones de détente à l’UNIKIN : proximité des facultés et cadre paisible.",
     icon: "home",
     stats: [
       { label: "Chambres", value: "3000+" },
@@ -56,10 +56,10 @@ const ITEMS: CampusItem[] = [
     ]
   },
   { 
-    img: "/assets/img/campus/campus-img05.png", 
-    title: "Laboratoires modernes", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ista%20kinshasa%20batiment%20vodacom.jpg?width=1600",
+    title: "Laboratoires modernes",
     link: "#",
-    description: "Des équipements de pointe pour la recherche et l'innovation",
+    description: "Bâtiments techniques (ISTA) et équipements pour l’expérimentation, le prototypage et la recherche.",
     icon: "flask",
     stats: [
       { label: "Labos", value: "45" },
@@ -67,10 +67,10 @@ const ITEMS: CampusItem[] = [
     ]
   },
   { 
-    img: "/assets/img/campus/campus-img06.png", 
-    title: "Bibliothèques", 
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Halle%20de%20la%20Rawbank%20%C3%A0%20l%27Universit%C3%A8%20de%20Kinshasa.jpg?width=1600",
+    title: "Bibliothèques",
     link: "#",
-    description: "Des espaces d'étude calmes avec des ressources documentaires riches",
+    description: "Halles et espaces de lecture (UNIKIN) : ressources documentaires et zones d’étude connectées.",
     icon: "book",
     stats: [
       { label: "Volumes", value: "500K+" },
@@ -78,6 +78,7 @@ const ITEMS: CampusItem[] = [
     ]
   },
 ];
+
 
 const ICONS: Record<string, JSX.Element> = {
   theater: (

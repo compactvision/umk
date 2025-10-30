@@ -8,7 +8,7 @@ export default function Hero() {
 
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
-        const handleMouseMove = (e) => {
+        const handleMouseMove = (e: MouseEvent) => {
             setMousePosition({ x: e.clientX, y: e.clientY });
         };
         
@@ -123,22 +123,23 @@ export default function Hero() {
                                 De Kinkole
                             </span>
                             <span className="block mt-2 sm:mt-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/95">
-                                Votre Chemin Vers Le
+                                Le moyen de predire l'
                                 <span className="relative ml-2 sm:ml-3 group">
-                                    Succès
+                                    Avenir{" "} 
                                     <svg className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-2 sm:h-3 text-amber-400/60 transition-all duration-300 group-hover:text-amber-400/80" viewBox="0 0 200 12" preserveAspectRatio="none">
                                         <path d="M0 8 Q50 2 100 8 T200 8" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
                                     </svg>
                                 </span>
+                                est de le créer
                             </span>
                         </h1>
 
                         {/* Sous-titre élégant responsive avec animation améliorée */}
-                        <p className={`mt-4 sm:mt-6 lg:mt-8 max-w-2xl lg:max-w-3xl text-base sm:text-lg md:text-xl text-blue-100/90 font-medium leading-relaxed transition-all duration-1000 delay-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        {/* <p className={`mt-4 sm:mt-6 lg:mt-8 max-w-2xl lg:max-w-3xl text-base sm:text-lg md:text-xl text-blue-100/90 font-medium leading-relaxed transition-all duration-1000 delay-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                             Forgez votre avenir avec une éducation de classe mondiale, 
                             <span className="text-amber-200 font-semibold hover:text-amber-100 transition-colors duration-300"> des programmes innovants </span>
                             et un accompagnement personnalisé vers l'excellence académique.
-                        </p>
+                        </p> */}
 
                         {/* Image étudiants avec effets responsive améliorés */}
                         <div className={`mt-6 sm:mt-8 lg:mt-12 w-full max-w-3xl lg:max-w-5xl group transition-all duration-1000 delay-700 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
@@ -252,7 +253,7 @@ export default function Hero() {
             </div>
 
             {/* CSS Animations et Responsive améliorées */}
-            <style jsx>{`
+            <style>{`
                 @keyframes float {
                     0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
                     50% { transform: translateY(-15px) rotate(180deg); opacity: 1; }

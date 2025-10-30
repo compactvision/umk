@@ -41,7 +41,7 @@ export default function Preloader({
       aria-live="polite"
       aria-busy="true"
       className={[
-        "fixed inset-0 z-[9999] flex items-center justify-center",
+        "fixed inset-0 z-[999999] flex items-center justify-center",
         "transition-opacity duration-700 ease-out",
         exiting ? "opacity-0 pointer-events-none" : "opacity-100",
       ].join(" ")}
@@ -155,6 +155,7 @@ function Particles() {
           style={{
             top: p.top,
             left: p.left,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             animationDelay: p.delay as any,
           }}
         />

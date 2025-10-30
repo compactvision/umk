@@ -10,38 +10,39 @@ type Testimonial = {
 
 const DATA: Testimonial[] = [
   {
-    mainImg: "/assets/img/testimonial/tes-img.png",
-    thumbImg: "/assets/img/testimonial/tes-img02.png",
+    mainImg: "https://commons.wikimedia.org/wiki/Special:FilePath/ULPGL%20GOMA%2C%20Campus%20Mo%C3%AFse%20vue%20de%20devant.jpg?width=1600",
+    thumbImg: "https://ui-avatars.com/api/?name=Prisca+Mbuyi&background=F59E0B&color=fff&size=128",
     quote:
-      "L'université Edubost a transformé mon parcours. Le corps enseignant expert, les expériences pratiques et la communauté bienveillante m'ont parfaitement préparé pour ma carrière.",
-    name: "Dr. William Harris",
-    role: "Doyen des Humanités",
+      "À l’UMK, j’ai trouvé un encadrement sérieux et des pratiques de terrain adaptées aux réalités congolaises. Les stages m’ont donné une vraie confiance.",
+    name: "Prisca Mbuyi",
+    role: "Étudiante en Santé Publique",
   },
   {
-    mainImg: "/assets/img/testimonial/tes-img04.png",
-    thumbImg: "/assets/img/testimonial/tes-img03.png",
+    mainImg: "https://commons.wikimedia.org/wiki/Special:FilePath/Halle%20de%20la%20Rawbank%20%C3%A0%20l%27Universit%C3%A8%20de%20Kinshasa.jpg?width=1600",
+    thumbImg: "https://ui-avatars.com/api/?name=Ars%C3%A8ne+Kabasele&background=EAB308&color=fff&size=128",
     quote:
-      "Les installations de pointe et la vie étudiante dynamique ont rendu mon expérience universitaire inoubliable et enrichissante.",
-    name: "Jessica Taylor",
-    role: "Présidente du Conseil Étudiant",
+      "Les bibliothèques et espaces de travail m’ont permis d’avancer vite sur mes projets. L’accès aux ressources locales et internationales est un atout énorme.",
+    name: "Arsène Kabasele",
+    role: "Master en Économie & Gestion",
   },
   {
-    mainImg: "/assets/img/testimonial/tes-img.png",
-    thumbImg: "/assets/img/testimonial/tes-img02.png",
+    mainImg: "https://commons.wikimedia.org/wiki/Special:FilePath/Ista%20kinshasa%20batiment%20vodacom.jpg?width=1600",
+    thumbImg: "https://ui-avatars.com/api/?name=Esther+Ilunga&background=D97706&color=fff&size=128",
     quote:
-      "L'approche pédagogique innovante et les opportunités de recherche m'ont permis de développer des compétences clés pour mon avenir professionnel.",
-    name: "Ryan Stewart",
-    role: "Responsable des Services Informatiques",
+      "Les labos et les travaux pratiques m’ont vraiment fait progresser. On code, on prototype, on teste — c’est très concret et motivant.",
+    name: "Esther Ilunga",
+    role: "Licence en Informatique",
   },
   {
-    mainImg: "/assets/img/testimonial/tes-img04.png",
-    thumbImg: "/assets/img/testimonial/tes-img03.png",
+    mainImg: "https://commons.wikimedia.org/wiki/Special:FilePath/Secretary%20Blinken%20at%20MOU%20Signing%20Ceremony%20with%20Democratic%20Republic%20of%20the%20Congo%20Foreign%20Minister%20Lutundula%20and%20Zambian%20Foreign%20Minister%20Kakubo%20(52562579804).jpg?width=1600",
+    thumbImg: "https://ui-avatars.com/api/?name=Pr+Jean+Kapinga&background=F59E0B&color=fff&size=128",
     quote:
-      "L'accompagnement personnalisé et les relations étroites entre étudiants et professeurs font toute la différence dans la qualité de l'enseignement.",
-    name: "Sarah Parker",
-    role: "Coordinatrice de la Vie Étudiante",
+      "Nos partenariats ouvrent des portes: mobilités, co-encadrements et projets appliqués au service du développement en RDC.",
+    name: "Pr. Jean Kapinga",
+    role: "Vice-Doyen à la Recherche",
   },
 ];
+
 
 export default function Testimonial(): JSX.Element {
   const [active, setActive] = useState(0);
