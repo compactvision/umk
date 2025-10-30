@@ -1,8 +1,8 @@
 import DashboardHeader from '@/components/layouts/Dashboard/DashboardHeader';
 import Sidebar from '@/components/layouts/Dashboard/Sidebar';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import '../../../../css/dashboard/app.css';
-import { usePage } from '@inertiajs/react';
 
 // Composant Dashboard principal
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
@@ -34,13 +34,13 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const handleButtonClick = (e: React.MouseEvent, menuId: string) => {
-      e.stopPropagation();
-      setCurrentActiveMenu(prev => prev === menuId ? null : menuId);
+        e.stopPropagation();
+        setCurrentActiveMenu((prev) => (prev === menuId ? null : menuId));
     };
 
     const toggleMobileSidebar = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setIsMobileSidebarOpen(prev => !prev);
+        e.stopPropagation();
+        setIsMobileSidebarOpen((prev) => !prev);
     };
 
     const mainRef = useRef<HTMLDivElement>(null);
@@ -65,17 +65,28 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <div className="dashboard">
+        <div className="relative min-h-screen overflow-hidden bg-gray-50">
             {/* Overlay pour mobile */}
-            <div className={`overlay ${isMobileSidebarOpen ? 'overlay--active' : ''}`} id="overlay" onClick={closeAllMenus}></div>
+            <div
+                className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 md:hidden ${
+                    isMobileSidebarOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+                id="overlay"
+                onClick={closeAllMenus}
+            ></div>
 
-            <Sidebar onButtonClick={handleButtonClick} isMobileSidebarOpen={isMobileSidebarOpen} currentActiveMenu={currentActiveMenu || ''} userRole={user?.roles} />
+            <Sidebar
+                onButtonClick={handleButtonClick}
+                isMobileSidebarOpen={isMobileSidebarOpen}
+                currentActiveMenu={currentActiveMenu || ''}
+                userRole={user?.roles}
+            />
 
-            <DashboardHeader onMobileToggle={toggleMobileSidebar} />
+            <DashboardHeader onMobileToggle={toggleMobileSidebar} isMobileSidebarOpen={isMobileSidebarOpen} />
 
-            <main className="main" ref={mainRef}>
-                <div className="main__content">
-                    {children}
+            <main className="min-h-screen pt-16 transition-transform duration-300 ease-out md:ml-20 lg:ml-20" ref={mainRef}>
+                <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                   {children}
                 </div>
             </main>
         </div>

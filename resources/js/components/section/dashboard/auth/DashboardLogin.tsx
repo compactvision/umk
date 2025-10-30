@@ -38,25 +38,12 @@ const DashboardLogin = () => {
         router.get(route('auth.' + provider + '.redirect'));
     };
 
-    useEffect(() => {
-        const logo = document.querySelector('.login-page__logo');
-        if (logo) {
-            const interval = setInterval(() => {
-                logo.classList.add('login-page__logo--pulse');
-                setTimeout(() => {
-                    logo.classList.remove('login-page__logo--pulse');
-                }, 200);
-            }, 3000);
-            return () => clearInterval(interval);
-        }
-    }, []);
-
     const getButtonText = () => {
         switch (processing) {
             case true:
                 return (
                     <>
-                        <span className="login-form__submit-spinner">⟳</span>
+                        <span className="inline-block animate-spin mr-2">⟳</span>
                         Connexion en cours...
                     </>
                 );
@@ -65,17 +52,29 @@ const DashboardLogin = () => {
         }
     };
 
-    const getButtonClass = () => {
-        let baseClass = 'login-form__submit';
-        if (processing) baseClass += ' login-form__submit--loading';
-        return baseClass;
-    };
-
     return (
-        <div className="login-page">
-            <div className="login-container">
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="login-form__group">
+        <div className="h-screen w-full flex items-center justify-center font-sans bg-gradient-to-br from-slate-50 to-gray-100">
+            <div className="w-full max-w-md px-6">
+                {/* Logo */}
+                <div className="flex justify-center mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center font-bold text-white text-3xl transition-all duration-500 hover:scale-110 hover:rotate-6">
+                        D
+                    </div>
+                </div>
+                
+                {/* Titre */}
+                <div className="text-center mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-1">Bienvenue</h1>
+                    <p className="text-gray-600">Connectez-vous à votre espace</p>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                            </svg>
+                        </div>
                         <input
                             type="email"
                             name="email"
@@ -83,17 +82,23 @@ const DashboardLogin = () => {
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('email')}
                             onBlur={() => setFocusedField(null)}
-                            className={`login-form__input ${focusedField === 'email' ? 'login-form__input--focused' : ''}`}
+                            className={`w-full pl-12 pr-4 py-3.5 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
+                                ${focusedField === 'email' 
+                                    ? 'border-b-2 border-indigo-500' 
+                                    : 'border-b border-gray-300'
+                                }`}
                             placeholder="Adresse email"
                             required
                         />
-                        <div className="login-form__input-icon">
-                          <svg style={{marginTop: '10px'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 128 128"><path fill="#fff" d="M117.64 102.31H10.36c-2.74 0-3.83-1.71-3.83-3.83V29.52c0-2.12 1.71-3.83 3.83-3.83h107.27c2.12 0 3.83 1.71 3.83 3.83v68.96a3.815 3.815 0 0 1-3.82 3.83"/><path fill="#6fbff0" stroke="#6fbff0" strokeMiterlimit="10" strokeWidth="0.5" d="M120.94 28.12a1.44 1.44 0 0 0-2.02-.19L82.23 58.81v6.35L86 61.73l32.25 38.73c.67.65 1.24.9 1.83.47c.37-.27.29-.78-.25-1.37l-29.57-41.7l30.5-27.72c.6-.5.69-1.41.18-2.02zm-73.9 31.75L9.08 27.93a1.43 1.43 0 0 0-2.02.19c-.51.61-.42 1.52.19 2.02l30.5 27.72L8.17 99.57c-.53.59-.61 1.1-.25 1.37c.59.43 1.16.18 1.83-.47L42 61.73l5.04 4.58z"/><path fill="none" stroke="#6fbff0" stroke-miterlimit="10" stroke-width="4" d="M117.64 102.31H10.36c-2.74 0-3.83-1.71-3.83-3.83V29.52c0-2.12 1.71-3.83 3.83-3.83h107.27c2.12 0 3.83 1.71 3.83 3.83v68.96a3.815 3.815 0 0 1-3.82 3.83z"/><path fill="#0d47a1" d="m51.52 41.96l25.5-2.29h1.42c.29 0 .57.13.75.36l1.45 1.85a.4.4 0 0 1 .08.23v7.82c0 .21-.17.38-.38.38h-20a.38.38 0 0 0-.38.38v9.99c0 .23.2.4.43.37l15.24-2.25h.67c.32 0 .62.15.81.39l1.43 1.82a.4.4 0 0 1 .08.23v7.82c0 .21-.17.38-.38.38H60.35a.38.38 0 0 0-.38.38v9.98c0 .23.21.41.44.37l13.13-2.24c.02 0 .04-.01.06-.01h4.8c.32 0 .62.15.82.4l1.42 1.82a.4.4 0 0 1 .08.23v7.82c0 .21-.17.38-.38.38H51.38a.39.39 0 0 1-.3-.14l-1.62-2.07a.44.44 0 0 1-.08-.25l1.8-43.78c.01-.2.16-.36.34-.37"/><path fill="#2196f3" d="M50.04 39.67h28.21c.37 0 .66.3.66.66v7c0 .37-.3.66-.66.66H58.82c-.37 0-.66.3-.66.66v9.47c0 .37.3.66.66.66h17.34c.37 0 .66.3.66.66v7c0 .37-.3.66-.66.66H58.82c-.37 0-.66.3-.66.66v9.47c0 .37.3.66.66.66h19.43c.37 0 .66.3.66.66v7c0 .37-.3.66-.66.66H50.04a.66.66 0 0 1-.66-.66V40.33c0-.37.3-.66.66-.66"/></svg>
-                        </div>
+                        {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
                     </div>
-                    {formErrors.email && <p className="login-form__error">{formErrors.email}</p>}
 
-                    <div className="login-form__group">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
                         <input
                             type="password"
                             name="password"
@@ -101,61 +106,75 @@ const DashboardLogin = () => {
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('password')}
                             onBlur={() => setFocusedField(null)}
-                            className={`login-form__input ${focusedField === 'password' ? 'login-form__input--focused' : ''}`}
+                            className={`w-full pl-12 pr-4 py-3.5 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
+                                ${focusedField === 'password' 
+                                    ? 'border-b-2 border-indigo-500' 
+                                    : 'border-b border-gray-300'
+                                }`}
                             placeholder="Mot de passe"
                             required
                         />
-                        <div className="login-form__input-icon">
-                          <svg style={{marginTop: '10px'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512"><path fill="#b1b4b5" d="M376.749 349.097c-13.531 0-24.5-10.969-24.5-24.5V181.932c0-48.083-39.119-87.203-87.203-87.203c-48.083 0-87.203 39.119-87.203 87.203v82.977c0 13.531-10.969 24.5-24.5 24.5s-24.5-10.969-24.5-24.5v-82.977c0-75.103 61.1-136.203 136.203-136.203s136.203 61.1 136.203 136.203v142.665c0 13.531-10.969 24.5-24.5 24.5"/><path fill="#ffb636" d="M414.115 497.459H115.977c-27.835 0-50.4-22.565-50.4-50.4V274.691c0-27.835 22.565-50.4 50.4-50.4h298.138c27.835 0 50.4 22.565 50.4 50.4v172.367c0 27.836-22.565 50.401-50.4 50.401"/><path fill="#ffd469" d="M109.311 456.841h-2.525c-7.953 0-14.4-6.447-14.4-14.4V279.309c0-7.953 6.447-14.4 14.4-14.4h2.525c7.953 0 14.4 6.447 14.4 14.4v163.132c0 7.953-6.447 14.4-14.4 14.4"/></svg>
-                        </div>
+                        {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
                     </div>
-                    {formErrors.password && <p className="login-form__error">{formErrors.password}</p>}
 
-                    <div className="login-form__actions">
-                        <label className="login-form__remember">
+                    <div className="flex justify-between items-center py-2">
+                        <label className="flex items-center gap-3 text-gray-600 cursor-pointer">
                             <input
                                 type="checkbox"
                                 name="remember"
                                 checked={data.remember}
                                 onChange={handleInputChange}
-                                className="login-form__checkbox"
+                                className="w-5 h-5 text-indigo-600 bg-transparent border-gray-300 rounded focus:ring-indigo-500"
                             />
-                            <span className="login-form__checkbox-custom"></span>
-                            Se souvenir de moi
+                            Se souvenir
                         </label>
-                        <Link href={route('password.request')} className="login-form__forgot">
+                        <Link href={route('password.request')} className="text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
                             Mot de passe oublié ?
                         </Link>
                     </div>
 
-                    <button type="submit" className={getButtonClass()} disabled={processing}>
+                    <button 
+                        type="submit" 
+                        className="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 text-base" 
+                        disabled={processing}
+                    >
                         {getButtonText()}
                     </button>
                 </form>
 
-                <div className="login-divider">
-                    <div className="login-divider__line"></div>
-                    <span className="login-divider__text">ou connectez-vous avec</span>
+                <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-4 bg-gradient-to-br from-slate-50 to-gray-100 text-gray-500">ou</span>
+                    </div>
                 </div>
 
-                <div className="social-login">
-                    <button className="social-login__button social-login__button--google" onClick={() => handleSocialLogin('Google')}>
-                        <span className="social-login__icon">G</span>
-                        Google
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                    <button className="flex items-center justify-center py-3 text-gray-700 hover:text-gray-900 transition-colors duration-200" onClick={() => handleSocialLogin('Google')}>
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
                     </button>
-                    <button className="social-login__button social-login__button--facebook" onClick={() => handleSocialLogin('Facebook')}>
-                        <span className="social-login__icon">f</span>
-                        Facebook
+                    <button className="flex items-center justify-center py-3 text-gray-700 hover:text-gray-900 transition-colors duration-200" onClick={() => handleSocialLogin('Facebook')}>
+                        <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
                     </button>
-                    <button className="social-login__button social-login__button--twitter" onClick={() => handleSocialLogin('Twitter')}>
-                        <span className="social-login__icon">𝕏</span>
-                        Twitter
+                    <button className="flex items-center justify-center py-3 text-gray-700 hover:text-gray-900 transition-colors duration-200" onClick={() => handleSocialLogin('Twitter')}>
+                        <svg className="w-5 h-5" fill="#1DA1F2" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
                     </button>
                 </div>
 
-                <div className="login-signup">
+                <div className="text-center text-gray-600">
                     Pas encore de compte ?{' '}
-                    <Link href={route('register')} className="login-signup__link">
+                    <Link href={route('register')} className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors duration-200">
                         Créer un compte
                     </Link>
                 </div>
