@@ -24,91 +24,86 @@ type EnrollmentItem = {
 };
 
 export default function Index() {
-    const [filterStatus, setFilterStatus] = useState('all'); // conserve le nom
-    const [searchTerm, setSearchTerm] = useState(''); // string contrôlé
+    const [filterStatus, setFilterStatus] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
     const { enrollments } = usePage<{ enrollments?: { data?: EnrollmentItem[] } }>().props;
     
-
     const items: EnrollmentItem[] = useMemo(() => {
         return Array.isArray(enrollments?.data) ? enrollments!.data! : [];
     }, [enrollments]);
 
-    // --- Mapping vers TES classes existantes ---
-
-    // Ton bloc "enrollment-card__status" (dans ton design d'origine = statut du "cours")
-    // Ici on l’emploie pour refléter un état visuel dérivé de notre workflow:
-    // draft->upcoming, submitted|in_review->pending, pending_documents->full (complet = bloqué par docs),
-    // validated->completed, rejected->cancelled, archived->completed (neutre)
+    // Mapping vers TES classes existentes
     const getStatusConfig = (status: EnrollmentItem['status']) => {
         const map: Record<string, { label: string; className: string; icon: JSX.Element }> = {
             draft: {
                 label: 'Brouillon',
-                className: 'enrollment-card__status--upcoming',
-                icon: <Calendar className="enrollment-card__status-icon" />,
+                className: 'bg-blue-100 text-blue-600',
+                icon: <Calendar className="w-4 h-4" />,
             },
-            submitted: { label: 'Soumise', className: 'enrollment-card__status--pending', icon: <Clock className="enrollment-card__status-icon" /> },
+            submitted: { 
+                label: 'Soumise', 
+                className: 'bg-cyan-100 text-cyan-600', 
+                icon: <Clock className="w-4 h-4" /> 
+            },
             in_review: {
                 label: 'En vérification',
-                className: 'enrollment-card__status--pending',
-                icon: <AlertCircle className="enrollment-card__status-icon" />,
+                className: 'bg-cyan-100 text-cyan-600',
+                icon: <AlertCircle className="w-4 h-4" />,
             },
             pending_documents: {
                 label: 'Compléments requis',
-                className: 'enrollment-card__status--full',
-                icon: <Users className="enrollment-card__status-icon" />,
+                className: 'bg-amber-100 text-amber-600',
+                icon: <Users className="w-4 h-4" />,
             },
             validated: {
                 label: 'Validée',
-                className: 'enrollment-card__status--completed',
-                icon: <CheckCircle className="enrollment-card__status-icon" />,
+                className: 'bg-green-100 text-green-600',
+                icon: <CheckCircle className="w-4 h-4" />,
             },
             rejected: {
                 label: 'Rejetée',
-                className: 'enrollment-card__status--cancelled',
-                icon: <XCircle className="enrollment-card__status-icon" />,
+                className: 'bg-red-100 text-red-600',
+                icon: <XCircle className="w-4 h-4" />,
             },
             archived: {
                 label: 'Archivée',
-                className: 'enrollment-card__status--completed',
-                icon: <CheckCircle className="enrollment-card__status-icon" />,
+                className: 'bg-green-100 text-green-600',
+                icon: <CheckCircle className="w-4 h-4" />,
             },
         };
         return map[status as string] ?? map['draft'];
     };
 
-    // Ton bloc "enrollment-card__enrollment-status" (dans ton design = état d'acceptation)
-    // Ici on l’emploie pour la visibilité "paiement" + exceptions:
-    // paid->accepted, unpaid->pending_approval, partial->conditionally_accepted, rejected->rejected
     const getEnrollmentStatusConfig = (status: EnrollmentItem['status'], payment?: EnrollmentItem['payment_status']) => {
         const base = String(payment ?? 'unpaid');
         if (status === 'rejected') {
             return {
                 label: 'Inscription rejetée',
-                className: 'enrollment-card__enrollment-status--rejected',
-                icon: <XCircle className="enrollment-card__enrollment-status-icon" />,
+                className: 'bg-red-100 text-red-600 border border-red-200',
+                icon: <XCircle className="w-4 h-4" />,
             };
         }
         const cfg: Record<string, { label: string; className: string; icon: JSX.Element }> = {
             paid: {
                 label: 'Payée (acceptée)',
-                className: 'enrollment-card__enrollment-status--accepted',
-                icon: <CheckCircle className="enrollment-card__enrollment-status-icon" />,
+                className: 'bg-green-100 text-green-600 border border-green-200',
+                icon: <CheckCircle className="w-4 h-4" />,
             },
             partial: {
                 label: 'Paiement partiel',
-                className: 'enrollment-card__enrollment-status--conditional',
-                icon: <AlertCircle className="enrollment-card__enrollment-status-icon" />,
+                className: 'bg-gradient-to-r from-amber-100 to-cyan-100 text-amber-600 border border-amber-200',
+                icon: <AlertCircle className="w-4 h-4" />,
             },
             unpaid: {
                 label: "En attente d'approbation",
-                className: 'enrollment-card__enrollment-status--pending',
-                icon: <Clock className="enrollment-card__enrollment-status-icon" />,
+                className: 'bg-cyan-100 text-cyan-600 border border-cyan-200',
+                icon: <Clock className="w-4 h-4" />,
             },
         };
         return cfg[base] ?? cfg['unpaid'];
     };
 
-    // --- Filtrage robuste (garde tes noms: filterStatus/searchTerm/enrollments.data) ---
+    // Filtrage robuste
     const q = lower(searchTerm.trim());
     const filteredEnrollments = useMemo(() => {
         return items.filter((e) => {
@@ -120,7 +115,7 @@ export default function Index() {
         });
     }, [items, q, filterStatus]);
 
-    // Stats (garde tes blocs)
+    // Stats
     const countBy = (s: EnrollmentItem['status']) => items.filter((e) => e.status === s).length;
 
     const handleVisit = (uuid: string) => {
@@ -129,43 +124,68 @@ export default function Index() {
 
     return (
         <Dashboard>
-            <div className="enrollments">
-                <div className="enrollments__header">
-                    <h1 className="enrollments__title">Mes Inscriptions</h1>
-                    <Link href={route('dashboard.enrollments.create', { new: 1 })} preserveState={false} className="btn btn--primary">
+            <div className="max-w-7xl mx-auto p-8 bg-gradient-to-br from-gray-50 to-slate-100 min-h-screen">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b-2 border-gray-200">
+                    <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500">
+                        Mes Inscriptions
+                    </h1>
+                    <Link 
+                        href={route('dashboard.enrollments.create', { new: 1 })} 
+                        preserveState={false} 
+                        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                    >
                         Nouvelle inscription
                     </Link>
+                </div>
 
-                    <div className="enrollments__stats">
-                        <div className="enrollments__stat">
-                            <span className="enrollments__stat-number">{countBy('submitted') + countBy('in_review')}</span>
-                            <span className="enrollments__stat-label">En cours</span>
-                        </div>
-                        <div className="enrollments__stat">
-                            <span className="enrollments__stat-number">{countBy('validated')}</span>
-                            <span className="enrollments__stat-label">Validées</span>
-                        </div>
-                        <div className="enrollments__stat">
-                            <span className="enrollments__stat-number">{items.length}</span>
-                            <span className="enrollments__stat-label">Total</span>
-                        </div>
+                {/* Stats */}
+                <div className="flex flex-wrap gap-8 mb-8 justify-center sm:justify-start">
+                    <div className="text-center px-6 py-3 bg-white rounded-xl shadow-md border border-gray-200">
+                        <span className="block text-3xl font-bold text-blue-500">
+                            {countBy('submitted') + countBy('in_review')}
+                        </span>
+                        <span className="block text-sm text-gray-600 uppercase tracking-wide mt-1">
+                            En cours
+                        </span>
+                    </div>
+                    <div className="text-center px-6 py-3 bg-white rounded-xl shadow-md border border-gray-200">
+                        <span className="block text-3xl font-bold text-green-500">
+                            {countBy('validated')}
+                        </span>
+                        <span className="block text-sm text-gray-600 uppercase tracking-wide mt-1">
+                            Validées
+                        </span>
+                    </div>
+                    <div className="text-center px-6 py-3 bg-white rounded-xl shadow-md border border-gray-200">
+                        <span className="block text-3xl font-bold text-gray-700">
+                            {items.length}
+                        </span>
+                        <span className="block text-sm text-gray-600 uppercase tracking-wide mt-1">
+                            Total
+                        </span>
                     </div>
                 </div>
 
-                <div className="enrollments__controls">
-                    <div className="enrollments__search">
-                        <Search className="enrollments__search-icon" />
+                {/* Controls */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <div className="relative flex-1 min-w-[300px]">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Rechercher (niveau, matricule, notes…)"
-                            className="enrollments__search-input"
+                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all duration-300"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value ?? '')}
                         />
                     </div>
-                    <div className="enrollments__filter">
-                        <Filter size={16} />
-                        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="enrollments__filter-select">
+                    <div className="flex items-center gap-2 px-4 py-3 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
+                        <Filter size={16} className="text-gray-500" />
+                        <select 
+                            value={filterStatus} 
+                            onChange={(e) => setFilterStatus(e.target.value)} 
+                            className="border-none outline-none bg-transparent text-gray-700 cursor-pointer"
+                        >
                             <option value="all">Tous les statuts</option>
                             <option value="draft">Brouillons</option>
                             <option value="submitted">Soumises</option>
@@ -178,10 +198,13 @@ export default function Index() {
                     </div>
                 </div>
 
+                {/* Empty State */}
                 {filteredEnrollments.length === 0 ? (
-                    <div className="enrollments__empty">Aucune inscription trouvée avec ces critères.</div>
+                    <div className="text-center py-12 text-gray-500 text-lg">
+                        Aucune inscription trouvée avec ces critères.
+                    </div>
                 ) : (
-                    <div className="enrollments__grid">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredEnrollments.map((e) => {
                             const statusCfg = getStatusConfig(e.status);
                             const enrollmentStatusCfg = getEnrollmentStatusConfig(e.status, e.payment_status);
@@ -192,71 +215,77 @@ export default function Index() {
                             const verified = docs.filter((d) => d.verified).length;
 
                             return (
-                                <div key={e.id} className="enrollment-card">
-                                    <div className="enrollment-card__header">
-                                        <div className="enrollment-card__title-section">
-                                            <h3 className="enrollment-card__title">{levelName}</h3>
-                                            <p className="enrollment-card__code">{levelTitle || e.matricule || e.uuid || '—'}</p>
+                                <div key={e.id} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 relative overflow-hidden">
+                                    {/* Top border accent */}
+                                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                                    
+                                    {/* Header */}
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-bold text-gray-900 mb-1 leading-tight">
+                                                {levelName}
+                                            </h3>
+                                            <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">
+                                                {levelTitle || e.matricule || e.uuid || '—'}
+                                            </p>
                                         </div>
-                                        <div className={`enrollment-card__status ${statusCfg.className}`}>
+                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide ${statusCfg.className}`}>
                                             {statusCfg.icon}
                                             {statusCfg.label}
                                         </div>
                                     </div>
 
-                                    <div className={`enrollment-card__enrollment-status ${enrollmentStatusCfg.className}`}>
+                                    {/* Enrollment Status */}
+                                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide mb-4 ${enrollmentStatusCfg.className}`}>
                                         {enrollmentStatusCfg.icon}
                                         {enrollmentStatusCfg.label}
                                     </div>
 
-                                    <div className="enrollment-card__enrollment-info">
-                                        <div className="enrollment-card__enrollment-date">
-                                            Créée le {fmtDate(e.created_at)} {e.status === 'validated' && <>• Inscrit le {fmtDate(e.enrolled_at)}</>}
+                                    {/* Enrollment Info */}
+                                    <div className="bg-gray-50 p-3 rounded-lg mb-4 border-l-3 border-cyan-500">
+                                        <div className="text-sm text-gray-600">
+                                            Créée le {fmtDate(e.created_at)} 
+                                            {e.status === 'validated' && (
+                                                <> • Inscrit le {fmtDate(e.enrolled_at)}</>
+                                            )}
                                         </div>
                                     </div>
 
+                                    {/* Rejection Reason */}
                                     {e.status === 'rejected' && e.notes && (
-                                        <div className="enrollment-card__rejection-reason">
-                                            <div className="enrollment-card__rejection-text">Motif: {e.notes}</div>
+                                        <div className="bg-red-50 p-3 rounded-lg mb-4 border-l-3 border-red-500">
+                                            <div className="text-sm text-red-600 font-medium">
+                                                Motif: {e.notes}
+                                            </div>
                                         </div>
                                     )}
 
-                                    {/* Bloc "instructor/details/capacity" gardé MAIS caché si données absentes */}
-                                    {false && (
-                                        <>
-                                            <div className="enrollment-card__instructor">
-                                                <BookOpen className="enrollment-card__instructor-icon" />—
-                                            </div>
-                                            <div className="enrollment-card__details">
-                                                <div className="enrollment-card__detail">
-                                                    <Calendar className="enrollment-card__detail-icon" /> —
-                                                </div>
-                                                <div className="enrollment-card__detail">
-                                                    <MapPin className="enrollment-card__detail-icon" /> —
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    <div className="enrollment-card__capacity">
-                                        <span className="enrollment-card__capacity-info">Documents vérifiés</span>
-                                        <span className="enrollment-card__capacity-numbers">
+                                    {/* Documents Capacity */}
+                                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg mb-4">
+                                        <span className="text-sm text-gray-600">Documents vérifiés</span>
+                                        <span className="font-bold text-gray-900">
                                             {verified} / {docs.length}
                                         </span>
                                     </div>
 
-                                    {/* Progress/grade/waitlist gardés mais non utilisés ici */}
-                                    <div className="enrollment-card__footer">
-                                        <div className="enrollment-card__dates">
+                                    {/* Footer */}
+                                    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                                        <div className="text-xs text-gray-500">
                                             {fmtDate(e.created_at)} — {fmtDate(e.enrolled_at)}
                                         </div>
-                                        <div className="enrollment-card__credits">
+                                        <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-xs font-medium">
                                             <FileCheck2 size={12} />
                                             {verified} docs ok
                                         </div>
                                     </div>
 
-                                    <button onClick={() => handleVisit(e.uuid)} className="btn btn--primary" style={{ marginTop: 10}}>Voir</button>
+                                    {/* Action Button */}
+                                    <button 
+                                        onClick={() => handleVisit(e.uuid)} 
+                                        className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                                    >
+                                        Voir
+                                    </button>
                                 </div>
                             );
                         })}

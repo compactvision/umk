@@ -16,12 +16,18 @@ class SwitchPageController extends Controller
     //
     public function home()
     {
-        return Inertia::render('Homepage');
+        $allFaculties = $this->facultyService->getWithLevels();
+        return Inertia::render('Homepage', [
+            'faculties' => FacultyResource::collection($allFaculties),
+        ]);
     }
 
     public function admission()
     {
-        return Inertia::render('Admissionpage');
+        $allFaculties = $this->facultyService->getWithLevels();
+        return Inertia::render('Admissionpage', [
+            'faculties' => FacultyResource::collection($allFaculties),
+        ]);
     }
 
     public function courses(Request $request)

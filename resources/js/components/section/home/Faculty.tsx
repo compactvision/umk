@@ -1,10 +1,10 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { route } from 'ziggy-js';
 
 type Dept = {
-  title: string;
-  programs: number;
-  tagline: string;
+  name: string;
+  levels: {length: number};
+  description: string;
   href?: string;
   icon: 'law' | 'economics' | 'engineering' | 'health' | 'wellness';
 };
@@ -12,50 +12,56 @@ type Dept = {
 // ✅ Tes 6 filières phares (UMK)
 const DEPARTMENTS: Dept[] = [
   {
-    title: 'Droit & Administration des Affaires',
-    programs: 14,
-    tagline: 'Se faire former par les professionnels',
+    name: 'Droit & Administration des Affaires',
+    levels: 14,
+    description: 'Se faire former par les professionnels',
     href: "",
     icon: 'law',
   },
   {
-    title: 'Économie & Gestion des Entreprises',
-    programs: 18,
-    tagline: 'Venez découvrir un secteur passionnant',
+    name: 'Économie & Gestion des Entreprises',
+    levels: 18,
+    description: 'Venez découvrir un secteur passionnant',
     href: "",
     icon: 'economics',
   },
   {
-    title: 'Informatique',
-    programs: 16,
-    tagline: 'Rien que la technologie, venez explorer',
+    name: 'Informatique',
+    levels: 16,
+    description: 'Rien que la technologie, venez explorer',
     href: "",
     icon: 'engineering',
   },
   {
-    title: 'Santé Publique',
-    programs: 12,
-    tagline: 'Sauvons le monde, un métier noble',
+    name: 'Santé Publique',
+    levels: 12,
+    description: 'Sauvons le monde, un métier noble',
     href: "",
     icon: 'health',
   },
   {
-    title: 'Médecine',
-    programs: 10,
-    tagline: 'Libérez votre passion pour la science et votre compassion pour l’humanité dans notre prestigieuse faculté de médecine',
+    name: 'Médecine',
+    levels: 10,
+    description: 'Libérez votre passion pour la science et votre compassion pour l’humanité dans notre prestigieuse faculté de médecine',
     href: "",
     icon: 'health',
   },
   {
-    title: 'Sciences Infirmières',
-    programs: 9,
-    tagline: 'Faites une différence tangible dans la vie des patients en tant qu’infirmière qualifiée et accomplie.',
+    name: 'Sciences Infirmières',
+    levels: 9,
+    description: 'Faites une différence tangible dans la vie des patients en tant qu’infirmière qualifiée et accomplie.',
     href: "",
     icon: 'wellness',
   },
 ];
 
 export default function Faculty() {
+  const { props } = usePage();
+
+  const faculties = props.faculties;
+
+  console.log(faculties);
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white to-slate-50 py-20 md:py-24">
       {/* Shapes décoratives */}
@@ -84,7 +90,7 @@ export default function Faculty() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {DEPARTMENTS.map((d, i) => (
+          {faculties.data.map((d, i) => (
             <Card key={i} dept={d} />
           ))}
         </div>
@@ -109,15 +115,15 @@ function Card({ dept }: { dept: Dept }) {
         </div>
 
         {/* Title */}
-        <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">{dept.title}</h3>
+        <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">{dept.name}</h3>
 
         {/* Tagline */}
-        <p className="mt-2 line-clamp-2 text-sm text-slate-600">{dept.tagline}</p>
+        <p className="mt-2 line-clamp-2 text-sm text-slate-600">{dept.description}</p>
 
         {/* Meta */}
         <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
           <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1">
-            Formations : {dept.programs} programmes
+            Formations : {dept.levels.length} niveaux
           </span>
         </div>
 

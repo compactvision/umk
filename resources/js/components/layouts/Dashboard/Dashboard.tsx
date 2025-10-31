@@ -2,7 +2,7 @@ import DashboardHeader from '@/components/layouts/Dashboard/DashboardHeader';
 import Sidebar from '@/components/layouts/Dashboard/Sidebar';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
-import '../../../../css/dashboard/app.css';
+// import '../../../../css/dashboard/app.css';
 
 // Composant Dashboard principal
 const Dashboard = ({ children }: { children: React.ReactNode }) => {

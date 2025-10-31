@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import {
     Award,
     BarChart3,
+    BadgeCheck,
     Bell,
     BookOpen,
     Calendar,
@@ -155,7 +156,7 @@ const Sidebar = ({
         },
         {
             id: 'enrollments',
-            label: 'Enroll',
+            label: 'Inscriptions',
             ariaLabel: 'Gestion des inscriptions',
             icon: <BookOpen size={isMobile ? 20 : 24} />,
         },
@@ -185,15 +186,11 @@ const Sidebar = ({
             ],
         },
         reports: {
-            title: 'Apps & Reports',
+            title: 'Apps & Vue',
             items: [
                 { id: 'years', label: 'Année Academique', icon: <Calendar size={18} />, href: route('dashboard.admin.academic-years.index')},
-                { id: 'faculty', label: 'Faculté', icon: <Grid3x3 size={18} />, href: route('dashboard.admin.faculties.index') },
-                { id: 'levels', label: 'Niveau', icon: <Grid3x3 size={18} />, href: route('dashboard.admin.faculties.show', { id: 1 }) },
-                { id: 'monthly', label: 'Monthly Reports', icon: <Calendar size={18} />, href: '#' },
-                { id: 'annual', label: 'Annual Reports', icon: <FileText size={18} />, href: '#' },
-                { id: 'custom', label: 'Custom Reports', icon: <Settings size={18} />, href: '#' },
-                { id: 'export', label: 'Export Data', icon: <Mail size={18} />, href: '#' },
+                { id: 'faculty', label: 'Faculté', icon: <GraduationCap size={18} />, href: route('dashboard.admin.faculties.index') },
+                { id: 'levels', label: 'Niveau', icon: <BadgeCheck size={18} />, href: route('dashboard.admin.faculties.show', { id: 1 }) },
             ],
         },
         users: {
@@ -215,9 +212,9 @@ const Sidebar = ({
             ],
         },
         enrollments: {
-            title: 'Enrollments',
+            title: 'Inscriptions',
             items: [
-                { id: 'my-enrollments', label: 'My Enrollments', icon: <BookOpen size={18} />, href: '#' },
+                { id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') },
                 { id: 'available', label: 'Available Courses', icon: <Grid3x3 size={18} />, href: '#' },
                 { id: 'pending', label: 'Pending', icon: <Clock size={18} />, href: '#' },
                 { id: 'completed', label: 'Completed', icon: <Award size={18} />, href: '#' },

@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 /**
  * Preloader UMK — premium, fluide, accessible.
- * - Props:
- *   - minDuration: durée minimale d’affichage (ms)
- *   - logoSrc: chemin du logo
- *   - title: titre affiché
- *   - subtitle: sous-texte
+ * Corrigé : timers nettoyés proprement, pas de return dans le callback setTimeout.
  */
 export default function Preloader({
   minDuration = 1800,
@@ -22,15 +18,31 @@ export default function Preloader({
   const [exiting, setExiting] = useState(false);
   const [mounted, setMounted] = useState(true);
 
+  // ✅ refs pour timers
+  const minTimerRef = useRef<number | null>(null);
+  const exitTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
-    // Durée minimale + on attend que la page soit (quasi) prête
-    const minTimer = setTimeout(() => {
+    // démarre la durée minimale
+    minTimerRef.current = window.setTimeout(() => {
       setExiting(true);
-      const offTimer = setTimeout(() => setMounted(false), 700); // durée du fade-out
-      return () => clearTimeout(offTimer);
+      // lance l’animation de fade-out puis démonte
+      exitTimerRef.current = window.setTimeout(() => {
+        setMounted(false);
+      }, 700); // doit matcher la duration du fade-out
     }, minDuration);
 
-    return () => clearTimeout(minTimer);
+    // ✅ vrai cleanup de l’effet
+    return () => {
+      if (minTimerRef.current) {
+        window.clearTimeout(minTimerRef.current);
+        minTimerRef.current = null;
+      }
+      if (exitTimerRef.current) {
+        window.clearTimeout(exitTimerRef.current);
+        exitTimerRef.current = null;
+      }
+    };
   }, [minDuration]);
 
   if (!mounted) return null;
@@ -60,15 +72,10 @@ export default function Preloader({
 
       {/* Contenu central */}
       <div className="relative mx-auto flex w-full max-w-md flex-col items-center px-6 text-center">
-        {/* Anneau + logo */}
         <div className="relative h-32 w-32 sm:h-36 sm:w-36">
-          {/* Anneau statique (fond) */}
           <div className="absolute inset-0 rounded-full bg-slate-200/60 [mask:radial-gradient(farthest-side,transparent_70%,black_72%)]" />
-          {/* Anneau conique animé */}
           <div className="absolute inset-0 rounded-full shadow-[0_8px_30px_rgba(15,23,42,0.12)] [background:conic-gradient(#4f46e5,#06b6d4,#4f46e5)] [mask:radial-gradient(farthest-side,transparent_calc(70%-3px),black_0)] animate-[spin_1.1s_linear_infinite]" />
-          {/* Orbe en orbite */}
           <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-indigo-600 shadow-[0_0_0_6px_rgba(99,102,241,.15)] animate-[orbit_1.1s_linear_infinite]" />
-          {/* Logo */}
           <div className="absolute inset-2 rounded-full bg-white/80 backdrop-blur-sm ring-1 ring-white/50 flex items-center justify-center">
             <img
               src={logoSrc}
@@ -78,24 +85,20 @@ export default function Preloader({
           </div>
         </div>
 
-        {/* Titre + sous-titre */}
         <h1 className="mt-6 text-base font-semibold tracking-tight text-slate-800 sm:text-lg">
           {title}
         </h1>
         <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
 
-        {/* Barre de progression indéterminée */}
         <div className="mt-6 h-2 w-64 max-w-full overflow-hidden rounded-full bg-slate-200 sm:h-2.5">
           <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-indigo-600 to-sky-500 animate-[progress_1.6s_ease-in-out_infinite]" />
         </div>
 
-        {/* Astuce/qualité */}
         <p className="mt-3 text-[11px] uppercase tracking-[.16em] text-slate-400">
           Optimisation des ressources…
         </p>
       </div>
 
-      {/* Styles additionnels (keyframes + accessibility) */}
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes orbit {
@@ -107,19 +110,9 @@ export default function Preloader({
           60% { transform: scale(1.02); opacity:1; }
           100% { transform: scale(1); }
         }
-        @keyframes sheen {
-          0%, 100% { opacity:.18; }
-          50% { opacity:.28; }
-        }
-        @keyframes float {
-          0%,100% { transform: translateY(0) translateX(0) scale(1); opacity:.75; }
-          50% { transform: translateY(-10px) translateX(4px) scale(1.05); opacity:.95; }
-        }
-        @keyframes progress {
-          0% { transform: translateX(-120%); }
-          50% { transform: translateX(-20%); }
-          100% { transform: translateX(120%); }
-        }
+        @keyframes sheen { 0%, 100% { opacity:.18; } 50% { opacity:.28; } }
+        @keyframes float { 0%,100% { transform: translateY(0) translateX(0) scale(1); opacity:.75; } 50% { transform: translateY(-10px) translateX(4px) scale(1.05); opacity:.95; } }
+        @keyframes progress { 0% { transform: translateX(-120%); } 50% { transform: translateX(-20%); } 100% { transform: translateX(120%); } }
         @media (prefers-reduced-motion: reduce) {
           .animate-[spin_1.1s_linear_infinite],
           .animate-[orbit_1.1s_linear_infinite],
@@ -133,9 +126,7 @@ export default function Preloader({
   );
 }
 
-/** Petites particules décoratives flottantes */
 function Particles() {
-  // positions/délais pour 8 particules
   const ps = [
     { top: "12%", left: "18%", delay: "0s" },
     { top: "22%", left: "76%", delay: ".2s" },
@@ -152,12 +143,7 @@ function Particles() {
         <span
           key={i}
           className="absolute h-2 w-2 rounded-full bg-sky-400/70 shadow-[0_0_0_6px_rgba(56,189,248,0.08)] animate-[float_4.5s_ease-in-out_infinite]"
-          style={{
-            top: p.top,
-            left: p.left,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            animationDelay: p.delay as any,
-          }}
+          style={{ top: p.top, left: p.left, animationDelay: p.delay as unknown as string }}
         />
       ))}
     </div>

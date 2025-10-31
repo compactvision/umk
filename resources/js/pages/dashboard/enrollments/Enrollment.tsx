@@ -1,159 +1,31 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import BackButton from '@/components/UI/dashboard/BackButton';
-import { useForm, usePage } from '@inertiajs/react';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { route } from 'ziggy-js';
+import {
+    BookOpen,
+    Building2,
+    Calendar,
+    Check,
+    CheckCircle2,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    CreditCard,
+    FileText,
+    GraduationCap,
+    Lock,
+    Mail,
+    Upload,
+    User,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
 
-// ====================== TYPES ======================
-type PageMode = 'create' | 'view' | 'edit';
-type Id = number | string;
-type PaymentStage = 'confirm' | 'pay';
+export default function Enrollment() {
+    const [step, setStep] = useState(1);
+    const [paymentStage, setPaymentStage] = useState('confirm');
+    const [isConfirmed, setIsConfirmed] = useState(false);
+    const [expandedSections, setExpandedSections] = useState({ 0: true, 1: false, 2: false, 3: false });
 
-interface Faculty {
-    id: Id;
-    name: string;
-}
-
-interface Level {
-    id: Id;
-    name?: string;
-    title?: string;
-    code?: string;
-}
-
-interface Year {
-    id: Id;
-    label?: string;
-    title?: string;
-    is_active?: boolean;
-    status?: string;
-}
-
-interface RequirementItem {
-    key: string;
-    label: string;
-    required: boolean;
-    mimes?: string[];
-    hint?: string | null;
-}
-
-interface Requirements {
-    personal_info: RequirementItem[];
-    academic_info: RequirementItem[];
-    payment: { required: boolean; amount: number; currency: string };
-}
-
-interface ServerDoc {
-    id: number;
-    key: string;
-    filename: string;
-    url: string;
-}
-
-interface EnrollmentFormData {
-    faculty_id: Id | '';
-    level_id: Id | '';
-    year_id: Id | '';
-    name: string;
-    email: string;
-    program: string;
-    documents: Record<string, File | undefined>;
-    cardNumber: string;
-    cvv: string;
-}
-
-interface ViewEnrollment {
-    id: Id;
-    uuid: string;
-    status: 'draft' | 'submitted' | string;
-    level_id: Id;
-    academic_year_id: Id;
-    form_snapshot?: Partial<EnrollmentFormData>;
-    meta?: Record<string, any>;
-    last_step?: number;
-    documents?: { key: string; filename: string; uuid: string; mime: string; size: number; url: string }[];
-}
-
-interface EnrollmentBootstrapProps {
-    faculties: Faculty[];
-    levelsByFaculty: Record<Id, Level[]>;
-    years: Year[];
-}
-
-interface PageProps extends EnrollmentBootstrapProps {
-    mode?: PageMode;
-    startFromDraft?: boolean;
-    enrollment?: ViewEnrollment | null;
-}
-
-interface SidebarField {
-    key: string;
-    label: string;
-    icon: string;
-    type?: 'doc' | 'confirm' | 'payment';
-    docKey?: string;
-}
-
-// ====================== HELPERS ======================
-const getCsrf = (): string => 
-    (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
-
-const isYearActive = (year: Year): boolean => 
-    year.is_active !== undefined ? !!year.is_active : year.status === 'open';
-
-const getYearText = (year: Year): string => year.label || year.title || '';
-const getLevelLabel = (level?: Level): string => level?.name || level?.title || '';
-
-// ====================== COMPONENT ======================
-export default function Enrollment(): JSX.Element {
-    const { props } = usePage<PageProps>();
-    const {
-        faculties = [],
-        levelsByFaculty = {},
-        years = [],
-        mode = 'create',
-        enrollment: currentEnrollment = null,
-        startFromDraft = true
-    } = props;
-
-    // ====================== STATE ======================
-    const [step, setStep] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [paymentStage, setPaymentStage] = useState<PaymentStage>('confirm');
-    const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [serverDocs, setServerDocs] = useState<Record<string, ServerDoc>>({});
-    const [draftBlocked, setDraftBlocked] = useState<boolean>(false);
-    const [draftBlockMsg, setDraftBlockMsg] = useState<string>('');
-    const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({
-        0: true, 1: false, 2: false, 3: false
-    });
-
-    const [requirements, setRequirements] = useState<Requirements>({
-        personal_info: [],
-        academic_info: [],
-        payment: { required: false, amount: 0, currency: 'USD' }
-    });
-
-    // ====================== DERIVED STATE ======================
-    const isView = mode === 'view';
-    const canEdit = isView && currentEnrollment?.status === 'draft';
-    
-    const search = useMemo(() => 
-        typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams(),
-        []
-    );
-    
-    const forceNew = search.get('new') === '1';
-    const allowDraftResume = mode === 'create' && !forceNew && startFromDraft && !currentEnrollment;
-
-    // ====================== FORM ======================
-    const {
-        data: formData,
-        setData,
-        post,
-        processing,
-    } = useForm<EnrollmentFormData>({
+    const [formData, setFormData] = useState({
         faculty_id: '',
         level_id: '',
         year_id: '',
@@ -165,330 +37,51 @@ export default function Enrollment(): JSX.Element {
         cvv: '',
     });
 
-    // ====================== CALLBACKS ======================
-    const resetFormToEmpty = useCallback(() => {
-        setData({
-            faculty_id: '',
-            level_id: '',
-            year_id: '',
-            name: '',
-            email: '',
-            program: '',
-            documents: {},
-            cardNumber: '',
-            cvv: '',
-        });
-        setServerDocs({});
-        setErrors({});
-        setRequirements({
-            personal_info: [],
-            academic_info: [],
-            payment: { required: false, amount: 0, currency: 'USD' }
-        });
-        setStep(1);
-        setPaymentStage('confirm');
-        setIsConfirmed(false);
-    }, [setData]);
+    const faculties = [
+        { id: 1, name: 'Sciences et Technologies' },
+        { id: 2, name: 'Lettres et Sciences Humaines' },
+        { id: 3, name: 'Médecine et Sciences de la Santé' },
+    ];
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setData(name as keyof EnrollmentFormData, value as any);
-    }, [setData]);
+    const requirements = {
+        personal_info: [
+            { key: 'photo', label: "Photo d'identité", required: true },
+            { key: 'id_card', label: "Carte d'identité", required: true },
+        ],
+        academic_info: [
+            { key: 'diploma', label: 'Diplôme', required: true },
+            { key: 'transcript', label: 'Relevé de notes', required: true },
+        ],
+        payment: { required: true, amount: 500, currency: 'EUR' },
+    };
 
-    const handleFileChange = useCallback((key: string, file?: File | null) => {
-        setData('documents', { ...formData.documents, [key]: file || undefined });
-    }, [formData.documents, setData]);
+    const stepperLabels = ['Faculté', 'Infos', 'Académique', 'Paiement'];
 
-    const uploadDraftDoc = useCallback(async (docKey: string, file: File) => {
-        const formData = new FormData();
-        formData.append('key', docKey);
-        formData.append('file', file);
-
-        try {
-            const response = await fetch(route('dashboard.enrollment.draft.upload'), {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': getCsrf(),
-                },
-                credentials: 'same-origin',
-                body: formData,
-            });
-            
-            const result = await response.json();
-            if (result?.ok && result?.document) {
-                setServerDocs(prev => ({ ...prev, [docKey]: result.document }));
-            }
-        } catch (error) {
-            console.warn('Failed to upload draft document:', error);
-        }
-    }, []);
-
-    const toggleSection = useCallback((sectionIndex: number) => {
-        setExpandedSections(prev => ({ ...prev, [sectionIndex]: !prev[sectionIndex] }));
-    }, []);
-
-    // ====================== VALIDATION ======================
-    const validateStep = useCallback((): boolean => {
+    const validateStep = () => {
         switch (step) {
             case 1:
-                return !!(formData.faculty_id && formData.level_id && formData.year_id) && !errors.year_id;
+                return !!(formData.faculty_id && formData.level_id && formData.year_id);
             case 2:
-                const hasPersonalInfo = formData.name.trim() && formData.email.trim();
-                const hasRequiredPersonalDocs = requirements.personal_info.every(item => {
-                    if (!item.required) return true;
-                    return !!(formData.documents?.[item.key] || serverDocs[item.key]);
-                });
-                return hasPersonalInfo && hasRequiredPersonalDocs;
+                return !!(formData.name && formData.email);
             case 3:
-                const hasProgram = formData.program.trim();
-                const hasRequiredAcademicDocs = requirements.academic_info.every(item => {
-                    if (!item.required) return true;
-                    return !!(formData.documents?.[item.key] || serverDocs[item.key]);
-                });
-                return hasProgram && hasRequiredAcademicDocs;
+                return !!formData.program;
             case 4:
                 if (!isConfirmed) return false;
-                if (!requirements.payment.required) return true;
-                if (paymentStage === 'pay') {
-                    return formData.cardNumber.trim() !== '' && formData.cvv.trim() !== '';
-                }
+                if (paymentStage === 'pay') return !!(formData.cardNumber && formData.cvv);
                 return true;
             default:
                 return false;
         }
-    }, [step, formData, errors, requirements, isConfirmed, paymentStage, serverDocs]);
+    };
 
-    // ====================== LABELS ======================
-    const labels = useMemo(() => ({
-        faculty: (id: Id | '') => faculties.find(f => String(f.id) === String(id))?.name || '',
-        level: (fid: Id | '', lid: Id | '') => {
-            const levels = levelsByFaculty[fid as Id] || [];
-            const level = levels.find(l => String(l.id) === String(lid));
-            return getLevelLabel(level);
-        },
-        year: (id: Id | '') => {
-            const year = years.find(y => String(y.id) === String(id));
-            return year ? getYearText(year) : '';
-        }
-    }), [faculties, levelsByFaculty, years]);
-
-    // ====================== EFFECTS ======================
-    
-    // Draft Resume Effect
-    useEffect(() => {
-        if (mode !== 'create' || forceNew || !allowDraftResume) {
-            if (forceNew) resetFormToEmpty();
-            return;
-        }
-
-        const loadDraft = async () => {
-            try {
-                const response = await fetch(route('dashboard.enrollment.draft.show'), {
-                    headers: { Accept: 'application/json' }
-                });
-                const result = await response.json();
-                
-                if (!result.ok || !result.draft) return;
-
-                const snapshot = result.draft.form_snapshot || {};
-                setData(prev => ({
-                    ...prev,
-                    faculty_id: snapshot.faculty_id ?? '',
-                    level_id: snapshot.level_id ?? '',
-                    year_id: (snapshot as any).academic_year_id ?? snapshot.year_id ?? '',
-                    name: snapshot.name ?? '',
-                    email: snapshot.email ?? '',
-                    program: snapshot.program ?? '',
-                    documents: {},
-                    cardNumber: '',
-                    cvv: '',
-                }));
-
-                if (result.draft.last_step) setStep(result.draft.last_step);
-                
-                const docs = result.draft.documents || [];
-                setServerDocs(Object.fromEntries(docs.map(d => [d.key, d])));
-            } catch (error) {
-                console.warn('Failed to load draft:', error);
-            }
-        };
-
-        loadDraft();
-    }, [mode, allowDraftResume, forceNew, resetFormToEmpty, setData]);
-
-    // Current Enrollment Effect
-    useEffect(() => {
-        if (!currentEnrollment) return;
-
-        const snapshot = currentEnrollment.form_snapshot ?? currentEnrollment.meta ?? {};
-        setData({
-            faculty_id: String(snapshot.faculty_id ?? (currentEnrollment as any).level_faculty_id ?? ''),
-            level_id: String(currentEnrollment.level_id ?? snapshot.level_id ?? ''),
-            year_id: String((snapshot as any).academic_year_id ?? snapshot.year_id ?? currentEnrollment.academic_year_id ?? ''),
-            name: snapshot.name ?? '',
-            email: snapshot.email ?? '',
-            program: snapshot.program ?? '',
-            documents: {},
-            cardNumber: '',
-            cvv: '',
-        });
-
-        const docs = currentEnrollment.documents ?? [];
-        setServerDocs(Object.fromEntries(docs.map(d => [d.key, {
-            id: 0 as any,
-            key: d.key,
-            filename: d.filename,
-            url: d.url || ''
-        }])));
-
-        setStep(currentEnrollment.last_step ? Math.min(currentEnrollment.last_step, 4) : 4);
-        setPaymentStage('confirm');
-        setIsConfirmed(true);
-    }, [currentEnrollment, setData]);
-
-    // Autosave Effect
-    useEffect(() => {
-        if (draftBlocked || (isView && !canEdit)) return;
-
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(async () => {
-            const snapshot = {
-                faculty_id: formData.faculty_id,
-                level_id: formData.level_id,
-                year_id: formData.year_id,
-                name: formData.name,
-                email: formData.email,
-                program: formData.program,
-            };
-
-            try {
-                const response = await fetch(route('dashboard.enrollment.draft.save'), {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': getCsrf(),
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ form_snapshot: snapshot, last_step: step }),
-                    signal: controller.signal,
-                });
-
-                if (response.status === 409) {
-                    let message = 'Une inscription sur ce niveau est déjà disponible pour cette année.';
-                    try {
-                        const result = await response.json();
-                        if (result?.error) message = result.error;
-                    } catch {}
-                    
-                    setDraftBlocked(true);
-                    setDraftBlockMsg(message);
-                    setErrors(prev => ({ ...prev, year_id: message }));
-                }
-            } catch (error) {
-                if (!controller.signal.aborted) {
-                    console.warn('Autosave failed:', error);
-                }
-            }
-        }, 800);
-
-        return () => {
-            controller.abort();
-            clearTimeout(timeoutId);
-        };
-    }, [draftBlocked, isView, canEdit, formData.faculty_id, formData.level_id, formData.year_id, formData.name, formData.email, formData.program, step]);
-
-    // Requirements Loading Effect
-    useEffect(() => {
-        const loadRequirements = async () => {
-            if (!formData.level_id || !formData.year_id) {
-                setRequirements({
-                    personal_info: [],
-                    academic_info: [],
-                    payment: { required: false, amount: 0, currency: 'USD' }
-                });
-                setErrors({});
-                return;
-            }
-
-            try {
-                setIsLoading(true);
-                setErrors({});
-                setPaymentStage('confirm');
-                setIsConfirmed(false);
-
-                const params = new URLSearchParams({
-                    level_id: String(formData.level_id),
-                    year_id: String(formData.year_id),
-                    faculty_id: String(formData.faculty_id || ''),
-                });
-
-                const response = await fetch(`${route('dashboard.enrollment.requirements')}?${params}`, {
-                    headers: { Accept: 'application/json' }
-                });
-                const result = await response.json();
-
-                if (!result.ok) {
-                    setErrors({ year_id: result.message || 'Cette année académique n\'est pas active.' });
-                    setRequirements({
-                        personal_info: [],
-                        academic_info: [],
-                        payment: { required: false, amount: 0, currency: 'USD' }
-                    });
-                    return;
-                }
-
-                setRequirements(result.payload || {
-                    personal_info: [],
-                    academic_info: [],
-                    payment: { required: false, amount: 0, currency: 'USD' }
-                });
-            } catch (error) {
-                setErrors({ global: 'Impossible de charger les conditions.' });
-                setRequirements({
-                    personal_info: [],
-                    academic_info: [],
-                    payment: { required: false, amount: 0, currency: 'USD' }
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        setDraftBlocked(false);
-        setDraftBlockMsg('');
-        loadRequirements();
-    }, [formData.level_id, formData.year_id, formData.faculty_id]);
-
-    // ====================== NAVIGATION ======================
-    const nextStep = async () => {
-        if (!validateStep()) return;
-        
-        setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 300));
-
+    const nextStep = () => {
         if (step === 4) {
-            if (!requirements.payment.required) {
-                setIsLoading(false);
-                handleSubmit();
-                return;
-            }
             if (paymentStage === 'confirm') {
                 setPaymentStage('pay');
-                setIsLoading(false);
-                return;
-            }
-            if (paymentStage === 'pay') {
-                setIsLoading(false);
-                handleSubmit();
                 return;
             }
         }
-
-        setStep(prev => Math.min(prev + 1, 4));
-        setIsLoading(false);
+        if (step < 4) setStep((s) => s + 1);
     };
 
     const prevStep = () => {
@@ -496,550 +89,371 @@ export default function Enrollment(): JSX.Element {
             setPaymentStage('confirm');
             return;
         }
-        setStep(prev => Math.max(prev - 1, 1));
+        if (step > 1) setStep((s) => s - 1);
     };
 
-    const handleSubmit = (e?: Event) => {
-        e?.preventDefault?.();
-        if (!validateStep()) return;
-
-        post(route('dashboard.enrollment.store'), {
-            forceFormData: true,
-            onError: (errors) => setErrors(errors as any || {}),
-            onSuccess: () => {
-                // TODO: toast/redirect
-            },
-        });
-    };
-
-    // ====================== SIDEBAR LOGIC ======================
-    const sidebarSections = useMemo(() => {
-        const personalDocFields = requirements.personal_info.map(item => ({
-            key: `doc_personal_${item.key}`,
-            type: 'doc' as const,
-            docKey: item.key,
-            label: item.label,
-            icon: '📄',
-        }));
-
-        const academicDocFields = requirements.academic_info.map(item => ({
-            key: `doc_academic_${item.key}`,
-            type: 'doc' as const,
-            docKey: item.key,
-            label: item.label,
-            icon: '📎',
-        }));
-
-        const confirmFields = [{
-            key: 'confirmed',
-            type: 'confirm' as const,
-            label: "Je certifie l'exactitude des informations fournies",
-            icon: '✅'
-        }];
-
-        const paymentFields = requirements.payment.required ? [
-            { key: 'cardNumber', label: 'Numéro de carte', icon: '💳', type: 'payment' as const },
-            { key: 'cvv', label: 'Code CVV', icon: '🔒', type: 'payment' as const },
-        ] : [];
-
-        return [
+    const sidebarSections = useMemo(
+        () => [
             {
                 title: 'Choix de la Faculté',
                 fields: [
-                    { key: 'faculty_id', label: 'Faculté', icon: '🏛️' },
-                    { key: 'level_id', label: 'Niveau académique', icon: '📚' },
-                    { key: 'year_id', label: "Année d'inscription", icon: '📅' },
+                    { key: 'faculty_id', label: 'Faculté', icon: Building2 },
+                    { key: 'level_id', label: 'Niveau académique', icon: GraduationCap },
+                    { key: 'year_id', label: "Année d'inscription", icon: Calendar },
                 ],
             },
             {
                 title: 'Informations Personnelles',
                 fields: [
-                    { key: 'name', label: 'Nom complet', icon: '👤' },
-                    { key: 'email', label: 'Adresse email', icon: '📧' },
-                    ...personalDocFields
+                    { key: 'name', label: 'Nom complet', icon: User },
+                    { key: 'email', label: 'Adresse email', icon: Mail },
+                    { key: 'photo', label: "Photo d'identité", icon: FileText, type: 'doc' },
+                    { key: 'id_card', label: "Carte d'identité", icon: FileText, type: 'doc' },
                 ],
             },
             {
                 title: 'Parcours Académique',
                 fields: [
-                    { key: 'program', label: "Programme d'études", icon: '📚' },
-                    ...academicDocFields
+                    { key: 'program', label: "Programme d'études", icon: BookOpen },
+                    { key: 'diploma', label: 'Diplôme', icon: FileText, type: 'doc' },
+                    { key: 'transcript', label: 'Relevé de notes', icon: FileText, type: 'doc' },
                 ],
             },
             {
-                title: requirements.payment.required ? 'Paiement & Confirmation' : 'Confirmation',
-                fields: [...confirmFields, ...paymentFields],
+                title: 'Paiement & Confirmation',
+                fields: [
+                    { key: 'confirmed', label: 'Certification', icon: CheckCircle2, type: 'confirm' },
+                    { key: 'cardNumber', label: 'Numéro de carte', icon: CreditCard, type: 'payment' },
+                    { key: 'cvv', label: 'Code CVV', icon: Lock, type: 'payment' },
+                ],
             },
-        ];
-    }, [requirements]);
-
-    const isSidebarFieldCompleted = useCallback((field: SidebarField): boolean => {
-        if (field.type === 'doc' && field.docKey) {
-            return !!(formData.documents?.[field.docKey] || serverDocs[field.docKey]);
-        }
-        if (field.type === 'confirm') {
-            return isConfirmed;
-        }
-        if (field.type === 'payment') {
-            if (field.key === 'cardNumber') return formData.cardNumber.trim().length > 0;
-            if (field.key === 'cvv') return formData.cvv.trim().length > 0;
-            return false;
-        }
-        
-        const value = (formData as any)[field.key];
-        return value != null && (typeof value !== 'string' || value.trim() !== '');
-    }, [formData, serverDocs, isConfirmed]);
-
-    const progressStats = useMemo(() => {
-        const totalFields = sidebarSections.reduce((acc, section) => acc + section.fields.length, 0);
-        const completedFields = sidebarSections.reduce((acc, section) => {
-            return acc + section.fields.filter(field => isSidebarFieldCompleted(field as SidebarField)).length;
-        }, 0);
-        
-        return {
-            total: totalFields,
-            completed: completedFields,
-            percentage: totalFields ? Math.round((completedFields / totalFields) * 100) : 0
-        };
-    }, [sidebarSections, isSidebarFieldCompleted]);
-
-    // ====================== UI HELPERS ======================
-    const stepperLabels = useMemo(() => [
-        'Faculté',
-        'Infos',
-        'Académique',
-        requirements.payment.required ? 'Paiement' : 'Confirmation'
-    ], [requirements.payment.required]);
-
-    const getStepTitle = () => {
-        if (step === 4 && requirements.payment.required && paymentStage === 'confirm') {
-            return 'Confirmation';
-        }
-        const titles = {
-            1: 'Choix de la Faculté',
-            2: 'Informations Personnelles',
-            3: 'Parcours Académique',
-            4: requirements.payment.required ? 'Paiement' : 'Confirmation',
-        };
-        return titles[step as keyof typeof titles];
-    };
-
-    const getSidebarFieldValue = (field: SidebarField): string => {
-        if (field.type === 'doc') return 'Fichier ajouté';
-        if (field.type === 'confirm') return 'Confirmé';
-        if (field.type === 'payment') {
-            if (field.key === 'cardNumber') return '**** **** **** ' + formData.cardNumber.slice(-4);
-            if (field.key === 'cvv') return '***';
-        }
-
-        switch (field.key) {
-            case 'faculty_id': return `🏛️ ${labels.faculty(formData.faculty_id)}`;
-            case 'level_id': return `🎓 ${labels.level(formData.faculty_id, formData.level_id)}`;
-            case 'year_id': return `📅 ${labels.year(formData.year_id)}`;
-            default: return String((formData as any)[field.key] || '');
-        }
-    };
-
-    // ====================== COMPONENTS ======================
-    const DocPreview: React.FC<{
-        docKey: string;
-        label: string;
-        canEdit: boolean;
-        mimes?: string[];
-    }> = ({ docKey, label, canEdit, mimes }) => {
-        const doc = serverDocs[docKey];
-        if (!doc) return null;
-
-        const filename = doc.filename || '';
-        const isImage = /\.(png|jpe?g|gif|webp)$/i.test(filename);
-        const isPdf = filename.toLowerCase().endsWith('.pdf');
-
-        return (
-            <div className="doc-preview" style={{ marginTop: 8 }}>
-                {isImage && (
-                    <img 
-                        src={doc.url} 
-                        alt={label} 
-                        style={{ maxHeight: 120, borderRadius: 8 }} 
-                    />
-                )}
-                {isPdf && (
-                    <iframe
-                        src={doc.url}
-                        title={label}
-                        style={{ width: '100%', height: 320, border: '1px solid #eee', borderRadius: 8 }}
-                    />
-                )}
-                <div style={{ marginTop: 6 }}>
-                    <a href={doc.url} target="_blank" rel="noreferrer">
-                        Ouvrir le document
-                    </a>
-                </div>
-
-                {canEdit && (
-                    <div style={{ marginTop: 6 }}>
-                        <label className="btn btn--secondary" style={{ cursor: 'pointer' }}>
-                            Remplacer
-                            <input
-                                type="file"
-                                style={{ display: 'none' }}
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0] ?? null;
-                                    if (file) {
-                                        handleFileChange(docKey, file);
-                                        uploadDraftDoc(docKey, file);
-                                    }
-                                }}
-                                accept={Array.isArray(mimes) ? mimes.join(',') : undefined}
-                            />
-                        </label>
-                    </div>
-                )}
-            </div>
-        );
-    };
-
-    const FileInput: React.FC<{
-        item: RequirementItem;
-        disabled: boolean;
-    }> = ({ item, disabled }) => (
-        <div className="form-field" key={item.key}>
-            <label className="form-field__label">
-                {item.label} {item.required && '*'}
-            </label>
-            <input
-                type="file"
-                className="form-field__input"
-                onChange={(e) => {
-                    const file = e.target.files?.[0] ?? null;
-                    handleFileChange(item.key, file);
-                    if (file) uploadDraftDoc(item.key, file);
-                }}
-                accept={Array.isArray(item.mimes) ? item.mimes.join(',') : undefined}
-                required={item.required}
-                disabled={disabled}
-            />
-            <DocPreview
-                docKey={item.key}
-                label={item.label}
-                canEdit={canEdit}
-                mimes={item.mimes}
-            />
-        </div>
+        ],
+        [],
     );
 
-    // ====================== RENDER ======================
+    const isFieldCompleted = (field) => {
+        if (field.type === 'confirm') return isConfirmed;
+        if (field.type === 'payment') return !!formData[field.key];
+        return !!formData[field.key];
+    };
+
+    const totalFields = sidebarSections.reduce((acc, s) => acc + s.fields.length, 0);
+    const completedFields = sidebarSections.reduce((acc, s) => acc + s.fields.filter(isFieldCompleted).length, 0);
+    const percentage = Math.round((completedFields / totalFields) * 100);
+
     return (
         <Dashboard>
             <div className="subscription">
                 <BackButton />
+            </div>
+            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+                {/* Header avec stepper flottant */}
+                <div className="sticky top-0 z-10 border-b border-gray-200/50 bg-white/80 shadow-lg shadow-purple-100/20 backdrop-blur-xl">
+                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        {/* Barre de progression */}
+                        <div className="mb-6">
+                            <div className="mb-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-gray-600">Étape {step} sur 4</span>
+                                <span className="text-sm font-bold text-indigo-600">{Math.round((step / 4) * 100)}%</span>
+                            </div>
+                            <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                                <div
+                                    className="h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 transition-all duration-700 ease-out"
+                                    style={{ width: `${(step / 4) * 100}%` }}
+                                />
+                            </div>
+                        </div>
 
-                {/* Header */}
-                <div className="subscription__header">
-                    <div className="container">
                         {/* Stepper */}
-                        <div className="stepper">
-                            <div className="stepper__track">
-                                <div 
-                                    className="stepper__progress" 
-                                    style={{ width: `${((step - 1) / 3) * 100}%` }} 
+                        <div className="relative flex items-center justify-between">
+                            <div className="absolute top-5 right-0 left-0 h-0.5 bg-gray-200">
+                                <div
+                                    className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-500"
+                                    style={{ width: `${((step - 1) / 3) * 100}%` }}
                                 />
                             </div>
 
                             {[1, 2, 3, 4].map((s) => (
-                                <div
-                                    key={s}
-                                    className={`stepper__step ${
-                                        step >= s ? 'stepper__step--active' : ''
-                                    } ${step > s ? 'stepper__step--completed' : ''}`}
-                                >
-                                    <div className="stepper__circle">
+                                <div key={s} className="relative z-10 flex flex-col items-center">
+                                    <div
+                                        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 sm:h-12 sm:w-12 ${
+                                            step >= s
+                                                ? 'scale-110 bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg shadow-indigo-300/50'
+                                                : 'bg-gray-200'
+                                        }`}
+                                    >
                                         {step > s ? (
-                                            <svg className="stepper__check" viewBox="0 0 24 24">
-                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                            </svg>
+                                            <Check className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                                         ) : (
-                                            <span className="stepper__number">{s}</span>
+                                            <span className={`text-sm font-bold sm:text-base ${step >= s ? 'text-white' : 'text-gray-400'}`}>
+                                                {s}
+                                            </span>
                                         )}
                                     </div>
+                                    <span
+                                        className={`mt-2 hidden text-xs font-medium transition-colors sm:block sm:text-sm ${
+                                            step >= s ? 'text-indigo-600' : 'text-gray-400'
+                                        }`}
+                                    >
+                                        {stepperLabels[s - 1]}
+                                    </span>
                                 </div>
-                            ))}
-                        </div>
-
-                        {/* Stepper Labels */}
-                        <div className="stepper__labels">
-                            {stepperLabels.map((label, index) => (
-                                <span 
-                                    key={index} 
-                                    className={`stepper__label ${
-                                        step >= index + 1 ? 'stepper__label--active' : ''
-                                    }`}
-                                >
-                                    {label}
-                                </span>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                {/* View Mode Status */}
-                {isView && (
-                    <div style={{
-                        display: 'flex',
-                        margin: "0 auto",
-                        justifyContent: 'space-between',
-                        marginTop: 24,
-                        marginBottom: 12,
-                        padding: "15px",
-                        background: "lightgreen",
-                        borderRadius: "16px",
-                        width: "60%"
-                    }}>
-                        <div>
-                            Statut : <strong>{currentEnrollment?.status}</strong>
-                            {currentEnrollment?.status !== 'draft' && ' (lecture seule)'}
-                        </div>
-                        {canEdit && (
-                            <button type="button" className="btn btn--secondary">
-                                Mode édition (brouillon)
-                            </button>
-                        )}
-                    </div>
-                )}
+                {/* Contenu principal */}
+                <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+                        {/* Formulaire principal */}
+                        <div className="lg:col-span-2">
+                            <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-2xl shadow-purple-100/30 backdrop-blur-sm sm:p-8 lg:p-10">
+                                <div className="mb-8">
+                                    <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 px-4 py-2">
+                                        <div className="h-2 w-2 animate-pulse rounded-full bg-indigo-600" />
+                                        <span className="text-sm font-semibold text-indigo-700">En cours</span>
+                                    </div>
+                                    <h2 className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+                                        {step === 1 && 'Choix de la Faculté'}
+                                        {step === 2 && 'Informations Personnelles'}
+                                        {step === 3 && 'Parcours Académique'}
+                                        {step === 4 && (paymentStage === 'confirm' ? 'Confirmation' : 'Paiement')}
+                                    </h2>
+                                    <p className="mt-2 text-gray-600">Remplissez les informations ci-dessous avec précision</p>
+                                </div>
 
-                {/* Main Content */}
-                <main className="subscription__main">
-                    <div className="container">
-                        <div className="content-wrapper">
-                            {/* Form */}
-                            <div className="form-container">
-                                <h2 className="form__title">{getStepTitle()}</h2>
-
-                                <form onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSubmit(e.nativeEvent);
-                                }} className="form">
-                                    
-                                    {/* Step 1 - Faculty Selection */}
+                                <form className="space-y-6">
+                                    {/* Step 1 */}
                                     {step === 1 && (
-                                        <div className="form__step">
-                                            <div className="form__fields">
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Faculté</label>
-                                                    <select
-                                                        name="faculty_id"
-                                                        value={formData.faculty_id}
-                                                        onChange={(e) => {
-                                                            handleChange(e);
-                                                            setData('level_id', '');
-                                                        }}
-                                                        className="form-field__input"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    >
-                                                        <option value="">Sélectionnez une faculté</option>
-                                                        {faculties.map((faculty) => (
-                                                            <option key={faculty.id} value={String(faculty.id)}>
-                                                                🏛️ {faculty.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
+                                        <div className="animate-fadeIn space-y-6">
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <Building2 className="mr-2 inline h-4 w-4 text-indigo-600" />
+                                                    Faculté
+                                                </label>
+                                                <select
+                                                    className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-gray-900 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
+                                                    value={formData.faculty_id}
+                                                    onChange={(e) => setFormData({ ...formData, faculty_id: e.target.value })}
+                                                >
+                                                    <option value="">Sélectionnez une faculté</option>
+                                                    {faculties.map((f) => (
+                                                        <option key={f.id} value={f.id}>
+                                                            {f.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
 
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Niveau académique</label>
-                                                    <select
-                                                        name="level_id"
-                                                        value={formData.level_id}
-                                                        onChange={handleChange}
-                                                        className="form-field__input"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing || !formData.faculty_id}
-                                                    >
-                                                        <option value="">Sélectionnez un niveau</option>
-                                                        {(levelsByFaculty[formData.faculty_id as Id] || []).map((level) => (
-                                                            <option key={level.id} value={String(level.id)}>
-                                                                🎓 {getLevelLabel(level)}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <GraduationCap className="mr-2 inline h-4 w-4 text-purple-600" />
+                                                    Niveau académique
+                                                </label>
+                                                <select
+                                                    className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 transition-all duration-300 focus:border-purple-600 focus:ring-4 focus:ring-purple-100"
+                                                    value={formData.level_id}
+                                                    onChange={(e) => setFormData({ ...formData, level_id: e.target.value })}
+                                                    disabled={!formData.faculty_id}
+                                                >
+                                                    <option value="">Sélectionnez un niveau</option>
+                                                    <option value="1">Licence 1</option>
+                                                    <option value="2">Licence 2</option>
+                                                    <option value="3">Master 1</option>
+                                                </select>
+                                            </div>
 
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Année d'inscription</label>
-                                                    <select
-                                                        name="year_id"
-                                                        value={formData.year_id}
-                                                        onChange={handleChange}
-                                                        className="form-field__input"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    >
-                                                        <option value="">Sélectionnez une année</option>
-                                                        {years.filter(isYearActive).map((year) => (
-                                                            <option key={year.id} value={String(year.id)}>
-                                                                📅 {getYearText(year)}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {errors.year_id && (
-                                                        <p className="form-field__error">{errors.year_id}</p>
-                                                    )}
-                                                </div>
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <Calendar className="mr-2 inline h-4 w-4 text-pink-600" />
+                                                    Année d'inscription
+                                                </label>
+                                                <select
+                                                    className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 transition-all duration-300 focus:border-pink-600 focus:ring-4 focus:ring-pink-100"
+                                                    value={formData.year_id}
+                                                    onChange={(e) => setFormData({ ...formData, year_id: e.target.value })}
+                                                >
+                                                    <option value="">Sélectionnez une année</option>
+                                                    <option value="2024">2024-2025</option>
+                                                    <option value="2025">2025-2026</option>
+                                                </select>
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Step 2 - Personal Information */}
+                                    {/* Step 2 */}
                                     {step === 2 && (
-                                        <div className="form__step">
-                                            <div className="form__fields">
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Nom complet</label>
-                                                    <input
-                                                        type="text"
-                                                        name="name"
-                                                        value={formData.name}
-                                                        onChange={handleChange}
-                                                        className="form-field__input"
-                                                        placeholder="Entrez votre nom complet"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    />
-                                                </div>
-
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Adresse email</label>
-                                                    <input
-                                                        type="email"
-                                                        name="email"
-                                                        value={formData.email}
-                                                        onChange={handleChange}
-                                                        className="form-field__input"
-                                                        placeholder="votre@email.com"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    />
-                                                </div>
-
-                                                {/* Personal Documents */}
-                                                {requirements.personal_info.map((item) => (
-                                                    <FileInput
-                                                        key={item.key}
-                                                        item={item}
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    />
-                                                ))}
+                                        <div className="animate-fadeIn space-y-6">
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <User className="mr-2 inline h-4 w-4 text-indigo-600" />
+                                                    Nom complet
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
+                                                    placeholder="Jean Dupont"
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                />
                                             </div>
-                                        </div>
-                                    )}
 
-                                    {/* Step 3 - Academic Information */}
-                                    {step === 3 && (
-                                        <div className="form__step">
-                                            <div className="form__fields">
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Programme d'études</label>
-                                                    <input
-                                                        type="text"
-                                                        name="program"
-                                                        value={formData.program}
-                                                        onChange={handleChange}
-                                                        className="form-field__input"
-                                                        placeholder="Ex: Informatique"
-                                                        required
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    />
-                                                </div>
-
-                                                {/* Academic Documents */}
-                                                {requirements.academic_info.map((item) => (
-                                                    <FileInput
-                                                        key={item.key}
-                                                        item={item}
-                                                        disabled={(isView && !canEdit) || processing}
-                                                    />
-                                                ))}
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <Mail className="mr-2 inline h-4 w-4 text-purple-600" />
+                                                    Adresse email
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-all duration-300 focus:border-purple-600 focus:ring-4 focus:ring-purple-100"
+                                                    placeholder="jean.dupont@email.com"
+                                                    value={formData.email}
+                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                />
                                             </div>
-                                        </div>
-                                    )}
 
-                                    {/* Step 4 - Confirmation & Payment */}
-                                    {step === 4 && (
-                                        <div className="form__step">
-                                            <div className="form__fields">
-                                                {/* Confirmation */}
-                                                <div className="form-field">
-                                                    <label className="form-field__label">Confirmation</label>
-                                                    <div className="form-field__input" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                                                        <input
-                                                            id="confirmAccuracy"
-                                                            type="checkbox"
-                                                            checked={isConfirmed}
-                                                            onChange={(e) => setIsConfirmed(e.target.checked)}
-                                                            style={{ width: 18, height: 18 }}
-                                                            required
-                                                            disabled={(isView && !canEdit) || processing}
-                                                        />
-                                                        <label htmlFor="confirmAccuracy" style={{ cursor: 'pointer' }}>
-                                                            Je certifie que les informations fournies sont exactes et complètes.
+                                            {requirements.personal_info.map((doc) => (
+                                                <div key={doc.key} className="group">
+                                                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                        <FileText className="mr-2 inline h-4 w-4 text-pink-600" />
+                                                        {doc.label}
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input type="file" className="hidden" id={doc.key} />
+                                                        <label
+                                                            htmlFor={doc.key}
+                                                            className="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-50"
+                                                        >
+                                                            <Upload className="h-5 w-5 text-gray-400 transition-colors group-hover:text-indigo-600" />
+                                                            <span className="text-sm font-medium text-gray-600 group-hover:text-indigo-600">
+                                                                Cliquez pour télécharger
+                                                            </span>
                                                         </label>
                                                     </div>
                                                 </div>
-
-                                                {/* Payment Section */}
-                                                {requirements.payment.required && paymentStage === 'pay' && (
-                                                    <>
-                                                        <div className="form-field">
-                                                            <label className="form-field__label">Montant à régler</label>
-                                                            <div className="form-field__input" style={{ opacity: 0.85 }}>
-                                                                {requirements.payment.amount} {requirements.payment.currency}
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="form-field">
-                                                            <label className="form-field__label">💳 Numéro de carte</label>
-                                                            <input
-                                                                type="text"
-                                                                name="cardNumber"
-                                                                value={formData.cardNumber}
-                                                                onChange={handleChange}
-                                                                className="form-field__input"
-                                                                placeholder="1234 5678 9012 3456"
-                                                                required
-                                                                disabled={processing}
-                                                            />
-                                                        </div>
-
-                                                        <div className="form-field">
-                                                            <label className="form-field__label">🔒 Code CVV</label>
-                                                            <input
-                                                                type="text"
-                                                                name="cvv"
-                                                                value={formData.cvv}
-                                                                onChange={handleChange}
-                                                                className="form-field__input"
-                                                                placeholder="123"
-                                                                maxLength={3}
-                                                                required
-                                                                disabled={processing}
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
+                                            ))}
                                         </div>
                                     )}
 
-                                    {/* Form Actions */}
-                                    <div className="form__actions">
-                                        {step > 1 && (
+                                    {/* Step 3 */}
+                                    {step === 3 && (
+                                        <div className="animate-fadeIn space-y-6">
+                                            <div className="group">
+                                                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                    <BookOpen className="mr-2 inline h-4 w-4 text-indigo-600" />
+                                                    Programme d'études
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
+                                                    placeholder="Ex: Informatique"
+                                                    value={formData.program}
+                                                    onChange={(e) => setFormData({ ...formData, program: e.target.value })}
+                                                />
+                                            </div>
+
+                                            {requirements.academic_info.map((doc) => (
+                                                <div key={doc.key} className="group">
+                                                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                        <FileText className="mr-2 inline h-4 w-4 text-purple-600" />
+                                                        {doc.label}
+                                                    </label>
+                                                    <div className="relative">
+                                                        <input type="file" className="hidden" id={doc.key} />
+                                                        <label
+                                                            htmlFor={doc.key}
+                                                            className="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-6 transition-all duration-300 hover:border-purple-400 hover:bg-purple-50"
+                                                        >
+                                                            <Upload className="h-5 w-5 text-gray-400 transition-colors group-hover:text-purple-600" />
+                                                            <span className="text-sm font-medium text-gray-600 group-hover:text-purple-600">
+                                                                Cliquez pour télécharger
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Step 4 */}
+                                    {step === 4 && (
+                                        <div className="animate-fadeIn space-y-6">
+                                            <div className="rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+                                                <label className="group flex cursor-pointer items-start gap-3">
+                                                    <div className="relative mt-1 flex items-center justify-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isConfirmed}
+                                                            onChange={(e) => setIsConfirmed(e.target.checked)}
+                                                            className="h-6 w-6 cursor-pointer rounded-lg border-2 border-indigo-300 transition-all duration-300 checked:border-indigo-600 checked:bg-indigo-600"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <span className="block text-sm font-semibold text-gray-800 transition-colors group-hover:text-indigo-600">
+                                                            Je certifie l'exactitude des informations
+                                                        </span>
+                                                        <span className="mt-1 block text-xs text-gray-600">
+                                                            En cochant cette case, vous confirmez que toutes les informations fournies sont vraies et
+                                                            complètes
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            </div>
+
+                                            {paymentStage === 'pay' && (
+                                                <div className="space-y-6">
+                                                    <div className="rounded-2xl border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-6">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-sm font-semibold text-gray-700">Montant à régler</span>
+                                                            <span className="text-2xl font-bold text-green-600">
+                                                                {requirements.payment.amount} {requirements.payment.currency}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="group">
+                                                        <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                            <CreditCard className="mr-2 inline h-4 w-4 text-indigo-600" />
+                                                            Numéro de carte
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
+                                                            placeholder="1234 5678 9012 3456"
+                                                            value={formData.cardNumber}
+                                                            onChange={(e) => setFormData({ ...formData, cardNumber: e.target.value })}
+                                                        />
+                                                    </div>
+
+                                                    <div className="group">
+                                                        <label className="mb-2 block text-sm font-semibold text-gray-700">
+                                                            <Lock className="mr-2 inline h-4 w-4 text-purple-600" />
+                                                            Code CVV
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            maxLength={3}
+                                                            className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-all duration-300 focus:border-purple-600 focus:ring-4 focus:ring-purple-100"
+                                                            placeholder="123"
+                                                            value={formData.cvv}
+                                                            onChange={(e) => setFormData({ ...formData, cvv: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Boutons de navigation */}
+                                    <div className="flex gap-4 pt-6">
+                                        {(step > 1 || (step === 4 && paymentStage === 'pay')) && (
                                             <button
                                                 type="button"
                                                 onClick={prevStep}
-                                                className="btn btn--secondary"
-                                                disabled={isLoading || processing}
+                                                className="flex items-center gap-2 rounded-xl border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-all duration-300 hover:border-gray-400 hover:bg-gray-50"
                                             >
+                                                <ChevronLeft className="h-5 w-5" />
                                                 Précédent
                                             </button>
                                         )}
@@ -1048,138 +462,151 @@ export default function Enrollment(): JSX.Element {
                                             <button
                                                 type="button"
                                                 onClick={nextStep}
-                                                className={`btn btn--primary ${!validateStep() ? 'btn--disabled' : ''}`}
-                                                disabled={isLoading || processing || !validateStep()}
+                                                disabled={!validateStep()}
+                                                className={`ml-auto flex items-center gap-2 rounded-xl px-8 py-3 font-semibold transition-all duration-300 ${
+                                                    validateStep()
+                                                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-300/50 hover:scale-105 hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl hover:shadow-indigo-400/50'
+                                                        : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                                }`}
                                             >
-                                                {isLoading ? 'Chargement...' : 'Suivant'}
+                                                Suivant
+                                                <ChevronRight className="h-5 w-5" />
                                             </button>
                                         ) : (
                                             <button
-                                                type={!requirements.payment.required || paymentStage === 'pay' ? 'submit' : 'button'}
-                                                onClick={!requirements.payment.required || paymentStage === 'pay' ? undefined : nextStep}
-                                                className={`btn ${
-                                                    !requirements.payment.required || paymentStage === 'pay' ? 'btn--success' : 'btn--primary'
-                                                } ${!validateStep() ? 'btn--disabled' : ''}`}
-                                                disabled={isLoading || processing || !validateStep() || (isView && !canEdit)}
+                                                type="button"
+                                                onClick={nextStep}
+                                                disabled={!validateStep()}
+                                                className={`ml-auto flex items-center gap-2 rounded-xl px-8 py-3 font-semibold transition-all duration-300 ${
+                                                    validateStep()
+                                                        ? paymentStage === 'pay'
+                                                            ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-300/50 hover:scale-105 hover:from-green-700 hover:to-emerald-700 hover:shadow-xl hover:shadow-green-400/50'
+                                                            : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-300/50 hover:scale-105 hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl hover:shadow-indigo-400/50'
+                                                        : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                                                }`}
                                             >
-                                                {isLoading
-                                                    ? (paymentStage === 'pay' || !requirements.payment.required)
-                                                        ? 'Traitement...'
-                                                        : 'Chargement...'
-                                                    : !requirements.payment.required
-                                                      ? '✨ Valider'
-                                                      : paymentStage === 'confirm'
-                                                        ? 'Continuer vers le paiement'
-                                                        : '✨ Payer & Valider'}
+                                                {paymentStage === 'confirm' ? (
+                                                    <>
+                                                        Continuer vers le paiement <ChevronRight className="h-5 w-5" />
+                                                    </>
+                                                ) : (
+                                                    <>✨ Payer & Valider</>
+                                                )}
                                             </button>
                                         )}
                                     </div>
                                 </form>
                             </div>
+                        </div>
 
-                            {/* Progress Sidebar */}
-                            <div className="progress-sidebar">
-                                <div className="progress-sidebar__header">
-                                    <h3 className="progress-sidebar__title">📋 Progression</h3>
-                                    <div className="progress-sidebar__stats">
-                                        <span className="progress-stats">
-                                            {progressStats.completed}/{progressStats.total} complétés
-                                        </span>
+                        {/* Sidebar de progression */}
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-32">
+                                <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-2xl shadow-purple-100/30 backdrop-blur-sm">
+                                    <div className="mb-6">
+                                        <h3 className="mb-2 text-xl font-bold text-gray-800">📋 Progression</h3>
+                                        <p className="text-sm text-gray-600">
+                                            {completedFields}/{totalFields} champs complétés
+                                        </p>
                                     </div>
-                                </div>
 
-                                <div className="progress-sidebar__content">
-                                    {sidebarSections.map((section, sectionIndex) => {
-                                        const completedCount = section.fields.filter(field => 
-                                            isSidebarFieldCompleted(field as SidebarField)
-                                        ).length;
-
-                                        return (
-                                            <div key={sectionIndex} className="accordion-section">
-                                                <button 
-                                                    type="button" 
-                                                    className="accordion-header" 
-                                                    onClick={() => toggleSection(sectionIndex)}
-                                                >
-                                                    <div className="accordion-header__content">
-                                                        <h4 className="accordion-header__title">{section.title}</h4>
-                                                        <div className="accordion-header__count">
-                                                            <span className="field-count">
-                                                                {completedCount}/{section.fields.length}
-                                                            </span>
-                                                            <svg
-                                                                className={`accordion-icon ${
-                                                                    expandedSections[sectionIndex] ? 'accordion-icon--expanded' : ''
-                                                                }`}
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path d="M7 10l5 5 5-5z" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </button>
-
-                                                <div className={`accordion-content ${
-                                                    expandedSections[sectionIndex] ? 'accordion-content--expanded' : ''
-                                                }`}>
-                                                    <div className="accordion-content__inner">
-                                                        {section.fields.map((field, fieldIndex) => {
-                                                            const typedField = field as SidebarField;
-                                                            const isCompleted = isSidebarFieldCompleted(typedField);
-
-                                                            return (
-                                                                <div
-                                                                    key={fieldIndex}
-                                                                    className={`progress-item ${
-                                                                        isCompleted ? 'progress-item--completed' : ''
-                                                                    }`}
-                                                                >
-                                                                    <div className="progress-item__icon">
-                                                                        {isCompleted ? (
-                                                                            <div className="progress-item__check">
-                                                                                <svg viewBox="0 0 24 24" className="check-icon">
-                                                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                                                                </svg>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <span className="progress-item__emoji">{typedField.icon}</span>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="progress-item__content">
-                                                                        <span className="progress-item__label">{typedField.label}</span>
-                                                                        {isCompleted && (
-                                                                            <span className="progress-item__value">
-                                                                                {getSidebarFieldValue(typedField)}
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* Global Progress Bar */}
-                                <div className="progress-sidebar__footer">
-                                    <div className="global-progress">
-                                        <div className="global-progress__label">Progression globale</div>
-                                        <div className="global-progress__bar">
-                                            <div 
-                                                className="global-progress__fill" 
-                                                style={{ width: `${progressStats.percentage}%` }} 
+                                    <div className="mb-6">
+                                        <div className="relative h-3 overflow-hidden rounded-full bg-gray-200">
+                                            <div
+                                                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 transition-all duration-500"
+                                                style={{ width: `${percentage}%` }}
                                             />
                                         </div>
-                                        <div className="global-progress__percentage">{progressStats.percentage}%</div>
+                                        <p className="mt-2 text-right text-sm font-bold text-indigo-600">{percentage}%</p>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {sidebarSections.map((section, idx) => {
+                                            const completed = section.fields.filter(isFieldCompleted).length;
+                                            const Icon = section.fields[0]?.icon;
+
+                                            return (
+                                                <div key={idx} className="overflow-hidden rounded-2xl border border-gray-200">
+                                                    <button
+                                                        onClick={() => setExpandedSections({ ...expandedSections, [idx]: !expandedSections[idx] })}
+                                                        className="flex w-full items-center justify-between p-4 transition-colors hover:bg-gray-50"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {Icon && <Icon className="h-5 w-5 text-indigo-600" />}
+                                                            <span className="text-sm font-semibold text-gray-800">{section.title}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs font-bold text-indigo-600">
+                                                                {completed}/{section.fields.length}
+                                                            </span>
+                                                            <ChevronDown
+                                                                className={`h-4 w-4 text-gray-400 transition-transform ${expandedSections[idx] ? 'rotate-180' : ''}`}
+                                                            />
+                                                        </div>
+                                                    </button>
+
+                                                    {expandedSections[idx] && (
+                                                        <div className="space-y-2 px-4 pb-4">
+                                                            {section.fields.map((field, fidx) => {
+                                                                const FieldIcon = field.icon;
+                                                                const completed = isFieldCompleted(field);
+
+                                                                return (
+                                                                    <div
+                                                                        key={fidx}
+                                                                        className={`flex items-center gap-3 rounded-lg p-2 ${completed ? 'bg-green-50' : 'bg-gray-50'}`}
+                                                                    >
+                                                                        <div
+                                                                            className={`flex h-6 w-6 items-center justify-center rounded-full ${completed ? 'bg-green-500' : 'bg-gray-300'}`}
+                                                                        >
+                                                                            {completed ? (
+                                                                                <Check className="h-4 w-4 text-white" />
+                                                                            ) : (
+                                                                                <FieldIcon className="h-3 w-3 text-gray-500" />
+                                                                            )}
+                                                                        </div>
+                                                                        <span
+                                                                            className={`text-xs font-medium ${completed ? 'text-green-700' : 'text-gray-600'}`}
+                                                                        >
+                                                                            {field.label}
+                                                                        </span>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
+
+                <style jsx>{`
+                    @keyframes fadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(10px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+
+                    .animate-fadeIn {
+                        animation: fadeIn 0.5s ease-out;
+                    }
+
+                    @media (max-width: 640px) {
+                        .stepper__labels {
+                            font-size: 0.75rem;
+                        }
+                    }
+                `}</style>
             </div>
         </Dashboard>
     );
