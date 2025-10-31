@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, User, MessageCircle, ChevronRight, Filter, Calendar, Tag, Eye, Heart, Share2 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 export default function Blog() {
   const [selectedTopic, setSelectedTopic] = useState('all');
@@ -305,11 +306,11 @@ export default function Blog() {
                         <Share2 className="w-5 h-5" />
                       </button>
                     </div>
-                    
-                    <button className="inline-flex items-center gap-2 text-amber-600 font-medium hover:text-amber-700 transition-colors">
+                  
+                    <Link href={`/blog/${post.id}`} className="inline-flex items-center gap-2 text-amber-600 font-medium hover:text-amber-700 transition-colors">
                       Lire la suite
                       <ChevronRight className="w-4 h-4" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -374,7 +375,7 @@ export default function Blog() {
 
         {/* CTA Button */}
         <div className={`text-center transition-all duration-1000 delay-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105">
+          <Link href={route('blog')} className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105">
             <span>Voir plus d'actualités</span>
             <div className="flex items-center justify-center w-10 h-10 bg-white/20 rounded-xl group-hover:bg-white/30 transition-colors duration-300">
               <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -382,7 +383,7 @@ export default function Blog() {
             
             {/* Button glow effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-2xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10"></div>
-          </button>
+          </Link>
         </div>
       </div>
 

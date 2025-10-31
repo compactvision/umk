@@ -215,9 +215,6 @@ const Sidebar = ({
             title: 'Inscriptions',
             items: [
                 { id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') },
-                { id: 'available', label: 'Available Courses', icon: <Grid3x3 size={18} />, href: '#' },
-                { id: 'pending', label: 'Pending', icon: <Clock size={18} />, href: '#' },
-                { id: 'completed', label: 'Completed', icon: <Award size={18} />, href: '#' },
             ],
         },
     };

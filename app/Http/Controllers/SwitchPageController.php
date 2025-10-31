@@ -59,4 +59,14 @@ class SwitchPageController extends Controller
     {
         return Inertia::render('Contactpage');
     }
+
+    public function blog()
+    {
+        return Inertia::render('Blogpage');
+    }
+
+    public function blogDetails($id)
+    {
+        return Inertia::render('BlogDetailsPage');
+    }
 }

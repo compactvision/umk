@@ -286,7 +286,7 @@ export default function Campus(): JSX.Element {
                       {item.description}
                     </p>
                   )}
-                  <Link
+                  {/* <Link
                     href={item.link}
                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   >
@@ -297,7 +297,7 @@ export default function Campus(): JSX.Element {
                         fill="currentColor"
                       />
                     </svg>
-                  </Link>
+                  </Link> */}
                 </div>
                 
                 {/* Focus ring */}
