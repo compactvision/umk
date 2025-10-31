@@ -2,13 +2,16 @@ import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import Alert from '@/utils/sweetAlert';
+import { Link } from '@inertiajs/react';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     const { data, setData, post, processing, errors } = useForm({ email: '' });
     const [focused, setFocused] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitted(true);
         Alert.loading('Envoi de l\'email de réinitialisation en cours...');
 
         post(route('password.email'), {
@@ -17,399 +20,280 @@ export default function ForgotPassword({ status }: { status?: string }) {
             },
             onError: () => {
                 Alert.error('Une erreur est survenue lors de la réinitialisation de votre mot de passe.');
+                setIsSubmitted(false);
             },
         });
     };
 
     return (
         <Dashboard>
-            <div className="forgot-password">
-                <style>{`
-                    .forgot-password {
-                        min-height: 100vh;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                        position: relative;
-                        overflow: hidden;
-                    }
+            <div className="flex items-center justify-center p-4 sm:p-5 font-sans relative overflow-hidden">
+                {/* Fond animé amélioré */}
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"></div>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent animate-gradient-shift"></div>
+                    {/* Éléments décoratifs flottants - cachés sur mobile */}
+                    <div className="hidden sm:block absolute top-20 left-20 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-float-1"></div>
+                    <div className="hidden sm:block absolute top-40 right-20 w-40 h-40 bg-purple-400/20 rounded-full blur-xl animate-float-2"></div>
+                    <div className="hidden sm:block absolute bottom-20 left-1/3 w-36 h-36 bg-indigo-400/20 rounded-full blur-xl animate-float-3"></div>
+                </div>
+                
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 w-full max-w-sm sm:max-w-md shadow-2xl border border-white/20 relative z-10 animate-slide-up">
+                    {/* Badge de sécurité */}
+                    <div className="flex justify-center mb-4 sm:mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <span className="hidden sm:inline">Connexion sécurisée</span>
+                            <span className="sm:hidden">Sécurisé</span>
+                        </div>
+                    </div>
 
-                    .forgot-password::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        animation: backgroundPulse 8s ease-in-out infinite;
-                    }
-
-                    @keyframes backgroundPulse {
-                        0%, 100% { opacity: 0.8; }
-                        50% { opacity: 1; }
-                    }
-
-                    .auth-container {
-                        background: rgba(255, 255, 255, 0.95);
-                        backdrop-filter: blur(20px);
-                        border-radius: 24px;
-                        padding: 48px;
-                        width: 100%;
-                        max-width: 440px;
-                        box-shadow: 
-                            0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                            0 0 0 1px rgba(255, 255, 255, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        position: relative;
-                        z-index: 10;
-                        animation: slideUp 0.6s ease-out;
-                    }
-
-                    @keyframes slideUp {
-                        from {
-                            opacity: 0;
-                            transform: translateY(30px);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateY(0);
-                        }
-                    }
-
-                    .auth-icon {
-                        width: 64px;
-                        height: 64px;
-                        margin: 0 auto 32px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        border-radius: 16px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-                        animation: iconFloat 3s ease-in-out infinite;
-                    }
-
-                    @keyframes iconFloat {
-                        0%, 100% { transform: translateY(0px); }
-                        50% { transform: translateY(-5px); }
-                    }
-
-                    .auth-icon::before {
-                        content: '🔐';
-                        font-size: 28px;
-                        filter: brightness(1.2);
-                    }
-
-                    .auth-title {
-                        color: #1a202c;
-                        font-size: 28px;
-                        font-weight: 700;
-                        text-align: center;
-                        margin-bottom: 12px;
-                        letter-spacing: -0.025em;
-                        line-height: 1.2;
-                    }
-
-                    .auth-subtitle {
-                        color: #64748b;
-                        font-size: 16px;
-                        text-align: center;
-                        line-height: 1.6;
-                        margin-bottom: 40px;
-                        font-weight: 400;
-                    }
-
-                    .status-alert {
-                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                        color: white;
-                        padding: 16px 20px;
-                        border-radius: 12px;
-                        margin-bottom: 24px;
-                        font-size: 14px;
-                        font-weight: 500;
-                        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-                        animation: alertSlide 0.4s ease-out;
-                        position: relative;
-                        overflow: hidden;
-                    }
-
-                    .status-alert::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-                        animation: shimmer 2s infinite;
-                    }
-
-                    @keyframes shimmer {
-                        0% { left: -100%; }
-                        100% { left: 100%; }
-                    }
-
-                    @keyframes alertSlide {
-                        from {
-                            opacity: 0;
-                            transform: translateY(-10px);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateY(0);
-                        }
-                    }
-
-                    .auth-form {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 24px;
-                    }
-
-                    .input-wrapper {
-                        position: relative;
-                    }
-
-                    .auth-input {
-                        width: 100%;
-                        height: 56px;
-                        padding: 0 20px 0 56px;
-                        border: 2px solid #e2e8f0;
-                        border-radius: 16px;
-                        font-size: 16px;
-                        background: #fafafa;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        outline: none;
-                        color: #1a202c;
-                        font-weight: 500;
-                    }
-
-                    .auth-input:focus {
-                        border-color: #667eea;
-                        background: white;
-                        box-shadow: 
-                            0 0 0 3px rgba(102, 126, 234, 0.1),
-                            0 8px 25px rgba(0, 0, 0, 0.08);
-                        transform: translateY(-2px);
-                    }
-
-                    .auth-input::placeholder {
-                        color: #94a3b8;
-                        font-weight: 400;
-                    }
-
-                    .input-icon {
-                        position: absolute;
-                        left: 20px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 20px;
-                        color: #94a3b8;
-                        transition: color 0.3s ease;
-                        z-index: 1;
-                    }
-
-                    .auth-input:focus + .input-icon {
-                        color: #667eea;
-                    }
-
-                    .input-error {
-                        color: #ef4444;
-                        font-size: 14px;
-                        font-weight: 500;
-                        margin-top: 8px;
-                        animation: errorShake 0.5s ease-out;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    }
-
-                    .input-error::before {
-                        content: '⚠️';
-                        font-size: 12px;
-                    }
-
-                    @keyframes errorShake {
-                        0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
-                        10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-                    }
-
-                    .auth-button {
-                        height: 56px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        color: white;
-                        border: none;
-                        border-radius: 16px;
-                        font-size: 16px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-                        position: relative;
-                        overflow: hidden;
-                        letter-spacing: 0.025em;
-                    }
-
-                    .auth-button:hover:not(:disabled) {
-                        transform: translateY(-2px);
-                        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-                    }
-
-                    .auth-button:active:not(:disabled) {
-                        transform: translateY(0);
-                    }
-
-                    .auth-button:disabled {
-                        opacity: 0.7;
-                        cursor: not-allowed;
-                        transform: none;
-                    }
-
-                    .auth-button::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-                        transition: left 0.5s;
-                    }
-
-                    .auth-button:hover:not(:disabled)::before {
-                        left: 100%;
-                    }
-
-                    .loading-spinner {
-                        display: inline-block;
-                        width: 18px;
-                        height: 18px;
-                        border: 2px solid rgba(255, 255, 255, 0.3);
-                        border-radius: 50%;
-                        border-top-color: white;
-                        animation: spin 1s ease-in-out infinite;
-                        margin-right: 8px;
-                    }
-
-                    @keyframes spin {
-                        to { transform: rotate(360deg); }
-                    }
-
-                    .back-link {
-                        text-align: center;
-                        margin-top: 32px;
-                    }
-
-                    .back-link a {
-                        color: #667eea;
-                        text-decoration: none;
-                        font-weight: 500;
-                        font-size: 14px;
-                        transition: color 0.3s ease;
-                        position: relative;
-                    }
-
-                    .back-link a:hover {
-                        color: #764ba2;
-                    }
-
-                    .back-link a::after {
-                        content: '';
-                        position: absolute;
-                        bottom: -2px;
-                        left: 0;
-                        width: 0;
-                        height: 2px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        transition: width 0.3s ease;
-                    }
-
-                    .back-link a:hover::after {
-                        width: 100%;
-                    }
-
-                    @media (max-width: 480px) {
-                        .auth-container {
-                            padding: 32px 24px;
-                            margin: 0 16px;
-                        }
-                        
-                        .auth-title {
-                            font-size: 24px;
-                        }
-                        
-                        .auth-subtitle {
-                            font-size: 15px;
-                        }
-                        
-                        .auth-input,
-                        .auth-button {
-                            height: 52px;
-                        }
-                    }
-
-                    @media (prefers-reduced-motion: reduce) {
-                        *,
-                        *::before,
-                        *::after {
-                            animation-duration: 0.01ms !important;
-                            animation-iteration-count: 1 !important;
-                            transition-duration: 0.01ms !important;
-                        }
-                    }
-                `}</style>
-
-                <div className="auth-container">
-                    <div className="auth-icon"></div>
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 sm:mb-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg sm:shadow-xl shadow-indigo-500/30 animate-float relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent animate-spin-slow"></div>
+                        <span className="text-2xl sm:text-3xl relative z-10 group-hover:scale-110 transition-transform duration-300">🔐</span>
+                    </div>
                     
-                    <h1 className="auth-title">Mot de passe oublié</h1>
-                    <p className="auth-subtitle">
-                        Saisissez votre adresse email et nous vous enverrons un lien de réinitialisation sécurisé.
+                    <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 tracking-tight bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                        Mot de passe oublié
+                    </h1>
+                    <p className="text-gray-500 text-center text-sm sm:text-base leading-relaxed mb-8 sm:mb-10 px-2">
+                        Pas de souci ! Saisissez votre adresse email et nous vous enverrons un lien de réinitialisation sécurisé.
                     </p>
 
                     {status && (
-                        <div className="status-alert">
-                            {status}
+                        <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-3 sm:p-4 rounded-xl mb-6 text-xs sm:text-sm font-medium shadow-lg shadow-green-500/30 animate-alert-slide relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                            <div className="flex items-center gap-2">
+                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                                </svg>
+                                <span className="text-xs sm:text-sm">{status}</span>
+                            </div>
                         </div>
                     )}
 
-                    <div className="auth-form">
-                        <div className="input-wrapper">
-                            <input
-                                type="email"
-                                name="email"
-                                value={data.email}
-                                onChange={(e) => setData({ email: e.target.value })}
-                                className="auth-input"
-                                placeholder="votre.email@exemple.com"
-                                required
-                                onFocus={() => setFocused(true)}
-                                onBlur={() => setFocused(false)}
-                            />
-                            <div className="input-icon">📧</div>
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className="relative group">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Adresse email
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={data.email}
+                                    onChange={(e) => setData({ email: e.target.value })}
+                                    className={`w-full h-12 sm:h-14 px-4 sm:px-5 pl-12 sm:pl-14 border-2 rounded-xl sm:rounded-2xl text-sm sm:text-base transition-all duration-300 outline-none font-medium
+                                        ${focused 
+                                            ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/10 -translate-y-0.5' 
+                                            : 'border-gray-200 bg-gray-50'
+                                        } ${isSubmitted && !errors.email ? 'border-green-500 bg-green-50' : ''}`}
+                                    placeholder="votre.email@exemple.com"
+                                    required
+                                    onFocus={() => setFocused(true)}
+                                    onBlur={() => setFocused(false)}
+                                />
+                                <div className={`absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 text-lg sm:text-xl transition-all duration-300 z-10 ${focused ? 'text-indigo-500 scale-110' : 'text-gray-400'} ${isSubmitted && !errors.email ? 'text-green-500' : ''}`}>
+                                    {isSubmitted && !errors.email ? '✅' : '📧'}
+                                </div>
+                                {focused && (
+                                    <div className="absolute -inset-1 bg-indigo-500/5 rounded-xl sm:rounded-2xl animate-pulse"></div>
+                                )}
+                            </div>
                             {errors.email && (
-                                <div className="input-error">{errors.email}</div>
+                                <div className="mt-2 text-xs sm:text-sm text-red-500 font-medium flex items-center gap-2 animate-error-shake bg-red-50 p-2 rounded-lg border-l-3 border-red-500">
+                                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                                    </svg>
+                                    <span className="text-xs">{errors.email}</span>
+                                </div>
                             )}
                         </div>
 
                         <button 
                             type="button" 
-                            className="auth-button" 
+                            className="w-full h-12 sm:h-14 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg shadow-indigo-500/30 relative overflow-hidden tracking-wide hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/40 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none group" 
                             disabled={processing}
                             onClick={handleSubmit}
                         >
-                            {processing && <div className="loading-spinner"></div>}
-                            {processing ? 'Envoi en cours...' : 'Envoyer le lien de réinitialisation'}
+                            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-500"></span>
+                            <span className="relative z-10 flex items-center justify-center gap-2">
+                                {processing ? (
+                                    <>
+                                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 rounded-full border-t-white animate-spin"></div>
+                                        <span className="text-xs sm:text-sm">Envoi en cours...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span className="text-xs sm:text-sm">Envoyer le lien</span>
+                                    </>
+                                )}
+                            </span>
                         </button>
                     </div>
 
-                    <div className="back-link">
-                        <a href="/login">← Retour à la connexion</a>
+                    <div className="text-center mt-6 sm:mt-8">
+                        <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span className="hidden sm:inline">Besoin d'aide ?</span>
+                            <span className="sm:hidden">Aide</span>
+                        </div>
+                        <Link 
+                            href="/login" 
+                            className="inline-flex items-center gap-2 text-indigo-500 font-medium text-xs sm:text-sm hover:text-purple-600 transition-all duration-300 relative group"
+                        >
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span className="hidden sm:inline">Retour à la connexion</span>
+                            <span className="sm:hidden">Connexion</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+                        </Link>
+                    </div>
+
+                    {/* Informations de sécurité - cachées sur mobile */}
+                    <div className="hidden sm:block mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                        <div className="flex items-start gap-3">
+                            <svg className="w-5 h-5 text-blue-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 7c0-5.92-4.808-10.72-10.72-10.72A10.975 10.975 0 002.166 5zM8.058 14H15.94a8.975 8.975 0 00-1.856-4.5 8.975 8.975 0 00-7.17 0 8.975 8.975 0 00-1.856 4.5z" clipRule="evenodd"/>
+                            </svg>
+                            <div className="text-xs text-blue-700">
+                                <p className="font-medium mb-1">🔒 Sécurité garantie</p>
+                                <p>Votre email est protégé et ne sera jamais partagé. Le lien de réinitialisation expire après 60 minutes.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes slide-up {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-5px); }
+                }
+                
+                @keyframes float-1 {
+                    0%, 100% { transform: translateY(0px) translateX(0px); }
+                    33% { transform: translateY(-10px) translateX(5px); }
+                    66% { transform: translateY(-5px) translateX(-5px); }
+                }
+                
+                @keyframes float-2 {
+                    0%, 100% { transform: translateY(0px) translateX(0px); }
+                    33% { transform: translateY(-8px) translateX(-8px); }
+                    66% { transform: translateY(-12px) translateX(4px); }
+                }
+                
+                @keyframes float-3 {
+                    0%, 100% { transform: translateY(0px) translateX(0px); }
+                    33% { transform: translateY(-6px) translateX(-6px); }
+                    66% { transform: translateY(-10px) translateX(8px); }
+                }
+                
+                @keyframes gradient-shift {
+                    0%, 100% { transform: translateX(0%) translateY(0%); }
+                    25% { transform: translateX(25%) translateY(-25%); }
+                    50% { transform: translateX(-25%) translateY(25%); }
+                    75% { transform: translateX(15%) translateY(-15%); }
+                }
+                
+                @keyframes alert-slide {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                
+                @keyframes shimmer {
+                    0% { left: -100%; }
+                    100% { left: 100%; }
+                }
+                
+                @keyframes error-shake {
+                    0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+                }
+                
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                
+                .animate-slide-up {
+                    animation: slide-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                
+                .animate-float {
+                    animation: float 3s ease-in-out infinite;
+                }
+                
+                .animate-float-1 {
+                    animation: float-1 8s ease-in-out infinite;
+                }
+                
+                .animate-float-2 {
+                    animation: float-2 10s ease-in-out infinite;
+                }
+                
+                .animate-float-3 {
+                    animation: float-3 12s ease-in-out infinite;
+                }
+                
+                .animate-gradient-shift {
+                    animation: gradient-shift 15s ease-in-out infinite;
+                }
+                
+                .animate-alert-slide {
+                    animation: alert-slide 0.4s ease-out;
+                }
+                
+                .animate-shimmer {
+                    animation: shimmer 2s infinite;
+                }
+                
+                .animate-error-shake {
+                    animation: error-shake 0.5s ease-out;
+                }
+                
+                .animate-spin-slow {
+                    animation: spin-slow 3s linear infinite;
+                }
+                
+                @media (prefers-reduced-motion: reduce) {
+                    .animate-slide-up,
+                    .animate-float,
+                    .animate-float-1,
+                    .animate-float-2,
+                    .animate-float-3,
+                    .animate-gradient-shift,
+                    .animate-alert-slide,
+                    .animate-shimmer,
+                    .animate-error-shake,
+                    .animate-spin-slow {
+                        animation: none;
+                    }
+                }
+            `}</style>
         </Dashboard>
     );
 }

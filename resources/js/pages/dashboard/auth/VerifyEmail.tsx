@@ -2,98 +2,113 @@ import React from 'react'
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import { Link } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
+import Alert from '@/utils/sweetAlert';
 
 export default function Signup({ status }: { status: string }) {
     const { post, processing } = useForm();
 
     const handleResend = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('verification.send'));
+        post(route('verification.send'), {
+            onSuccess: () => {
+                Alert.success('Email de vérification envoyé avec succès');
+            },
+            onError: () => {
+                Alert.error('Erreur lors de l\'envoi de l\'email de vérification');
+            }
+        });
     };
 
     return (
         <Dashboard> 
-            <div className="email-verify">
-                <div className="verify-container">
+            <div className="bg-gradient-to-br from-slate-50 to-gray-100 font-sans flex items-center justify-center p-4 relative overflow-hidden">
+                {/* Effet de fond subtil */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-blue-50/20 to-transparent"></div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-green-50/20 to-transparent"></div>
+                </div>
+                
+                <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-md p-8 relative backdrop-blur-lg animate-slide-up">
                     {/* Icon de vérification */}
-                    <div className="verify-icon">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="4 4" className="icon-circle"/>
+                    <div className="flex justify-center mb-8">
+                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 text-blue-500">
+                            <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="4 4" className="animate-spin-slow"/>
                             <path d="M32 12v8m0 24v8m12-20h-8m-24 0h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                             <circle cx="32" cy="32" r="3" fill="currentColor"/>
                         </svg>
                     </div>
 
-                    <div className="verify-content">
-                        <h1 className="verify-title">
+                    <div className="text-center">
+                        <h1 className="text-3xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
                             Vérifiez votre adresse email
                         </h1>
                         
-                        <p className="verify-description">
+                        <p className="text-lg text-gray-600 leading-relaxed mb-8">
                             Nous avons envoyé un lien de vérification à votre adresse email. 
                             Cliquez sur le lien pour activer votre compte et accéder à toutes les fonctionnalités.
                         </p>
 
-                        <div className="verify-email-note">
-                            <svg className="email-icon" viewBox="0 0 24 24" fill="none">
+                        <div className="flex items-center justify-center gap-2 bg-blue-50 text-blue-600 p-3 rounded-xl text-sm font-medium mb-8 border border-blue-100">
+                            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
                                 <path d="M3 8L12 13L21 8M3 8V16C3 16.5523 3.44772 17 4 17H20C20.5523 17 21 16.5523 21 16V8M3 8C3 7.44772 3.44772 7 4 7H20C20.5523 7 21 7.44772 21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                             <span>Vérifiez également votre dossier spam</span>
                         </div>
 
                         {status === 'verification-link-sent' && (
-                            <div className="verify-alert success-alert">
-                                <svg className="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-8 flex items-start gap-2 text-left animate-fade-in">
+                                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                                 </svg>
                                 <div>
-                                    <strong>Email envoyé avec succès !</strong>
-                                    <p>Un nouveau lien de vérification vient d'être envoyé à votre adresse email.</p>
+                                    <strong className="text-green-600 font-semibold block mb-1">Email envoyé avec succès !</strong>
+                                    <p className="text-green-700 text-sm leading-relaxed">Un nouveau lien de vérification vient d'être envoyé à votre adresse email.</p>
                                 </div>
                             </div>
                         )}
 
-                        <form onSubmit={handleResend} className="verify-form">
+                        <form onSubmit={handleResend} className="mb-8">
                             <button 
                                 type="submit" 
-                                className={`verify-button ${processing ? 'loading' : ''}`}
+                                className={`w-full bg-blue-500 text-white rounded-xl p-4 font-semibold text-base flex items-center justify-center gap-2 min-h-[48px] relative overflow-hidden transition-all duration-200 hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none ${processing ? 'disabled' : ''}`}
                                 disabled={processing}
                             >
                                 {processing ? (
                                     <>
-                                        <div className="loading-spinner"></div>
+                                        <div className="w-5 h-5 border-2 border-white/30 rounded-full border-t-white animate-spin"></div>
                                         <span>Envoi en cours...</span>
                                     </>
                                 ) : (
                                     <>
-                                        <svg className="button-icon" viewBox="0 0 24 24" fill="none">
+                                        <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
                                             <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
                                             <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
                                         </svg>
                                         Renvoyer l'email de vérification
                                     </>
                                 )}
+                                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-all duration-500"></span>
                             </button>
                         </form>
 
-                        <div className="verify-footer">
-                            <p className="footer-text">Vous n'avez pas reçu l'email ?</p>
-                            <div className="footer-actions">
+                        <div className="border-t border-gray-100 pt-6">
+                            <p className="text-gray-500 text-sm mb-4">Vous n'avez pas reçu l'email ?</p>
+                            <div className="flex gap-6 justify-center flex-wrap">
                                 <Link 
                                     href={route('logout')} 
                                     method="post" 
                                     as="button" 
-                                    className="logout-link"
+                                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-1 rounded-md transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 >
-                                    <svg className="logout-icon" viewBox="0 0 24 24" fill="none">
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
                                         <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                         <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                         <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                     Se déconnecter
                                 </Link>
-                                <button type="button" className="support-link">
-                                    <svg className="support-icon" viewBox="0 0 24 24" fill="none">
+                                <button type="button" className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-1 rounded-md transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
                                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                                         <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                         <path d="H12V16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -106,90 +121,8 @@ export default function Signup({ status }: { status: string }) {
                 </div>
             </div>
 
-            <style>{`
-                /* Variables CSS pour la cohérence */
-                :root {
-                    --primary-color: #3b82f6;
-                    --primary-hover: #2563eb;
-                    --primary-light: #dbeafe;
-                    --success-color: #10b981;
-                    --success-light: #d1fae5;
-                    --text-primary: #111827;
-                    --text-secondary: #6b7280;
-                    --text-muted: #9ca3af;
-                    --border-color: #e5e7eb;
-                    --border-light: #f3f4f6;
-                    --background: #ffffff;
-                    --background-muted: #f9fafb;
-                    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-                    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-                    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-                    --radius-sm: 0.375rem;
-                    --radius-md: 0.5rem;
-                    --radius-lg: 0.75rem;
-                    --radius-xl: 1rem;
-                    --spacing-xs: 0.5rem;
-                    --spacing-sm: 0.75rem;
-                    --spacing-md: 1rem;
-                    --spacing-lg: 1.5rem;
-                    --spacing-xl: 2rem;
-                    --spacing-2xl: 3rem;
-                    --font-sm: 0.875rem;
-                    --font-base: 1rem;
-                    --font-lg: 1.125rem;
-                    --font-xl: 1.25rem;
-                    --font-2xl: 1.5rem;
-                    --font-3xl: 1.875rem;
-                }
-
-                /* Reset et base */
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-
-                .email-verify {
-                    min-height: 100vh;
-                    background: linear-gradient(135deg, #f8fafc 0%, var(--background-muted) 100%);
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: var(--spacing-md);
-                    position: relative;
-                    overflow-x: hidden;
-                }
-
-                /* Effet de fond subtil */
-                .email-verify::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-image: 
-                        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
-                    pointer-events: none;
-                }
-
-                .verify-container {
-                    background: var(--background);
-                    border-radius: var(--radius-xl);
-                    box-shadow: var(--shadow-xl);
-                    border: 1px solid var(--border-light);
-                    width: 100%;
-                    max-width: 480px;
-                    padding: var(--spacing-2xl);
-                    position: relative;
-                    backdrop-filter: blur(10px);
-                    animation: slideUp 0.6s ease-out;
-                }
-
-                @keyframes slideUp {
+            <style jsx>{`
+                @keyframes slide-up {
                     from {
                         opacity: 0;
                         transform: translateY(30px);
@@ -199,345 +132,40 @@ export default function Signup({ status }: { status: string }) {
                         transform: translateY(0);
                     }
                 }
-
-                /* Icône de vérification */
-                .verify-icon {
-                    display: flex;
-                    justify-content: center;
-                    margin-bottom: var(--spacing-xl);
+                
+                @keyframes fade-in {
+                    from { 
+                        opacity: 0; 
+                        transform: scale(0.95); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: scale(1); 
+                    }
                 }
-
-                .verify-icon svg {
-                    width: 80px;
-                    height: 80px;
-                    color: var(--primary-color);
-                }
-
-                .icon-circle {
-                    animation: rotate 8s linear infinite;
-                }
-
-                @keyframes rotate {
+                
+                @keyframes spin-slow {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
-
-                /* Contenu principal */
-                .verify-content {
-                    text-align: center;
+                
+                .animate-slide-up {
+                    animation: slide-up 0.6s ease-out;
                 }
-
-                .verify-title {
-                    font-size: var(--font-3xl);
-                    font-weight: 800;
-                    color: var(--text-primary);
-                    margin-bottom: var(--spacing-lg);
-                    line-height: 1.2;
-                    letter-spacing: -0.025em;
+                
+                .animate-fade-in {
+                    animation: fade-in 0.5s ease-out;
                 }
-
-                .verify-description {
-                    font-size: var(--font-lg);
-                    color: var(--text-secondary);
-                    line-height: 1.6;
-                    margin-bottom: var(--spacing-xl);
+                
+                .animate-spin-slow {
+                    animation: spin-slow 8s linear infinite;
                 }
-
-                .verify-email-note {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: var(--spacing-sm);
-                    background: var(--primary-light);
-                    color: var(--primary-color);
-                    padding: var(--spacing-sm) var(--spacing-md);
-                    border-radius: var(--radius-lg);
-                    font-size: var(--font-sm);
-                    font-weight: 500;
-                    margin-bottom: var(--spacing-xl);
-                    border: 1px solid rgba(59, 130, 246, 0.2);
-                }
-
-                .email-icon {
-                    width: 18px;
-                    height: 18px;
-                    flex-shrink: 0;
-                }
-
-                /* Alerte de succès */
-                .verify-alert {
-                    border-radius: var(--radius-lg);
-                    padding: var(--spacing-lg);
-                    margin-bottom: var(--spacing-xl);
-                    animation: fadeIn 0.5s ease-out;
-                }
-
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: scale(0.95); }
-                    to { opacity: 1; transform: scale(1); }
-                }
-
-                .success-alert {
-                    background: var(--success-light);
-                    border: 1px solid rgba(16, 185, 129, 0.3);
-                    display: flex;
-                    align-items: flex-start;
-                    gap: var(--spacing-sm);
-                    text-align: left;
-                }
-
-                .alert-icon {
-                    width: 20px;
-                    height: 20px;
-                    color: var(--success-color);
-                    flex-shrink: 0;
-                    margin-top: 2px;
-                }
-
-                .success-alert strong {
-                    color: var(--success-color);
-                    font-weight: 600;
-                    display: block;
-                    margin-bottom: 4px;
-                }
-
-                .success-alert p {
-                    color: #047857;
-                    font-size: var(--font-sm);
-                    line-height: 1.5;
-                }
-
-                /* Formulaire */
-                .verify-form {
-                    margin-bottom: var(--spacing-xl);
-                }
-
-                .verify-button {
-                    width: 100%;
-                    background: var(--primary-color);
-                    color: white;
-                    border: none;
-                    border-radius: var(--radius-lg);
-                    padding: var(--spacing-md) var(--spacing-lg);
-                    font-size: var(--font-base);
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: var(--spacing-sm);
-                    min-height: 48px;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .verify-button::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                    transition: left 0.5s;
-                }
-
-                .verify-button:hover::before {
-                    left: 100%;
-                }
-
-                .verify-button:hover:not(:disabled) {
-                    background: var(--primary-hover);
-                    transform: translateY(-1px);
-                    box-shadow: var(--shadow-lg);
-                }
-
-                .verify-button:active:not(:disabled) {
-                    transform: translateY(0);
-                    box-shadow: var(--shadow-md);
-                }
-
-                .verify-button:disabled {
-                    background: var(--text-muted);
-                    cursor: not-allowed;
-                    transform: none;
-                    box-shadow: none;
-                }
-
-                .button-icon {
-                    width: 20px;
-                    height: 20px;
-                    flex-shrink: 0;
-                }
-
-                /* Animation de chargement */
-                .loading-spinner {
-                    width: 20px;
-                    height: 20px;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 50%;
-                    border-top-color: white;
-                    animation: spin 1s linear infinite;
-                }
-
-                @keyframes spin {
-                    to { transform: rotate(360deg); }
-                }
-
-                /* Pied de page */
-                .verify-footer {
-                    border-top: 1px solid var(--border-light);
-                    padding-top: var(--spacing-lg);
-                }
-
-                .footer-text {
-                    color: var(--text-muted);
-                    font-size: var(--font-sm);
-                    margin-bottom: var(--spacing-md);
-                }
-
-                .footer-actions {
-                    display: flex;
-                    gap: var(--spacing-lg);
-                    justify-content: center;
-                    flex-wrap: wrap;
-                }
-
-                .logout-link,
-                .support-link {
-                    display: flex;
-                    align-items: center;
-                    gap: var(--spacing-xs);
-                    font-size: var(--font-sm);
-                    color: var(--text-secondary);
-                    text-decoration: none;
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-sm);
-                    transition: all 0.2s ease;
-                    font-weight: 500;
-                }
-
-                .logout-link:hover,
-                .support-link:hover {
-                    color: var(--primary-color);
-                    background: var(--primary-light);
-                }
-
-                .logout-icon,
-                .support-icon {
-                    width: 16px;
-                    height: 16px;
-                }
-
-                /* Responsive Design */
-                @media (max-width: 640px) {
-                    .email-verify {
-                        padding: var(--spacing-sm);
-                    }
-
-                    .verify-container {
-                        padding: var(--spacing-xl);
-                        max-width: 100%;
-                    }
-
-                    .verify-title {
-                        font-size: var(--font-2xl);
-                    }
-
-                    .verify-description {
-                        font-size: var(--font-base);
-                    }
-
-                    .verify-icon svg {
-                        width: 64px;
-                        height: 64px;
-                    }
-
-                    .footer-actions {
-                        flex-direction: column;
-                        gap: var(--spacing-sm);
-                    }
-
-                    .verify-email-note {
-                        flex-direction: column;
-                        text-align: center;
-                        gap: var(--spacing-xs);
-                    }
-
-                    .success-alert {
-                        flex-direction: column;
-                        text-align: center;
-                    }
-                }
-
-                @media (max-width: 480px) {
-                    .verify-container {
-                        padding: var(--spacing-lg);
-                        border-radius: var(--radius-lg);
-                    }
-
-                    .verify-title {
-                        font-size: var(--font-xl);
-                        margin-bottom: var(--spacing-md);
-                    }
-
-                    .verify-description {
-                        font-size: var(--font-sm);
-                        margin-bottom: var(--spacing-lg);
-                    }
-
-                    .verify-icon {
-                        margin-bottom: var(--spacing-lg);
-                    }
-
-                    .verify-icon svg {
-                        width: 56px;
-                        height: 56px;
-                    }
-
-                    .verify-button {
-                        padding: var(--spacing-sm) var(--spacing-md);
-                        font-size: var(--font-sm);
-                    }
-                }
-
-                /* Amélioration de l'accessibilité */
+                
                 @media (prefers-reduced-motion: reduce) {
-                    .icon-circle,
-                    .loading-spinner,
-                    .verify-button::before {
+                    .animate-slide-up,
+                    .animate-fade-in,
+                    .animate-spin-slow {
                         animation: none;
-                    }
-
-                    .verify-container {
-                        animation: none;
-                    }
-                }
-
-                /* Focus states pour l'accessibilité */
-                .verify-button:focus,
-                .logout-link:focus,
-                .support-link:focus {
-                    outline: 2px solid var(--primary-color);
-                    outline-offset: 2px;
-                }
-
-                /* Amélioration du contraste */
-                @media (prefers-contrast: high) {
-                    .verify-container {
-                        border-width: 2px;
-                    }
-
-                    .verify-button {
-                        border: 2px solid transparent;
-                    }
-
-                    .verify-button:focus {
-                        border-color: var(--primary-color);
                     }
                 }
             `}</style>

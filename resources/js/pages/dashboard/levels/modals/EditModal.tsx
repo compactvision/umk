@@ -16,7 +16,6 @@ export default function EditModal({
 }) {
     if (!isOpen) return null;
 
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSave(levelDataHook);
@@ -29,20 +28,22 @@ export default function EditModal({
             return (
                 <>
                     {editField === 'options' && (
-                        <div className="modal__hint">
-                            💡 <strong>Exemples d'opportunités :</strong>
-                            <br />
-                            • Ingénieur logiciel, DevOps, Consultant IT
-                            <br />
-                            • Développeur web, Architecte système, Chef de projet
-                            <br />
-                            • Data Scientist, Cybersécurité, IA/Machine Learning
-                            <br />
-                            <em>Séparez chaque opportunité par une virgule</em>
+                        <div className="mt-2 p-3 bg-slate-50 rounded-lg border-l-4 border-blue-500">
+                            <span className="text-sm text-slate-600">
+                                💡 <strong>Exemples d'opportunités :</strong>
+                                <br />
+                                • Ingénieur logiciel, DevOps, Consultant IT
+                                <br />
+                                • Développeur web, Architecte système, Chef de projet
+                                <br />
+                                • Data Scientist, Cybersécurité, IA/Machine Learning
+                                <br />
+                                <em>Séparez chaque opportunité par une virgule</em>
+                            </span>
                         </div>
                     )}
                     <textarea
-                        className="modal__textarea"
+                        className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                         value={levelDataHook.getFieldValue(editField) || ''}
                         onChange={(e) => levelDataHook.updateField(editField, e.target.value)}
                         placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
@@ -54,29 +55,36 @@ export default function EditModal({
 
         if (editField === 'illustration_image') {
             return (
-                <div className="modal__file-field">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        className="modal__file-input"
-                        onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                                levelDataHook.updateField(editField, file);
-                            }
-                        }}
-                    />
-                    <div className="modal__file-info">
-                        <ImageIcon size={20} />
-                        <span>Sélectionnez une nouvelle image d'illustration</span>
+                <div className="space-y-4">
+                    <div className="relative">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="file-upload"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    levelDataHook.updateField(editField, file);
+                                }
+                            }}
+                        />
+                        <label 
+                            htmlFor="file-upload"
+                            className="flex items-center gap-3 p-4 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+                        >
+                            <ImageIcon size={20} className="text-slate-500" />
+                            <span className="text-slate-600">Sélectionnez une nouvelle image d'illustration</span>
+                        </label>
                     </div>
                     {levelDataHook.levelData.illustration_image &&
                         typeof levelDataHook.levelData.illustration_image === 'string' && (
-                            <div className="modal__current-image">
+                            <div className="mt-4">
+                                <p className="text-sm text-slate-600 mb-2">Image actuelle :</p>
                                 <img
                                     src={`/storage/${levelDataHook.levelData.illustration_image}`}
                                     alt="Image actuelle"
-                                    className="modal__preview-img"
+                                    className="w-full h-48 object-cover rounded-xl border border-slate-200"
                                 />
                             </div>
                         )}
@@ -102,7 +110,7 @@ export default function EditModal({
                           ? 'number'
                           : 'text'
                 }
-                className="modal__input"
+                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 value={editField === 'has_certificate' ? undefined : levelDataHook.getFieldValue(editField) || ''}
                 checked={editField === 'has_certificate' ? levelDataHook.getFieldValue(editField) : undefined}
                 onChange={(e) => {
@@ -121,29 +129,33 @@ export default function EditModal({
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+            <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 opacity-100" onClick={(e) => e.stopPropagation()}>
                 <form onSubmit={handleSubmit}>
-                    <div className="modal__header">
-                        <h2 className="modal__title">Modifier {getFieldLabel(editField)}</h2>
-                        <button type="button" className="modal__close" onClick={onClose}>
+                    <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                        <h2 className="text-2xl font-bold text-slate-800">Modifier {getFieldLabel(editField)}</h2>
+                        <button type="button" className="flex items-center justify-center w-10 h-10 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
                             <X size={20} />
                         </button>
                     </div>
-                    <div className="modal__body">
-                        <div className="modal__field">
-                            <label className="modal__label">{getFieldLabel(editField)}</label>
+                    
+                    <div className="p-6">
+                        <div className="mb-6">
+                            <label className="block font-semibold text-slate-700 mb-2">{getFieldLabel(editField)}</label>
                             {renderInputField()}
                             {levelDataHook.errors[editField] && (
-                                <div className="modal__error">{levelDataHook.errors[editField]}</div>
+                                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                                    {levelDataHook.errors[editField]}
+                                </div>
                             )}
                         </div>
                     </div>
-                    <div className="modal__actions">
-                        <button type="button" className="modal__btn modal__btn--secondary" onClick={onClose}>
+                    
+                    <div className="flex gap-3 justify-end p-6 border-t border-slate-200">
+                        <button type="button" className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-semibold hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
                             Annuler
                         </button>
-                        <button type="submit" className="modal__btn modal__btn--primary" disabled={levelDataHook.processing}>
+                        <button type="submit" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" disabled={levelDataHook.processing}>
                             <Save size={16} />
                             {levelDataHook.processing ? 'Enregistrement...' : 'Enregistrer'}
                         </button>

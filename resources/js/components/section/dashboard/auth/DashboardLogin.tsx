@@ -53,7 +53,7 @@ const DashboardLogin = () => {
     };
 
     return (
-        <div className="h-screen w-full flex items-center justify-center font-sans bg-gradient-to-br from-slate-50 to-gray-100">
+        <div className="w-full flex items-center justify-center font-sans bg-gradient-to-br from-slate-50 to-gray-100">
             <div className="w-full max-w-md px-6">
                 {/* Logo */}
                 <div className="flex justify-center mb-6">

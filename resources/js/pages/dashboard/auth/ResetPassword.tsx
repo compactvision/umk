@@ -21,7 +21,6 @@ export default function ResetPassword({ token, email }: { token?: string; email?
             newErrors.password_confirmation = 'Les mots de passe ne correspondent pas';
         }
 
-
         post(route('password.update'), {
             onSuccess: () => {
                 Alert.success('Mot de passe réinitialisé avec succès!');
@@ -54,12 +53,24 @@ export default function ResetPassword({ token, email }: { token?: string; email?
     const getPasswordStrengthColor = () => {
         switch (passwordStrength) {
             case 0:
-            case 1: return '#ef4444';
-            case 2: return '#f97316';
-            case 3: return '#eab308';
-            case 4: return '#22c55e';
-            case 5: return '#10b981';
-            default: return '#e5e7eb';
+            case 1: return 'bg-red-500';
+            case 2: return 'bg-orange-500';
+            case 3: return 'bg-yellow-500';
+            case 4: return 'bg-green-500';
+            case 5: return 'bg-green-600';
+            default: return 'bg-gray-200';
+        }
+    };
+
+    const getPasswordStrengthTextColor = () => {
+        switch (passwordStrength) {
+            case 0:
+            case 1: return 'text-red-500';
+            case 2: return 'text-orange-500';
+            case 3: return 'text-yellow-500';
+            case 4: return 'text-green-500';
+            case 5: return 'text-green-600';
+            default: return 'text-gray-200';
         }
     };
 
@@ -77,501 +88,191 @@ export default function ResetPassword({ token, email }: { token?: string; email?
 
     return (
         <Dashboard>
-            <div className="reset-password">
-                <style jsx>{`
-                    
-
-                    .reset-password {
-                        min-height: 100vh;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 20px;
-                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                        position: relative;
-                        overflow: hidden;
-                    }
-
-                    .reset-password::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        animation: backgroundShift 12s ease-in-out infinite;
-                    }
-
-                    @keyframes backgroundShift {
-                        0%, 100% { transform: scale(1) rotate(0deg); }
-                        33% { transform: scale(1.1) rotate(120deg); }
-                        66% { transform: scale(0.9) rotate(240deg); }
-                    }
-
-                    .auth-container {
-                        background: rgba(255, 255, 255, 0.98);
-                        backdrop-filter: blur(24px);
-                        border-radius: 28px;
-                        padding: 48px;
-                        width: 100%;
-                        max-width: 480px;
-                        box-shadow: 
-                            0 32px 64px -12px rgba(0, 0, 0, 0.4),
-                            0 0 0 1px rgba(255, 255, 255, 0.1),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-                        border: 1px solid rgba(255, 255, 255, 0.15);
-                        position: relative;
-                        z-index: 10;
-                        animation: containerEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    }
-
-                    @keyframes containerEntry {
-                        from {
-                            opacity: 0;
-                            transform: translateY(40px) scale(0.95);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateY(0) scale(1);
-                        }
-                    }
-
-                    .auth-header {
-                        text-align: center;
-                        margin-bottom: 40px;
-                    }
-
-                    .auth-icon {
-                        width: 72px;
-                        height: 72px;
-                        margin: 0 auto 24px;
-                        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
-                        border-radius: 20px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        box-shadow: 
-                            0 12px 32px rgba(59, 130, 246, 0.4),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-                        animation: iconPulse 4s ease-in-out infinite;
-                        position: relative;
-                        overflow: hidden;
-                    }
-
-                    .auth-icon::before {
-                        content: '';
-                        position: absolute;
-                        top: -50%;
-                        left: -50%;
-                        width: 200%;
-                        height: 200%;
-                        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-                        animation: iconShine 3s linear infinite;
-                    }
-
-                    .auth-icon::after {
-                        content: '🔐';
-                        font-size: 32px;
-                        position: relative;
-                        z-index: 1;
-                        filter: brightness(1.3);
-                    }
-
-                    @keyframes iconPulse {
-                        0%, 100% { transform: scale(1); }
-                        50% { transform: scale(1.05); }
-                    }
-
-                    @keyframes iconShine {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-
-                    .auth-title {
-                        color: #0f172a;
-                        font-size: 32px;
-                        font-weight: 800;
-                        margin-bottom: 12px;
-                        letter-spacing: -0.025em;
-                        line-height: 1.1;
-                        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                    }
-
-                    .auth-subtitle {
-                        color: #64748b;
-                        font-size: 16px;
-                        line-height: 1.6;
-                        font-weight: 400;
-                    }
-
-                    .auth-form {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 28px;
-                    }
-
-                    .input-group {
-                        position: relative;
-                    }
-
-                    .input-wrapper {
-                        position: relative;
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .auth-input {
-                        width: 100%;
-                        height: 60px;
-                        padding: 0 24px 0 60px;
-                        border: 2px solid #e2e8f0;
-                        border-radius: 18px;
-                        font-size: 16px;
-                        background: #fafbfc;
-                        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                        outline: none;
-                        color: #0f172a;
-                        font-weight: 500;
-                        position: relative;
-                    }
-
-                    .auth-input:focus {
-                        border-color: #3b82f6;
-                        background: white;
-                        box-shadow: 
-                            0 0 0 4px rgba(59, 130, 246, 0.08),
-                            0 12px 32px rgba(59, 130, 246, 0.12);
-                        transform: translateY(-3px);
-                    }
-
-                    .auth-input::placeholder {
-                        color: #94a3b8;
-                        font-weight: 400;
-                    }
-
-                    .input-icon {
-                        position: absolute;
-                        left: 22px;
-                        font-size: 20px;
-                        color: #94a3b8;
-                        transition: all 0.3s ease;
-                        z-index: 1;
-                    }
-
-                    .auth-input:focus ~ .input-icon {
-                        color: #3b82f6;
-                        transform: scale(1.1);
-                    }
-
-                    .password-toggle {
-                        position: absolute;
-                        right: 20px;
-                        background: none;
-                        border: none;
-                        font-size: 18px;
-                        color: #94a3b8;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        z-index: 2;
-                        padding: 4px;
-                        border-radius: 8px;
-                    }
-
-                    .password-toggle:hover {
-                        color: #3b82f6;
-                        background: rgba(59, 130, 246, 0.08);
-                    }
-
-                    .password-strength {
-                        margin-top: 12px;
-                        display: flex;
-                        gap: 4px;
-                        align-items: center;
-                    }
-
-                    .strength-bar {
-                        height: 4px;
-                        flex: 1;
-                        background: #e5e7eb;
-                        border-radius: 2px;
-                        transition: all 0.3s ease;
-                    }
-
-                    .strength-bar.active {
-                        background: ${getPasswordStrengthColor()};
-                    }
-
-                    .strength-text {
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: ${getPasswordStrengthColor()};
-                        margin-left: 8px;
-                        min-width: 70px;
-                    }
-
-                    .input-error {
-                        color: #ef4444;
-                        font-size: 14px;
-                        font-weight: 500;
-                        margin-top: 10px;
-                        animation: errorBounce 0.6s ease-out;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        background: rgba(239, 68, 68, 0.05);
-                        padding: 8px 12px;
-                        border-radius: 8px;
-                        border-left: 3px solid #ef4444;
-                    }
-
-                    .input-error::before {
-                        content: '❌';
-                        font-size: 12px;
-                    }
-
-                    @keyframes errorBounce {
-                        0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
-                        10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-                    }
-
-                    .auth-button {
-                        height: 60px;
-                        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
-                        color: white;
-                        border: none;
-                        border-radius: 18px;
-                        font-size: 17px;
-                        font-weight: 700;
-                        cursor: pointer;
-                        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                        box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
-                        position: relative;
-                        overflow: hidden;
-                        letter-spacing: 0.5px;
-                        text-transform: uppercase;
-                        font-size: 14px;
-                    }
-
-                    .auth-button:hover:not(:disabled) {
-                        transform: translateY(-3px);
-                        box-shadow: 0 16px 40px rgba(59, 130, 246, 0.5);
-                        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #0891b2 100%);
-                    }
-
-                    .auth-button:active:not(:disabled) {
-                        transform: translateY(-1px);
-                    }
-
-                    .auth-button:disabled {
-                        opacity: 0.6;
-                        cursor: not-allowed;
-                        transform: none;
-                    }
-
-                    .auth-button::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-                        transition: left 0.6s;
-                    }
-
-                    .auth-button:hover:not(:disabled)::before {
-                        left: 100%;
-                    }
-
-                    .loading-spinner {
-                        display: inline-block;
-                        width: 20px;
-                        height: 20px;
-                        border: 2px solid rgba(255, 255, 255, 0.3);
-                        border-radius: 50%;
-                        border-top-color: white;
-                        animation: spin 1s linear infinite;
-                        margin-right: 10px;
-                    }
-
-                    @keyframes spin {
-                        to { transform: rotate(360deg); }
-                    }
-
-                    .security-info {
-                        margin-top: 32px;
-                        padding: 20px;
-                        background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
-                        border-radius: 16px;
-                        border: 1px solid rgba(34, 197, 94, 0.1);
-                        font-size: 13px;
-                        color: #059669;
-                        text-align: center;
-                        line-height: 1.5;
-                    }
-
-                    .security-info::before {
-                        content: '🔒';
-                        display: block;
-                        font-size: 20px;
-                        margin-bottom: 8px;
-                    }
-
-                    @media (max-width: 520px) {
-                        .auth-container {
-                            padding: 32px 24px;
-                            margin: 0 16px;
-                            border-radius: 24px;
-                        }
-                        
-                        .auth-title {
-                            font-size: 26px;
-                        }
-                        
-                        .auth-subtitle {
-                            font-size: 15px;
-                        }
-                        
-                        .auth-input,
-                        .auth-button {
-                            height: 56px;
-                        }
-                        
-                        .auth-form {
-                            gap: 24px;
-                        }
-                    }
-
-                    @media (prefers-reduced-motion: reduce) {
-                        *,
-                        *::before,
-                        *::after {
-                            animation-duration: 0.01ms !important;
-                            animation-iteration-count: 1 !important;
-                            transition-duration: 0.01ms !important;
-                        }
-                    }
-                `}</style>
-
-                <div className="auth-container">
-                    <div className="auth-header">
-                        <div className="auth-icon"></div>
-                        <h1 className="auth-title">Nouveau mot de passe</h1>
-                        <p className="auth-subtitle">
+            <div className="flex items-center justify-center p-5 font-sans relative overflow-hidden">
+                {/* Fond animé */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 animate-pulse"></div>
+                
+                <div className="bg-white/98 backdrop-blur-xl rounded-3xl p-12 w-full max-w-md shadow-2xl border border-white/20 relative z-10 animate-slide-up">
+                    <div className="text-center mb-10">
+                        <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/40 animate-pulse relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent animate-spin-slow"></div>
+                            <span className="text-3xl relative z-10">🔐</span>
+                        </div>
+                        <h1 className="text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                            Nouveau mot de passe
+                        </h1>
+                        <p className="text-gray-500 text-base leading-relaxed">
                             Créez un mot de passe sécurisé pour protéger votre compte
                         </p>
                     </div>
 
-                    <div className="auth-form">
-                        <div className="input-group">
-                            <div className="input-wrapper">
+                    <div className="space-y-7">
+                        <div className="relative">
+                            <div className="relative flex items-center">
                                 <input
                                     type="email"
                                     name="email"
                                     value={data.email}
                                     onChange={(e) => setData({ ...data, email: e.target.value })}
-                                    className="auth-input"
+                                    className="w-full h-16 px-6 pl-16 border-2 border-gray-200 rounded-2xl text-base bg-gray-50 transition-all duration-300 outline-none text-slate-900 font-medium focus:border-blue-500 focus:bg-white focus:shadow-lg focus:shadow-blue-500/10 focus:-translate-y-1"
                                     placeholder="votre.email@exemple.com"
                                     required
                                     onFocus={() => setFocused('email')}
                                     onBlur={() => setFocused(null)}
                                     readOnly
                                 />
-                                <div className="input-icon">📧</div>
+                                <div className="absolute left-6 text-xl text-gray-400 transition-all duration-300 z-10">
+                                    📧
+                                </div>
                             </div>
                             {errors.email && (
-                                <div className="input-error">{errors.email}</div>
+                                <div className="mt-2.5 text-sm text-red-500 font-medium flex items-center gap-2 bg-red-50 p-2 rounded-lg border-l-3 border-red-500 animate-error-bounce">
+                                    <span>❌</span>
+                                    {errors.email}
+                                </div>
                             )}
                         </div>
 
-                        <div className="input-group">
-                            <div className="input-wrapper">
+                        <div className="relative">
+                            <div className="relative flex items-center">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     value={data.password}
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
-                                    className="auth-input"
+                                    className="w-full h-16 px-6 pl-16 pr-16 border-2 border-gray-200 rounded-2xl text-base bg-gray-50 transition-all duration-300 outline-none text-slate-900 font-medium focus:border-blue-500 focus:bg-white focus:shadow-lg focus:shadow-blue-500/10 focus:-translate-y-1"
                                     placeholder="Nouveau mot de passe"
                                     required
                                     onFocus={() => setFocused('password')}
                                     onBlur={() => setFocused(null)}
                                 />
-                                <div className="input-icon">🔑</div>
+                                <div className={`absolute left-6 text-xl transition-all duration-300 z-10 ${focused === 'password' ? 'text-blue-500 scale-110' : 'text-gray-400'}`}>
+                                    🔑
+                                </div>
                                 <button
                                     type="button"
-                                    className="password-toggle"
+                                    className="absolute right-5 text-lg text-gray-400 transition-all duration-300 z-20 p-1 rounded-lg hover:text-blue-500 hover:bg-blue-50"
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
                                     {showPassword ? '🙈' : '👁️'}
                                 </button>
                             </div>
                             {data.password && (
-                                <div className="password-strength">
+                                <div className="mt-3 flex gap-1 items-center">
                                     {[1, 2, 3, 4, 5].map((level) => (
                                         <div
                                             key={level}
-                                            className={`strength-bar ${level <= passwordStrength ? 'active' : ''}`}
+                                            className={`h-1 flex-1 rounded-full transition-all duration-300 ${level <= passwordStrength ? getPasswordStrengthColor() : 'bg-gray-200'}`}
                                         />
                                     ))}
-                                    <div className="strength-text">
+                                    <div className={`text-xs font-semibold ml-2 min-w-[70px] ${getPasswordStrengthTextColor()}`}>
                                         {getPasswordStrengthText()}
                                     </div>
                                 </div>
                             )}
                             {errors.password && (
-                                <div className="input-error">{errors.password}</div>
+                                <div className="mt-2.5 text-sm text-red-500 font-medium flex items-center gap-2 bg-red-50 p-2 rounded-lg border-l-3 border-red-500 animate-error-bounce">
+                                    <span>❌</span>
+                                    {errors.password}
+                                </div>
                             )}
                         </div>
 
-                        <div className="input-group">
-                            <div className="input-wrapper">
+                        <div className="relative">
+                            <div className="relative flex items-center">
                                 <input
                                     type={showConfirmPassword ? 'text' : 'password'}
                                     name="password_confirmation"
                                     value={data.password_confirmation}
                                     onChange={(e) => setData({ ...data, password_confirmation: e.target.value })}
-                                    className="auth-input"
+                                    className="w-full h-16 px-6 pl-16 pr-16 border-2 border-gray-200 rounded-2xl text-base bg-gray-50 transition-all duration-300 outline-none text-slate-900 font-medium focus:border-blue-500 focus:bg-white focus:shadow-lg focus:shadow-blue-500/10 focus:-translate-y-1"
                                     placeholder="Confirmer le nouveau mot de passe"
                                     required
                                     onFocus={() => setFocused('confirm')}
                                     onBlur={() => setFocused(null)}
                                 />
-                                <div className="input-icon">🔐</div>
+                                <div className={`absolute left-6 text-xl transition-all duration-300 z-10 ${focused === 'confirm' ? 'text-blue-500 scale-110' : 'text-gray-400'}`}>
+                                    🔐
+                                </div>
                                 <button
                                     type="button"
-                                    className="password-toggle"
+                                    className="absolute right-5 text-lg text-gray-400 transition-all duration-300 z-20 p-1 rounded-lg hover:text-blue-500 hover:bg-blue-50"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                 >
                                     {showConfirmPassword ? '🙈' : '👁️'}
                                 </button>
                             </div>
                             {errors.password_confirmation && (
-                                <div className="input-error">{errors.password_confirmation}</div>
+                                <div className="mt-2.5 text-sm text-red-500 font-medium flex items-center gap-2 bg-red-50 p-2 rounded-lg border-l-3 border-red-500 animate-error-bounce">
+                                    <span>❌</span>
+                                    {errors.password_confirmation}
+                                </div>
                             )}
                         </div>
 
                         <button 
                             type="button" 
-                            className="auth-button" 
+                            className="h-16 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 text-white rounded-2xl text-base font-bold cursor-pointer transition-all duration-300 shadow-lg shadow-blue-500/40 relative overflow-hidden tracking-wide uppercase text-sm hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/50 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none" 
                             disabled={processing}
                             onClick={handleSubmit}
                         >
-                            {processing && <div className="loading-spinner"></div>}
+                            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full hover:translate-x-full transition-all duration-600"></span>
+                            {processing && <div className="inline-block w-5 h-5 border-2 border-white/30 rounded-full border-t-white animate-spin mr-2.5"></div>}
                             {processing ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                         </button>
                     </div>
 
-                    <div className="security-info">
+                    <div className="mt-8 p-5 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100 text-sm text-green-600 text-center leading-relaxed">
+                        <span className="block text-xl mb-2">🔒</span>
                         Votre mot de passe sera chiffré et stocké de manière sécurisée. 
                         Assurez-vous qu'il contient au moins 8 caractères avec des lettres, 
                         chiffres et symboles.
                     </div>
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes slide-up {
+                    from {
+                        opacity: 0;
+                        transform: translateY(40px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                
+                @keyframes error-bounce {
+                    0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+                }
+                
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                
+                .animate-slide-up {
+                    animation: slide-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                
+                .animate-error-bounce {
+                    animation: error-bounce 0.6s ease-out;
+                }
+                
+                .animate-spin-slow {
+                    animation: spin-slow 3s linear infinite;
+                }
+                
+                @media (prefers-reduced-motion: reduce) {
+                    .animate-slide-up,
+                    .animate-error-bounce,
+                    .animate-spin-slow {
+                        animation: none;
+                    }
+                }
+            `}</style>
         </Dashboard>
     );
 }

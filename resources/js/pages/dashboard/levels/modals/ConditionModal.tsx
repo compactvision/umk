@@ -13,23 +13,24 @@ export default function ConditionModal({
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-100 p-4" onClick={onClose}>
+            <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 opacity-100" onClick={(e) => e.stopPropagation()}>
                 <form onSubmit={onSave}>
-                    <div className="modal__header">
-                        <h2 className="modal__title">
+                    <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                        <h2 className="text-2xl font-bold text-slate-800">
                             {conditionMode === 'add' ? 'Ajouter' : 'Modifier'} une condition
                         </h2>
-                        <button type="button" className="modal__close" onClick={onClose}>
+                        <button type="button" className="flex items-center justify-center w-10 h-10 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
                             <X size={20} />
                         </button>
                     </div>
-                    <div className="modal__body">
-                        <div className="modal__field">
-                            <label className="modal__label">Titre</label>
+                    
+                    <div className="p-6 space-y-6">
+                        <div>
+                            <label className="block font-semibold text-slate-700 mb-2">Titre</label>
                             <input
                                 type="text"
-                                className="modal__input"
+                                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                 value={conditionData.title || ''}
                                 onChange={(e) => setConditionData('title', e.target.value)}
                                 placeholder="Exemple : Diplôme requis"
@@ -37,72 +38,75 @@ export default function ConditionModal({
                             />
                         </div>
 
-                        <div className="modal__field">
-                            <label className="modal__label">Description</label>
+                        <div>
+                            <label className="block font-semibold text-slate-700 mb-2">Description</label>
                             <textarea
-                                className="modal__textarea"
+                                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none min-h-[120px]"
                                 value={conditionData.description || ''}
                                 onChange={(e) => setConditionData('description', e.target.value)}
                                 placeholder="Exemple : Avoir un diplôme d'État avec mention"
                                 required
                             />
-                            <div className="modal__hint">
-                                💡 Décrivez clairement la condition requise pour l'admission au programme
+                            <div className="mt-2 p-3 bg-slate-50 rounded-lg border-l-4 border-blue-500">
+                                <span className="text-sm text-slate-600">
+                                    💡 Décrivez clairement la condition requise pour l'admission au programme
+                                </span>
                             </div>
                         </div>
 
-                        <div className="modal__field">
-                            <label className="modal__label">Type</label>
-                            <select
-                                className="modal__select"
-                                value={conditionData.section || ''}
-                                onChange={(e) => setConditionData('section', e.target.value)}
-                                required
-                                style={{
-                                    width: '100%',
-                                    padding: '1rem',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '8px',
-                                    fontSize: '1rem',
-                                    color: '#333',
-                                    backgroundColor: '#fff',
-                                    appearance: 'none',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                <option value="">Sélectionnez un type</option>
-                                <option value="personal_info">Informations personnelles</option>
-                                <option value="academic_info">Informations académiques</option>
-                                <option value="other">Autre</option>
-                            </select>
+                        <div>
+                            <label className="block font-semibold text-slate-700 mb-2">Type</label>
+                            <div className="relative">
+                                <select
+                                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer bg-white"
+                                    value={conditionData.section || ''}
+                                    onChange={(e) => setConditionData('section', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Sélectionnez un type</option>
+                                    <option value="personal_info">Informations personnelles</option>
+                                    <option value="academic_info">Informations académiques</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                        <div className="modal__field">
-                            <label className="modal__label">Statut</label>
-                            <label className="toggle-switch">
-                                <input
-                                    id="is_active"
-                                    type="checkbox"
-                                    checked={!!conditionData.is_required}
-                                    onChange={(e) => setConditionData('is_required', e.target.checked)}
-                                />
-                                <span className="toggle-switch__slider"></span>
-                            </label>
-                            <span className="toggle-label">
-                                {conditionData.is_required ? 'Requis' : 'Non requis'}
-                            </span>
+
+                        <div>
+                            <label className="block font-semibold text-slate-700 mb-2">Statut</label>
+                            <div className="flex items-center gap-3">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        id="is_active"
+                                        type="checkbox"
+                                        checked={!!conditionData.is_required}
+                                        onChange={(e) => setConditionData('is_required', e.target.checked)}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                                <span className="text-sm text-slate-600">
+                                    {conditionData.is_required ? 'Requis' : 'Non requis'}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div className="modal__actions">
+                    
+                    <div className="flex gap-3 justify-end p-6 border-t border-slate-200">
                         <button
                             type="button"
-                            className="modal__btn modal__btn--secondary"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-semibold hover:bg-slate-200 transition-colors duration-200"
                             onClick={onClose}
                         >
                             Annuler
                         </button>
                         <button
                             type="submit"
-                            className="modal__btn modal__btn--primary"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={!conditionData.title?.trim() || !conditionData.description?.trim() || conditionProcessing}
                         >
                             <Save size={16} />

@@ -61,24 +61,30 @@ export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
     ];
 
     return (
-        <div className="details-section">
-            <h3 className="details-section__title">Détails du programme</h3>
-            <div className="details-list">
+        <div className="bg-white rounded-3xl shadow-lg border border-white/80 p-10 mb-8">
+            <h3 className="text-3xl font-bold text-slate-800 mb-8">Détails du programme</h3>
+            <div className="flex flex-col gap-6">
                 {details.map((item) => (
-                    <div key={item.field} className="detail-item">
-                        <div className="detail-item__content">
-                            <div className="detail-item__icon">{item.icon}</div>
-                            <div className="detail-item__info">
-                                <div className="detail-item__label">{item.label}</div>
-                                <div className="detail-item__value">{item.value}</div>
+                    <div 
+                        key={item.field} 
+                        className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl transition-all duration-300 border border-transparent hover:bg-slate-100 hover:border-slate-200 hover:translate-x-1"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl text-blue-500">
+                                {item.icon}
+                            </div>
+                            <div className="flex flex-col">
+                                <div className="font-semibold text-slate-800 mb-1">{item.label}</div>
+                                <div className="text-slate-600 text-sm leading-relaxed">{item.value}</div>
                             </div>
                         </div>
                         <button
                             onClick={() => onEdit(item.field, getFieldValue(item.field))}
-                            className="detail-item__edit"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 text-white border-none rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-md"
                         >
                             <Edit3 size={16} />
-                            Modifier
+                            <span className="hidden sm:inline">Modifier</span>
+                            <span className="sm:hidden">Edit</span>
                         </button>
                     </div>
                 ))}

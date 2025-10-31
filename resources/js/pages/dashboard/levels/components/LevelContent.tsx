@@ -1,37 +1,21 @@
-import InfosTab from '../tabs/InfosTab';
-import ProfessorsTab from '../tabs/ProfessorsTab';
+import ConditionModal from '../modals/ConditionModal';
+import EditModal from '../modals/EditModal';
+import ImagePreviewModal from '../modals/ImagePreviewModal';
 import ConditionsTab from '../tabs/ConditionsTab';
 import CoursesTab from '../tabs/CoursesTab';
-import EditModal from '../modals/EditModal';
-import ConditionModal from '../modals/ConditionModal';
-import ImagePreviewModal from '../modals/ImagePreviewModal';
+import InfosTab from '../tabs/InfosTab';
+import ProfessorsTab from '../tabs/ProfessorsTab';
 
-export default function LevelContent({ 
-    activeTab, 
-    isAnimating, 
-    levelDataHook, 
-    modalsHook, 
-    levelConditions 
-}) {
-    console.log("LevelCOntent", levelConditions)
+export default function LevelContent({ activeTab, isAnimating, levelDataHook, modalsHook, levelConditions }) {
+    console.log('LevelCOntent', levelConditions);
     const renderActiveTab = () => {
         switch (activeTab) {
             case 'infos':
-                return (
-                    <InfosTab 
-                        levelDataHook={levelDataHook} 
-                        modalsHook={modalsHook} 
-                    />
-                );
+                return <InfosTab levelDataHook={levelDataHook} modalsHook={modalsHook} />;
             case 'prof':
                 return <ProfessorsTab />;
             case 'conditions':
-                return (
-                    <ConditionsTab 
-                        levelConditions={levelConditions} 
-                        modalsHook={modalsHook} 
-                    />
-                );
+                return <ConditionsTab levelConditions={levelConditions} modalsHook={modalsHook} />;
             case 'cours':
                 return <CoursesTab />;
             default:
@@ -41,14 +25,16 @@ export default function LevelContent({
 
     return (
         <>
-            <div className={`level-content ${
-                isAnimating ? 'level-content--animating' : 'level-content--visible'
-            }`}>
+            <div
+                className={`origin-center transform transition-all duration-500 ease-in-out ${
+                    isAnimating ? 'translate-x-4 scale-95 opacity-0' : 'translate-x-0 scale-100 opacity-100'
+                }`}
+            >
                 {renderActiveTab()}
             </div>
 
             {/* Modals */}
-            <EditModal 
+            <EditModal
                 isOpen={modalsHook.isEditModalOpen}
                 editField={modalsHook.editField}
                 levelDataHook={levelDataHook}

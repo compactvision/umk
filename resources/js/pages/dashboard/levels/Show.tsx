@@ -6,7 +6,6 @@ import LevelNavigation from './components/LevelNavigation';
 import LevelContent from './components/LevelContent';
 import { useLevelData } from './hooks/useLevelData';
 import { useLevelModals } from './hooks/useLevelModals';
-import './Level.css';
 
 export default function LevelShow() {
     const [activeTab, setActiveTab] = useState('infos');
@@ -26,13 +25,13 @@ export default function LevelShow() {
 
     return (
         <Dashboard>
-            <div className="level-page">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans">
                 <LevelHero 
                     levelData={levelDataHook.detailsData} 
                     levelDetail={levelDetail} 
                 />
                 
-                <div className="level-container">
+                <div className="max-w-7xl mx-auto px-6 relative z-30 -mt-16">
                     <LevelNavigation 
                         activeTab={activeTab} 
                         setActiveTab={setActiveTab} 
