@@ -43,6 +43,7 @@ export function useRequirements(params: Params) {
                 });
 
                 const data = res.data;
+                console.log(data)
                 if (!data?.ok) {
                     setRequirements({ personal_info: [], academic_info: [], payment: undefined });
                     setError(data?.message || 'Impossible de récupérer les exigences.');

@@ -3,6 +3,7 @@
 namespace App\Modules\AdmissionCondition\Domain\Repositories;
 
 use App\Modules\AdmissionCondition\Domain\Entities\AdmissionCondition;
+use Illuminate\Support\Collection;
 
 interface AdmissionConditionRepository
 {
@@ -17,7 +18,7 @@ interface AdmissionConditionRepository
     public function findByFaculty(int $facultyId): array;
 
     /** @return AdmissionCondition[] */
-    public function findByLevelAndFaculty(int $facultyId, int $levelId): array;
+    public function findByLevelAndFaculty(int $facultyId, int $levelId): Collection;
 
     public function delete(int $id): void;
 }

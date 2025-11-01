@@ -2,76 +2,101 @@
 
 namespace App\Modules\Enrollment\Infrastructure\Persistence;
 
-
 use App\Models\Enrollment;
-use App\Modules\Enrollment\Domain\Repositories\EnrollmentRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Modules\Enrollment\Domain\Enums\EnrollmentStatus;
+use App\Modules\Enrollment\Domain\Exceptions\EnrollmentNotFoundException;
+use App\Modules\Enrollment\Domain\Repositories\EnrollmentRepositoryInterface;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
-final class EloquentEnrollmentRepository implements EnrollmentRepository
+class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
 {
-    public function create(array $data): Enrollment
-    {
-        return Enrollment::create($data);
-    }
     public function findById(int $id): ?Enrollment
     {
-        return Enrollment::with(['documents', 'requirements'])->find($id);
+        return Enrollment::find($id);
     }
+
     public function findByUuid(string $uuid): ?Enrollment
     {
         return Enrollment::where('uuid', $uuid)->first();
     }
-    public function save(Enrollment $e): void
+
+    public function findByIdOrFail(int $id): Enrollment
     {
-        $e->save();
+        $enrollment = $this->findById($id);
+        
+        if (!$enrollment) {
+            throw EnrollmentNotFoundException::withId($id);
+        }
+        
+        return $enrollment;
     }
 
-    public function paginateByStudent(
-        int $studentId,
-        array $filters = [],
-        int $perPage = 15,
-        int $page = 1
-    ): LengthAwarePaginator {
-        $q = Enrollment::query()
-            ->with(['level.faculty','documents'])
-            ->where('student_id', $studentId);
-
-        // Filtres
-        if (!empty($filters['statuses']) && is_array($filters['statuses'])) {
-            $q->whereIn('status', $filters['statuses']); // valeurs string des enums
+    public function findByUuidOrFail(string $uuid): Enrollment
+    {
+        $enrollment = $this->findByUuid($uuid);
+        
+        if (!$enrollment) {
+            throw EnrollmentNotFoundException::withUuid($uuid);
         }
+        
+        return $enrollment;
+    }
 
-        if (!empty($filters['level_id'])) {
-            $q->where('level_id', (int) $filters['level_id']);
+    public function findDraftForStudent(int $studentId): ?Enrollment
+    {
+        return Enrollment::where('student_id', $studentId)
+            ->where('status', EnrollmentStatus::DRAFT->value)
+            ->where(function ($query) {
+                $query->whereNull('draft_expires_at')
+                    ->orWhere('draft_expires_at', '>', Carbon::now());
+            })
+            ->latest()
+            ->first();
+    }
+
+    public function findByStudent(int $studentId, ?EnrollmentStatus $status = null): Collection
+    {
+        $query = Enrollment::where('student_id', $studentId);
+        
+        if ($status) {
+            $query->where('status', $status->value);
         }
+        
+        return $query->orderBy('created_at', 'desc')->get();
+    }
 
-        $dateField = $filters['date_field'] ?? 'created_at';
-        if (!in_array($dateField, ['created_at','enrolled_at'], true)) {
-            $dateField = 'created_at';
-        }
+    public function save(Enrollment $enrollment): Enrollment
+    {
+        $enrollment->save();
+        return $enrollment->fresh();
+    }
 
-        if (!empty($filters['from'])) {
-            $q->where($dateField, '>=', $filters['from']);
-        }
-        if (!empty($filters['to'])) {
-            $q->where($dateField, '<=', $filters['to']);
-        }
+    public function delete(Enrollment $enrollment): bool
+    {
+        return $enrollment->delete();
+    }
 
-        if (!empty($filters['search'])) {
-            $search = trim($filters['search']);
-            $q->where(function ($qq) use ($search) {
-                $qq->where('matricule', 'like', "%{$search}%")
-                   ->orWhere('notes', 'like', "%{$search}%")
-                   ->orWhere('uuid', 'like', "%{$search}%");
-            });
-        }
+    public function generateMatricule(int $levelId, int $yearId): string
+    {
+        $last = Enrollment::where('level_id', $levelId)
+            ->where('academic_year_id', $yearId)
+            ->whereNotNull('matricule')
+            ->orderBy('matricule', 'desc')
+            ->value('matricule');
+            
+        return $last ?? '';
+    }
 
-        $orderBy  = $filters['order_by'] ?? 'created_at';
-        $orderDir = strtolower($filters['order_dir'] ?? 'desc');
-        $orderDir = in_array($orderDir, ['asc','desc'], true) ? $orderDir : 'desc';
+    public function existsMatricule(string $matricule): bool
+    {
+        return Enrollment::where('matricule', $matricule)->exists();
+    }
 
-        $q->orderBy($orderBy, $orderDir);
-
-        return $q->paginate($perPage, ['*'], 'page', $page);
+    public function getExpiredDrafts(): Collection
+    {
+        return Enrollment::where('status', EnrollmentStatus::DRAFT->value)
+            ->where('draft_expires_at', '<', Carbon::now())
+            ->get();
     }
 }

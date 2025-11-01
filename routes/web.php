@@ -9,12 +9,15 @@ use App\Modules\Level\Infrastructure\Http\Controllers\LevelController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
-use App\Http\Controllers\ProfessorController\ProfessorController;
-use App\Models\Enrollment;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Controllers\AdmissionConditionController;
 use App\Modules\Blog\Infrastructure\Http\Controllers\CategoryController;
 use App\Modules\Blog\Infrastructure\Http\Controllers\PostController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\DocumentController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\DraftController;
 use App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentDocumentController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentManagementController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\RequirementsController;
+use App\Modules\Enrollment\Infrastructure\Http\Controllers\SubmitController;
 use App\Modules\Enrollment\Interfaces\Http\Controllers\EnrollmentController as ControllersEnrollmentController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\SocialAuthController;
@@ -182,16 +185,34 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         Route::post('/dashboard/blog/categories', [CategoryController::class, 'store'])->name('categories.store');
     });
 
-    Route::get('/enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
-    // Route::get('/enrollments/create', [EnrollmentController::class, 'create'])->name('enrollments.create');
-    Route::get('/enrollment/bootstrap', [EnrollmentController::class, 'bootstrap'])->name('enrollments.create');
-    Route::get('/enrollment/requirements', [EnrollmentController::class, 'requirements'])->name('enrollment.requirements');
-    Route::post('/enrollment/store', [EnrollmentController::class, 'store'])->name('enrollment.store');
-    Route::get('/enrollments/{enrollment:uuid}', [EnrollmentController::class, 'show'])->name('enrollment.show');
+    Route::prefix('enrollments')->name('enrollments.')->group(function () {
+        Route::get('/', [EnrollmentController::class, 'index'])->name('index');
+        Route::get('/create', [EnrollmentController::class, 'create'])->name('create');
+        Route::get('/{uuid}', [EnrollmentController::class, 'show'])->name('show');
+        
+        // Draft
+        Route::post('/save-progress', [DraftController::class, 'save'])->name('save-progress');
+        
+        // Submit
+        Route::post('/{uuid}/submit', SubmitController::class)->name('submit');
+        
+        // Documents
+        Route::post('/documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
+        Route::get('/documents/{uuid}/download', [DocumentController::class, 'download'])->name('documents.download');
+        Route::delete('/documents/{uuid}', [DocumentController::class, 'delete'])->name('documents.delete');
+    });
     
-    Route::get('/enrollment/docs/{uuid}', [EnrollmentDocumentController::class, 'stream'])->name('enrollment.docs.stream');
-    Route::get('/enrollment/draft/show', [EnrollmentDocumentController::class, 'show'])->name('enrollment.draft.show');
-    Route::post('/enrollment/draft/save', [EnrollmentDocumentController::class, 'save'])->name('enrollment.draft.save');
-    Route::post('/enrollment/draft/upload', [EnrollmentDocumentController::class, 'upload'])->name('enrollment.draft.upload');
-    Route::delete('/enrollment/draft', [EnrollmentDocumentController::class, 'discard'])->name('enrollment.draft.discard');
+    // Route pour récupérer le draft
+    Route::get('/enrollment/draft/show', [DraftController::class, 'show'])->name('enrollment.draft.show');
+    
+    // Route pour les requirements
+    Route::get('/enrollment/requirements', RequirementsController::class)->name('enrollment.requirements');
+    
+    // Routes Admin
+    Route::middleware(['admin'])->prefix('admin/enrollments')->name('admin.enrollments.')->group(function () {
+        Route::get('/', [EnrollmentManagementController::class, 'index'])->name('index');
+        Route::get('/{id}', [EnrollmentManagementController::class, 'show'])->name('show');
+        Route::post('/{id}/validate', [EnrollmentManagementController::class, 'validate'])->name('validate');
+        Route::post('/{id}/reject', [EnrollmentManagementController::class, 'reject'])->name('reject');
+    });
 });

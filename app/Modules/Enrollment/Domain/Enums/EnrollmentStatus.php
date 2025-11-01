@@ -5,10 +5,54 @@ namespace App\Modules\Enrollment\Domain\Enums;
 enum EnrollmentStatus: string
 {
     case DRAFT = 'draft';
-    case SUBMITTED = 'submitted';
-    case IN_REVIEW = 'in_review';
-    case PENDING_DOCUMENTS = 'pending_documents';
+    case PENDING = 'pending';
     case VALIDATED = 'validated';
     case REJECTED = 'rejected';
-    case ARCHIVED = 'archived';
+    case CANCELLED = 'cancelled';
+
+    public function label(): string
+    {
+        return match($this) {
+            self::DRAFT => 'Brouillon',
+            self::PENDING => 'En attente',
+            self::VALIDATED => 'Validée',
+            self::REJECTED => 'Rejetée',
+            self::CANCELLED => 'Annulée',
+        };
+    }
+
+    public function canTransitionTo(self $newStatus): bool
+    {
+        return match($this) {
+            self::DRAFT => in_array($newStatus, [self::PENDING, self::CANCELLED]),
+            self::PENDING => in_array($newStatus, [self::VALIDATED, self::REJECTED, self::CANCELLED]),
+            self::VALIDATED => $newStatus === self::CANCELLED,
+            default => false,
+        };
+    }
+
+    public function isDraft(): bool
+    {
+        return $this === self::DRAFT;
+    }
+
+    public function isPending(): bool
+    {
+        return $this === self::PENDING;
+    }
+
+    public function isValidated(): bool
+    {
+        return $this === self::VALIDATED;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this === self::REJECTED;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this === self::CANCELLED;
+    }
 }

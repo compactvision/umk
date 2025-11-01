@@ -5,7 +5,7 @@ namespace App\Modules\AdmissionCondition\Infrastructure\Persistence;
 use App\Modules\AdmissionCondition\Domain\Entities\AdmissionCondition;
 use App\Modules\AdmissionCondition\Domain\Repositories\AdmissionConditionRepository;
 use App\Models\AdmissionCondition as AdmissionConditionModel;
-
+use Illuminate\Support\Collection;
 
 class EloquentAdmissionConditionRepository implements AdmissionConditionRepository
 {
@@ -36,7 +36,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     {
         return AdmissionConditionModel::where('level_id', $levelId)
             ->get()
-            ->map(fn ($m) => $this->mapToEntity($m))
+            ->map(fn($m) => $this->mapToEntity($m))
             ->all();
     }
 
@@ -44,7 +44,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     {
         return AdmissionConditionModel::where('faculty_id', $facultyId)
             ->get()
-            ->map(fn ($m) => $this->mapToEntity($m))
+            ->map(fn($m) => $this->mapToEntity($m))
             ->all();
     }
 
@@ -53,25 +53,38 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
         AdmissionConditionModel::destroy($id);
     }
 
-    public function findByLevelAndFaculty(int $facultyId, int $levelId): array
+    public function findByLevelAndFaculty(int $facultyId, int $levelId): Collection
     {
-        return AdmissionConditionModel::where('faculty_id', $facultyId)
+        $q = AdmissionConditionModel::query()
             ->where('level_id', $levelId)
-            ->get()
-            ->map(fn ($m) => $this->mapToEntity($m))
-            ->all();
+            ->when(
+                is_null($facultyId),
+                fn($q) => $q->whereNull('faculty_id'),
+                fn($q) => $q->where(function ($q2) use ($facultyId) {
+                    $q2->where('faculty_id', $facultyId)
+                        ->orWhereNull('faculty_id');
+                })
+            )
+            ->orderByRaw("CASE section
+                WHEN 'personal_info' THEN 1
+                WHEN 'academic_info' THEN 2
+                ELSE 3
+            END")
+            ->orderBy('id');
+
+        return $q->get()->map(fn($m) => $this->mapToEntity($m));
     }
 
-    private function mapToEntity(AdmissionConditionModel $model): AdmissionCondition
+    private function mapToEntity(AdmissionConditionModel $m): AdmissionCondition
     {
         return new AdmissionCondition(
-            $model->id,
-            $model->faculty_id,
-            $model->level_id,
-            $model->title,
-            $model->description,
-            $model->section,
-            $model->is_required
+            id: $m->id,
+            facultyId: $m->faculty_id,
+            levelId: $m->level_id,
+            title: $m->title,
+            description: $m->description,
+            section: $m->section,     // 'personal_info' | 'academic_info' | ...
+            isRequired: (bool) $m->is_required
         );
     }
 }

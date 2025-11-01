@@ -57,10 +57,24 @@ export default function EnrollmentPageSection() {
         return Object.fromEntries(
             Object.entries(raw).map(([fid, arr]) => [
                 String(fid),
-                (arr ?? []).map((l: any) => ({ id: String(l.id), name: l.name ?? l.title ?? '—' })),
+                (arr ?? []).map((l: any) => ({
+                    id: String(l.id),
+                    name: l.name ?? l.title ?? '—',
+                    // ⬇️ on garde les détails si fournis par le backend
+                    detail: l.detail ? { fees: l.detail.fees ?? 0 } : null,
+                })),
             ]),
         );
     }, [props.levelsByFaculty]);
+
+    const selectedLevel = useMemo(() => {
+        const fid = String(formData.faculty_id || '');
+        const lid = String(formData.level_id || '');
+        if (!fid || !lid) return null;
+        const list = levelsByFaculty[fid] ?? [];
+        return list.find((l) => l.id === lid) ?? null;
+    }, [formData.faculty_id, formData.level_id, levelsByFaculty]);
+
 
     const availableLevels: Level[] = useMemo(() => {
         const fid = String(formData.faculty_id || '');
@@ -228,6 +242,8 @@ export default function EnrollmentPageSection() {
                                     setFormData={setFormData}
                                     focusedField={focusedField}
                                     setFocusedField={setFocusedField}
+                                    levelDetailFee={selectedLevel?.detail?.fees ?? 0} // ✅ level_id sélectionné → selectedLevel → fees
+                                    defaultCurrency="USD"
                                 />
                             )}
 

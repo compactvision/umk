@@ -57,4 +57,9 @@ class User extends Authenticatable implements MustVerifyEmailContract
         ]);
     }
 
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'student_id');
+    }
+
 }
