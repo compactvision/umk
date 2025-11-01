@@ -12,6 +12,8 @@ use App\Http\Controllers\SwitchPageController;
 use App\Http\Controllers\ProfessorController\ProfessorController;
 use App\Models\Enrollment;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Controllers\AdmissionConditionController;
+use App\Modules\Blog\Infrastructure\Http\Controllers\CategoryController;
+use App\Modules\Blog\Infrastructure\Http\Controllers\PostController;
 use App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentDocumentController;
 use App\Modules\Enrollment\Interfaces\Http\Controllers\EnrollmentController as ControllersEnrollmentController;
 use App\Modules\Identity\Infrastructure\Http\Controllers\PasswordResetController;
@@ -174,6 +176,10 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
                 Route::delete('/{id}', [AdmissionConditionController::class, 'destroy'])->name('destroy');
             });
         });
+
+        Route::resource('posts', PostController::class)->except(['show']);
+        Route::get('/dashboard/blog/{slug}', [PostController::class, 'show'])->name('posts.show');
+        Route::post('/dashboard/blog/categories', [CategoryController::class, 'store'])->name('categories.store');
     });
 
     Route::get('/enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');

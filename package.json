@@ -56,6 +56,7 @@
         "isotope-layout": "^3.0.6",
         "jquery": "^3.7.1",
         "laravel-vite-plugin": "^1.0",
+        "lodash": "^4.17.21",
         "lucide-react": "^0.475.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",

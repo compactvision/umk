@@ -191,6 +191,7 @@ const Sidebar = ({
                 { id: 'years', label: 'Année Academique', icon: <Calendar size={18} />, href: route('dashboard.admin.academic-years.index')},
                 { id: 'faculty', label: 'Faculté', icon: <GraduationCap size={18} />, href: route('dashboard.admin.faculties.index') },
                 { id: 'levels', label: 'Niveau', icon: <BadgeCheck size={18} />, href: route('dashboard.admin.faculties.show', { id: 1 }) },
+                { id: 'posts', label: 'Posts', icon: <BookOpen size={18} />, href: route('dashboard.admin.posts.index') },
             ],
         },
         users: {

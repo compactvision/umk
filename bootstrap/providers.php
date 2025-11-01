@@ -9,4 +9,5 @@ return [
     App\Modules\LevelDetail\Infrastructure\Providers\LevelDetailServiceProvider::class,
     App\Modules\AdmissionCondition\Infrastructure\Providers\AdmissionConditionServiceProvider::class,
     App\Modules\Enrollment\Infrastructure\Providers\EnrollmentServiceProvider::class,
+    App\Modules\Blog\Infrastructure\Providers\BlogServiceProvider::class,
 ];
