@@ -32,7 +32,10 @@ class LevelResource extends JsonResource
 
             // Relations si vous en avez
             // 'students_count' => $this->whenLoaded('students', fn() => $this->students->count()),
-            'details' => $this->whenLoaded('details'),
+            // app/Http/Resources/LevelResource.php
+
+            'detail' => $this->whenLoaded('detail', fn() => new LevelDetailsResource($this->detail)),
+
         ];
     }
 }

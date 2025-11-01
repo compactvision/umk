@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Faculty;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -39,16 +40,15 @@ class FacultyService
 
     public function getWithLevels()
     {
-        return Faculty::with([
-            'levels' => function ($query) {
-                $query->orderBy('title')
-                    ->with('detail'); // 🔥 Charger details à ce niveau
-            }
-        ])
+        return Faculty::query()
             ->where('is_active', true)
+            ->with([
+                'levels' => fn($q) => $q->orderBy('title'),
+                'levels.detail',
+            ])
+            ->orderBy('name')
             ->get();
     }
-
 
 
     /**
@@ -81,7 +81,7 @@ class FacultyService
             Log::info('Faculté créée', [
                 'faculty_id' => $faculty->id,
                 'name' => $faculty->name,
-                'user_id' => auth()->id()
+                'user_id' => Auth::user()->id
             ]);
 
             return $faculty;
@@ -104,7 +104,7 @@ class FacultyService
             Log::info('Faculté mise à jour', [
                 'faculty_id' => $faculty->id,
                 'changes' => array_diff_assoc($data, $oldData),
-                'user_id' => auth()->id()
+                'user_id' => Auth::user()->id
             ]);
 
             return $faculty->refresh();
@@ -125,7 +125,7 @@ class FacultyService
             Log::warning('Faculté supprimée', [
                 'faculty_id' => $faculty->id,
                 'name' => $faculty->name,
-                'user_id' => auth()->id()
+                'user_id' => Auth::user()->id
             ]);
 
             return $result;
