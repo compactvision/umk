@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, User, MessageCircle, ChevronRight, Filter, Calendar, Tag, Eye, Heart, Share2 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 export default function Blog() {
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [likedPosts, setLikedPosts] = useState([]);
+  const { props } = usePage();
 
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 100);
