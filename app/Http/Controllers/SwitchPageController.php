@@ -72,6 +72,11 @@ class SwitchPageController extends Controller
         ]);
     }
 
+    public function about()
+    {
+        return Inertia::render('Aboutpage');
+    }
+
     public function contact()
     {
         return Inertia::render('Contactpage');
@@ -156,7 +161,7 @@ class SwitchPageController extends Controller
                 ->findOrFail($id);
 
         $incrementViews = $this->postRepository->incrementViews($id);
-        
+
         if (method_exists($this->categoryRepository, 'getAllWithCount')) {
             $categories = $this->categoryRepository->getAllWithCount();
         } else {

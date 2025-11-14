@@ -30,6 +30,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 Route::get('/', [SwitchPageController::class, 'home'])->name('home');
 Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admission');
 Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses');
+Route::get('/about', [SwitchPageController::class, 'about'])->name('about');
 Route::get('/course/{id}', [SwitchPageController::class, 'courseShow'])->name('courseShow');
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 Route::get('blog', [SwitchPageController::class, 'blog'])->name('blog');

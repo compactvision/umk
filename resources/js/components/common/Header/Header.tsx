@@ -122,7 +122,8 @@ export default function Header() {
                         {[
                             { label: 'Accueil', path: '/', href: route('home'), icon: '🏠' },
                             { label: 'Admission', path: '/admission', href: route('admission'), icon: '📚' },
-                            { label: 'Cours', path: '/courses', href: route('courses'), icon: '🎓' },
+                            { label: 'Faculté', path: '/courses', href: route('courses'), icon: '🎓' },
+                            { label: 'A Propos', path: '/about', href: route('about'), icon: '❓' },
                             { label: 'Contact', path: '/contact', href: route('contact'), icon: '💬' },
                         ].map((item) => (
                             <Link
@@ -338,6 +339,7 @@ export default function Header() {
                             { label: 'Accueil', path: '/', href: route('home'), icon: '🏠' },
                             { label: 'Admission', path: '/admission', href: route('admission'), icon: '📚' },
                             { label: 'Cours', path: '/courses', href: route('courses'), icon: '🎓' },
+                            { label: 'A propos', path: '/about', href: route('about'), icon: '❓' },
                             { label: 'Contact', path: '/contact', href: route('contact'), icon: '💬' },
                         ].map((item, index) => (
                             <Link
