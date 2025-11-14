@@ -151,9 +151,29 @@ class SwitchPageController extends Controller
 
     public function blogDetails($id)
     {
-        $post = PostModel::findOrFail($id);
+        $post = PostModel::query()
+                ->with(['category', 'author'])
+                ->findOrFail($id);
+
+        $incrementViews = $this->postRepository->incrementViews($id);
+        
+        if (method_exists($this->categoryRepository, 'getAllWithCount')) {
+            $categories = $this->categoryRepository->getAllWithCount();
+        } else {
+            // fallback : récupérer catégories avec count
+            $cats = CategoryModel::withCount('posts')->get(['id', 'name', 'slug', 'color', 'description']);
+            $categories = $cats->map(fn($c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug ?? null,
+                'count' => $c->posts_count ?? 0,
+                'color' => $c->color ?? null,
+                'description' => $c->description ?? null,
+            ])->toArray();
+        }
         return Inertia::render('BlogDetailsPage', [
             'post' => $post,
+            'categories' => $categories,
         ]);
     }
 }

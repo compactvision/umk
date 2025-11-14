@@ -111,9 +111,9 @@ class EloquentPostRepository implements PostRepository
         }
 
         $publishedAt = null;
-        if ($m->published_at) {
+        if ($m->created_at) {
             try {
-                $publishedAt = new \DateTimeImmutable($m->published_at);
+                $publishedAt = new \DateTimeImmutable($m->created_at);
             } catch (\Exception $e) {
                 $publishedAt = null;
             }
