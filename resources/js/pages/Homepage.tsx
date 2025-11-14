@@ -11,8 +11,8 @@ export default function Homepage() {
         <Hero />
         <Blog />
         <Faculty />
-        <Campus />
-        <Testimonial />
-        <Event />
+        {/* <Campus />   */}
+        {/* <Testimonial /> */}
+        {/* <Event /> */}
     </App>
 }

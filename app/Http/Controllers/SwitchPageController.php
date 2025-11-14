@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\FacultyResource;
+use App\Models\Blog;
 use App\Models\Level;
+use App\Modules\Blog\Domain\Entities\Post;
+use App\Modules\Blog\Domain\Repositories\PostRepository;
+use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use App\Services\FacultyService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,14 +15,21 @@ use Inertia\Inertia;
 class SwitchPageController extends Controller
 {
     public function __construct(
-        private FacultyService $facultyService
+        private FacultyService $facultyService,
+        private PostRepository $postRepository
     ) {}
     //
-    public function home()
+    public function home(Request $request)
     {
         $allFaculties = $this->facultyService->getWithLevels();
+        
+        $page = $request->input('page', 1);
+        
+        $posts = $this->postRepository->getAll(10, $page);
+        
         return Inertia::render('Homepage', [
             'faculties' => FacultyResource::collection($allFaculties),
+            'posts' => $posts,
         ]);
     }
 
@@ -62,11 +73,17 @@ class SwitchPageController extends Controller
 
     public function blog()
     {
-        return Inertia::render('Blogpage');
+        $posts = PostModel::all();
+        return Inertia::render('Blogpage', [
+            'posts' => $posts,
+        ]);
     }
 
     public function blogDetails($id)
     {
-        return Inertia::render('BlogDetailsPage');
+        $post = PostModel::findOrFail($id);
+        return Inertia::render('BlogDetailsPage', [
+            'post' => $post,
+        ]);
     }
 }

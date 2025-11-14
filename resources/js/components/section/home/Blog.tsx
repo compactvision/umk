@@ -9,6 +9,7 @@ export default function Blog() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [likedPosts, setLikedPosts] = useState([]);
   const { props } = usePage();
+  console.log(props);
 
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 100);

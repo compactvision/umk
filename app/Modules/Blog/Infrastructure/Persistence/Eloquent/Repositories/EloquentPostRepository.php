@@ -46,6 +46,24 @@ class EloquentPostRepository implements PostRepository
     {
         PostModel::whereKey($id)->increment('views');
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getAll(int $perPage = 10, int $page = 1): array
+    {
+        $result = PostModel::query()
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        
+        return [
+            'data' => $result->map(fn($m) => $this->toDomain($m))->toArray(),
+            'current_page' => $result->currentPage(),
+            'last_page' => $result->lastPage(),
+            'per_page' => $result->perPage(),
+            'total' => $result->total(),
+        ];
+    }
 
     private function mapToModel(Post $p, PostModel $m): void
     {
