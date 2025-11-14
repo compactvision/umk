@@ -10,7 +10,7 @@ export default function Coursespage() {
 
   return (
     <App>
-        <Breadcumb title="Nos Cours" desc="Offrir un large éventail d'opportunités d'apprentissage" />
+        <Breadcumb title="Nos Facultés" desc="Offrir un large éventail d'opportunités d'apprentissage" />
         <Courses faculties={facultyList}/>
     </App>
   )
