@@ -2,6 +2,7 @@
 
 namespace App\Modules\Blog\Domain\Entities;
 
+use App\Models\User;
 use App\Modules\Blog\Domain\ValueObjects\ImageSet;
 use DateTimeInterface;
 
@@ -25,5 +26,7 @@ final class Post
         public int $commentsCount,
         public string $status,
         public ?DateTimeInterface $publishedAt,
+        public ?Category $category = null,
+        public ?User $author = null,
     ) {}
 }

@@ -60,8 +60,6 @@ export default function Faculty() {
 
   const faculties = props.faculties;
 
-  console.log(faculties);
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white to-slate-50 py-20 md:py-24">
       {/* Shapes décoratives */}

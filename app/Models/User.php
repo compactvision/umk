@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Auth\MustVerifyEmail; // le trait ajoute hasVerifiedEmail(), markEmailAsVerified()...
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -60,6 +61,16 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class, 'student_id');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(PostModel::class, 'author_id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 
 }

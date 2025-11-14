@@ -9,4 +9,6 @@ interface CategoryRepository
     public function findByName(string $name): ?Category;
     public function findBySlug(string $slug): ?Category;
     public function save(Category $category): Category;
+    public function getAll(): array;
+    public function getAllWithCount(): array;
 }

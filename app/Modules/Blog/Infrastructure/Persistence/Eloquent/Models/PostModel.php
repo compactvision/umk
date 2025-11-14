@@ -2,6 +2,7 @@
 
 namespace App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class PostModel extends Model
@@ -20,4 +21,14 @@ class PostModel extends Model
         'featured' => 'bool',
         'published_at' => 'datetime',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id', 'id');
+    }
 }

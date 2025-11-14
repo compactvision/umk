@@ -10,13 +10,13 @@ final class EloquentCategoryRepository implements CategoryRepository
 {
     public function findByName(string $name): ?CategoryEntity
     {
-        $m = CategoryModel::where('name',$name)->first();
+        $m = CategoryModel::where('name', $name)->first();
         return $m ? $this->toDomain($m) : null;
     }
 
     public function findBySlug(string $slug): ?CategoryEntity
     {
-        $m = CategoryModel::where('slug',$slug)->first();
+        $m = CategoryModel::where('slug', $slug)->first();
         return $m ? $this->toDomain($m) : null;
     }
 
@@ -32,6 +32,16 @@ final class EloquentCategoryRepository implements CategoryRepository
         $m->save();
 
         return $this->toDomain($m);
+    }
+
+    public function getAll(): array
+    {
+        return CategoryModel::all()->map(fn($m) => $this->toDomain($m))->toArray();
+    }
+
+    public function getAllWithCount(): array
+    {
+        return CategoryModel::withCount('posts')->get(['id', 'name', 'slug', 'color', 'description'])->map(fn($m) => $this->toDomain($m))->toArray();
     }
 
     private function toDomain(CategoryModel $m): CategoryEntity
