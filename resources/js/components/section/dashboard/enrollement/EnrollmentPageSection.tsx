@@ -49,6 +49,8 @@ export default function EnrollmentPageSection() {
         email: user.email ?? '',
     });
 
+    console.log(formData)
+
     const faculties: Faculty[] = (props.faculties ?? []).map((f: any) => ({ id: String(f.id), name: f.name ?? f.title ?? f.label ?? '—' }));
     const years: Year[] = (props.years ?? []).map((y: any) => ({ id: String(y.id), name: y.name ?? y.title ?? '—' }));
 
@@ -259,14 +261,7 @@ export default function EnrollmentPageSection() {
                                     </button>
                                 )}
 
-                                <button
-                                    type="button"
-                                    onClick={saveProgress}
-                                    disabled={saveStatus === 'saving'}
-                                    className="flex items-center gap-2 rounded-xl border-2 border-blue-300 bg-blue-50 px-6 py-3 font-semibold text-blue-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-100 hover:shadow-md disabled:opacity-60"
-                                >
-                                    {saveStatus === 'saving' ? 'Sauvegarde...' : saveStatus === 'saved' ? 'Sauvegardé' : 'Sauvegarder'}
-                                </button>
+                                
 
                                 <button
                                     type="button"

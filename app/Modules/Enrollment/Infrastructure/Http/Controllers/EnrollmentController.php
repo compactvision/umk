@@ -63,7 +63,7 @@ class EnrollmentController extends Controller
             ->where('uuid', $uuid)
             ->firstOrFail();
 
-        return Inertia::render('Enrollment/Show', [
+        return Inertia::render('dashboard/enrollments/Show', [
             'enrollment' => $enrollment,
         ]);
     }

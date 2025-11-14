@@ -9,6 +9,7 @@ enum EnrollmentStatus: string
     case VALIDATED = 'validated';
     case REJECTED = 'rejected';
     case CANCELLED = 'cancelled';
+    case SUBMITTED = 'submitted';
 
     public function label(): string
     {
@@ -18,6 +19,7 @@ enum EnrollmentStatus: string
             self::VALIDATED => 'Validée',
             self::REJECTED => 'Rejetée',
             self::CANCELLED => 'Annulée',
+            self::SUBMITTED => 'Soumise',
         };
     }
 
@@ -27,6 +29,8 @@ enum EnrollmentStatus: string
             self::DRAFT => in_array($newStatus, [self::PENDING, self::CANCELLED]),
             self::PENDING => in_array($newStatus, [self::VALIDATED, self::REJECTED, self::CANCELLED]),
             self::VALIDATED => $newStatus === self::CANCELLED,
+            self::REJECTED => $newStatus === self::CANCELLED,
+            self::CANCELLED => $newStatus === self::CANCELLED,
             default => false,
         };
     }
@@ -34,6 +38,11 @@ enum EnrollmentStatus: string
     public function isDraft(): bool
     {
         return $this === self::DRAFT;
+    }
+
+    public function isSubmitted(): bool
+    {
+        return $this === self::SUBMITTED;
     }
 
     public function isPending(): bool

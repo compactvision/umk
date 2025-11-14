@@ -15,7 +15,7 @@ export default function Admissionpage() {
         <Faculty />
         <Testimonial />
         <Fanfact />
-        <Cta />
+        {/* <Cta /> */}
     </App>
   )
 }
