@@ -105,7 +105,7 @@ export default function Blog() {
 
   const getAuthorName = (post) => {
     if (post.author) {
-      return post.author.name || post.author.username || 'Anonyme';
+      return post.author.last_name || 'Anonyme';
     }
     return 'Anonyme';
   };
@@ -194,7 +194,7 @@ export default function Blog() {
                       </div>
                       
                       <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor(post.category_id)} mb-4`}>
-                        #{getCategoryName(post.category_id)}
+                        #{getCategoryName(post.category.id)}
                       </div>
                       
                       <h3 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-amber-700 transition-colors mb-3">
@@ -257,7 +257,7 @@ export default function Blog() {
                       </div>
                       
                       <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold text-white ${getCategoryColor(featuredPost.category_id)} mb-6`}>
-                        #{getCategoryName(featuredPost.category_id)}
+                        #{getCategoryName(featuredPost.category.id)}
                       </div>
                       
                       <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight mb-4 group-hover:text-amber-700 transition-colors">
@@ -275,7 +275,7 @@ export default function Blog() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
-                          <span className="text-sm">{formatDate(featuredPost.published_at)}</span>
+                          <span className="text-sm">{formatDate(featuredPost.publishedAt.date)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
@@ -293,15 +293,13 @@ export default function Blog() {
                             <span className="text-sm">{(featuredPost.likes || 0) + (likedPosts.includes(featuredPost.id) ? 1 : 0)}</span>
                           </button>
                           <div className="flex items-center gap-1 text-gray-500">
-                            <MessageCircle className="w-5 h-5" />
-                            <span className="text-sm">{featuredPost.comments_count || 0}</span>
+                            <Eye className="w-5 h-5" />
+                            <span className="text-sm">{featuredPost.views || 0}</span>
                           </div>
-                          <button className="flex items-center gap-1 text-gray-500 hover:text-amber-600 transition-colors">
-                            <Share2 className="w-5 h-5" />
-                          </button>
+
                         </div>
                       
-                        <Link href={`/blog/${featuredPost.slug}`} className="inline-flex items-center gap-2 text-amber-600 font-medium hover:text-amber-700 transition-colors">
+                        <Link href={`/blog/${featuredPost.id}`} className="inline-flex items-center gap-2 text-amber-600 font-medium hover:text-amber-700 transition-colors">
                           Lire la suite
                           <ChevronRight className="w-4 h-4" />
                         </Link>
@@ -327,14 +325,14 @@ export default function Blog() {
                     <div className="relative z-10 p-6">
                       <div className="aspect-video mb-4 rounded-2xl overflow-hidden">
                         <img 
-                          src={getPostImage(post)} 
+                          src={`/storage/${getPostImage(post)}`} 
                           alt={post.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                       </div>
                       
                       <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor(post.category_id)} mb-4`}>
-                        #{getCategoryName(post.category_id)}
+                        #{getCategoryName(post.category.id)}
                       </div>
                       
                       <h3 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-amber-700 transition-colors mb-3">
