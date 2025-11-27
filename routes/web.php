@@ -189,6 +189,7 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
     Route::prefix('enrollments')->name('enrollments.')->group(function () {
         Route::get('/', [EnrollmentController::class, 'index'])->name('index');
         Route::get('/create', [EnrollmentController::class, 'create'])->name('create');
+        Route::get('/{enrollment}/edit', [EnrollmentController::class, 'edit'])->name('edit');
         Route::get('/{uuid}', [EnrollmentController::class, 'show'])->name('show');
         
         // Draft

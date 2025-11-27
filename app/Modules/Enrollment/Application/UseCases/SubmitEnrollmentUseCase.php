@@ -38,10 +38,14 @@ class SubmitEnrollmentUseCase
             }
             
             // Vérifier le statut
-            if ($enrollment->status !== EnrollmentStatus::DRAFT->value) {
+            if ($enrollment->status === EnrollmentStatus::SUBMITTED) {
+                return $enrollment; // Idempotence : déjà soumis, on renvoie tel quel
+            }
+
+            if ($enrollment->status !== EnrollmentStatus::DRAFT) {
                 throw InvalidEnrollmentStateException::cannotTransition(
-                    EnrollmentStatus::from($enrollment->status),
-                    EnrollmentStatus::PENDING
+                    $enrollment->status,
+                    EnrollmentStatus::SUBMITTED
                 );
             }
             
@@ -58,7 +62,7 @@ class SubmitEnrollmentUseCase
             }
             
             // Changer le statut
-            $enrollment->status = EnrollmentStatus::PENDING->value;
+            $enrollment->status = EnrollmentStatus::SUBMITTED->value;
             $enrollment->notes = $dto->notes;
             $enrollment->draft_expires_at = null;
             

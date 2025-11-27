@@ -99,4 +99,18 @@ class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
             ->where('draft_expires_at', '<', Carbon::now())
             ->get();
     }
+
+    public function checkUniqueness(int $studentId, int $levelId, int $yearId, ?int $excludeId = null): bool
+    {
+        $query = Enrollment::where('student_id', $studentId)
+            ->where('level_id', $levelId)
+            ->where('academic_year_id', $yearId)
+            ->where('status', '!=', EnrollmentStatus::CANCELLED->value);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
+    }
 }

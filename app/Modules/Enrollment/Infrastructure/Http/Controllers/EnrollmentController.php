@@ -41,17 +41,41 @@ class EnrollmentController extends Controller
             ->map(fn($levels) => $levels->values());
 
         // Récupérer le brouillon existant si disponible
-        $draft = $this->getDraftUseCase->execute($request->user()->id);
+        // $draft = $this->getDraftUseCase->execute($request->user()->id);
 
         return Inertia::render('dashboard/enrollments/Enrollment', [
             'faculties' => $faculties,
             'years' => $years,
             'levelsByFaculty' => $levelsByFaculty,
-            'draft' => $draft ? [
-                'uuid' => $draft->uuid,
-                'last_step' => $draft->last_step,
-                'form_snapshot' => $draft->form_snapshot,
-            ] : null,
+            'draft' => null, // Toujours commencer avec un formulaire vide
+        ]);
+    }
+
+    public function edit(Request $request, string $uuid)
+    {
+        $enrollment = $request->user()
+            ->enrollments()
+            ->where('uuid', $uuid)
+            ->where('status', 'draft')
+            ->firstOrFail();
+
+        $faculties = Faculty::with('levels')->get();
+        $years = AcademicYear::where('status', 'open')->get();
+        
+        $levelsByFaculty = Level::with('faculty')
+            ->get()
+            ->groupBy('faculty_id')
+            ->map(fn($levels) => $levels->values());
+
+        return Inertia::render('dashboard/enrollments/Enrollment', [
+            'faculties' => $faculties,
+            'years' => $years,
+            'levelsByFaculty' => $levelsByFaculty,
+            'draft' => [
+                'uuid' => $enrollment->uuid,
+                'last_step' => $enrollment->last_step,
+                'form_snapshot' => $enrollment->form_snapshot,
+            ],
         ]);
     }
 

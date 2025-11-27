@@ -30,4 +30,6 @@ interface EnrollmentRepositoryInterface
     public function existsMatricule(string $matricule): bool;
 
     public function getExpiredDrafts(): Collection;
+
+    public function checkUniqueness(int $studentId, int $levelId, int $yearId, ?int $excludeId = null): bool;
 }

@@ -26,8 +26,9 @@ enum EnrollmentStatus: string
     public function canTransitionTo(self $newStatus): bool
     {
         return match($this) {
-            self::DRAFT => in_array($newStatus, [self::PENDING, self::CANCELLED]),
+            self::DRAFT => in_array($newStatus, [self::PENDING, self::SUBMITTED, self::CANCELLED]),
             self::PENDING => in_array($newStatus, [self::VALIDATED, self::REJECTED, self::CANCELLED]),
+            self::SUBMITTED => in_array($newStatus, [self::VALIDATED, self::REJECTED, self::CANCELLED]),
             self::VALIDATED => $newStatus === self::CANCELLED,
             self::REJECTED => $newStatus === self::CANCELLED,
             self::CANCELLED => $newStatus === self::CANCELLED,

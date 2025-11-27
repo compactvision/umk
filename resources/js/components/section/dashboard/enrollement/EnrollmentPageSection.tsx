@@ -28,6 +28,8 @@ export default function EnrollmentPageSection() {
 
     const { props } = usePage();
     const user = props?.auth?.user ?? {};
+    const draft = props.draft as any;
+
     const fullNameFromUser =
         [user.first_name ?? '', user.post_name ?? '', user.last_name ?? ''].filter(Boolean).join(' ').trim() || (user.name ?? '');
 
@@ -44,12 +46,16 @@ export default function EnrollmentPageSection() {
         handleFieldChange,
         saveProgress,
         saveStatus,
+        submitEnrollment,
     } = useEnrollmentForm({
         name: fullNameFromUser,
         email: user.email ?? '',
+        ...(draft ? {
+            uuid: draft.uuid,
+            last_step: draft.last_step,
+            ...draft.form_snapshot
+        } : {})
     });
-
-    console.log(formData)
 
     const faculties: Faculty[] = (props.faculties ?? []).map((f: any) => ({ id: String(f.id), name: f.name ?? f.title ?? f.label ?? '—' }));
     const years: Year[] = (props.years ?? []).map((y: any) => ({ id: String(y.id), name: y.name ?? y.title ?? '—' }));
@@ -124,20 +130,50 @@ export default function EnrollmentPageSection() {
 
     // nav
     const runValidationAndSetErrors = useCallback(() => {
-        const newErrors = validateStep(step, formData, requirements, noLevelsForSelectedFaculty, isConfirmed, paymentStage);
+        // Calculer si c'est gratuit (logique identique à Step4Payment)
+        const levelDetailFee = selectedLevel?.detail?.fees ?? 0;
+        const effectiveAmount = typeof levelDetailFee === 'number' ? levelDetailFee : (requirements.payment?.amount ?? 0);
+        const isFree = !effectiveAmount || effectiveAmount <= 0;
+
+        const newErrors = validateStep(step, formData, requirements, noLevelsForSelectedFaculty, isConfirmed, paymentStage, isFree);
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    }, [step, formData, requirements, noLevelsForSelectedFaculty, isConfirmed, paymentStage]);
+    }, [step, formData, requirements, noLevelsForSelectedFaculty, isConfirmed, paymentStage, selectedLevel]);
 
-    const nextStep = useCallback(() => {
+    const handleSubmit = useCallback(async () => {
+        console.log('handleSubmit called');
+        setIsSubmitting(true);
+        try {
+            console.log('Calling submitEnrollment...');
+            await submitEnrollment();
+            console.log('submitEnrollment resolved. Waiting for Inertia redirect...');
+            // La redirection est gérée par le backend (Inertia)
+        } catch (error) {
+            console.error('Erreur de soumission:', error);
+            setIsSubmitting(false);
+        }
+    }, [submitEnrollment]);
+
+    const nextStep = useCallback(async () => {
+        console.log('nextStep called, step:', step, 'paymentStage:', paymentStage);
         if (!runValidationAndSetErrors()) return;
+        
+        // Sauvegarder la progression avant de changer d'étape
+        if (step < 4) {
+            const saved = await saveProgress(step);
+            if (!saved) return; // Bloquer si la sauvegarde échoue (ex: erreur d'unicité)
+        }
+        
         if (step === 4) {
-            if (paymentStage === 'confirm') setPaymentStage('pay');
-            else handleSubmit();
+            if (paymentStage === 'confirm') {
+                setPaymentStage('pay');
+            } else {
+                handleSubmit();
+            }
             return;
         }
         setStep((s) => s + 1);
-    }, [runValidationAndSetErrors, step, paymentStage]);
+    }, [runValidationAndSetErrors, step, paymentStage, saveProgress, handleSubmit]);
 
     const prevStep = useCallback(() => {
         if (step === 4 && paymentStage === 'pay') {
@@ -146,17 +182,6 @@ export default function EnrollmentPageSection() {
         }
         if (step > 1) setStep((s) => s - 1);
     }, [step, paymentStage]);
-
-    const handleSubmit = useCallback(async () => {
-        setIsSubmitting(true);
-        await new Promise((r) => setTimeout(r, 1200)); // TODO: call API ici
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
-        setTimeout(() => {
-            // @ts-ignore
-            window.location.href = route('dashboard');
-        }, 2000);
-    }, []);
 
     return (
         <Dashboard>

@@ -283,12 +283,21 @@ export default function Index() {
                                     </div>
 
                                     {/* Action Button */}
-                                    <button 
-                                        onClick={() => handleVisit(e.uuid)} 
-                                        className="w-full mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 text-sm sm:text-base"
-                                    >
-                                        Voir
-                                    </button>
+                                    {e.status === 'draft' ? (
+                                        <Link
+                                            href={route('dashboard.enrollments.edit', { enrollment: e.uuid })}
+                                            className="block w-full text-center mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 text-sm sm:text-base"
+                                        >
+                                            Continuer l'inscription
+                                        </Link>
+                                    ) : (
+                                        <button 
+                                            onClick={() => handleVisit(e.uuid!)} 
+                                            className="w-full mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 text-sm sm:text-base"
+                                        >
+                                            Voir
+                                        </button>
+                                    )}
                                 </div>
                             );
                         })}

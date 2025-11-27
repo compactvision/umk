@@ -25,8 +25,8 @@ class SubmitController extends Controller
             $enrollment = $this->submitEnrollmentUseCase->execute($dto);
 
             return redirect()
-                ->route('dashboard.enrollments.show', $enrollment->uuid)
-                ->with('success', 'Votre inscription a été soumise avec succès !');
+                ->route('dashboard.enrollments.index')
+                ->with('success', 'Inscriptions enregistrer avec succes');
                 
         } catch (EnrollmentException $e) {
             return back()->withErrors([

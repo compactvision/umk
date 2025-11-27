@@ -52,16 +52,11 @@ class DraftController extends Controller
             $dto = SaveProgressDTO::fromRequest($validated, $request->user()->id);
             $enrollment = $this->saveProgressUseCase->execute($dto);
 
-            return response()->json([
-                'ok' => true,
-                'uuid' => $enrollment->uuid,
-                'message' => 'Progression sauvegardée',
-            ]);
+            return back()->with('success', 'Progression sauvegardée');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage(),
-            ], 500);
+            return back()->withErrors(['error' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
 }

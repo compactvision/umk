@@ -240,36 +240,60 @@ export function useEnrollmentForm(initial: Partial<FormData> & { uuid?: string; 
 
     // --------- SAUVEGARDE EXPLICITE (bouton "Sauvegarder") ----------
     const saveProgress = useCallback(
-        (forcedStep?: number) => {
+        (forcedStep?: number): Promise<boolean> => {
+            if (!uuid && !formData.faculty_id) return Promise.resolve(true); // Pas assez de données
+
             setSaveStatus('saving');
 
-            // 1) snapshot strictement JSON-serializable (élimine Proxy/File/etc.)
-            const safeSnapshot = JSON.parse(JSON.stringify(minimalSnapshot(formData)));
-
-            router.post(
-                SAVE_ROUTE,
-                {
-                    uuid,
-                    last_step: forcedStep ?? lastStep,
-                    form_snapshot: safeSnapshot,
-                },
-                {
-                    preserveScroll: true,
-                    // 2) évite FormData: Inertia n’essaiera pas de scanner des Files
-                    forceFormData: false,
-                    onSuccess: (page) => {
-                        const newUuid = (page.props as any)?.uuid ?? (page as any)?.uuid ?? null;
-                        if (newUuid && newUuid !== uuid) setUuid(newUuid);
-                        if (forcedStep) setLastStep(forcedStep);
-
-                        setSaveStatus('saved');
-                        window.setTimeout(() => setSaveStatus('idle'), 1000);
+            return new Promise((resolve, reject) => {
+                router.post(
+                    SAVE_ROUTE,
+                    {
+                        uuid,
+                        last_step: forcedStep ?? lastStep,
+                        form_snapshot: minimalSnapshot(formData),
                     },
-                    onError: () => setSaveStatus('idle'),
-                },
-            );
+                    {
+                        preserveScroll: true,
+                        // 2) évite FormData: Inertia n’essaiera pas de scanner des Files
+                        forceFormData: false,
+                        onSuccess: (page) => {
+                            // Récupérer le UUID depuis les props (structure: props.draft.uuid)
+                            const props = page.props as any;
+                            const newUuid = props.draft?.uuid ?? props.uuid ?? (page as any).uuid ?? null;
+                            
+                            if (newUuid && newUuid !== uuid) {
+                                setUuid(newUuid);
+                                // Mettre à jour l'URL pour pointer vers l'édition du brouillon
+                                const newUrl = window.route('dashboard.enrollments.edit', newUuid);
+                                window.history.replaceState({}, '', newUrl);
+                            }
+                            if (forcedStep) setLastStep(forcedStep);
+
+                            setSaveStatus('saved');
+                            window.setTimeout(() => setSaveStatus('idle'), 1000);
+                            resolve(true);
+                        },
+                        onError: (errors) => {
+                            setSaveStatus('idle');
+                            // Gérer l'erreur d'unicité spécifique
+                            if ((errors as any)?.uniqueness) {
+                                Alert.error((errors as any).uniqueness);
+                                // Attendre un peu que l'utilisateur lise le message avant de recharger
+                                setTimeout(() => {
+                                    router.visit(window.route('dashboard.enrollments.create'));
+                                }, 2000);
+                                resolve(false); // On résout à false pour bloquer la navigation mais l'action est traitée
+                                return;
+                            }
+                            console.error('Save error:', errors);
+                            resolve(false);
+                        },
+                    },
+                );
+            });
         },
-        [formData, isConfirmed, uuid, lastStep],
+        [uuid, formData, lastStep, minimalSnapshot],
     );
 
     // --------- Chargement éventuel d’un brouillon existant (OK, ce n’est pas de l’auto-save) ----------
@@ -343,37 +367,94 @@ export function useEnrollmentForm(initial: Partial<FormData> & { uuid?: string; 
         };
     }, [uuid, setFormData, setIsConfirmed, setLastStep, setUuid, setIsLoadingDraft]);
 
+    // --------- AUTO-SAVE avec debounce (SUPPRIMÉ) ----------
+    // L'utilisateur souhaite sauvegarder uniquement au changement d'étape.
+    // Le code ci-dessous est commenté/supprimé pour désactiver l'auto-save au changement de champ.
+    /*
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    
+    useEffect(() => {
+        // ...
+    }, [formData, isConfirmed]);
+    */
+
     // --------- SOUMISSION FINALE ----------
     const submitEnrollment = useCallback(
-        () => {
-            Alert.success("Inscription reussi")
-            window.location.href = route('dashboard.enrollments.index');
-        },
-        [],
-    );
-        // async (notes?: string) => {
-        //     if (!uuid) throw new Error('Aucun brouillon à soumettre');
+        async (notes?: string) => {
+            if (!uuid) {
+                Alert.error('Aucun brouillon à soumettre. Veuillez d\'abord remplir le formulaire.');
+                return false;
+            }
 
-        //     setSaveStatus('saving');
-        //     return new Promise((resolve, reject) => {
-        //         router.post(
-        //             SUBMIT_ROUTE(uuid),
-        //             { notes: notes || '' },
-        //             {
-        //                 onSuccess: () => {
-        //                     setSaveStatus('saved');
-        //                     resolve(true);
-        //                 },
-        //                 onError: (errors) => {
-        //                     setSaveStatus('idle');
-        //                     reject(errors);
-        //                 },
-        //             },
-        //         );
-        //     });
-        // },
-        // [uuid],
-    // );
+            setSaveStatus('saving');
+            
+            // 1. D'abord sauvegarder la progression actuelle pour être sûr
+            // On utilise une promesse pour attendre la fin de la sauvegarde
+            try {
+                console.log('submitEnrollment: Starting preliminary save...');
+                await new Promise<void>((resolve, reject) => {
+                    const safeSnapshot = JSON.parse(JSON.stringify(minimalSnapshot(formData)));
+                    router.post(
+                        SAVE_ROUTE,
+                        {
+                            uuid,
+                            last_step: lastStep,
+                            form_snapshot: safeSnapshot,
+                        },
+                        {
+                            preserveScroll: true,
+                            onSuccess: () => {
+                                console.log('submitEnrollment: Preliminary save success');
+                                resolve();
+                            },
+                            onError: (err) => {
+                                console.error('submitEnrollment: Preliminary save error', err);
+                                reject(new Error('Erreur lors de la sauvegarde préliminaire'));
+                            },
+                        }
+                    );
+                });
+            } catch (e) {
+                console.error('submitEnrollment: Save failed', e);
+                setSaveStatus('idle');
+                Alert.error('Impossible de sauvegarder les dernières modifications avant soumission.');
+                return false;
+            }
+
+            // 2. Ensuite soumettre
+            console.log('submitEnrollment: Starting final submission...');
+            return new Promise<boolean>((resolve, reject) => {
+                router.post(
+                    SUBMIT_ROUTE(uuid),
+                    { notes: notes || '' },
+                    {
+                        preserveScroll: true,
+                        onSuccess: () => {
+                            console.log('submitEnrollment: Submission success');
+                            setSaveStatus('saved');
+                            Alert.success('Inscription soumise avec succès !');
+                            resolve(true);
+                        },
+                        onError: (errors) => {
+                            console.error('submitEnrollment: Submission error', errors);
+                            setSaveStatus('idle');
+                            // Gérer l'erreur d'unicité spécifique
+                            if ((errors as any)?.uniqueness) {
+                                Alert.error((errors as any).uniqueness);
+                                // Réinitialiser le formulaire en rechargeant la page de création
+                                router.visit(window.route('dashboard.enrollments.create'));
+                                return;
+                            }
+                            const errorMsg = (errors as any)?.submit || 'Erreur lors de la soumission';
+                            Alert.error(errorMsg);
+                            reject(errors);
+                        },
+                    },
+                );
+            });
+        },
+        [uuid, formData, lastStep, minimalSnapshot],
+    );
 
     return {
         formData,
