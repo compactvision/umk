@@ -2,6 +2,7 @@
 
 namespace App\Modules\Enrollment\Application\UseCases;
 
+use App\Mail\EnrollmentSubmitted;
 use App\Models\Enrollment;
 use App\Modules\Enrollment\Application\DTOs\SubmitEnrollmentDTO;
 use App\Modules\Enrollment\Domain\Enums\EnrollmentStatus;
@@ -12,6 +13,7 @@ use App\Modules\Enrollment\Domain\Repositories\DocumentRepositoryInterface;
 use App\Modules\Enrollment\Domain\Services\EnrollmentValidator;
 use App\Modules\Enrollment\Domain\Services\MatriculeGenerator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class SubmitEnrollmentUseCase
 {
@@ -62,14 +64,28 @@ class SubmitEnrollmentUseCase
             }
             
             // Changer le statut
-            $enrollment->status = EnrollmentStatus::SUBMITTED->value;
+            $enrollment->status = EnrollmentStatus::SUBMITTED;
             $enrollment->notes = $dto->notes;
             $enrollment->draft_expires_at = null;
             
             // Marquer les documents comme permanents
             $this->documentRepository->markAsPermanent($enrollment->id);
             
-            return $this->enrollmentRepository->save($enrollment);
+            $savedEnrollment = $this->enrollmentRepository->save($enrollment);
+            
+            // Envoyer l'email de confirmation
+            try {
+                Mail::to($savedEnrollment->student->email)
+                    ->send(new EnrollmentSubmitted($savedEnrollment));
+            } catch (\Exception $e) {
+                // Log l'erreur mais ne bloque pas le processus
+                \Log::error('Failed to send enrollment confirmation email', [
+                    'enrollment_id' => $savedEnrollment->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+            
+            return $savedEnrollment;
         });
     }
 }
