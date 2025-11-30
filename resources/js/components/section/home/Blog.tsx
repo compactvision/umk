@@ -7,6 +7,10 @@ export default function Blog() {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [likedPosts, setLikedPosts] = useState([]);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
   
   const { props } = usePage();
   const { url } = usePage();
@@ -112,6 +116,39 @@ export default function Blog() {
 
   const getPostImage = (post) => {
     return post.images.main1 || post.images.main2 || '/images/default-blog.jpg';
+  };
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+
+    setNewsletterLoading(true);
+    setNewsletterError('');
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNewsletterSuccess(true);
+        setNewsletterEmail('');
+        setTimeout(() => setNewsletterSuccess(false), 5000);
+      } else {
+        setNewsletterError(data.message || 'Une erreur est survenue');
+      }
+    } catch (err) {
+      setNewsletterError('Erreur de connexion au serveur');
+    } finally {
+      setNewsletterLoading(false);
+    }
   };
 
   return (
@@ -412,16 +449,30 @@ export default function Blog() {
           <p className="text-amber-100 mb-8 max-w-2xl mx-auto">
             Abonnez-vous à notre newsletter pour recevoir les dernières nouvelles et événements de l'université.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input 
               type="email" 
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
               placeholder="Votre adresse email"
               className="flex-1 px-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-white"
+              required
+              disabled={newsletterLoading || newsletterSuccess}
             />
-            <button className="px-6 py-3 bg-white text-amber-600 font-semibold rounded-xl shadow-lg hover:bg-amber-50 transition-colors duration-300">
-              S'abonner
+            <button 
+              type="submit"
+              disabled={newsletterLoading || newsletterSuccess}
+              className="px-6 py-3 bg-white text-amber-600 font-semibold rounded-xl shadow-lg hover:bg-amber-50 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {newsletterLoading ? 'Envoi...' : newsletterSuccess ? 'Inscrit !' : "S'abonner"}
             </button>
-          </div>
+          </form>
+          {newsletterError && (
+            <p className="text-red-200 text-sm mt-3">{newsletterError}</p>
+          )}
+          {newsletterSuccess && (
+            <p className="text-white text-sm mt-3">✓ Merci de vous être abonné à notre newsletter !</p>
+          )}
         </div>
       </div>
 

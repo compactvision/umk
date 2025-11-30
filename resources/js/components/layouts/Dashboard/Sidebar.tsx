@@ -34,8 +34,8 @@ const rolePermissions: Record<UserRole, string[]> = {
     user: ['enrollments'],
     student: ['dashboard', 'settings'],
     instructor: ['analytics', 'reports', 'settings'],
-    admin: ['dashboard', 'analytics', 'reports', 'users', 'settings'],
-    super_admin: ['dashboard', 'analytics', 'reports', 'users', 'settings'],
+    admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
+    super_admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
 };
 
 const Sidebar = ({
@@ -160,6 +160,12 @@ const Sidebar = ({
             ariaLabel: 'Gestion des inscriptions',
             icon: <BookOpen size={isMobile ? 20 : 24} />,
         },
+        {
+            id: 'site_settings',
+            label: 'UMK',
+            ariaLabel: 'Paramètres du site',
+            icon: <Settings size={isMobile ? 20 : 24} />,
+        },
     ];
 
     const visibleMenuItems = menuItems.filter((item) => hasPermission(item.id));
@@ -216,6 +222,12 @@ const Sidebar = ({
             title: 'Inscriptions',
             items: [
                 { id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') },
+            ],
+        },
+        site_settings: {
+            title: 'Site Settings',
+            items: [
+                { id: 'site-settings', label: 'Paramètres du site', icon: <Settings size={18} />, href: route('dashboard.admin.site.index') },
             ],
         },
     };

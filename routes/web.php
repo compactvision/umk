@@ -36,6 +36,8 @@ Route::get('/course/{id}', [SwitchPageController::class, 'courseShow'])->name('c
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 Route::get('blog', [SwitchPageController::class, 'blog'])->name('blog');
 Route::get('blog/{id}', [SwitchPageController::class, 'blogDetails'])->name('blog.show');
+Route::get('politique', [SwitchPageController::class, 'politique'])->name('politique');
+Route::get('condition', [SwitchPageController::class, 'condition'])->name('condition');
 
 // Routes d'authentification
 Route::get('/dashboard/auth/login', function () {

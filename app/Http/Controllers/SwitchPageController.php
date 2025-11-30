@@ -181,4 +181,14 @@ class SwitchPageController extends Controller
             'categories' => $categories,
         ]);
     }
+
+    public function politique()
+    {
+        return Inertia::render('Politiquepage');
+    }
+
+    public function condition()
+    {
+        return Inertia::render('Conditionpage');
+    }
 }

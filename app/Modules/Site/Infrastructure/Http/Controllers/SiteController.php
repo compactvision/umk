@@ -31,18 +31,33 @@ class SiteController extends Controller
         return response()->json($site);
     }
 
-    public function store(SaveSiteRequest $request): JsonResponse
+    public function store(SaveSiteRequest $request)
     {
         return $this->save($request);
     }
 
-    public function update(SaveSiteRequest $request, $id = null): JsonResponse
+    public function update(SaveSiteRequest $request, $id = null)
     {
-        return $this->save($request);
+        $quest = $this->save($request);
+        return redirect()->back()->with('success', 'Site updated successfully');
     }
 
-    private function save(SaveSiteRequest $request): JsonResponse
+    private function save(SaveSiteRequest $request)
     {
+        // Handle logo upload
+        $logoUrl = $request->validated('logoUrl');
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('site', 'public');
+            $logoUrl = $logoPath;
+        }
+
+        // Handle favicon upload
+        $faviconUrl = $request->validated('faviconUrl');
+        if ($request->hasFile('favicon')) {
+            $faviconPath = $request->file('favicon')->store('site', 'public');
+            $faviconUrl = $faviconPath;
+        }
+
         $dto = new SiteDto(
             id: null, // ID is handled in repository for singleton logic
             siteName: $request->validated('siteName'),
@@ -50,8 +65,8 @@ class SiteController extends Controller
             contactEmail: $request->validated('contactEmail'),
             contactPhone: $request->validated('contactPhone'),
             address: $request->validated('address'),
-            logoUrl: $request->validated('logoUrl'),
-            faviconUrl: $request->validated('faviconUrl'),
+            logoUrl: $logoUrl,
+            faviconUrl: $faviconUrl,
             socialLinks: $request->validated('socialLinks'),
             description: $request->validated('description')
         );

@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SiteModuleTest extends TestCase
@@ -70,5 +72,36 @@ class SiteModuleTest extends TestCase
             'site_name' => 'Initial Site',
             'contact_email' => 'initial@example.com',
         ]);
+    }
+
+    public function test_can_upload_logo_and_favicon()
+    {
+        Storage::fake('public');
+
+        $logo = UploadedFile::fake()->image('logo.png', 150, 50);
+        $favicon = UploadedFile::fake()->image('favicon.png', 32, 32);
+
+        $data = [
+            'siteName' => 'Test Site',
+            'logo' => $logo,
+            'favicon' => $favicon,
+        ];
+
+        $response = $this->postJson('/api/site', $data);
+
+        $response->assertStatus(200);
+
+        // Verify files were stored
+        Storage::disk('public')->assertExists('site/' . $logo->hashName());
+        Storage::disk('public')->assertExists('site/' . $favicon->hashName());
+
+        // Verify paths are in database
+        $this->assertDatabaseHas('sites', [
+            'site_name' => 'Test Site',
+        ]);
+
+        $site = \App\Models\Site::first();
+        $this->assertStringContainsString('site/', $site->logo_url);
+        $this->assertStringContainsString('site/', $site->favicon_url);
     }
 }

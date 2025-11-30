@@ -1,21 +1,79 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { title } from 'process';
 import { useState } from 'react';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
     const [subscribed, setSubscribed] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const [activeLink, setActiveLink] = useState(null);
+    const { site } = usePage().props;
 
-    const handleSubscribe = (e) => {
+    const handleSubscribe = async (e) => {
         e.preventDefault();
-        if (email) {
-            setSubscribed(true);
-            setTimeout(() => setSubscribed(false), 3000);
-            setEmail('');
+        if (!email) return;
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch('/api/newsletter/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSubscribed(true);
+                setEmail('');
+                setTimeout(() => setSubscribed(false), 5000);
+            } else {
+                setError(data.message || 'Une erreur est survenue');
+            }
+        } catch (err) {
+            setError('Erreur de connexion au serveur');
+        } finally {
+            setLoading(false);
         }
     };
 
     const BG = '/assets/img/bg/footer.jpg';
+
+    const quickLinks = [
+        {
+            title: 'A propos',
+            links: "/about"
+        },
+        {
+            title: 'Contact',
+            links: "/contact"
+        },
+        {
+            title: 'Actualités',
+            links: "/blog"
+        },
+        {
+            title: 'Faculté',
+            links: "/courses"
+        }
+    ]
+
+    const admissions = [
+        {
+            title: 'Procedure d\'admission',
+            links: '/admission'
+        },
+        {
+            title: 'Frais de scolarité',
+            links: '/tuitions'
+        }
+    ]
 
     return (
         <footer className="relative isolate mt-24 overflow-hidden">
@@ -62,15 +120,18 @@ export default function Footer() {
                                 <div className="text-center md:text-right">
                                     <span className="mb-1 block text-sm text-blue-200">Hotline disponible 24h/24</span>
                                     <a
-                                        href="tel:+24305550132"
+                                        href={`tel:${site.contactPhone}`}
                                         className="inline-block text-2xl font-bold text-white transition-colors duration-300 hover:text-yellow-300"
                                     >
-                                        +243&nbsp;(0)&nbsp;818 847 593
+                                        {site.contactPhone}
                                     </a>
                                 </div>
-                                <button className="transform rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400">
+                                <a
+                                    href={`tel:${site.contactPhone}`}
+                                    className="transform rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 inline-block text-center"
+                                >
                                     Prendre rendez-vous
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -84,14 +145,12 @@ export default function Footer() {
                     <div className="sm:col-span-1 lg:col-span-2">
                         <a href="#!" className="group mb-6 inline-flex items-center">
                             <img
-                                src="/assets/img/logo/logo.png"
+                                src={site.logoUrl ? `/storage/${site.logoUrl}` : '/assets/img/logo/logo.png'}
                                 alt="UMK"
                                 className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
                             />
                         </a>
-                        <p className="mb-6 leading-relaxed text-slate-300">
-                            Université Moderne de Kinkole - Excellence académique et innovation pour former les leaders de demain.
-                        </p>
+                        <p className="mb-6 leading-relaxed text-slate-300">{site.description}</p>
 
                         <div className="mb-8">
                             <div className="flex items-start gap-3 text-slate-300">
@@ -106,9 +165,7 @@ export default function Footer() {
                                 </svg>
                                 <div>
                                     <p>
-                                        Au croisement des avenues Ndakala et Mpongo N°02, <br />
-                                        Q/ Kinkole Pêcheur – N’sélé. Kinshasa – RDC <br />
-                                        Réf. : Derrière le Marché de Kinkole, en face de la maison communale de la n’sélé.
+                                        {site.address}
                                     </p>
                                 </div>
                             </div>
@@ -121,7 +178,7 @@ export default function Footer() {
                                 <li>
                                     <a
                                         aria-label="Facebook"
-                                        href="#!"
+                                        href={site.socialLinks.facebook}
                                         className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-slate-400 transition-all duration-300 hover:bg-blue-600 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                     >
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -136,7 +193,7 @@ export default function Footer() {
                                 <li>
                                     <a
                                         aria-label="X"
-                                        href="#!"
+                                        href={site.socialLinks.twitter}
                                         className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-slate-400 transition-all duration-300 hover:bg-black hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                     >
                                         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -151,7 +208,7 @@ export default function Footer() {
                                 <li>
                                     <a
                                         aria-label="LinkedIn"
-                                        href="#!"
+                                        href={site.socialLinks.linkedin}
                                         className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-slate-400 transition-all duration-300 hover:bg-blue-700 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                     >
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -163,7 +220,7 @@ export default function Footer() {
                                     </a>
                                 </li>
                                 {/* Instagram */}
-                                <li>
+                                {/* <li>
                                     <a
                                         aria-label="Instagram"
                                         href="#!"
@@ -176,7 +233,7 @@ export default function Footer() {
                                             Instagram
                                         </span>
                                     </a>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
 
@@ -191,12 +248,20 @@ export default function Footer() {
                                     placeholder="Votre adresse email"
                                     className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-2 text-white placeholder-slate-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                     required
+                                    disabled={loading}
                                 />
+                                {error && (
+                                    <p className="text-red-400 text-xs">{error}</p>
+                                )}
+                                {subscribed && (
+                                    <p className="text-green-400 text-xs">✓ Merci de vous être abonné !</p>
+                                )}
                                 <button
                                     type="submit"
-                                    className="transform rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 font-medium text-white shadow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                    disabled={loading || subscribed}
+                                    className="transform rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 font-medium text-white shadow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {subscribed ? 'Inscrit !' : "S'abonner"}
+                                    {loading ? 'Envoi...' : subscribed ? 'Inscrit !' : "S'abonner"}
                                 </button>
                             </form>
                         </div>
@@ -209,17 +274,10 @@ export default function Footer() {
                             Admissions
                         </h3>
                         <ul className="space-y-3">
-                            {[
-                                "Procédure d'inscription",
-                                'Calendrier académique',
-                                'Démarches administratives',
-                                "Critères d'admission",
-                                'Frais de scolarité',
-                                "Bourses d'études",
-                            ].map((label, index) => (
+                            {admissions.map((label, index) => (
                                 <li key={label}>
-                                    <a
-                                        href="#!"
+                                    <Link
+                                        href={label.links}
                                         className="group flex items-center text-slate-400 transition-all duration-300 hover:translate-x-1 hover:text-blue-400 focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-blue-500"
                                         onMouseEnter={() => setActiveLink(`admissions-${index}`)}
                                         onMouseLeave={() => setActiveLink(null)}
@@ -232,8 +290,8 @@ export default function Footer() {
                                         >
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
-                                        {label}
-                                    </a>
+                                        {label.title}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
@@ -246,11 +304,11 @@ export default function Footer() {
                             Accès rapide
                         </h3>
                         <ul className="space-y-3">
-                            {['Presse & Médias', 'Portail Alumni', "Lettres d'information", 'Départements', 'Annuaire', 'Recrutement'].map(
+                            {quickLinks.map(
                                 (label, index) => (
                                     <li key={label}>
-                                        <a
-                                            href="#!"
+                                        <Link
+                                            href={label.links}
                                             className="group flex items-center text-slate-400 transition-all duration-300 hover:translate-x-1 hover:text-purple-400 focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-purple-500"
                                             onMouseEnter={() => setActiveLink(`quick-${index}`)}
                                             onMouseLeave={() => setActiveLink(null)}
@@ -263,8 +321,8 @@ export default function Footer() {
                                             >
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
-                                            {label}
-                                        </a>
+                                            {label.title}
+                                        </Link>
                                     </li>
                                 ),
                             )}
@@ -272,7 +330,7 @@ export default function Footer() {
                     </nav>
 
                     {/* Col 4 : Liens utiles */}
-                    <nav aria-label="Liens utiles" className="sm:col-span-1">
+                    {/* <nav aria-label="Liens utiles" className="sm:col-span-1">
                         <h3 className="mb-6 flex items-center text-sm font-semibold tracking-wide text-slate-300 uppercase">
                             <span className="mr-3 h-0.5 w-8 bg-green-500"></span>
                             Liens utiles
@@ -306,7 +364,7 @@ export default function Footer() {
                                 </li>
                             ))}
                         </ul>
-                    </nav>
+                    </nav> */}
 
                     {/* Col 5 : Boutons d'action */}
                     <div className="sm:col-span-1">
@@ -348,15 +406,15 @@ export default function Footer() {
                         </p>
 
                         <div className="flex items-center gap-6">
-                            <a href="#!" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
+                            <Link href="/politique" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
                                 Politique de confidentialité
-                            </a>
-                            <a href="#!" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
+                            </Link>
+                            <Link href="/condition" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
                                 Conditions d'utilisation
-                            </a>
-                            <a href="#!" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
+                            </Link>
+                            {/* <Link href="/plan" className="text-sm text-slate-400 transition-colors duration-300 hover:text-white">
                                 Plan du site
-                            </a>
+                            </Link> */}
                         </div>
                     </div>
                 </div>

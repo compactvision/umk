@@ -16,15 +16,15 @@ class SiteServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // $this->registerRoutes();
+        $this->registerRoutes();
     }
 
-    // private function registerRoutes(): void
-    // {
-    //     Route::prefix('api')
-    //         ->middleware('api')
-    //         ->group(function () {
-    //             require __DIR__ . '/../Http/Routes/api.php';
-    //         });
-    // }
+    private function registerRoutes(): void
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->group(function () {
+                require __DIR__ . '/../Http/Routes/api.php';
+            });
+    }
 }

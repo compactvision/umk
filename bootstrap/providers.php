@@ -11,4 +11,5 @@ return [
     App\Modules\Enrollment\Infrastructure\Providers\EnrollmentServiceProvider::class,
     App\Modules\Blog\Infrastructure\Providers\BlogServiceProvider::class,
     App\Modules\Site\Infrastructure\Providers\SiteServiceProvider::class,
+    App\Modules\Newsletter\Infrastructure\Providers\NewsletterServiceProvider::class,
 ];

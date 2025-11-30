@@ -7,6 +7,7 @@ export default function Header() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const { url } = usePage();
+    const { site } = usePage().props;
 
     const isActive = (path: string) => url === path || url.startsWith(path + '/');
 
@@ -42,6 +43,27 @@ export default function Header() {
         }
     };
 
+    const InfoFor = [
+        // {
+        //     label: 'Étudiants',
+        //     link: '#!',
+        // },
+        {
+            label: 'Faculté',
+            link: route('courses'),
+        },
+        {
+            label: 'Actualités',
+            link: route('blog'),
+        },
+        // {
+        //     label: 'Communauté',
+        //     link: '#!',
+        // },
+    ];
+
+    console.log(site)
+
     return (
         <>
             {/* TOP BAR */}
@@ -59,20 +81,20 @@ export default function Header() {
                         <span className="hidden font-medium opacity-90 sm:inline">SERVICE D'ASSISTANCE :</span>
                         <span className="font-medium opacity-90 sm:hidden">Support :</span>
                         <strong className="bg-gradient-to-r from-amber-300 to-yellow-300 bg-clip-text font-bold tracking-wide text-transparent">
-                            +243 (810) 01 01 111
+                            {site?.contactPhone}
                         </strong>
                     </div>
 
                     <div className="hidden items-center gap-4 md:flex lg:gap-6">
                         <span className="hidden text-xs font-semibold tracking-wider uppercase opacity-85 lg:inline">INFORMATION POUR :</span>
                         <span className="text-xs font-semibold tracking-wider uppercase opacity-85 lg:hidden">INFO :</span>
-                        {['Étudiants', 'Faculté', 'Recherche', 'Communauté'].map((t) => (
+                        {InfoFor.map((t) => (
                             <a
-                                key={t}
-                                href="#!"
+                                key={t.label}
+                                href={t.link}
                                 className="group relative px-2 py-1 text-xs font-medium transition-all duration-300 hover:scale-105 hover:text-amber-300 lg:px-3 lg:py-2 lg:text-sm"
                             >
-                                <span className="relative z-10">{t}</span>
+                                <span className="relative z-10">{t.label}</span>
                                 <div className="absolute inset-0 rounded-lg bg-white/10 opacity-0 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100" />
                             </a>
                         ))}
