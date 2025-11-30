@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BookOpen, DollarSign, Users, Clock, Award, Headphones, ChevronRight, Sparkles, ArrowRight, MapPin, GraduationCap, Briefcase, Target, Lightbulb } from 'lucide-react';
+import { router } from '@inertiajs/react';
 
 const AboutPageSection = () => {
     const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
@@ -296,7 +297,7 @@ const AboutPageSection = () => {
                                         Développez votre potentiel et transformez votre avenir avec nous
                                     </p>
                                 </div>
-                                <button className="px-8 py-3 bg-white text-amber-600 font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center">
+                                <button onClick={() => router.visit('/dashboard/enrollments')} className="px-8 py-3 bg-white text-amber-600 font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center">
                                     Postuler maintenant
                                     <ChevronRight className="w-5 h-5 ml-2" />
                                 </button>

@@ -38,6 +38,7 @@ Route::get('blog', [SwitchPageController::class, 'blog'])->name('blog');
 Route::get('blog/{id}', [SwitchPageController::class, 'blogDetails'])->name('blog.show');
 Route::get('politique', [SwitchPageController::class, 'politique'])->name('politique');
 Route::get('condition', [SwitchPageController::class, 'condition'])->name('condition');
+Route::get('tuitions', [SwitchPageController::class, 'tuitions'])->name('tuitions');
 
 // Routes d'authentification
 Route::get('/dashboard/auth/login', function () {

@@ -191,4 +191,9 @@ class SwitchPageController extends Controller
     {
         return Inertia::render('Conditionpage');
     }
+
+    public function tuitions()
+    {
+        return Inertia::render('Tuitionspage');
+    }
 }

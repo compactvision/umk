@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -10,6 +10,7 @@ export default function Contact() {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const { site } = usePage().props;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -202,7 +203,7 @@ export default function Contact() {
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Appelez-nous</h4>
                                         <p className="text-gray-600 text-sm">Du lundi au vendredi de 9h à 18h</p>
-                                        <p className="text-yellow-600 font-medium">+243 810 23 45 67</p>
+                                        <p className="text-yellow-600 font-medium">{site.contactPhone}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-4 group">
@@ -214,7 +215,7 @@ export default function Contact() {
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Écrivez-nous</h4>
                                         <p className="text-gray-600 text-sm">Notre équipe est à votre écoute</p>
-                                        <p className="text-yellow-600 font-medium">contact@umk.edu</p>
+                                        <p className="text-yellow-600 font-medium">{site.contactEmail}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-4 group sm:col-span-2">
@@ -227,7 +228,7 @@ export default function Contact() {
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Notre campus</h4>
                                         <p className="text-gray-600 text-sm">Venez visiter l'université UMK</p>
-                                        <p className="text-green-600 font-medium">123 Avenue Kinkole, Kinshasa, RDC</p>
+                                        <p className="text-green-600 font-medium">{site.address}</p>
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +248,7 @@ export default function Contact() {
                             </div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">Programmes d'études</h4>
                             <p className="text-gray-600">Découvrez notre catalogue de formations et trouvez celle qui vous correspond.</p>
-                            <Link href="#" className="mt-4 inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
+                            <Link href="/courses" className="mt-4 inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
                                 En savoir plus
                                 <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -262,7 +263,7 @@ export default function Contact() {
                             </div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">Frais de scolarité</h4>
                             <p className="text-gray-600">Informations sur les coûts et les options de financement disponibles.</p>
-                            <Link href="#" className="mt-4 inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
+                            <Link href="/tuitions" className="mt-4 inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
                                 En savoir plus
                                 <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -277,7 +278,7 @@ export default function Contact() {
                             </div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-2">Processus d'admission</h4>
                             <p className="text-gray-600">Guide complet pour postuler et rejoindre notre communauté universitaire.</p>
-                            <Link href="#" className="mt-4 inline-flex items-center text-green-600 font-medium hover:text-green-700">
+                            <Link href="/admission" className="mt-4 inline-flex items-center text-green-600 font-medium hover:text-green-700">
                                 En savoir plus
                                 <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
