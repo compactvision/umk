@@ -9,6 +9,7 @@ use App\Modules\Level\Infrastructure\Http\Controllers\LevelController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SwitchPageController;
+use App\Modules\Site\Infrastructure\Http\Controllers\SiteController;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Controllers\AdmissionConditionController;
 use App\Modules\Blog\Infrastructure\Http\Controllers\CategoryController;
 use App\Modules\Blog\Infrastructure\Http\Controllers\PostController;
@@ -184,6 +185,12 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         Route::resource('posts', PostController::class)->except(['show']);
         Route::get('/dashboard/blog/{slug}', [PostController::class, 'show'])->name('posts.show');
         Route::post('/dashboard/blog/categories', [CategoryController::class, 'store'])->name('categories.store');
+
+        Route::prefix('/site')->name('site.')->group(function () {
+            Route::get('/', [SiteController::class, 'index'])->name('index');
+            Route::post('/', [SiteController::class, 'store'])->name('store');
+            Route::put('/{id}', [SiteController::class, 'update'])->name('update');
+        });
     });
 
     Route::prefix('enrollments')->name('enrollments.')->group(function () {

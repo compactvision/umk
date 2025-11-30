@@ -10,4 +10,5 @@ return [
     App\Modules\AdmissionCondition\Infrastructure\Providers\AdmissionConditionServiceProvider::class,
     App\Modules\Enrollment\Infrastructure\Providers\EnrollmentServiceProvider::class,
     App\Modules\Blog\Infrastructure\Providers\BlogServiceProvider::class,
+    App\Modules\Site\Infrastructure\Providers\SiteServiceProvider::class,
 ];
