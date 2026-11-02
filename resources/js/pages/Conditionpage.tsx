@@ -1,3 +1,4 @@
+import Breadcrumb from "@/components/UI/home/Breadcumb";
 import App from "@/components/layouts/Home/App";
 import { FileCheck, Monitor, UserCheck, Shield, Eye, AlertTriangle, UserX, RefreshCw, Scale, Mail } from 'lucide-react';
 
@@ -7,20 +8,7 @@ export default function TermsOfUse() {
     return (
         <App>
             {/* En-tête percutant */}
-            <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12 sm:py-16">
-                <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
-                    <FileCheck className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-white/80" />
-                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
-                        Conditions Générales d'Utilisation
-                    </h1>
-                    <p className="text-lg sm:text-xl text-indigo-100">
-                        Les règles qui régissent notre relation.
-                    </p>
-                    <p className="text-sm text-indigo-200 mt-2">
-                        Dernière mise à jour : {lastUpdatedDate}
-                    </p>
-                </div>
-            </header>
+            <Breadcrumb title="Conditions d’utilisation" desc="Les informations relatives à l’utilisation du site et à votre relation avec l’Université Simon Kimbangu." />
 
             <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-12 sm:py-16 bg-gray-50 min-h-screen">
                 <div className="space-y-8">
@@ -32,27 +20,27 @@ export default function TermsOfUse() {
                         <div className="p-6 sm:w-2/3">
                             <h3 className="text-xl font-bold text-gray-900 mb-3">1. Acceptation des conditions</h3>
                             <p className="text-gray-700">
-                                L'accès et l'utilisation du site web <strong>[URL de votre site]</strong> (le "Service") sont soumis aux présentes conditions générales d'utilisation ("CGU"). En accédant ou en utilisant le Service, vous acceptez d'être lié par ces CGU. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre Service.
+                                L'accès et l'utilisation du site web <strong>universitesk.net</strong> (le "Service") sont soumis aux présentes conditions générales d'utilisation ("CGU"). En accédant ou en utilisant le Service, vous acceptez d'être lié par ces CGU. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre Service.
                             </p>
                         </div>
                     </section>
 
                     {/* Section 2: Description du service */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-blue-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Monitor className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
                             <h3 className="text-xl font-bold text-gray-900 mb-3">2. Description du service</h3>
                             <p className="text-gray-700">
-                                <strong>[Nom de votre entreprise]</strong> fournit une plateforme en ligne permettant aux utilisateurs de s'inscrire à des programmes d'études et de gérer leur dossier d'inscription.
+                                <strong>Université Simon Kimbangu</strong> fournit une plateforme en ligne permettant aux utilisateurs de s'inscrire à des programmes d'études et de gérer leur dossier d'inscription.
                             </p>
                         </div>
                     </section>
 
                     {/* Section 3: Obligations de l'utilisateur */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-cyan-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <UserCheck className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
@@ -70,13 +58,13 @@ export default function TermsOfUse() {
 
                     {/* Section 4: Propriété intellectuelle */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-purple-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Shield className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
                             <h3 className="text-xl font-bold text-gray-900 mb-3">4. Propriété intellectuelle</h3>
                             <p className="text-gray-700 mb-3">
-                                Le Service et tout son contenu sont la propriété de <strong>[Nom de votre entreprise]</strong> et sont protégés par les lois sur la propriété intellectuelle.
+                                Le Service et tout son contenu sont la propriété de <strong>Université Simon Kimbangu</strong> et sont protégés par les lois sur la propriété intellectuelle.
                             </p>
                             <p className="text-gray-700">
                                 Les documents que vous soumettez restent votre propriété. Cependant, en nous les soumettant, vous nous accordez le droit de les utiliser aux fins de la gestion de votre inscription.
@@ -86,13 +74,13 @@ export default function TermsOfUse() {
 
                     {/* Section 5: Confidentialité */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-indigo-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Eye className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
                             <h3 className="text-xl font-bold text-gray-900 mb-3">5. Confidentialité</h3>
                             <p className="text-gray-700">
-                                Votre confidentialité est importante pour nous. Veuillez consulter notre <a href="/politique-de-confidentialite" className="text-blue-600 hover:underline font-semibold">Politique de Confidentialité</a> pour comprendre comment nous collectons, utilisons et protégeons vos informations.
+                                Votre confidentialité est importante pour nous. Veuillez consulter notre <a href="/politique-de-confidentialite" className="text-emerald-600 hover:underline font-semibold">Politique de Confidentialité</a> pour comprendre comment nous collectons, utilisons et protégeons vos informations.
                             </p>
                         </div>
                     </section>
@@ -105,7 +93,7 @@ export default function TermsOfUse() {
                         <div className="p-6 sm:w-2/3">
                             <h3 className="text-xl font-bold text-gray-900 mb-3">6. Limitation de responsabilité</h3>
                             <p className="text-gray-700">
-                                Dans la mesure maximale permise par la loi, <strong>[Nom de votre entreprise]</strong> ne sera pas responsable des dommages indirects découlant de votre utilisation ou de votre incapacité à utiliser le Service.
+                                Dans la mesure maximale permise par la loi, <strong>Université Simon Kimbangu</strong> ne sera pas responsable des dommages indirects découlant de votre utilisation ou de votre incapacité à utiliser le Service.
                             </p>
                         </div>
                     </section>
@@ -158,8 +146,8 @@ export default function TermsOfUse() {
                         Pour toute question concernant ces CGU, veuillez nous contacter :
                     </p>
                     <p className="text-gray-700 mt-2">
-                        Par e-mail : <a href="mailto:[adresse e-mail de contact]" className="text-blue-600 hover:underline font-semibold">[adresse e-mail de contact]</a><br />
-                        Par courrier : <strong>[Adresse postale de votre entreprise]</strong>
+                        Par e-mail : <a href="mailto:contact@universitesk.net" className="text-emerald-600 hover:underline font-semibold">contact@universitesk.net</a><br />
+                        Par courrier : <strong>N° 44, avenue Bongolo, Kauka, Kalamu, Kinshasa, RDC</strong>
                     </p>
                 </footer>
             </main>

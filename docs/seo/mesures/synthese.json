@@ -1,0 +1,138 @@
+[
+  {
+    "audit": "accueil-mobile-ssr",
+    "url": "http://127.0.0.1:8140/",
+    "date": "2026-11-02T11:52:42.344Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 75,
+      "accessibility": 95,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 8749.832225,
+    "cls": 0.0002473003763698492,
+    "tbt_ms": 70.5,
+    "ttfb_ms": 99,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "accueil-ordinateur-ssr",
+    "url": "http://127.0.0.1:8140/",
+    "date": "2026-11-02T11:50:33.256Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 93,
+      "accessibility": 95,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 1737.532325,
+    "cls": 0.001836245074862096,
+    "tbt_ms": 0,
+    "ttfb_ms": 1509,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "admissions-mobile",
+    "url": "http://127.0.0.1:8140/admission",
+    "date": "2026-11-02T12:01:01.929Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 74,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 6161.680799999997,
+    "cls": 0.002011197590791626,
+    "tbt_ms": 162,
+    "ttfb_ms": 1642,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "admissions-ordinateur",
+    "url": "http://127.0.0.1:8140/admission",
+    "date": "2026-11-02T12:01:20.828Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 92,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 1898.4058499999996,
+    "cls": 0.001996404895587077,
+    "tbt_ms": 0,
+    "ttfb_ms": 121,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "formation-mobile",
+    "url": "http://127.0.0.1:8140/course/1",
+    "date": "2026-11-02T12:10:25.251Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 73,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 9461.5684,
+    "cls": 0.001033851921812759,
+    "tbt_ms": 130.9999999999991,
+    "ttfb_ms": 1886,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "formation-ordinateur",
+    "url": "http://127.0.0.1:8140/course/1",
+    "date": "2026-11-02T12:10:45.150Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 1686.8659999999995,
+    "cls": 0.001131097813238771,
+    "tbt_ms": 53.999999999999886,
+    "ttfb_ms": 560,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "accueil-mobile-compile",
+    "url": "http://127.0.0.1:8139/",
+    "date": "2026-11-02T11:17:58.552Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 74,
+      "accessibility": 95,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 9242.493000000002,
+    "cls": 0.01083670141972709,
+    "tbt_ms": 121.5,
+    "ttfb_ms": 610,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  {
+    "audit": "accueil-mobile",
+    "url": "http://127.0.0.1:8137/",
+    "date": "2026-11-02T11:12:54.926Z",
+    "lighthouse": "13.6.0",
+    "scores": {
+      "performance": 50,
+      "accessibility": 95,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "lcp_ms": 23552.298750000005,
+    "cls": 0,
+    "tbt_ms": 735.5,
+    "ttfb_ms": 229,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  }
+]

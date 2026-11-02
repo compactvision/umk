@@ -1,0 +1,282 @@
+{
+  "MED": {
+    "L1": [
+      [
+        "Biologie cellulaire et moléculaire",
+        "Chimie générale et organique",
+        "Physique médicale",
+        "Anatomie générale",
+        "Mathématiques et biostatistique",
+        "Méthodologie du travail universitaire"
+      ],
+      [
+        "Anatomie des appareils locomoteur et cardiovasculaire",
+        "Histologie et embryologie générales",
+        "Biochimie structurale",
+        "Physiologie générale",
+        "Introduction à la santé publique",
+        "Éthique et communication en santé"
+      ]
+    ],
+    "L2": [
+      [
+        "Anatomie des systèmes nerveux et viscéraux",
+        "Physiologie cardiovasculaire et respiratoire",
+        "Biochimie métabolique",
+        "Histologie spéciale",
+        "Microbiologie générale",
+        "Biostatistique appliquée"
+      ],
+      [
+        "Physiologie rénale et endocrinienne",
+        "Immunologie fondamentale",
+        "Parasitologie médicale",
+        "Génétique humaine",
+        "Sémiologie générale",
+        "Travaux pratiques de sciences biomédicales"
+      ]
+    ],
+    "L3": [
+      [
+        "Anatomie pathologique générale",
+        "Pharmacologie générale",
+        "Physiopathologie",
+        "Bactériologie et virologie médicales",
+        "Sémiologie médicale",
+        "Techniques de laboratoire biomédical"
+      ],
+      [
+        "Pathologie médicale intégrée",
+        "Introduction à la pathologie chirurgicale",
+        "Pharmacologie des principaux systèmes",
+        "Épidémiologie et prévention",
+        "Initiation clinique supervisée",
+        "Projet de recherche biomédicale"
+      ]
+    ]
+  },
+  "SP": {
+    "L1": [
+      [
+        "Introduction à la santé publique",
+        "Biologie humaine",
+        "Statistique descriptive",
+        "Chimie et environnement",
+        "Sociologie de la santé",
+        "Méthodologie universitaire"
+      ],
+      [
+        "Épidémiologie descriptive",
+        "Anatomie et physiologie humaines",
+        "Hygiène et assainissement",
+        "Nutrition humaine",
+        "Communication pour la santé",
+        "Informatique et gestion des données"
+      ]
+    ],
+    "L2": [
+      [
+        "Épidémiologie analytique",
+        "Biostatistique inférentielle",
+        "Santé environnementale",
+        "Systèmes et politiques de santé",
+        "Microbiologie et maladies transmissibles",
+        "Méthodes de recherche en santé"
+      ],
+      [
+        "Planification sanitaire",
+        "Prévention et contrôle des maladies",
+        "Santé maternelle et infantile",
+        "Économie de la santé",
+        "Surveillance épidémiologique",
+        "Diagnostic communautaire de terrain"
+      ]
+    ],
+    "L3": [
+      [
+        "Gestion des programmes de santé",
+        "Évaluation des interventions sanitaires",
+        "Santé au travail",
+        "Gestion des urgences sanitaires",
+        "Analyse des données de santé",
+        "Droit et éthique en santé publique"
+      ],
+      [
+        "Stage de santé communautaire",
+        "Travail de fin de cycle en santé publique",
+        "Promotion et éducation pour la santé",
+        "Management des services de santé",
+        "Suivi des indicateurs sanitaires",
+        "Séminaire de recherche appliquée"
+      ]
+    ]
+  },
+  "SSPA": {
+    "L1": [
+      [
+        "Introduction à la sociologie",
+        "Introduction à la science politique",
+        "Introduction à l’administration publique",
+        "Histoire des institutions politiques",
+        "Expression et communication françaises",
+        "Méthodologie du travail universitaire"
+      ],
+      [
+        "Sociologie générale",
+        "Institutions politiques congolaises",
+        "Introduction à l’économie politique",
+        "Introduction au droit public",
+        "Statistiques en sciences sociales",
+        "Informatique appliquée aux sciences sociales"
+      ]
+    ],
+    "L2": [
+      [
+        "Sociologie des organisations",
+        "Systèmes politiques comparés",
+        "Droit administratif",
+        "Méthodes d’enquête quantitative",
+        "Finances publiques",
+        "Histoire politique de l’Afrique"
+      ],
+      [
+        "Analyse des politiques publiques",
+        "Gestion des ressources humaines publiques",
+        "Relations internationales",
+        "Méthodes d’enquête qualitative",
+        "Décentralisation et gouvernance locale",
+        "Démographie et développement"
+      ]
+    ],
+    "L3": [
+      [
+        "Management des administrations publiques",
+        "Sociologie du développement",
+        "Analyse électorale et participation citoyenne",
+        "Conception et gestion de projets",
+        "Évaluation des politiques publiques",
+        "Éthique et déontologie administratives"
+      ],
+      [
+        "Stage en organisation publique ou associative",
+        "Travail de fin de cycle en sciences sociales",
+        "Gouvernance et gestion des conflits",
+        "Coopération internationale",
+        "Entrepreneuriat social",
+        "Séminaire de recherche en sciences politiques"
+      ]
+    ]
+  },
+  "DR": {
+    "L1": [
+      [
+        "Introduction générale au droit",
+        "Droit constitutionnel : théorie générale",
+        "Droit civil : personnes et famille",
+        "Histoire du droit et des institutions",
+        "Expression juridique française",
+        "Méthodologie juridique"
+      ],
+      [
+        "Droit constitutionnel congolais",
+        "Droit civil : biens",
+        "Introduction au droit pénal",
+        "Institutions judiciaires",
+        "Sociologie juridique",
+        "Informatique et recherche documentaire juridique"
+      ]
+    ],
+    "L2": [
+      [
+        "Droit civil : théorie des obligations",
+        "Droit administratif général",
+        "Droit pénal général",
+        "Droit commercial général",
+        "Droit international public",
+        "Méthodes de recherche juridique"
+      ],
+      [
+        "Droit civil : contrats spéciaux",
+        "Procédure civile",
+        "Droit pénal spécial",
+        "Finances publiques et droit budgétaire",
+        "Droit du travail",
+        "Droits humains et libertés publiques"
+      ]
+    ],
+    "L3": [
+      [
+        "Droit des sociétés",
+        "Procédure pénale",
+        "Droit fiscal",
+        "Droit international privé",
+        "Droit foncier et immobilier",
+        "Contentieux administratif"
+      ],
+      [
+        "Stage et clinique juridique",
+        "Travail de fin de cycle en droit",
+        "Droit des affaires OHADA",
+        "Droit des successions et libéralités",
+        "Droit de l’environnement",
+        "Déontologie des professions juridiques"
+      ]
+    ]
+  },
+  "THEO": {
+    "L1": [
+      [
+        "Introduction à l’Ancien Testament",
+        "Introduction au Nouveau Testament",
+        "Histoire du christianisme ancien",
+        "Introduction à la philosophie",
+        "Expression et communication françaises",
+        "Méthodologie des études théologiques"
+      ],
+      [
+        "Pentateuque et livres historiques",
+        "Évangiles synoptiques",
+        "Grec biblique : initiation",
+        "Histoire du christianisme en Afrique",
+        "Sociologie des religions",
+        "Introduction à la théologie systématique"
+      ]
+    ],
+    "L2": [
+      [
+        "Exégèse de l’Ancien Testament",
+        "Exégèse du Nouveau Testament",
+        "Théologie systématique : Dieu et création",
+        "Hébreu biblique : initiation",
+        "Histoire de la Réforme",
+        "Éthique chrétienne fondamentale"
+      ],
+      [
+        "Lettres pauliniennes",
+        "Théologie systématique : christologie",
+        "Herméneutique biblique",
+        "Grec biblique : lecture de textes",
+        "Homilétique et communication pastorale",
+        "Religions africaines et dialogue interreligieux"
+      ]
+    ],
+    "L3": [
+      [
+        "Théologie systématique : ecclésiologie",
+        "Éthique sociale chrétienne",
+        "Théologie africaine et contextualisation",
+        "Exégèse des livres prophétiques",
+        "Accompagnement et relation d’aide",
+        "Administration des communautés religieuses"
+      ],
+      [
+        "Stage pastoral supervisé",
+        "Travail de fin de cycle en théologie",
+        "Missiologie et engagement communautaire",
+        "Liturgie et pratiques cultuelles",
+        "Théologie et développement durable",
+        "Séminaire de recherche théologique"
+      ]
+    ]
+  }
+}

@@ -1,4 +1,6 @@
+import AdminModal from '@/components/admin/AdminModal';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import VideoFields from '@/components/news/VideoFields';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -7,6 +9,7 @@ type Category = { id: number; name: string; color?: string; description?: string
 type Post = {
     id: number;
     uuid: string;
+    video_url?: string | null;
     title: string;
     slug: string;
     excerpt?: string | null;
@@ -56,6 +59,8 @@ export default function Index(props: PageProps) {
 
     // ------- Create Form (Inertia) -------
     const { data, setData, post, processing, errors, reset, transform, progress } = useForm<{
+        video_url: string;
+        video_file: File | null;
         title: string;
         category_id: string | number | null;
         excerpt: string;
@@ -70,6 +75,8 @@ export default function Index(props: PageProps) {
         gallery: File[];
         tags: string;
     }>({
+        video_url: '',
+        video_file: null,
         title: '',
         category_id: '',
         excerpt: '',
@@ -189,16 +196,6 @@ export default function Index(props: PageProps) {
         [],
     );
 
-    // Format date for display
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('fr-FR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        }).format(date);
-    };
-
     return (
         <Dashboard>
             <Head title="Blog" />
@@ -253,8 +250,10 @@ export default function Index(props: PageProps) {
                     {/* Header */}
                     <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent">Blog</h1>
-                            <p className="mt-2 text-slate-600">Gérez et publiez les actualités de l'UMK.</p>
+                            <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent">
+                                Actualités
+                            </h1>
+                            <p className="mt-2 text-slate-600">Gérez et publiez les actualités de l'USK.</p>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -532,480 +531,446 @@ export default function Index(props: PageProps) {
 
             {/* Create Post Modal */}
             {showCreate && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal}></div>
-                    <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl">
-                        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 p-6 backdrop-blur-sm">
-                            <div>
-                                <h2 className="text-2xl font-bold text-slate-800">Créer un article</h2>
-                                <p className="mt-1 text-sm text-slate-500">Remplissez les informations ci-dessous pour créer un nouvel article</p>
+                <AdminModal
+                    wide
+                    title="Nouvelle actualité"
+                    description="Préparez le contenu, ajoutez vos images et choisissez le mode de publication."
+                    onClose={closeModal}
+                    formId="post-create-form"
+                    submitLabel={
+                        data.status === 'published'
+                            ? 'Publier l’actualité'
+                            : data.status === 'archived'
+                              ? 'Créer dans les archives'
+                              : 'Enregistrer le brouillon'
+                    }
+                    busy={processing}
+                    errors={errors}
+                >
+                    <form id="post-create-form" onSubmit={submitCreate} className="admin-modal-form space-y-6">
+                        <h3 className="admin-modal-section">Les informations essentielles</h3>
+                        {/* Row 1 */}
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <label htmlFor="post-title" className="block text-sm font-medium text-slate-700">
+                                    Titre *
+                                </label>
+                                <input
+                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                    id="post-title"
+                                    name="title"
+                                    value={data.title}
+                                    onChange={(e) => setData('title', e.target.value)}
+                                    required
+                                />
+                                {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
                             </div>
-                            <button
-                                onClick={closeModal}
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
-                                aria-label="Fermer"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </button>
+                            <div className="space-y-2">
+                                <label htmlFor="post-category_id" className="block text-sm font-medium text-slate-700">
+                                    Catégorie
+                                </label>
+                                <select
+                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                    value={data.category_id ?? ''}
+                                    onChange={(e) => setData('category_id', e.target.value)}
+                                >
+                                    <option value="">—</option>
+                                    {categories.map((c) => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.category_id && <p className="text-sm text-red-500">{errors.category_id}</p>}
+                            </div>
                         </div>
 
-                        <div className="max-h-[calc(90vh-80px)] overflow-y-auto p-6">
-                            <form onSubmit={submitCreate} className="space-y-6">
-                                {/* Row 1 */}
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Titre *</label>
-                                        <input
-                                            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                            value={data.title}
-                                            onChange={(e) => setData('title', e.target.value)}
-                                            required
-                                        />
-                                        {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Catégorie</label>
-                                        <select
-                                            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                            value={data.category_id ?? ''}
-                                            onChange={(e) => setData('category_id', e.target.value)}
-                                        >
-                                            <option value="">—</option>
-                                            {categories.map((c) => (
-                                                <option key={c.id} value={c.id}>
-                                                    {c.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.category_id && <p className="text-sm text-red-500">{errors.category_id}</p>}
-                                    </div>
+                        {/* Row 2 */}
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-slate-700">Extrait (300)</label>
+                                <textarea
+                                    rows={4}
+                                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                    id="post-excerpt"
+                                    name="excerpt"
+                                    value={data.excerpt}
+                                    onChange={(e) => setData('excerpt', e.target.value)}
+                                    maxLength={300}
+                                />
+                                <div className="flex justify-between text-xs text-slate-500">
+                                    <span>Brève description de l'article</span>
+                                    <span>{data.excerpt.length}/300</span>
                                 </div>
-
-                                {/* Row 2 */}
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Extrait (300)</label>
-                                        <textarea
-                                            rows={4}
-                                            className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                            value={data.excerpt}
-                                            onChange={(e) => setData('excerpt', e.target.value)}
-                                            maxLength={300}
-                                        />
-                                        <div className="flex justify-between text-xs text-slate-500">
-                                            <span>Brève description de l'article</span>
-                                            <span>{data.excerpt.length}/300</span>
-                                        </div>
-                                        {errors.excerpt && <p className="text-sm text-red-500">{errors.excerpt}</p>}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="block text-sm font-medium text-slate-700">Temps de lecture</label>
-                                            <input
-                                                placeholder="7 min"
-                                                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                                value={data.read_time}
-                                                onChange={(e) => setData('read_time', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="block text-sm font-medium text-slate-700">Tags</label>
-                                            <input
-                                                placeholder="tag1, tag2, tag3"
-                                                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                                value={data.tags}
-                                                onChange={(e) => setData('tags', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Gradient UI */}
-                                <div className="space-y-3">
-                                    <label className="block text-sm font-medium text-slate-700">Gradient UI</label>
-                                    <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
-                                        {gradientOptions.map((gradient) => (
-                                            <button
-                                                key={gradient}
-                                                type="button"
-                                                className={`group relative h-12 overflow-hidden rounded-xl transition-all ${
-                                                    data.gradient === gradient ? 'ring-2 ring-indigo-500 ring-offset-2' : ''
-                                                }`}
-                                                onClick={() => setData('gradient', gradient)}
-                                            >
-                                                <div className={`h-full w-full bg-gradient-to-r ${gradient}`}></div>
-                                                {data.gradient === gradient && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-6 w-6 text-white"
-                                                            viewBox="0 0 20 20"
-                                                            fill="currentColor"
-                                                        >
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </div>
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <input type="hidden" value={data.gradient} onChange={(e) => setData('gradient', e.target.value)} />
-                                </div>
-
-                                {/* Content */}
+                                {errors.excerpt && <p className="text-sm text-red-500">{errors.excerpt}</p>}
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-slate-700">Contenu</label>
-                                    <textarea
-                                        rows={8}
-                                        className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        value={data.content}
-                                        onChange={(e) => setData('content', e.target.value)}
+                                    <label htmlFor="post-read_time" className="block text-sm font-medium text-slate-700">
+                                        Temps de lecture
+                                    </label>
+                                    <input
+                                        placeholder="7 min"
+                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                        id="post-read_time"
+                                        name="read_time"
+                                        value={data.read_time}
+                                        onChange={(e) => setData('read_time', e.target.value)}
                                     />
-                                    {errors.content && <p className="text-sm text-red-500">{errors.content}</p>}
                                 </div>
-
-                                {/* Images */}
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Image principale 1</label>
-                                        <div className="relative">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => setData('main_image_1', e.target.files?.[0] ?? null)}
-                                                className="sr-only"
-                                                id="main_image_1"
-                                            />
-                                            <label
-                                                htmlFor="main_image_1"
-                                                className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
-                                            >
-                                                {data.main_image_1 ? (
-                                                    <PreviewFile file={data.main_image_1} className="h-full w-full rounded-xl object-cover" />
-                                                ) : (
-                                                    <>
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-10 w-10 text-slate-400"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={1.5}
-                                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                                            />
-                                                        </svg>
-                                                        <span className="mt-2 text-sm text-slate-500">Cliquez pour télécharger</span>
-                                                    </>
-                                                )}
-                                            </label>
-                                        </div>
-                                        {errors.main_image_1 && <p className="text-sm text-red-500">{errors.main_image_1}</p>}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Image principale 2</label>
-                                        <div className="relative">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => setData('main_image_2', e.target.files?.[0] ?? null)}
-                                                className="sr-only"
-                                                id="main_image_2"
-                                            />
-                                            <label
-                                                htmlFor="main_image_2"
-                                                className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
-                                            >
-                                                {data.main_image_2 ? (
-                                                    <PreviewFile file={data.main_image_2} className="h-full w-full rounded-xl object-cover" />
-                                                ) : (
-                                                    <>
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-10 w-10 text-slate-400"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={1.5}
-                                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                                            />
-                                                        </svg>
-                                                        <span className="mt-2 text-sm text-slate-500">Cliquez pour télécharger</span>
-                                                    </>
-                                                )}
-                                            </label>
-                                        </div>
-                                        {errors.main_image_2 && <p className="text-sm text-red-500">{errors.main_image_2}</p>}
-                                    </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="post-tags" className="block text-sm font-medium text-slate-700">
+                                        Tags
+                                    </label>
+                                    <input
+                                        placeholder="tag1, tag2, tag3"
+                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                        id="post-tags"
+                                        name="tags"
+                                        value={data.tags}
+                                        onChange={(e) => setData('tags', e.target.value)}
+                                    />
                                 </div>
-
-                                {/* Gallery */}
-                                <div className="space-y-3">
-                                    <label className="block text-sm font-medium text-slate-700">Galerie descriptive</label>
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={(e) => setData('gallery', Array.from(e.target.files ?? []))}
-                                            className="sr-only"
-                                            id="gallery"
-                                        />
-                                        <label
-                                            htmlFor="gallery"
-                                            className="flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-8 w-8 text-slate-400"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={1.5}
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                                />
-                                            </svg>
-                                            <span className="text-sm text-slate-500">Cliquez pour télécharger plusieurs images</span>
-                                        </label>
-                                    </div>
-                                    {data.gallery?.length > 0 && (
-                                        <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
-                                            {data.gallery.map((f, i) => (
-                                                <div key={i} className="group relative">
-                                                    <PreviewFile file={f} className="h-20 w-full rounded-lg object-cover" />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            const newGallery = [...data.gallery];
-                                                            newGallery.splice(i, 1);
-                                                            setData('gallery', newGallery);
-                                                        }}
-                                                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-4 w-4"
-                                                            viewBox="0 0 20 20"
-                                                            fill="currentColor"
-                                                        >
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {errors.gallery && <p className="text-sm text-red-500">{errors.gallery}</p>}
-                                    {progress && (
-                                        <div className="w-full rounded-full bg-slate-200">
-                                            <div
-                                                className="h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
-                                                style={{ width: `${progress.percentage}%` }}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Meta */}
-                                <div className="grid gap-6 md:grid-cols-3">
-                                    <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-4">
-                                        <input
-                                            id="featured"
-                                            type="checkbox"
-                                            className="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                            checked={data.featured}
-                                            onChange={(e) => setData('featured', e.target.checked)}
-                                        />
-                                        <label htmlFor="featured" className="text-sm font-medium text-slate-700">
-                                            Mettre en avant
-                                        </label>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Statut</label>
-                                        <select
-                                            value={data.status}
-                                            onChange={(e) => setData('status', e.target.value as 'draft' | 'published' | 'archived')}
-                                            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        >
-                                            <option value="draft">Brouillon</option>
-                                            <option value="published">Publié</option>
-                                            <option value="archived">Archivé</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-slate-700">Publication (optionnel)</label>
-                                        <input
-                                            type="datetime-local"
-                                            value={data.published_at}
-                                            onChange={(e) => setData('published_at', e.target.value)}
-                                            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
-                                    <button
-                                        type="button"
-                                        onClick={closeModal}
-                                        className="rounded-xl border border-slate-200 bg-white px-6 py-3 font-medium text-slate-700 shadow-sm transition-all hover:bg-slate-50"
-                                    >
-                                        Annuler
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-60"
-                                    >
-                                        <span className="relative z-10 flex items-center gap-2">
-                                            {processing ? (
-                                                <>
-                                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                                                    Enregistrement...
-                                                </>
-                                            ) : (
-                                                'Publier'
-                                            )}
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                </div>
+
+                        {/* Gradient UI */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-slate-700">Style visuel de l’article</label>
+                            <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+                                {gradientOptions.map((gradient) => (
+                                    <button
+                                        key={gradient}
+                                        type="button"
+                                        className={`group relative h-12 overflow-hidden rounded-xl transition-all ${
+                                            data.gradient === gradient ? 'ring-2 ring-indigo-500 ring-offset-2' : ''
+                                        }`}
+                                        onClick={() => setData('gradient', gradient)}
+                                    >
+                                        <div className={`h-full w-full bg-gradient-to-r ${gradient}`}></div>
+                                        {data.gradient === gradient && (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-6 w-6 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                            <input type="hidden" value={data.gradient} onChange={(e) => setData('gradient', e.target.value)} />
+                        </div>
+
+                        <h3 className="admin-modal-section">Le contenu de l’actualité</h3>
+                        {/* Content */}
+                        <div className="space-y-2">
+                            <label htmlFor="post-content" className="block text-sm font-medium text-slate-700">
+                                Contenu
+                            </label>
+                            <textarea
+                                rows={8}
+                                className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                id="post-content"
+                                name="content"
+                                value={data.content}
+                                onChange={(e) => setData('content', e.target.value)}
+                            />
+                            {errors.content && <p className="text-sm text-red-500">{errors.content}</p>}
+                        </div>
+
+                        <VideoFields
+                            url={data.video_url}
+                            file={data.video_file}
+                            onUrl={(value) => setData('video_url', value)}
+                            onFile={(value) => setData('video_file', value)}
+                            errors={errors}
+                        />
+                        <h3 className="admin-modal-section">Les images et la galerie</h3>
+                        {/* Images */}
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-slate-700">Image principale 1</label>
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setData('main_image_1', e.target.files?.[0] ?? null)}
+                                        className="sr-only"
+                                        id="main_image_1"
+                                    />
+                                    <label
+                                        htmlFor="main_image_1"
+                                        className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
+                                    >
+                                        {data.main_image_1 ? (
+                                            <PreviewFile file={data.main_image_1} className="h-full w-full rounded-xl object-cover" />
+                                        ) : (
+                                            <>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-10 w-10 text-slate-400"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={1.5}
+                                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                    />
+                                                </svg>
+                                                <span className="mt-2 text-sm text-slate-500">Cliquez pour télécharger</span>
+                                            </>
+                                        )}
+                                    </label>
+                                </div>
+                                {errors.main_image_1 && <p className="text-sm text-red-500">{errors.main_image_1}</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-slate-700">Image principale 2</label>
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setData('main_image_2', e.target.files?.[0] ?? null)}
+                                        className="sr-only"
+                                        id="main_image_2"
+                                    />
+                                    <label
+                                        htmlFor="main_image_2"
+                                        className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
+                                    >
+                                        {data.main_image_2 ? (
+                                            <PreviewFile file={data.main_image_2} className="h-full w-full rounded-xl object-cover" />
+                                        ) : (
+                                            <>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-10 w-10 text-slate-400"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={1.5}
+                                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                    />
+                                                </svg>
+                                                <span className="mt-2 text-sm text-slate-500">Cliquez pour télécharger</span>
+                                            </>
+                                        )}
+                                    </label>
+                                </div>
+                                {errors.main_image_2 && <p className="text-sm text-red-500">{errors.main_image_2}</p>}
+                            </div>
+                        </div>
+
+                        {/* Gallery */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-slate-700">Galerie descriptive</label>
+                            <div className="relative">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => setData('gallery', Array.from(e.target.files ?? []))}
+                                    className="sr-only"
+                                    id="gallery"
+                                />
+                                <label
+                                    htmlFor="gallery"
+                                    className="flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white/50 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-8 w-8 text-slate-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={1.5}
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                        />
+                                    </svg>
+                                    <span className="text-sm text-slate-500">Cliquez pour télécharger plusieurs images</span>
+                                </label>
+                            </div>
+                            {data.gallery?.length > 0 && (
+                                <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+                                    {data.gallery.map((f, i) => (
+                                        <div key={i} className="group relative">
+                                            <PreviewFile file={f} className="h-20 w-full rounded-lg object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newGallery = [...data.gallery];
+                                                    newGallery.splice(i, 1);
+                                                    setData('gallery', newGallery);
+                                                }}
+                                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {errors.gallery && <p className="text-sm text-red-500">{errors.gallery}</p>}
+                            {progress && (
+                                <div className="w-full rounded-full bg-slate-200">
+                                    <div
+                                        className="h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
+                                        style={{ width: `${progress.percentage}%` }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        <h3 className="admin-modal-section">La publication</h3>
+                        {/* Meta */}
+                        <div className="grid gap-6 md:grid-cols-3">
+                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-4">
+                                <input
+                                    id="featured"
+                                    type="checkbox"
+                                    className="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                    checked={data.featured}
+                                    onChange={(e) => setData('featured', e.target.checked)}
+                                />
+                                <label htmlFor="featured" className="text-sm font-medium text-slate-700">
+                                    Mettre en avant
+                                </label>
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="post-status" className="block text-sm font-medium text-slate-700">
+                                    Statut
+                                </label>
+                                <select
+                                    id="post-status"
+                                    name="status"
+                                    value={data.status}
+                                    onChange={(e) => setData('status', e.target.value as 'draft' | 'published' | 'archived')}
+                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                >
+                                    <option value="draft">Brouillon</option>
+                                    <option value="published">Publié</option>
+                                    <option value="archived">Archivé</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="post-published_at" className="block text-sm font-medium text-slate-700">
+                                    Publication (optionnel)
+                                </label>
+                                <input
+                                    type="datetime-local"
+                                    id="post-published_at"
+                                    name="published_at"
+                                    value={data.published_at}
+                                    onChange={(e) => setData('published_at', e.target.value)}
+                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                    </form>
+                </AdminModal>
             )}
 
             {/* Create Category Modal */}
             {showCreateCategory && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeCategoryModal}></div>
-                    <div className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
-                        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 p-6 backdrop-blur-sm">
-                            <div>
-                                <h2 className="text-2xl font-bold text-slate-800">Créer une catégorie</h2>
-                                <p className="mt-1 text-sm text-slate-500">Ajoutez une nouvelle catégorie pour organiser vos articles</p>
-                            </div>
-                            <button
-                                onClick={closeCategoryModal}
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
-                                aria-label="Fermer"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </button>
+                <AdminModal
+                    title="Nouvelle catégorie"
+                    description="Organisez les actualités pour faciliter leur découverte."
+                    onClose={closeCategoryModal}
+                    formId="category-create-form"
+                    submitLabel="Créer la catégorie"
+                    busy={processingCategory}
+                    errors={categoryErrors}
+                >
+                    <form id="category-create-form" onSubmit={submitCreateCategory} className="admin-modal-form space-y-6">
+                        <div className="space-y-2">
+                            <label htmlFor="category-name" className="block text-sm font-medium text-slate-700">
+                                Nom de la catégorie *
+                            </label>
+                            <input
+                                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                id="category-name"
+                                name="name"
+                                value={categoryData.name}
+                                onChange={(e) => setCategoryData('name', e.target.value)}
+                                required
+                            />
+                            {categoryErrors.name && <p className="text-sm text-red-500">{categoryErrors.name}</p>}
                         </div>
 
-                        <div className="p-6">
-                            <form onSubmit={submitCreateCategory} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-slate-700">Nom de la catégorie *</label>
+                        <div className="space-y-3">
+                            <label htmlFor="category-color" className="block text-sm font-medium text-slate-700">
+                                Couleur
+                            </label>
+                            <div className="flex items-center gap-4">
+                                <div className="relative">
                                     <input
-                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        value={categoryData.name}
-                                        onChange={(e) => setCategoryData('name', e.target.value)}
-                                        required
+                                        type="color"
+                                        id="category-color"
+                                        name="color"
+                                        value={categoryData.color}
+                                        onChange={(e) => setCategoryData('color', e.target.value)}
+                                        className="h-12 w-20 rounded-xl border border-slate-200 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                                     />
-                                    {categoryErrors.name && <p className="text-sm text-red-500">{categoryErrors.name}</p>}
+                                    <div
+                                        className="absolute -right-1 -bottom-1 h-6 w-6 rounded-full border-2 border-white shadow-md"
+                                        style={{ backgroundColor: categoryData.color }}
+                                    ></div>
                                 </div>
-
-                                <div className="space-y-3">
-                                    <label className="block text-sm font-medium text-slate-700">Couleur</label>
-                                    <div className="flex items-center gap-4">
-                                        <div className="relative">
-                                            <input
-                                                type="color"
-                                                value={categoryData.color}
-                                                onChange={(e) => setCategoryData('color', e.target.value)}
-                                                className="h-12 w-20 rounded-xl border border-slate-200 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                            />
-                                            <div
-                                                className="absolute -right-1 -bottom-1 h-6 w-6 rounded-full border-2 border-white shadow-md"
-                                                style={{ backgroundColor: categoryData.color }}
-                                            ></div>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            value={categoryData.color}
-                                            onChange={(e) => setCategoryData('color', e.target.value)}
-                                            className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                            placeholder="#6366f1"
-                                        />
-                                    </div>
-                                    {categoryErrors.color && <p className="text-sm text-red-500">{categoryErrors.color}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-slate-700">Description</label>
-                                    <textarea
-                                        rows={4}
-                                        className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        value={categoryData.description}
-                                        onChange={(e) => setCategoryData('description', e.target.value)}
-                                    />
-                                    {categoryErrors.description && <p className="text-sm text-red-500">{categoryErrors.description}</p>}
-                                </div>
-
-                                <div className="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
-                                    <button
-                                        type="button"
-                                        onClick={closeCategoryModal}
-                                        className="rounded-xl border border-slate-200 bg-white px-6 py-3 font-medium text-slate-700 shadow-sm transition-all hover:bg-slate-50"
-                                    >
-                                        Annuler
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={processingCategory}
-                                        className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-60"
-                                    >
-                                        <span className="relative z-10 flex items-center gap-2">
-                                            {processingCategory ? (
-                                                <>
-                                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                                                    Création...
-                                                </>
-                                            ) : (
-                                                'Créer'
-                                            )}
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
-                                    </button>
-                                </div>
-                            </form>
+                                <input
+                                    type="text"
+                                    value={categoryData.color}
+                                    onChange={(e) => setCategoryData('color', e.target.value)}
+                                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                    placeholder="#6366f1"
+                                />
+                            </div>
+                            {categoryErrors.color && <p className="text-sm text-red-500">{categoryErrors.color}</p>}
                         </div>
-                    </div>
-                </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="category-description" className="block text-sm font-medium text-slate-700">
+                                Description
+                            </label>
+                            <textarea
+                                rows={4}
+                                className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+                                id="category-description"
+                                name="description"
+                                value={categoryData.description}
+                                onChange={(e) => setCategoryData('description', e.target.value)}
+                            />
+                            {categoryErrors.description && <p className="text-sm text-red-500">{categoryErrors.description}</p>}
+                        </div>
+                    </form>
+                </AdminModal>
             )}
         </Dashboard>
     );
@@ -1073,6 +1038,11 @@ function ArticleCard({ post }: { post: Post }) {
                     </span>
                 </div>
 
+                {post.video_url && (
+                    <span className="mb-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+                        Actualité vidéo
+                    </span>
+                )}
                 <h3 className="mb-2 text-xl font-bold text-slate-800 transition-colors group-hover:text-indigo-600">{post.title}</h3>
                 {post.excerpt && <p className="mb-4 line-clamp-2 text-slate-600">{post.excerpt}</p>}
 

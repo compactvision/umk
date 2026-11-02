@@ -1,4 +1,5 @@
 <?php
+
 // app/Modules/Enrollment/Domain/ValueObjects/Matricule.php
 
 namespace App\Modules\Enrollment\Domain\ValueObjects;
@@ -9,7 +10,7 @@ final readonly class Matricule
 {
     private function __construct(private string $value)
     {
-        if (!preg_match('/^[A-Z0-9]{6,20}$/', $value)) {
+        if (! preg_match('/^[A-Z0-9]{5,20}$/', $value)) {
             throw new InvalidArgumentException("Format de matricule invalide: {$value}");
         }
     }
@@ -19,16 +20,15 @@ final readonly class Matricule
         return new self(strtoupper(trim($matricule)));
     }
 
-    /**
-     * Génère un matricule au format: YYYYFFNNNNN
-     * YYYY = année (4 chiffres)
-     * FF = faculté (2 chiffres)
-     * NNNNN = séquence (5 chiffres)
-     */
-    public static function generate(int $year, int $facultyId, int $sequence): self
+    /** Code faculté + numéro d’entrée, avec au moins quatre chiffres. */
+    public static function generate(string $facultyCode, int $sequence): self
     {
-        $matricule = sprintf('%d%02d%05d', $year, $facultyId, $sequence);
-        return new self($matricule);
+        $code = strtoupper(trim($facultyCode));
+        if (! preg_match('/^[A-Z]{1,12}$/', $code) || $sequence < 1 || $sequence > 99999999) {
+            throw new InvalidArgumentException('Le code faculté ou le numéro d’entrée est invalide.');
+        }
+
+        return new self($code.str_pad((string) $sequence, 4, '0', STR_PAD_LEFT));
     }
 
     public function toString(): string
@@ -41,19 +41,19 @@ final readonly class Matricule
         return $this->value === $other->value;
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
-        return (int) substr($this->value, 0, 4);
+        return ctype_digit($this->value) ? (int) substr($this->value, 0, 4) : null;
     }
 
-    public function getFacultyCode(): int
+    public function getFacultyCode(): string
     {
-        return (int) substr($this->value, 4, 2);
+        return preg_match('/^([A-Z]+)\d+$/', $this->value, $matches) ? $matches[1] : substr($this->value, 4, 2);
     }
 
     public function getSequence(): int
     {
-        return (int) substr($this->value, 6, 5);
+        return preg_match('/^[A-Z]+(\d+)$/', $this->value, $matches) ? (int) $matches[1] : (int) substr($this->value, 6, 5);
     }
 
     public function __toString(): string

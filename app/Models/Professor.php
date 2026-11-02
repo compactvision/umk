@@ -14,6 +14,13 @@ class Professor extends Model
         'photo', 'faculty_id', 'level_id', 'speciality', 'biography', 'hire_date', 'is_active'
     ];
 
+    protected $casts = ['is_active' => 'boolean'];
+
+    public function offerings()
+    {
+        return $this->hasMany(\App\Models\Student\AcademicOffering::class, 'professor_id');
+    }
+
     public function faculties()
     {
         return $this->belongsToMany(Faculty::class, 'faculty_professor');

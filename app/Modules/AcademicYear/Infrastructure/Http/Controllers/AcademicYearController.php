@@ -39,6 +39,26 @@ class AcademicYearController extends Controller
 
         return Inertia::render('dashboard/academicYear/Show', [
             'academicYear' => AcademicYearResource::make($year),
+            'enrollmentStats' => (function () use ($id) {
+                $counts = \App\Models\Enrollment::where('academic_year_id', $id)->selectRaw('status, COUNT(*) AS total')->groupBy('status')->pluck('total', 'status');
+                return [
+                    'total' => (int) $counts->sum(),
+                    'validated' => (int) ($counts['validated'] ?? 0),
+                    'pending' => (int) ($counts['pending'] ?? 0) + (int) ($counts['submitted'] ?? 0),
+                    'draft' => (int) ($counts['draft'] ?? 0),
+                ];
+            })(),
+            'enrollments' => \App\Models\Enrollment::where('academic_year_id', $id)
+                ->with(['student:id,first_name,last_name', 'level:id,title,code'])
+                ->orderByDesc('id')->paginate(8)->withQueryString()
+                ->through(fn ($enrollment) => [
+                    'id' => $enrollment->id,
+                    'student_name' => trim(($enrollment->student?->first_name ?? '').' '.($enrollment->student?->last_name ?? '')) ?: 'Candidat',
+                    'level_title' => $enrollment->level?->title,
+                    'level_code' => $enrollment->level?->code,
+                    'status' => $enrollment->status->value,
+                    'status_label' => $enrollment->status->label(),
+                ]),
         ]);
     }
 
@@ -76,8 +96,7 @@ class AcademicYearController extends Controller
                 new \DateTimeImmutable($validated['end_date'])
             );
 
-            return redirect()
-                ->route('dashboard.admin.academic-years.index')
+            return back()
                 ->with('success', 'Année académique mise à jour avec succès.');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
@@ -89,8 +108,7 @@ class AcademicYearController extends Controller
         try {
             $useCase->execute($id);
 
-            return redirect()
-                ->route('dashboard.admin.academic-years.index')
+            return back()
                 ->with('success', "Année académique ouverte avec succès.");
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
@@ -102,7 +120,7 @@ class AcademicYearController extends Controller
         try {
             $closeAcademicYear->execute($id);
 
-            return redirect()->route('dashboard.admin.academic-years.index')
+            return back()
                 ->with('success', 'Année académique clôturée');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);

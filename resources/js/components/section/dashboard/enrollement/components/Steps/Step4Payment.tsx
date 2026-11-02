@@ -1,178 +1,101 @@
-// resources/js/pages/enrollment/components/steps/Step4Payment.tsx
-import { AlertCircle, Check, CreditCard, Lock, Shield } from 'lucide-react';
-import { Requirements } from '../../types';
-
-type Props = {
-  isConfirmed: boolean;
-  setIsConfirmed: (checked: boolean) => void;
-  errors: Record<string, string>;
-  requirements: Requirements;
-  paymentStage: 'confirm' | 'pay';
-  formData: any;
-  setCardNumber: (raw: string) => void;
-  setFormData: React.Dispatch<React.SetStateAction<any>>;
-  focusedField: string | null;
-  setFocusedField: (v: string | null) => void;
-
-  /** Nouveau : montant des frais depuis les "level details" (prioritaire sur requirements) */
-  levelDetailFee?: number | null;
-  /** Optionnel : devise par défaut si non fournie côté requirements */
-  defaultCurrency?: string;
-};
-
+import { FileCheck2 } from 'lucide-react';
+import type { FormData, Requirements } from '../../types';
 export default function Step4Payment({
-  isConfirmed,
-  setIsConfirmed,
-  errors,
-  requirements,
-  paymentStage,
-  formData,
-  setCardNumber,
-  setFormData,
-  focusedField,
-  setFocusedField,
-  levelDetailFee,
-  defaultCurrency = 'CDF',
-}: Props) {
-  // 1) Détermine le montant effectif en priorisant le "levelDetailFee"
-  const effectiveAmount =
-    typeof levelDetailFee === 'number'
-      ? levelDetailFee
-      : (requirements.payment?.amount ?? 0);
-
-  const currency = requirements.payment?.currency ?? defaultCurrency;
-
-  // 2) Règle d’affaire : gratuit si <= 0
-  const isFree = !effectiveAmount || effectiveAmount <= 0;
-
-  // 3) On n’affiche le bloc paiement que si NON gratuit ET que paymentStage === 'pay'
-  const shouldShowPaymentForm = !isFree && paymentStage === 'pay' && !!requirements.payment;
-
-  return (
-    <div className="animate-fadeIn space-y-6">
-      {/* Confirmation */}
-      <div
-        className={`rounded-2xl border-2 ${
-          errors.confirmed ? 'border-red-300 bg-red-50' : 'border-indigo-100 bg-gradient-to-br from-indigo-50 to-purple-50'
-        } p-6 transition-all duration-300`}
-      >
-        <label className="group flex cursor-pointer items-start gap-3">
-          <div className="relative mt-1 flex items-center justify-center">
-            <input
-              type="checkbox"
-              checked={isConfirmed}
-              onChange={(e) => setIsConfirmed(e.target.checked)}
-              className="h-6 w-6 cursor-pointer rounded-lg border-2 border-indigo-300 transition-all duration-300 checked:border-indigo-600 checked:bg-indigo-600"
-            />
-            {isConfirmed && <Check className="pointer-events-none absolute h-4 w-4 text-white" />}
-          </div>
-          <div>
-            <span className="block text-sm font-semibold text-gray-800 transition-colors group-hover:text-indigo-600">
-              Je certifie l'exactitude des informations
-            </span>
-            <span className="mt-1 block text-xs text-gray-600">
-              En cochant cette case, vous confirmez que toutes les informations fournies sont vraies et complètes.
-            </span>
-
-            {/* Indication si inscription gratuite */}
-            {isFree && (
-              <span className="mt-2 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-                Inscription gratuite — aucun paiement requis
-              </span>
-            )}
-          </div>
-        </label>
-        {errors.confirmed && (
-          <div className="mt-2 flex items-center text-sm text-red-600">
-            <AlertCircle className="mr-1 h-4 w-4" />
-            {errors.confirmed}
-          </div>
-        )}
-      </div>
-
-      {/* Paiement (uniquement si montant > 0) */}
-      {shouldShowPaymentForm && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-6 shadow-md">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="mr-3 rounded-full bg-green-100 p-2">
-                  <CreditCard className="h-5 w-5 text-green-600" />
+    isConfirmed,
+    setIsConfirmed,
+    errors,
+    requirements,
+    formData,
+    formation,
+    onEdit,
+}: {
+    isConfirmed: boolean;
+    setIsConfirmed: (checked: boolean) => void;
+    errors: Record<string, string>;
+    requirements: Requirements;
+    formData: FormData;
+    formation: { faculty: string; level: string; year: string };
+    onEdit: (step: number) => void;
+}) {
+    return (
+        <div className="enrollment-fields">
+            {[
+                {
+                    title: 'Votre formation',
+                    step: 1,
+                    rows: [
+                        ['Faculté', formation.faculty],
+                        ['Niveau', formation.level],
+                        ['Année académique', formation.year],
+                    ],
+                },
+                {
+                    title: 'Votre identité',
+                    step: 2,
+                    rows: [
+                        ['Nom complet', formData.name],
+                        ['Email', formData.email],
+                    ],
+                },
+                {
+                    title: 'Votre parcours',
+                    step: 3,
+                    rows: [
+                        ['Programme', formData.program],
+                        ['Pièces jointes', `${Object.values(formData.documents).filter(Boolean).length} document(s)`],
+                    ],
+                },
+            ].map((section) => (
+                <section key={section.title} className="enrollment-review">
+                    <header>
+                        <h3>{section.title}</h3>
+                        <button type="button" onClick={() => onEdit(section.step)}>
+                            Modifier
+                        </button>
+                    </header>
+                    <dl>
+                        {section.rows.map(([label, value]) => (
+                            <div key={label}>
+                                <dt>{label}</dt>
+                                <dd>{value || '—'}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </section>
+            ))}
+            {requirements.payment && requirements.payment.amount > 0 && (
+                <div className="enrollment-info">
+                    <FileCheck2 size={21} />
+                    <div>
+                        <strong>
+                            Frais indiqués : {new Intl.NumberFormat('fr-FR').format(requirements.payment.amount)} {requirements.payment.currency}
+                        </strong>
+                        <p>
+                            La soumission de ce dossier ne déclenche aucun paiement. Contactez le service des inscriptions pour les modalités de
+                            règlement.
+                        </p>
+                    </div>
                 </div>
-                <span className="text-sm font-semibold text-gray-700">Montant à régler</span>
-              </div>
-              <span className="text-2xl font-bold text-green-600">
-                {effectiveAmount} {currency}
-              </span>
-            </div>
-          </div>
-
-          {/* Numéro de carte */}
-          <div className={`group ${focusedField === 'cardNumber' ? 'scale-105 transform' : ''} transition-all duration-300`}>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              <CreditCard className="mr-2 inline h-4 w-4 text-indigo-600" />
-              Numéro de carte
-            </label>
-            <input
-              type="text"
-              className={`w-full rounded-xl border-2 ${
-                errors.cardNumber ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'
-              } px-4 py-3 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100`}
-              placeholder="1234 5678 9012 3456"
-              value={formData.cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              onFocus={() => setFocusedField('cardNumber')}
-              onBlur={() => setFocusedField(null)}
-              maxLength={19}
-            />
-            {errors.cardNumber && (
-              <div className="mt-1 flex items-center text-sm text-red-600">
-                <AlertCircle className="mr-1 h-4 w-4" />
-                {errors.cardNumber}
-              </div>
             )}
-          </div>
-
-          {/* CVV */}
-          <div className={`group ${focusedField === 'cvv' ? 'scale-105 transform' : ''} transition-all duration-300`}>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              <Lock className="mr-2 inline h-4 w-4 text-purple-600" />
-              Code CVV
+            <label className="enrollment-confirm">
+                <input
+                    id="confirmed"
+                    type="checkbox"
+                    checked={isConfirmed}
+                    onChange={(e) => setIsConfirmed(e.target.checked)}
+                    aria-invalid={!!errors.confirmed}
+                    aria-describedby={errors.confirmed ? 'confirmed-error' : undefined}
+                />
+                <span>
+                    <strong>Je certifie l’exactitude de mes informations.</strong>
+                    <small>J’ai relu mon dossier et vérifié les documents joints avant de le transmettre à l’université.</small>
+                </span>
             </label>
-            <input
-              type="text"
-              className={`w-full rounded-xl border-2 ${
-                errors.cvv ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'
-              } px-4 py-3 transition-all duration-300 focus:border-purple-600 focus:ring-4 focus:ring-purple-100`}
-              placeholder="123"
-              value={formData.cvv}
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, '');
-                setFormData((prev: any) => ({ ...prev, cvv: value }));
-              }}
-              onFocus={() => setFocusedField('cvv')}
-              onBlur={() => setFocusedField(null)}
-              maxLength={3}
-            />
-            {errors.cvv && (
-              <div className="mt-1 flex items-center text-sm text-red-600">
-                <AlertCircle className="mr-1 h-4 w-4" />
-                {errors.cvv}
-              </div>
+            {errors.confirmed && (
+                <p id="confirmed-error" className="enrollment-field-error" role="alert">
+                    {errors.confirmed}
+                </p>
             )}
-          </div>
-
-          <div className="flex items-start rounded-xl bg-blue-50 p-4">
-            <Shield className="mt-0.5 mr-2 h-5 w-5 text-blue-600" />
-            <div>
-              <p className="text-sm font-medium text-blue-800">Paiement sécurisé</p>
-              <p className="mt-1 text-xs text-blue-600">
-                Vos informations de paiement sont cryptées et ne seront jamais stockées sur nos serveurs.
-              </p>
-            </div>
-          </div>
         </div>
-      )}
-    </div>
-  );
+    );
 }

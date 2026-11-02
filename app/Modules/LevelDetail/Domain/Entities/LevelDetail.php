@@ -25,10 +25,14 @@ final class LevelDetail
         private ?string $facultyName = null,
         private ?string $facultyCode = null,
         private ?int $facultyId = null,
+        private ?float $priceForeign = null,
+        private array $installments = [],
     ) {}
 
     public function id(): ?int { return $this->id; }
     public function levelId(): int { return $this->levelId; }
+    public function installments(): array { return $this->installments; }
+    public function priceForeign(): ?float { return $this->priceForeign; }
     public function price(): ?float { return $this->price; }
     public function hasCertificate(): bool { return $this->hasCertificate; }
     public function language(): ?string { return $this->language; }

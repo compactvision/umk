@@ -12,9 +12,11 @@ class EmailVerificationController extends Controller
     /**
      * Affiche la page demandant à l'utilisateur de vérifier son email.
      */
-    public function notice()
+    public function notice(Request $request)
     {
-        return Inertia::render('dashboard/auth/VerifyEmail');
+        return Inertia::render('dashboard/auth/VerifyEmail', [
+            'status' => $request->session()->get('status'),
+        ]);
     }
 
     /**

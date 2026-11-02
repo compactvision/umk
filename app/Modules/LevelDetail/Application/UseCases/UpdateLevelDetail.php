@@ -28,7 +28,10 @@ final class UpdateLevelDetail
         ?UploadedFile $illustrationImage,
         ?string $courseObjective,
         ?int $fees,
-        ?array $options
+        ?array $options,
+        ?float $priceForeign = null,
+        bool $replacePriceForeign = false,
+        array $installments = []
     ): LevelDetail {
         $existing = $this->repo->findById($id);
 
@@ -60,6 +63,25 @@ final class UpdateLevelDetail
             }
         }
 
+        $submittedInstallments = $installments;
+        if (array_key_exists('price_national_first', $submittedInstallments) && array_key_exists('price_national_second', $submittedInstallments)
+            && $submittedInstallments['price_national_first'] === null && $submittedInstallments['price_national_second'] === null) {
+            $price = $existing->price();
+        }
+        if (array_key_exists('price_foreign_first', $submittedInstallments) && array_key_exists('price_foreign_second', $submittedInstallments)
+            && $submittedInstallments['price_foreign_first'] === null && $submittedInstallments['price_foreign_second'] === null) {
+            $priceForeign = $existing->priceForeign();
+            $replacePriceForeign = true;
+        }
+        $installments = array_replace($existing->installments(), $installments);
+        $priceForeign = $replacePriceForeign ? $priceForeign : $existing->priceForeign();
+        if (isset($installments['price_national_first'], $installments['price_national_second'])) {
+            $price = (round((float) $installments['price_national_first'] * 100) + round((float) $installments['price_national_second'] * 100)) / 100;
+        }
+        if (isset($installments['price_foreign_first'], $installments['price_foreign_second'])) {
+            $priceForeign = (round((float) $installments['price_foreign_first'] * 100) + round((float) $installments['price_foreign_second'] * 100)) / 100;
+        }
+
         $updated = new LevelDetail(
             $id,
             $levelId,
@@ -73,7 +95,9 @@ final class UpdateLevelDetail
             $imagePath,
             $courseObjective,
             $fees,
-            $options
+            $options,
+            priceForeign: $priceForeign,
+            installments: $installments
         );
 
         return $this->repo->save($updated);

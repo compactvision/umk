@@ -1,15 +1,19 @@
+import AppsNavigation from '@/components/admin/AppsNavigation';
+import DetailNavigation from '@/components/admin/DetailNavigation';
 import DashboardHeader from '@/components/layouts/Dashboard/DashboardHeader';
 import Sidebar from '@/components/layouts/Dashboard/Sidebar';
 import { usePage } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
-// import '../../../../css/dashboard/app.css';
+import { useEffect, useRef, useState, type ComponentProps } from 'react';
+import '../../../../css/dashboard/admin-apps.css';
+import '../../../../css/dashboard/usk-theme.css';
 
 // Composant Dashboard principal
-const Dashboard = ({ children }: { children: React.ReactNode }) => {
+const Dashboard = ({ children, authPage = false }: { children: React.ReactNode; authPage?: boolean }) => {
     const [currentActiveMenu, setCurrentActiveMenu] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    const { props } = usePage();
+    const { props, component } = usePage<{ auth: { user: { roles?: ComponentProps<typeof Sidebar>['userRole'] } | null } }>();
+    const isAdminApps = /^dashboard\/(academicYear|faculties|levels|blog|adminEnrollments|studentAcademic|professors|schedule|seo)\//.test(component);
     const user = props.auth?.user;
 
     useEffect(() => {
@@ -65,7 +69,9 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-gray-50">
+        <div
+            className={`usk-dashboard ${authPage ? 'usk-auth-page' : ''} ${isAdminApps ? 'usk-admin-apps' : ''} relative min-h-screen overflow-hidden bg-gray-50`}
+        >
             {/* Overlay pour mobile */}
             <div
                 className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 md:hidden ${
@@ -82,11 +88,34 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
                 userRole={user?.roles}
             />
 
-            <DashboardHeader onMobileToggle={toggleMobileSidebar} isMobileSidebarOpen={isMobileSidebarOpen} />
+            <DashboardHeader
+                enrollmentSpace={
+                    component.startsWith('dashboard/enrollments/') ||
+                    component.startsWith('dashboard/student/') ||
+                    (!authPage &&
+                        Array.isArray(user?.roles) &&
+                        !user.roles.includes('admin') &&
+                        user.roles.some((role) => role === 'user' || role === 'student'))
+                }
+                studentPortal={Boolean(props.studentPortalActive)}
+                administration={Array.isArray(user?.roles) && user.roles.includes('admin')}
+                adminApps={isAdminApps}
+                onMobileToggle={toggleMobileSidebar}
+                isMobileSidebarOpen={isMobileSidebarOpen}
+            />
 
-            <main className="min-h-screen pt-16 transition-transform duration-300 ease-out md:ml-20 lg:ml-20" ref={mainRef}>
-                <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                   {children}
+            <main
+                className={`${authPage ? 'usk-auth-main' : ''} min-h-screen pt-16 transition-transform duration-300 ease-out md:ml-20 lg:ml-20`}
+                ref={mainRef}
+            >
+                <div className={authPage ? 'usk-auth-content' : 'mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'}>
+                    {isAdminApps && (
+                        <>
+                            <AppsNavigation />
+                            <DetailNavigation />
+                        </>
+                    )}
+                    {children}
                 </div>
             </main>
         </div>

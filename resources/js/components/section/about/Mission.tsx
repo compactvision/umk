@@ -9,17 +9,17 @@ export default function Mission() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                         </svg>
                     </div>
-                    
+
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                         Notre Mission & Notre Vision
                     </h2>
-                    
+
                     <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                        L'UNIVERSITÉ MODERNE DE KINKOLE (UMK) s'engage à former des professionnels compétents 
+                        L'UNIVERSITÉ SIMON KIMBANGU (USK) s'engage à former des professionnels compétents
                         capables de transformer la société congolaise à travers l'excellence académique et l'innovation.
                     </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
                     {/* Carte Mission */}
                     <div className="bg-white rounded-2xl shadow-lg p-8 lg:p-10">
@@ -31,12 +31,12 @@ export default function Mission() {
                             </div>
                             <h3 className="text-2xl font-bold text-gray-900">Notre Mission</h3>
                         </div>
-                        
+
                         <p className="text-gray-700 mb-8 leading-relaxed">
-                            Permettre à tout apprenant, au bout du programme de formation choisi, de pouvoir voler plus haut 
+                            Permettre à tout apprenant, au bout du programme de formation choisi, de pouvoir voler plus haut
                             de ses propres ailes, comme un aigle, et d'entraîner avec lui d'autres personnes dans son envol.
                         </p>
-                        
+
                         <div className="space-y-4">
                             <h4 className="text-lg font-semibold text-gray-900">Nos engagements :</h4>
                             <ul className="space-y-3">
@@ -57,7 +57,7 @@ export default function Mission() {
                             </ul>
                         </div>
                     </div>
-                    
+
                     {/* Carte Vision */}
                     <div className="bg-white rounded-2xl shadow-lg p-8 lg:p-10">
                         <div className="flex items-center mb-6">
@@ -69,18 +69,18 @@ export default function Mission() {
                             </div>
                             <h3 className="text-2xl font-bold text-gray-900">Notre Vision</h3>
                         </div>
-                        
+
                         <p className="text-gray-700 mb-8 leading-relaxed">
-                            Faire de Kinkole une société du savoir, dans laquelle les connaissances, les compétences, 
+                            Faire de Kinshasa une société du savoir, dans laquelle les connaissances, les compétences,
                             la recherche, l'innovation et d'autres activités scientifiques occupent une place centrale.
                         </p>
-                        
+
                         <div className="space-y-4">
                             <h4 className="text-lg font-semibold text-gray-900">Nos ambitions :</h4>
                             <ul className="space-y-3">
                                 {[
                                     "Moderniser la société congolaise par l'éducation",
-                                    "Créer des opportunités pour les habitants de Kinkole",
+                                    "Créer des opportunités pour les habitants de Kinshasa",
                                     "Développer des compétences en gestion et communication",
                                     "Maîtriser l'environnement juridique et fiscal",
                                     "Promouvoir l'excellence académique"

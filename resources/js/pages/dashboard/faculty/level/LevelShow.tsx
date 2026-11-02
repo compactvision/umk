@@ -12,6 +12,7 @@ import {
     Eye,
     GraduationCap,
     Image as ImageIcon,
+    Lightbulb,
     Mail,
     MapPin,
     Plus,
@@ -37,7 +38,7 @@ export default function LevelShow() {
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
     const { level } = usePage().props;
 
-    console.log(level)
+    console.log(level);
 
     // Fonction utilitaire pour parser les données JSON de manière sécurisée
     const safeJsonParse = (data, fallback = []) => {
@@ -158,29 +159,29 @@ export default function LevelShow() {
         setIsEditModalOpen(true);
     };
 
-    // ✅ Fonction pour sauvegarder les modifications 
+    // ✅ Fonction pour sauvegarder les modifications
     const saveEdit = (e) => {
         e.preventDefault();
-    
+
         const isImageField = editField === 'details.illustration_image' || editField === 'image';
         const isFileUpload = isImageField && levelData.details.illustration_image instanceof File;
-    
+
         console.log(isImageField);
-    
+
         setIsEditModalOpen(false);
-    
+
         // ✅ Traiter les options seulement au moment de l'envoi
         const processedOptions =
             editField === 'details.options' ? processOptionsValue(levelData.details.options) : safeJsonParse(levelData.details.options, []);
-    
+
         const formData = new FormData();
         formData.append('_method', 'PUT');
-    
+
         // ✅ TOUJOURS envoyer tous les champs requis, même pour l'upload d'image
         formData.append('level_name', levelData.level_name || '');
         formData.append('level_code', levelData.level_code || '');
         formData.append('description', levelData.description || '');
-    
+
         // ✅ Champs details obligatoires
         formData.append('details[credit_required]', levelData.details.credit_required || 0);
         formData.append('details[duration_years]', levelData.details.duration_years || 0);
@@ -191,17 +192,17 @@ export default function LevelShow() {
         formData.append('details[student_number]', levelData.details.student_number || 0);
         formData.append('details[course_objective]', levelData.details.course_objective || '');
         formData.append('details[fees]', levelData.details.fees || 0);
-    
+
         // ✅ Traiter les options correctement
         processedOptions.forEach((option, index) => {
             formData.append(`details[options][${index}]`, option);
         });
-    
+
         // ✅ Si c'est un upload d'image, ajouter le fichier
         if (isFileUpload) {
             formData.append('details[illustration_image]', levelData.details.illustration_image);
         }
-    
+
         // ✅ Une seule requête pour tous les cas
         router.post(route('dashboard.levels.update.details', level.id), formData, {
             headers: {
@@ -209,7 +210,7 @@ export default function LevelShow() {
             },
             onSuccess: () => {
                 Alert.success(isFileUpload ? 'Image mise à jour avec succès' : 'Niveau mis à jour avec succès');
-                
+
                 // ✅ SOLUTION SIMPLE ET EFFICACE : Juste recharger les données
                 // Cela va automatiquement mettre à jour les props et re-initialiser le useForm
                 router.reload({ only: ['level'] });
@@ -798,7 +799,13 @@ export default function LevelShow() {
                                                 <>
                                                     {editField === 'details.options' && (
                                                         <div className="modal__hint">
-                                                            💡 <strong>Exemples d'opportunités :</strong>
+                                                            <Lightbulb
+                                                                size={18}
+                                                                strokeWidth={1.8}
+                                                                aria-hidden="true"
+                                                                className="inline-block shrink-0 align-middle"
+                                                            />{' '}
+                                                            <strong>Exemples d'opportunités :</strong>
                                                             <br />
                                                             • Ingénieur logiciel, DevOps, Consultant IT
                                                             <br />
@@ -949,7 +956,13 @@ export default function LevelShow() {
                                                 required
                                             />
                                             <div className="modal__hint">
-                                                💡 Décrivez clairement la condition requise pour l'admission au programme
+                                                <Lightbulb
+                                                    size={18}
+                                                    strokeWidth={1.8}
+                                                    aria-hidden="true"
+                                                    className="inline-block shrink-0 align-middle"
+                                                />{' '}
+                                                Décrivez clairement la condition requise pour l'admission au programme
                                             </div>
                                         </div>
                                         <div className="modal__field">

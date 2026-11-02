@@ -6,8 +6,7 @@ import CoursesTab from '../tabs/CoursesTab';
 import InfosTab from '../tabs/InfosTab';
 import ProfessorsTab from '../tabs/ProfessorsTab';
 
-export default function LevelContent({ activeTab, isAnimating, levelDataHook, modalsHook, levelConditions }) {
-    console.log('LevelCOntent', levelConditions);
+export default function LevelContent({ activeTab, levelDataHook, modalsHook, levelConditions }) {
     const renderActiveTab = () => {
         switch (activeTab) {
             case 'infos':
@@ -25,13 +24,7 @@ export default function LevelContent({ activeTab, isAnimating, levelDataHook, mo
 
     return (
         <>
-            <div
-                className={`origin-center transform transition-all duration-500 ease-in-out ${
-                    isAnimating ? 'translate-x-4 scale-95 opacity-0' : 'translate-x-0 scale-100 opacity-100'
-                }`}
-            >
-                {renderActiveTab()}
-            </div>
+            <div className="ld-tab-content">{renderActiveTab()}</div>
 
             {/* Modals */}
             <EditModal
@@ -40,6 +33,8 @@ export default function LevelContent({ activeTab, isAnimating, levelDataHook, mo
                 levelDataHook={levelDataHook}
                 onClose={() => modalsHook.setIsEditModalOpen(false)}
                 onSave={modalsHook.saveEdit}
+                saving={modalsHook.editSaving}
+                saveErrors={modalsHook.editErrors}
             />
 
             <ConditionModal
@@ -50,6 +45,7 @@ export default function LevelContent({ activeTab, isAnimating, levelDataHook, mo
                 onSave={modalsHook.saveCondition}
                 setConditionData={modalsHook.setConditionData}
                 conditionProcessing={modalsHook.conditionProcessing}
+                conditionErrors={modalsHook.conditionErrors}
             />
 
             <ImagePreviewModal

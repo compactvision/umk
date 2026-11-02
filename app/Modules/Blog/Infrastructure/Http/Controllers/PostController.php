@@ -31,8 +31,10 @@ class PostController extends Controller
                 'title'        => $p->title,
                 'slug'         => $p->slug,
                 'excerpt'      => $p->excerpt,
-                'main_image_1' => $p->main_image_1 ? Storage::url($p->main_image_1) : null,
-                'main_image_2' => $p->main_image_2 ? Storage::url($p->main_image_2) : null,
+            'video_url' => $p->video_url,
+            'videoUrl' => $p->video_url,
+                'main_image_1' => $p->main_image_1 ? $this->mediaUrl($p->main_image_1) : null,
+                'main_image_2' => $p->main_image_2 ? $this->mediaUrl($p->main_image_2) : null,
                 'views'        => (int) $p->views,
                 'likes'        => (int) $p->likes,
                 'featured'     => (bool) $p->featured,
@@ -49,6 +51,7 @@ class PostController extends Controller
         return Inertia::render('dashboard/blog/Index', [
             'categories' => $categories,
             'posts'      => $posts,
+            'videoUploadLimitMb' => \App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes() / 1024,
             'filters'    => compact('q', 'categoryId', 'status'),
         ]);
     }
@@ -60,23 +63,10 @@ class PostController extends Controller
         $main1 = $request->file('main_image_1')?->store('posts/main', 'public');
         $main2 = $request->file('main_image_2')?->store('posts/main', 'public');
 
-        // Galerie: on accepte soit un fichier, soit un path déjà connu
+        $video = $request->file('video_file')?->store('posts/videos', 'public') ?? $request->input('video_url');
         $gallery = [];
-        foreach (($request->input('gallery', []) ?? []) as $item) {
-            $path = $item['path'] ?? null;
-            if (!$path && !empty($item['file'])) {
-                // si gallery.*.file est envoyé, on le récupère via $request->file('gallery.0.file') etc.
-                // laravel mappe correctement:
-                $uploaded = $item['file'];
-                $path = $uploaded->store('posts/gallery', 'public');
-            }
-            if ($path) {
-                $gallery[] = [
-                    'path' => $path,
-                    'alt' => $item['alt'] ?? null,
-                    'caption' => $item['caption'] ?? null,
-                ];
-            }
+        foreach ($request->file('gallery', []) as $image) {
+            $gallery[] = ['path' => $image->store('posts/gallery', 'public')];
         }
 
         $dto = new CreatePostData(
@@ -95,6 +85,7 @@ class PostController extends Controller
             publishedAt: $request->date('published_at'),
             seoTitle: $request->input('seo_title'),
             seoDescription: $request->input('seo_description'),
+            videoUrl: $video,
         );
 
         $post = $service->handle($dto);
@@ -114,6 +105,8 @@ class PostController extends Controller
             'title'        => $p->title,
             'slug'         => $p->slug,
             'excerpt'      => $p->excerpt,
+            'video_url' => $p->video_url,
+            'videoUrl' => $p->video_url,
             'content'      => $p->content, // HTML ou texte brut
             'read_time'    => $p->read_time,
             'gradient'     => $p->gradient,
@@ -121,11 +114,11 @@ class PostController extends Controller
             'status'       => $p->status,
             'published_at' => optional($p->published_at)?->toIso8601String(),
 
-            'main_image_1' => $p->main_image_1 ? Storage::url($p->main_image_1) : null,
-            'main_image_2' => $p->main_image_2 ? Storage::url($p->main_image_2) : null,
+            'main_image_1' => $p->main_image_1 ? $this->mediaUrl($p->main_image_1) : null,
+            'main_image_2' => $p->main_image_2 ? $this->mediaUrl($p->main_image_2) : null,
             'gallery'      => collect($p->gallery ?? [])->map(function ($g) {
                 return [
-                    'path'    => isset($g['path']) ? Storage::url($g['path']) : null,
+                    'path'    => isset($g['path']) ? $this->mediaUrl($g['path']) : null,
                     'alt'     => $g['alt'] ?? null,
                     'caption' => $g['caption'] ?? null,
                 ];
@@ -141,6 +134,7 @@ class PostController extends Controller
 
         return Inertia::render('dashboard/blog/Show', [
             'post' => $post,
+            'videoUploadLimitMb' => \App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes() / 1024,
             'can'  => [
                 'update' => true,
                 'delete' => true,
@@ -151,6 +145,9 @@ class PostController extends Controller
     public function update(Request $request, int $id, UpdatePostService $service)
     {
         $validated = $request->validate([
+            'video_url' => ['nullable', 'url', 'max:2048', new \App\Modules\Blog\Infrastructure\Rules\VideoUrl],
+            'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm', 'max:'.\App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes(), 'prohibits:video_url'],
+            'remove_video' => ['sometimes', 'boolean'],
             'category_id'   => ['nullable', 'integer', 'exists:categories,id'],
             'title'         => ['nullable', 'string', 'max:255'],
             'excerpt'       => ['nullable', 'string', 'max:300'],
@@ -205,8 +202,12 @@ class PostController extends Controller
             }
         }
 
+        $video = $request->file('video_file')?->store('posts/videos', 'public')
+            ?? ($request->input('video_url') ?: ($request->boolean('remove_video') ? UpdatePostData::REMOVE : null));
+
         $dto = new UpdatePostData(
             postId: $id,
+            videoUrl: $video,
             categoryId: $validated['category_id'] ?? null,
             title: $validated['title'] ?? null,
             excerpt: $validated['excerpt'] ?? null,
@@ -231,4 +232,9 @@ class PostController extends Controller
             ->route('dashboard.admin.posts.show', $post->slug)
             ->with('success', 'Article mis à jour avec succès.');
     }
+    private function mediaUrl(string $path): string
+    {
+        return preg_match('#^(https?://|/)#', $path) ? $path : Storage::url($path);
+    }
+
 }

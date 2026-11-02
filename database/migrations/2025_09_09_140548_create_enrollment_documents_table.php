@@ -45,7 +45,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique(['enrollment_id','key','is_temp'], 'enroll_docs_unique_by_state');
-            $table->index(['enrollment_id', 'type', 'version', 'verified_by']);
+            $table->index(['enrollment_id', 'type', 'version', 'verified_by'], 'enroll_docs_lookup_index');
         });
     }
 

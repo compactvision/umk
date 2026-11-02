@@ -1,10 +1,10 @@
-import Alert from "@/utils/sweetAlert";
-import { router } from "@inertiajs/react";
+import Alert from '@/utils/sweetAlert';
+import { router } from '@inertiajs/react';
 
 export const safeJsonParse = (data, fallback = []) => {
     if (!data) return fallback;
     if (Array.isArray(data)) return data;
-    
+
     if (typeof data === 'string') {
         if (!data.trim()) return fallback;
         try {
@@ -17,7 +17,7 @@ export const safeJsonParse = (data, fallback = []) => {
             return data;
         }
     }
-    
+
     return data || fallback;
 };
 
@@ -39,13 +39,14 @@ export const getFieldLabel = (field) => {
         duration_years: 'Durée (années)',
         courses_number: 'Nombre de cours',
         student_number: "Nombre d'etudiants",
-        price: 'Prix',
+        price: 'Tarif nationaux',
+        price_foreign: 'Tarif étrangers',
         language: 'Langue',
         has_certificate: 'Certificat',
         options: 'Options/Opportunités',
         course_objective: 'Objectifs du cours',
         fees: 'Frais',
-        semestres: 'Semestres'
+        semestres: 'Semestres',
     };
     return labels[field] || field;
 };
@@ -112,30 +113,30 @@ export const NAVIGATION_ITEMS = [
 export const CONDITION_TYPES = [
     { value: 'personal_info', label: 'Informations personnelles' },
     { value: 'academic_info', label: 'Informations académiques' },
-    { value: 'other', label: 'Autre' }
+    { value: 'other', label: 'Autre' },
 ];
 
 export function saveLevel(levelId, levelDataHook) {
     const formData = new FormData();
-  
+
     Object.entries(levelDataHook.data).forEach(([key, value]) => {
-      if (typeof value === 'object' && value !== null) {
-        Object.entries(value).forEach(([k, v]) => {
-          // pour les fichiers
-          if (v instanceof File) {
-            formData.append(`${key}[${k}]`, v);
-          } else {
-            formData.append(`${key}[${k}]`, v ?? '');
-          }
-        });
-      } else {
-        formData.append(key, value ?? '');
-      }
+        if (typeof value === 'object' && value !== null) {
+            Object.entries(value).forEach(([k, v]) => {
+                // pour les fichiers
+                if (v instanceof File) {
+                    formData.append(`${key}[${k}]`, v);
+                } else {
+                    formData.append(`${key}[${k}]`, v ?? '');
+                }
+            });
+        } else {
+            formData.append(key, value ?? '');
+        }
     });
-  
+
     router.post(route('dashboard.admin.levels.details.update', levelId), formData, {
-      forceFormData: true,
-      onSuccess: () => Alert.success('Mise à jour réussie'),
-      onError: () => Alert.error('Erreur lors de la mise à jour'),
+        forceFormData: true,
+        onSuccess: () => Alert.success('Mise à jour réussie'),
+        onError: () => Alert.error('Erreur lors de la mise à jour'),
     });
-  }
+}

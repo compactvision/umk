@@ -44,7 +44,7 @@ class EloquentPostRepository implements PostRepository
 
     public function incrementViews(int $id): void
     {
-        PostModel::whereKey($id)->increment('views');
+        \Illuminate\Support\Facades\DB::table('posts')->where('id', $id)->increment('views');
     }
 
     /**
@@ -86,6 +86,7 @@ class EloquentPostRepository implements PostRepository
             'slug' => $p->slug,
             'excerpt' => $p->excerpt,
             'content' => $p->content,
+            'video_url' => $p->videoUrl,
             'main_image_1' => $p->images->main1,
             'main_image_2' => $p->images->main2,
             'gallery'      => $p->images->gallery,
@@ -102,22 +103,8 @@ class EloquentPostRepository implements PostRepository
 
     private function toDomain(PostModel $m): Post
     {
-        $gallery = null;
-        if (!empty($m->gallery)) {
-            $decoded = json_decode($m->gallery, true);
-            $gallery = is_array($decoded) ? $decoded : [];
-        } else {
-            $gallery = [];
-        }
-
-        $publishedAt = null;
-        if ($m->created_at) {
-            try {
-                $publishedAt = new \DateTimeImmutable($m->created_at);
-            } catch (\Exception $e) {
-                $publishedAt = null;
-            }
-        }
+        $gallery = is_array($m->gallery) ? $m->gallery : (json_decode($m->gallery ?? '[]', true) ?: []);
+        $publishedAt = $m->published_at?->toDateTimeImmutable();
 
         $categoryDto = null;
         if ($m->relationLoaded('category') && $m->category) {
@@ -155,6 +142,7 @@ class EloquentPostRepository implements PostRepository
             publishedAt: $publishedAt,
             category: $categoryDto,
             author: $authorDto,
+            videoUrl: $m->video_url,
         );
     }
 }

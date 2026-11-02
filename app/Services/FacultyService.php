@@ -43,7 +43,7 @@ class FacultyService
         return Faculty::query()
             ->where('is_active', true)
             ->with([
-                'levels' => fn($q) => $q->orderBy('title'),
+                'levels' => fn($q) => $q->where('is_active', true)->orderBy('title'),
                 'levels.detail',
             ])
             ->orderBy('name')

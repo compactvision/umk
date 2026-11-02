@@ -1,6 +1,23 @@
-import ErrorText from '@/components/UI/ErrorText';
-import { X, Save } from 'lucide-react';
-
+import AdminModal from '@/components/admin/AdminModal';
+import { Check, ClipboardCheck, FileCheck2, FolderOpen, GraduationCap, Info, UserRound } from 'lucide-react';
+import type { FormEvent } from 'react';
+import '../../../../../css/dashboard/level-forms.css';
+type ConditionData = { title?: string; description?: string; section?: string; is_required?: boolean };
+type Props = {
+    isOpen: boolean;
+    conditionMode: string;
+    conditionData: ConditionData;
+    onClose: () => void;
+    onSave: (event: FormEvent<HTMLFormElement>) => void;
+    setConditionData: (key: keyof ConditionData, value: string | boolean) => void;
+    conditionProcessing: boolean;
+    conditionErrors?: Record<string, string | undefined>;
+};
+const categories = [
+    { value: 'personal_info', label: 'Dossier personnel', hint: 'Identité et pièces personnelles', icon: UserRound },
+    { value: 'academic_info', label: 'Parcours académique', hint: 'Diplômes et prérequis', icon: GraduationCap },
+    { value: 'other', label: 'Autres conditions', hint: 'Exigences complémentaires', icon: FolderOpen },
+];
 export default function ConditionModal({
     isOpen,
     conditionMode,
@@ -8,113 +25,163 @@ export default function ConditionModal({
     onClose,
     onSave,
     setConditionData,
-    conditionProcessing
-}) {
+    conditionProcessing,
+    conditionErrors = {},
+}: Props) {
     if (!isOpen) return null;
-
+    const category = categories.find((item) => item.value === conditionData.section);
+    const error = (field: string) =>
+        conditionErrors[field] ? (
+            <p id={`condition-${field}-error`} className="lf-error" role="alert">
+                {conditionErrors[field]}
+            </p>
+        ) : null;
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-100 p-4" onClick={onClose}>
-            <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 opacity-100" onClick={(e) => e.stopPropagation()}>
-                <form onSubmit={onSave}>
-                    <div className="flex items-center justify-between p-6 border-b border-slate-200">
-                        <h2 className="text-2xl font-bold text-slate-800">
-                            {conditionMode === 'add' ? 'Ajouter' : 'Modifier'} une condition
-                        </h2>
-                        <button type="button" className="flex items-center justify-center w-10 h-10 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
-                            <X size={20} />
-                        </button>
-                    </div>
-                    
-                    <div className="p-6 space-y-6">
-                        <div>
-                            <label className="block font-semibold text-slate-700 mb-2">Titre</label>
+        <AdminModal
+            title={conditionMode === 'add' ? 'Une nouvelle condition.' : 'Affiner cette condition.'}
+            description="Définissez les attentes du parcours pour guider chaque candidature."
+            onClose={onClose}
+            formId="condition-form"
+            submitLabel={conditionMode === 'add' ? 'Ajouter la condition' : 'Enregistrer les modifications'}
+            busy={conditionProcessing}
+            errors={conditionErrors}
+            wide
+            className="level-form-modal lf-condition-modal"
+        >
+            <form id="condition-form" onSubmit={onSave} className="admin-modal-form lf-condition-layout">
+                <fieldset disabled={conditionProcessing} className="lf-fields">
+                    <section className="lf-form-section">
+                        <div className="lf-section-title">
+                            <span>01</span>
+                            <div>
+                                <h3>La condition attendue</h3>
+                                <p>Un intitulé précis, une consigne facile à comprendre.</p>
+                            </div>
+                        </div>
+                        <label className="lf-label" htmlFor="condition-title">
+                            Intitulé de la condition <span>*</span>
+                        </label>
+                        <input
+                            id="condition-title"
+                            type="text"
+                            value={conditionData.title || ''}
+                            onChange={(e) => setConditionData('title', e.target.value)}
+                            placeholder="Ex. : Présenter le diplôme d’État"
+                            maxLength={255}
+                            required
+                            aria-invalid={!!conditionErrors.title}
+                            aria-describedby={conditionErrors.title ? 'condition-title-error' : undefined}
+                        />
+                        {error('title')}
+                        <div className="lf-label-row">
+                            <label className="lf-label" htmlFor="condition-description">
+                                Précisions pour le candidat
+                            </label>
+                            <span>Facultatif</span>
+                        </div>
+                        <textarea
+                            id="condition-description"
+                            value={conditionData.description || ''}
+                            onChange={(e) => setConditionData('description', e.target.value)}
+                            placeholder="Précisez le document à fournir, son format ou les critères à respecter…"
+                            rows={4}
+                            aria-invalid={!!conditionErrors.description}
+                            aria-describedby="condition-description-help"
+                        />
+                        <p id="condition-description-help" className="lf-help">
+                            Une description claire aide le candidat à préparer son dossier.
+                        </p>
+                        {error('description')}
+                    </section>
+                    <section className="lf-form-section">
+                        <div className="lf-section-title">
+                            <span>02</span>
+                            <div>
+                                <h3>Le classement du dossier</h3>
+                                <p>Choisissez la catégorie qui correspond à cette condition.</p>
+                            </div>
+                        </div>
+                        <fieldset className="lf-category-group">
+                            <legend className="lf-label">
+                                Catégorie <span>*</span>
+                            </legend>
+                            <div className="lf-category-options">
+                                {categories.map((item) => (
+                                    <label className="lf-category" key={item.value}>
+                                        <input
+                                            type="radio"
+                                            name="condition-category"
+                                            value={item.value}
+                                            checked={conditionData.section === item.value}
+                                            onChange={() => setConditionData('section', item.value)}
+                                            required
+                                            aria-invalid={!!conditionErrors.section}
+                                        />
+                                        <span className="lf-category-card">
+                                            <item.icon size={21} strokeWidth={1.5} />
+                                            <span>
+                                                <strong>{item.label}</strong>
+                                                <small>{item.hint}</small>
+                                            </span>
+                                            <span className="lf-radio-check">
+                                                <Check size={12} />
+                                            </span>
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </fieldset>
+                        {error('section')}
+                    </section>
+                    <section className="lf-form-section">
+                        <div className="lf-section-title">
+                            <span>03</span>
+                            <div>
+                                <h3>Le niveau d’exigence</h3>
+                                <p>Indiquez si cette condition est indispensable à l’admission.</p>
+                            </div>
+                        </div>
+                        <label className="lf-switch-card" htmlFor="condition-required">
+                            <span className="lf-switch-copy">
+                                <strong>Condition obligatoire</strong>
+                                <small>
+                                    {conditionData.is_required
+                                        ? 'Le candidat doit remplir cette condition.'
+                                        : 'Cette condition est facultative pour le candidat.'}
+                                </small>
+                            </span>
                             <input
-                                type="text"
-                                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                                value={conditionData.title || ''}
-                                onChange={(e) => setConditionData('title', e.target.value)}
-                                placeholder="Exemple : Diplôme requis"
-                                required
+                                id="condition-required"
+                                type="checkbox"
+                                role="switch"
+                                checked={!!conditionData.is_required}
+                                onChange={(e) => setConditionData('is_required', e.target.checked)}
                             />
-                        </div>
-
-                        <div>
-                            <label className="block font-semibold text-slate-700 mb-2">Description</label>
-                            <textarea
-                                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none min-h-[120px]"
-                                value={conditionData.description || ''}
-                                onChange={(e) => setConditionData('description', e.target.value)}
-                                placeholder="Exemple : Avoir un diplôme d'État avec mention"
-                                required
-                            />
-                            <div className="mt-2 p-3 bg-slate-50 rounded-lg border-l-4 border-blue-500">
-                                <span className="text-sm text-slate-600">
-                                    💡 Décrivez clairement la condition requise pour l'admission au programme
-                                </span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block font-semibold text-slate-700 mb-2">Type</label>
-                            <div className="relative">
-                                <select
-                                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer bg-white"
-                                    value={conditionData.section || ''}
-                                    onChange={(e) => setConditionData('section', e.target.value)}
-                                    required
-                                >
-                                    <option value="">Sélectionnez un type</option>
-                                    <option value="personal_info">Informations personnelles</option>
-                                    <option value="academic_info">Informations académiques</option>
-                                    <option value="other">Autre</option>
-                                </select>
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block font-semibold text-slate-700 mb-2">Statut</label>
-                            <div className="flex items-center gap-3">
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        id="is_active"
-                                        type="checkbox"
-                                        checked={!!conditionData.is_required}
-                                        onChange={(e) => setConditionData('is_required', e.target.checked)}
-                                        className="sr-only peer"
-                                    />
-                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                </label>
-                                <span className="text-sm text-slate-600">
-                                    {conditionData.is_required ? 'Requis' : 'Non requis'}
-                                </span>
-                            </div>
-                        </div>
+                            <span className="lf-switch-track" aria-hidden="true" />
+                        </label>
+                        {error('is_required')}
+                    </section>
+                </fieldset>
+                <aside className="lf-preview">
+                    <span className="lf-eyebrow">APERÇU DE LA CONDITION</span>
+                    <div className="lf-preview-icon">
+                        <ClipboardCheck size={30} strokeWidth={1.3} />
                     </div>
-                    
-                    <div className="flex gap-3 justify-end p-6 border-t border-slate-200">
-                        <button
-                            type="button"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-semibold hover:bg-slate-200 transition-colors duration-200"
-                            onClick={onClose}
-                        >
-                            Annuler
-                        </button>
-                        <button
-                            type="submit"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                            disabled={!conditionData.title?.trim() || !conditionData.description?.trim() || conditionProcessing}
-                        >
-                            <Save size={16} />
-                            {conditionProcessing ? 'Traitement...' : conditionMode === 'add' ? 'Ajouter' : 'Modifier'}
-                        </button>
+                    <span className="lf-preview-category">{category?.label || 'Catégorie à choisir'}</span>
+                    <h3>{conditionData.title?.trim() || 'Votre condition prend forme ici.'}</h3>
+                    <p className="lf-preview-description">
+                        {conditionData.description?.trim() || 'Les précisions destinées au candidat apparaîtront ici.'}
+                    </p>
+                    <span className={`lf-status ${conditionData.is_required ? 'is-required' : ''}`}>
+                        <FileCheck2 size={13} />
+                        {conditionData.is_required ? 'Obligatoire' : 'Facultatif'}
+                    </span>
+                    <div className="lf-preview-note">
+                        <Info size={16} />
+                        <p>Cette condition sera rattachée au niveau en cours et affichée dans sa catégorie.</p>
                     </div>
-                </form>
-            </div>
-        </div>
+                </aside>
+            </form>
+        </AdminModal>
     );
 }

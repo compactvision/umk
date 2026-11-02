@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import vm from 'node:vm';
+import test from 'node:test';
+import ts from 'typescript';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+const require = createRequire(import.meta.url);
+const source = await readFile(new URL('../../resources/js/components/student/StudentOverview.tsx', import.meta.url), 'utf8');
+const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 } });
+const module = { exports: {} };
+vm.runInNewContext(outputText, { module, exports: module.exports, require(name) {
+    if (name === '@inertiajs/react') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
+    if (name === 'lucide-react') return new Proxy({}, { get: () => () => null });
+    if (name === './PortalCards') return { EmptyState: ({ title, children }) => React.createElement('div', {}, title, children) };
+    if (name === './types') return { money: value => `${value / 100} USD` };
+    return require(name);
+} });
+const Overview = module.exports.default;
+const base = () => ({ academic: { id: 7, application_uuid: 'own-application' }, balance: { assessed: false, overdue_cents: 0 }, permissions: { results_view: { allowed: true }, courses_view: { allowed: true }, schedule_view: { allowed: true } }, data: { generated_at: '2026-11-02T23:30:00+01:00', today_count: 0, week_count: 0, course_count: 0, today_sessions: [], week_sessions: [], alerts: [], latest_results: [], announcements: [], upcoming_evaluations: [] } });
+test('L’accueil respecte l’ordre frais, horaire, évaluations puis cours sans inventer de montants', () => {
+    const props = base(); props.permissions.evaluations_participate = { allowed: false };
+    const html = renderToStaticMarkup(React.createElement(Overview, props));
+    assert.ok(html.indexOf('Frais obligatoires') < html.indexOf('Horaire du jour'));
+    assert.ok(html.indexOf('Horaire du jour') < html.indexOf('Évaluations en cours'));
+    assert.ok(html.indexOf('Évaluations en cours') < html.indexOf('Cours du niveau'));
+    assert.match(html, /Frais à confirmer/); assert.doesNotMatch(html, /0 USD/);
+    assert.match(html, /schedule\?academic=7/); assert.match(html, /Aucune évaluation en cours/);
+});
+test('Le rappel affiche les seuls frais affectés et protège les évaluations sous condition', () => {
+    const props = base(); props.permissions.evaluations_participate = { allowed: false };
+    props.data.fee_summary = [{kind:'tuition',title:'Frais académiques',balance:{due_cents:10000,paid_cents:2500,balance_cents:7500,overdue_cents:0}}];
+    props.balance = { assessed:true,balance_cents:7500,currency:'USD' };
+    props.data.ongoing_evaluations = [{id:8,title:'Interrogation publiée',course:'Droit',closes_at:'2026-11-03T18:00:00+01:00',excerpt:'Énoncé confidentiel'}];
+    const html = renderToStaticMarkup(React.createElement(Overview, props));
+    assert.match(html, /100 USD/);assert.match(html, /25 USD/);assert.match(html, /75 USD/);
+    assert.match(html, /Conditions d’accès/);assert.doesNotMatch(html, /Énoncé confidentiel/);
+    assert.match(html, /fees\?academic=7/);
+});

@@ -1,5 +1,5 @@
 // resources/js/pages/enrollment/components/Sidebar.tsx
-import { Award, Check, ChevronDown, Globe, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { Award, Check, ChevronDown, Globe, TrendingUp, Users } from 'lucide-react';
 import { Section } from '../types';
 
 export default function Sidebar({
@@ -45,7 +45,7 @@ export default function Sidebar({
                             </div>
                         </div>
                         <p className="mt-2 flex items-center justify-end text-right text-sm font-bold text-indigo-600">
-                            <Sparkles className="mr-1 h-4 w-4" />
+                            <TrendingUp className="mr-1 h-4 w-4" />
                             {percentage}%
                         </p>
                     </div>

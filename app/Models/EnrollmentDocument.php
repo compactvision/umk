@@ -28,6 +28,7 @@ class EnrollmentDocument extends Model
         'key',
         'sha256',
         'verified',
+        'review_status',
         'verified_by',
         'verified_at',
         'comment',

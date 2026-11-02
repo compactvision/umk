@@ -26,6 +26,16 @@ class SaveProgressUseCase
             : null;
 
 
+        if ($dto->uuid && !$enrollment) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['uuid' => 'Ce brouillon est introuvable.']);
+        }
+
+        if ($enrollment && ($enrollment->student_id !== $dto->studentId || $enrollment->status !== EnrollmentStatus::DRAFT)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'uuid' => 'Ce brouillon ne peut pas être modifié.'
+            ]);
+        }
+
         if (!$enrollment) {
             // Créer un nouveau brouillon
             $enrollment = new Enrollment([
@@ -39,7 +49,7 @@ class SaveProgressUseCase
             ]);
         } else {
             // Mettre à jour le brouillon existant
-            $enrollment->last_step = max($enrollment->last_step, $dto->lastStep);
+            $enrollment->last_step = $dto->lastStep;
             $enrollment->form_snapshot = array_merge(
                 $enrollment->form_snapshot ?? [],
                 $dto->formSnapshot
@@ -54,6 +64,10 @@ class SaveProgressUseCase
                 $enrollment->academic_year_id = $dto->formSnapshot['year_id'];
             }
         }
+
+        $snapshot = $enrollment->form_snapshot ?? [];
+        unset($snapshot['cardNumber'], $snapshot['cvv']);
+        $enrollment->form_snapshot = $snapshot;
 
         // Vérifier l'unicité avant de sauvegarder
         if ($enrollment->level_id && $enrollment->academic_year_id) {
@@ -78,35 +92,44 @@ class SaveProgressUseCase
         $documents = $enrollment->form_snapshot['documents'] ?? [];
         $hasChanges = false;
 
+        // Apply explicit removals from the submitted snapshot.
+        foreach ($this->documentRepository->findByEnrollment($enrollment->id) as $existingDocument) {
+            if (!array_key_exists($existingDocument->key, $documents)) {
+                // Keep soft-deleted records from blocking a later upload for this key.
+                $existingDocument->key = 'removed-' . $existingDocument->uuid;
+                $this->documentRepository->save($existingDocument);
+                $this->documentRepository->delete($existingDocument);
+            }
+        }
+
         foreach ($documents as $key => $docData) {
             if (isset($docData['temp'])) {
                 $tempPath = $docData['temp']['path'];
                 
                 if (Storage::disk('temp')->exists($tempPath)) {
-                    // Supprimer l'ancien document s'il existe pour cette clé
                     $oldDoc = $this->documentRepository->findByEnrollmentAndKey($enrollment->id, $key);
-                    if ($oldDoc) {
-                        $this->documentRepository->delete($oldDoc);
-                    }
-
-                    // Déplacer le fichier
-                    $newPath = "enrollments/{$enrollment->uuid}/" . $docData['filename'];
-                    Storage::disk('local')->put($newPath, Storage::disk('temp')->get($tempPath));
-                    Storage::disk('temp')->delete($tempPath);
-                    
-                    // Créer l'enregistrement du document
-                    $doc = $this->documentRepository->save(new \App\Models\EnrollmentDocument([
+                    $contents = Storage::disk('temp')->get($tempPath);
+                    $newPath = "enrollments/{$enrollment->uuid}/" . \Illuminate\Support\Str::uuid() . '/' . basename($docData['filename']);
+                    Storage::disk('local')->put($newPath, $contents);
+                    $oldPath = $oldDoc?->path;
+                    $oldDisk = $oldDoc?->disk;
+                    $document = $oldDoc ?? new \App\Models\EnrollmentDocument;
+                    $document->fill([
                         'enrollment_id' => $enrollment->id,
                         'type' => 'document',
                         'disk' => 'local',
                         'path' => $newPath,
                         'filename' => $docData['filename'],
                         'mime' => $docData['mime'],
-                        'size_bytes' => $docData['size_bytes'],
+                        'size_bytes' => strlen($contents),
+                        'sha256' => hash('sha256', $contents),
                         'key' => $key,
                         'is_temp' => true,
-                    ]));
-                    
+                    ]);
+                    $doc = $this->documentRepository->save($document);
+                    Storage::disk('temp')->delete($tempPath);
+                    if ($oldPath && $oldDisk) Storage::disk($oldDisk)->delete($oldPath);
+
                     // Mettre à jour le snapshot avec les infos permanentes
                     $documents[$key] = [
                         'uuid' => $doc->uuid,

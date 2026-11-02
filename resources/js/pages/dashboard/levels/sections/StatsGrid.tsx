@@ -1,135 +1,96 @@
-import { 
-    Award, BookOpen, Clock, GraduationCap, DollarSign, MapPin, Edit3 
-} from 'lucide-react';
-import { formatValue, getFieldLabel } from '../utils/levelUtils';
-
-export default function StatsGrid({ levelData, onEdit }: { levelData: any; onEdit: any }) {
-    const stats = [
+import { formatPrice, paymentCategories, paymentTotal, type LevelPricing } from '@/lib/levelPricing';
+import { Banknote, BookOpen, Clock3, Coins, Layers3, Pencil, Users } from 'lucide-react';
+export default function StatsGrid({
+    levelData,
+    onEdit,
+}: {
+    levelData: LevelPricing & {
+        duration_years: number;
+        credit_required: number;
+        courses_number: number;
+        student_number: number;
+        price: number | string;
+        price_foreign?: number | string | null;
+        fees: number;
+    };
+    onEdit: (field: string, value: string | number | boolean | null | undefined) => void;
+}) {
+    const number = (value: unknown) => Number(value || 0).toLocaleString('fr-FR');
+    const stats: { field: keyof typeof levelData; label: string; value: string; icon: typeof Clock3 }[] = [
         {
-            field: 'level_code',
-            value: formatValue(levelData.level_code),
-            icon: <Award size={24} />,
-            color: 'purple',
+            field: 'duration_years',
+            label: 'Durée du parcours',
+            value: levelData.duration_years > 0 ? `${number(levelData.duration_years)} an${levelData.duration_years > 1 ? 's' : ''}` : 'À préciser',
+            icon: Clock3,
         },
         {
             field: 'credit_required',
-            value: formatValue(levelData.credit_required),
-            icon: <BookOpen size={24} />,
-            color: 'blue',
+            label: 'Crédits requis',
+            value: levelData.credit_required > 0 ? number(levelData.credit_required) : 'À préciser',
+            icon: Layers3,
         },
-        {
-            field: 'semestres',
-            value: levelData.duration_years && levelData.duration_years > 0 
-                ? levelData.duration_years * 2 
-                : 'Non défini',
-            icon: <Clock size={24} />,
-            color: 'green',
-        },
-        {
-            field: 'duration_years',
-            value: formatValue(levelData.duration_years),
-            icon: <Clock size={24} />,
-            color: 'orange',
-        },
-        {
-            field: 'courses_number',
-            value: formatValue(levelData.courses_number),
-            icon: <GraduationCap size={24} />,
-            color: 'red',
-        },
+        { field: 'courses_number', label: 'Cours au programme', value: number(levelData.courses_number), icon: BookOpen },
+        { field: 'student_number', label: 'Effectif étudiant', value: number(levelData.student_number), icon: Users },
         {
             field: 'price',
-            value: levelData.price && levelData.price > 0 
-                ? `${levelData.price} $` 
-                : 'Prix non fixé',
-            icon: <DollarSign size={24} />,
-            color: 'green',
+            label: 'Tarif nationaux',
+            value: formatPrice(paymentTotal(levelData.price_national_first, levelData.price_national_second, levelData.price)),
+            icon: Banknote,
         },
         {
-            field: 'student_number',
-            value: formatValue(levelData.student_number),
-            icon: <MapPin size={24} />,
-            color: 'blue',
+            field: 'price_foreign',
+            label: 'Tarif étrangers',
+            value: formatPrice(paymentTotal(levelData.price_foreign_first, levelData.price_foreign_second, levelData.price_foreign)),
+            icon: Banknote,
         },
-        {
-            field: 'fees',
-            value: levelData.fees && levelData.fees > 0 
-                ? `${levelData.fees} $` 
-                : 'Pas de frais',
-            icon: <DollarSign size={24} />,
-            color: 'green',
-        },
+        { field: 'fees', label: 'Frais complémentaires', value: levelData.fees > 0 ? `${number(levelData.fees)} $` : 'Aucun frais', icon: Coins },
     ];
-
-    const getColorClasses = (color) => {
-        const colorMap = {
-            purple: {
-                border: 'border-purple-500',
-                bg: 'bg-gradient-to-r from-purple-500 to-purple-600',
-                iconBg: 'bg-gradient-to-r from-purple-500 to-purple-600',
-                iconText: 'text-white'
-            },
-            blue: {
-                border: 'border-blue-500',
-                bg: 'bg-gradient-to-r from-blue-500 to-blue-600',
-                iconBg: 'bg-gradient-to-r from-blue-500 to-blue-600',
-                iconText: 'text-white'
-            },
-            green: {
-                border: 'border-green-500',
-                bg: 'bg-gradient-to-r from-green-500 to-green-600',
-                iconBg: 'bg-gradient-to-r from-green-500 to-green-600',
-                iconText: 'text-white'
-            },
-            orange: {
-                border: 'border-orange-500',
-                bg: 'bg-gradient-to-r from-orange-500 to-orange-600',
-                iconBg: 'bg-gradient-to-r from-orange-500 to-orange-600',
-                iconText: 'text-white'
-            },
-            red: {
-                border: 'border-red-500',
-                bg: 'bg-gradient-to-r from-red-500 to-red-600',
-                iconBg: 'bg-gradient-to-r from-red-500 to-red-600',
-                iconText: 'text-white'
-            }
-        };
-        return colorMap[color] || colorMap.blue;
-    };
-
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-            {stats.map((stat, index) => {
-                const colors = getColorClasses(stat.color);
-                return (
-                    <div
-                        key={stat.field}
-                        className="bg-white rounded-2xl p-8 shadow-lg border border-white/80 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-2 hover:scale-105 hover:shadow-xl animate-fadeInUp"
-                        style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                        <div className={`h-1 ${colors.bg} absolute top-0 left-0 right-0`}></div>
-                        <div className={`inline-flex p-4 rounded-2xl mb-6 text-white ${colors.iconBg}`}>
-                            {stat.icon}
-                        </div>
-                        <div className="text-xs font-medium text-slate-600 mb-2 uppercase tracking-wider">
-                            {getFieldLabel(stat.field)}
-                        </div>
-                        <div className="text-4xl font-extrabold text-slate-800 mb-4 leading-none">
-                            {stat.value}
-                        </div>
-                        {stat.field !== 'level_code' && (
-                            <button 
-                                className="inline-flex items-center gap-2 text-slate-600 text-sm font-medium hover:text-blue-500 transition-colors duration-200"
-                                onClick={() => onEdit(stat.field, stat.value)}
+        <section className="ld-metrics-section" aria-labelledby="ld-metrics-title">
+            <div className="ld-section-heading">
+                <div>
+                    <span className="ld-eyebrow">LES REPÈRES ESSENTIELS</span>
+                    <h2 id="ld-metrics-title">Le parcours en un regard.</h2>
+                </div>
+                <p>Les informations clés de votre formation.</p>
+            </div>
+            <div className="ld-metrics">
+                {stats.map((stat) => (
+                    <div className="ld-metric" key={stat.field}>
+                        <div className="ld-metric-top">
+                            <span className="ld-icon">
+                                <stat.icon size={20} strokeWidth={1.6} />
+                            </span>
+                            <button
+                                className="ld-icon-button"
+                                aria-label={`Modifier : ${stat.label}`}
+                                onClick={() => onEdit(stat.field, levelData[stat.field])}
                             >
-                                <Edit3 size={16} />
-                                <span className="hidden sm:inline">Modifier</span>
-                                <span className="sm:hidden">Edit</span>
+                                <Pencil size={15} strokeWidth={1.7} />
                             </button>
-                        )}
+                        </div>
+                        <span className="ld-metric-label">{stat.label}</span>
+                        {paymentCategories
+                            .filter((category) => category.total === stat.field)
+                            .map((category) => (
+                                <dl className="ld-payment-parts" key={category.total}>
+                                    <div>
+                                        <dt>1re tranche</dt>
+                                        <dd>{formatPrice(levelData[category.first])}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>2e tranche</dt>
+                                        <dd>{formatPrice(levelData[category.second])}</dd>
+                                    </div>
+                                    <div className="ld-payment-total-label">
+                                        <dt>Total</dt>
+                                    </div>
+                                </dl>
+                            ))}
+                        <strong>{stat.value}</strong>
                     </div>
-                );
-            })}
-        </div>
+                ))}
+            </div>
+        </section>
     );
 }

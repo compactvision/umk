@@ -1,9 +1,9 @@
+import { studentModules } from '@/components/student/navigation';
 import Alert from '@/utils/sweetAlert';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import {
-    Award,
-    BarChart3,
     BadgeCheck,
+    BarChart3,
     Bell,
     BookOpen,
     Calendar,
@@ -15,7 +15,6 @@ import {
     Home,
     Lock,
     LogOut,
-    Mail,
     Settings,
     Shield,
     TrendingUp,
@@ -32,7 +31,7 @@ type UserRole = 'user' | 'student' | 'instructor' | 'admin' | 'super_admin';
 // Configuration des permissions par rôle
 const rolePermissions: Record<UserRole, string[]> = {
     user: ['enrollments'],
-    student: ['dashboard', 'settings'],
+    student: ['dashboard', 'enrollments'],
     instructor: ['analytics', 'reports', 'settings'],
     admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
     super_admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
@@ -47,8 +46,11 @@ const Sidebar = ({
     onButtonClick: (e: React.MouseEvent, menuId: string) => void;
     isMobileSidebarOpen: boolean;
     currentActiveMenu: string | null;
-    userRole?: UserRole | null;
+    userRole?: UserRole | UserRole[] | null;
 }) => {
+    const roles = Array.isArray(userRole) ? userRole : [userRole];
+    const isAdministration = roles.some((role) => role === 'admin' || role === 'super_admin');
+    const portalActive = Boolean(usePage<{ studentPortalActive?: boolean }>().props.studentPortalActive);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -101,7 +103,7 @@ const Sidebar = ({
                 {
                     onFinish: () => {
                         Alert.close();
-                    }
+                    },
                 },
             );
         }
@@ -120,26 +122,30 @@ const Sidebar = ({
     );
 
     const hasPermission = (menuId: string): boolean => {
-        return rolePermissions[userRole as UserRole]?.includes(menuId) || false;
+        // Un étudiant activé retrouve son dossier dans son espace unique,
+        // même lorsqu’il conserve également le rôle candidat « user ».
+        if (menuId === 'enrollments' && (portalActive || isAdministration)) return false;
+        const roles = Array.isArray(userRole) ? userRole : [userRole];
+        return roles.some((role) => role && rolePermissions[role]?.includes(menuId));
     };
 
     const menuItems = [
         {
             id: 'dashboard',
-            label: 'Student',
-            ariaLabel: 'Tableau de bord',
+            label: isAdministration ? 'Nos étudiants' : 'Étudiant',
+            ariaLabel: isAdministration ? 'Gestion des étudiants du campus' : 'Espace étudiant',
             icon: <GraduationCap size={isMobile ? 20 : 24} />,
         },
         {
             id: 'analytics',
-            label: 'Instructor',
-            ariaLabel: 'Analyses et statistiques',
+            label: isAdministration ? 'Enseignants' : 'Instructor',
+            ariaLabel: isAdministration ? 'Gestion des enseignants' : 'Analyses et statistiques',
             icon: <BarChart3 size={isMobile ? 20 : 24} />,
         },
         {
             id: 'reports',
             label: 'Apps',
-            ariaLabel: 'Rapports',
+            ariaLabel: 'Applications de gestion',
             icon: <Grid3x3 size={isMobile ? 20 : 24} />,
         },
         {
@@ -162,7 +168,7 @@ const Sidebar = ({
         },
         {
             id: 'site_settings',
-            label: 'UMK',
+            label: 'USK',
             ariaLabel: 'Paramètres du site',
             icon: <Settings size={isMobile ? 20 : 24} />,
         },
@@ -173,18 +179,26 @@ const Sidebar = ({
     // Configuration des sous-menus
     const subMenuConfig = {
         dashboard: {
-            title: 'Student Dashboard',
-            items: [
-                { id: 'home', label: 'Home', icon: <Home size={18} />, href: '#' },
-                { id: 'my-courses', label: 'My Courses', icon: <BookOpen size={18} />, href: '#' },
-                { id: 'schedule', label: 'Schedule', icon: <Calendar size={18} />, href: '#' },
-                { id: 'grades', label: 'Grades', icon: <Award size={18} />, href: '#' },
-                { id: 'assignments', label: 'Assignments', icon: <FileText size={18} />, href: '#' },
+            title: isAdministration ? 'Nos étudiants' : 'Espace étudiant',
+            items: isAdministration ? [
+                { id: 'campus-students', label: 'Étudiants du campus', icon: <Users size={18} />, href: '/dashboard/admin/student-academic' },
+            ] : [
+                { id: 'home', label: 'Mon espace', icon: <Home size={18} />, href: portalActive ? '/dashboard/student' : '/dashboard' },
+                ...studentModules
+                    .filter((module) => module.id !== 'overview')
+                    .map((module) => ({
+                        id: module.id,
+                        label: module.title,
+                        icon: <module.icon size={18} />,
+                        href: `/dashboard/student/${module.id}`,
+                    })),
             ],
         },
         analytics: {
-            title: 'Instructor Analytics',
-            items: [
+            title: isAdministration ? 'Les enseignants' : 'Instructor Analytics',
+            items: isAdministration ? [
+                { id: 'professors', label: 'Gestion des enseignants', icon: <Users size={18} />, href: '/dashboard/admin/professors' },
+            ] : [
                 { id: 'overview', label: 'Overview', icon: <TrendingUp size={18} />, href: '#' },
                 { id: 'student-progress', label: 'Student Progress', icon: <Users size={18} />, href: '#' },
                 { id: 'course-stats', label: 'Course Statistics', icon: <BarChart3 size={18} />, href: '#' },
@@ -192,12 +206,22 @@ const Sidebar = ({
             ],
         },
         reports: {
-            title: 'Apps & Vue',
+            title: 'Applications USK',
             items: [
-                { id: 'years', label: 'Année Academique', icon: <Calendar size={18} />, href: route('dashboard.admin.academic-years.index')},
-                { id: 'faculty', label: 'Faculté', icon: <GraduationCap size={18} />, href: route('dashboard.admin.faculties.index') },
-                { id: 'levels', label: 'Niveau', icon: <BadgeCheck size={18} />, href: route('dashboard.admin.faculties.show', { id: 1 }) },
-                { id: 'posts', label: 'Posts', icon: <BookOpen size={18} />, href: route('dashboard.admin.posts.index') },
+                { id: 'seo', label: 'Référencement et documents', icon: <BookOpen size={18} />, href: '/dashboard/admin/seo' },
+                { id: 'schedule', label: 'Horaires des cours', icon: <Calendar size={18} />, href: '/dashboard/admin/schedule' },
+                { id: 'professors', label: 'Enseignants', icon: <Users size={18} />, href: '/dashboard/admin/professors' },
+                { id: 'student-academic', label: 'Nos étudiants', icon: <GraduationCap size={18} />, href: '/dashboard/admin/student-academic' },
+                {
+                    id: 'applications',
+                    label: 'Dossiers d’inscription',
+                    icon: <FileText size={18} />,
+                    href: route('dashboard.admin.enrollments.index'),
+                },
+                { id: 'years', label: 'Années académiques', icon: <Calendar size={18} />, href: route('dashboard.admin.academic-years.index') },
+                { id: 'faculty', label: 'Facultés', icon: <GraduationCap size={18} />, href: route('dashboard.admin.faculties.index') },
+                { id: 'levels', label: 'Niveaux', icon: <BadgeCheck size={18} />, href: route('dashboard.admin.levels.index') },
+                { id: 'posts', label: 'Actualités', icon: <BookOpen size={18} />, href: route('dashboard.admin.posts.index') },
             ],
         },
         users: {
@@ -220,15 +244,11 @@ const Sidebar = ({
         },
         enrollments: {
             title: 'Inscriptions',
-            items: [
-                { id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') },
-            ],
+            items: [{ id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') }],
         },
         site_settings: {
             title: 'Site Settings',
-            items: [
-                { id: 'site-settings', label: 'Paramètres du site', icon: <Settings size={18} />, href: route('dashboard.admin.site.index') },
-            ],
+            items: [{ id: 'site-settings', label: 'Paramètres du site', icon: <Settings size={18} />, href: route('dashboard.admin.site.index') }],
         },
     };
 
@@ -241,16 +261,16 @@ const Sidebar = ({
                 aria-label="Navigation principale"
             >
                 {/* Gradient Overlay Effect */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-indigo-500/5 via-transparent to-purple-500/5"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-teal-500/5"></div>
 
                 {/* Brand avec taille adaptative et animation subtile */}
                 <div
                     className={`relative flex items-center justify-center ${isMobile ? 'mb-4 px-2 py-4' : 'mb-6 px-3 py-5'} flex-shrink-0 border-b border-slate-700/50`}
                 >
                     <div
-                        className={`${isMobile ? 'h-10 w-10 text-xl' : 'h-12 w-12 text-2xl'} flex transform items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 font-bold text-white shadow-lg transition-all duration-500 hover:scale-110 hover:rotate-6 hover:shadow-xl hover:shadow-indigo-500/25`}
+                        className={`${isMobile ? 'h-10 w-10 text-xl' : 'h-12 w-12 text-2xl'} flex transform items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 font-bold text-white shadow-lg transition-all duration-500 hover:scale-110 hover:rotate-6 hover:shadow-xl hover:shadow-emerald-500/25`}
                     >
-                        D
+                        <img src="/assets/usk/logo.png" alt="Université Simon Kimbangu" className="h-full w-full object-contain p-1" />
                     </div>
                 </div>
 
@@ -265,13 +285,13 @@ const Sidebar = ({
                             <div key={item.id} className="group relative">
                                 {/* Active Indicator avec animation améliorée */}
                                 <div
-                                    className={`absolute ${isMobile ? '-left-1.5' : '-left-2'} top-1/2 -translate-y-1/2 ${isMobile ? 'h-8 w-1' : 'h-10 w-1.5'} rounded-r-full bg-gradient-to-b from-indigo-400 to-indigo-600 transition-all duration-500 ${isActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'}`}
+                                    className={`absolute ${isMobile ? '-left-1.5' : '-left-2'} top-1/2 -translate-y-1/2 ${isMobile ? 'h-8 w-1' : 'h-10 w-1.5'} rounded-r-full bg-gradient-to-b from-emerald-400 to-emerald-600 transition-all duration-500 ${isActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'}`}
                                 ></div>
 
                                 <button
                                     className={`relative w-full cursor-pointer border-none bg-transparent ${isMobile ? 'p-2.5' : 'p-3'} flex flex-col items-center overflow-hidden rounded-xl text-xs font-medium transition-all duration-300 ${
                                         isActive
-                                            ? 'scale-105 border border-indigo-400/40 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-white shadow-lg'
+                                            ? 'scale-105 border border-emerald-400/40 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-white shadow-lg'
                                             : 'text-slate-400 hover:scale-105 hover:bg-slate-800/60 hover:text-white active:scale-95'
                                     } ${isHovered && !isActive ? 'shadow-lg' : ''}`}
                                     data-menu={item.id}
@@ -288,7 +308,7 @@ const Sidebar = ({
                                 >
                                     {/* Background Glow Effect */}
                                     <div
-                                        className={`absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500/0 via-indigo-500/10 to-purple-500/0 transition-opacity duration-500 ${isActive || isHovered ? 'opacity-100' : 'opacity-0'}`}
+                                        className={`absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500/0 via-emerald-500/10 to-teal-500/0 transition-opacity duration-500 ${isActive || isHovered ? 'opacity-100' : 'opacity-0'}`}
                                     ></div>
 
                                     {/* Icon Container with Animation */}
@@ -306,7 +326,7 @@ const Sidebar = ({
                                     </span>
 
                                     {/* Ripple Effect on Click */}
-                                    {isActive && <span className="absolute inset-0 animate-ping rounded-xl bg-indigo-400 opacity-20"></span>}
+                                    {isActive && <span className="absolute inset-0 animate-ping rounded-xl bg-emerald-400 opacity-20"></span>}
                                 </button>
                             </div>
                         );
@@ -392,11 +412,19 @@ const Sidebar = ({
                                     className={`transition-all duration-500 ${hasAnimation ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}
                                 >
                                     <h3
-                                        className={`${isMobile ? 'text-xl' : 'text-2xl'} bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text font-bold text-slate-900 text-transparent`}
+                                        className={`${isMobile ? 'text-xl' : 'text-2xl'} bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text font-bold text-slate-900 text-transparent`}
                                     >
                                         {config.title}
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-500">Manage your {menuId} settings</p>
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        {menuId === 'dashboard'
+                                            ? (isAdministration ? 'Gestion et suivi des étudiants du campus' : 'Votre parcours et vos services étudiants')
+                                            : menuId === 'enrollments'
+                                              ? 'Vos candidatures et leur suivi'
+                                              : menuId === 'reports'
+                                                ? 'Formations, calendrier et contenus'
+                                                : `Manage your ${menuId} settings`}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -408,23 +436,23 @@ const Sidebar = ({
                                     <a
                                         key={item.id}
                                         href={item.href}
-                                        className={`group flex items-center ${isMobile ? 'gap-3 px-4 py-3' : 'gap-4 px-5 py-4'} relative transform overflow-hidden rounded-xl border border-transparent text-slate-600 transition-all duration-300 hover:translate-x-1 hover:border-slate-200/50 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-slate-900 ${hasAnimation ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}
+                                        className={`group flex items-center ${isMobile ? 'gap-3 px-4 py-3' : 'gap-4 px-5 py-4'} relative transform overflow-hidden rounded-xl border border-transparent text-slate-600 transition-all duration-300 hover:translate-x-1 hover:border-slate-200/50 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:text-slate-900 ${hasAnimation ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}
                                         style={{ transitionDelay: `${index * 50}ms` }}
                                         role="menuitem"
                                     >
                                         <span
-                                            className={`flex-shrink-0 ${isMobile ? 'h-9 w-9' : 'h-10 w-10'} flex transform items-center justify-center rounded-lg bg-slate-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-purple-600`}
+                                            className={`flex-shrink-0 ${isMobile ? 'h-9 w-9' : 'h-10 w-10'} flex transform items-center justify-center rounded-lg bg-slate-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600`}
                                         >
                                             <span className="text-slate-500 transition-colors duration-300 group-hover:text-white">{item.icon}</span>
                                         </span>
                                         <span className={`font-medium ${isMobile ? 'text-sm' : 'text-base'} flex-1`}>{item.label}</span>
                                         <ChevronRight
                                             size={isMobile ? 16 : 18}
-                                            className="text-slate-400 transition-all duration-300 group-hover:translate-x-1 group-hover:text-indigo-500"
+                                            className="text-slate-400 transition-all duration-300 group-hover:translate-x-1 group-hover:text-emerald-500"
                                         />
 
                                         {/* Hover effect background */}
-                                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 via-indigo-500/5 to-purple-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-teal-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                                     </a>
                                 ))}
                             </div>
@@ -437,7 +465,7 @@ const Sidebar = ({
                             <div className="flex items-center justify-between">
                                 <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-slate-500`}>Last updated: Today</span>
                                 <button
-                                    className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-indigo-600 transition-colors duration-200 hover:text-indigo-700 hover:underline`}
+                                    className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline`}
                                 >
                                     View all
                                 </button>

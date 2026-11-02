@@ -10,6 +10,11 @@ class LevelDetail extends Model
     protected $fillable = [
         'level_id',
         'price',
+        'price_foreign',
+        'price_national_first',
+        'price_national_second',
+        'price_foreign_first',
+        'price_foreign_second',
         'has_certificate',
         'language',
         'duration_years',

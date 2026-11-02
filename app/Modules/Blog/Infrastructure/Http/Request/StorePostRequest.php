@@ -14,6 +14,8 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'video_url' => ['nullable', 'url', 'max:2048', new \App\Modules\Blog\Infrastructure\Rules\VideoUrl],
+            'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm', 'max:'.\App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes(), 'prohibits:video_url'],
             'title'        => ['required','string','max:255'],
             'category_id'  => ['nullable','exists:categories,id'],
             'excerpt'      => ['nullable','string','max:300'],
@@ -28,12 +30,8 @@ class StorePostRequest extends FormRequest
             'main_image_1' => ['nullable','image','max:2048'],
             'main_image_2' => ['nullable','image','max:2048'],
 
-            // galerie: [{file?, path?, alt?, caption?}]
-            'gallery'      => ['nullable','array','max:20'],
-            'gallery.*.file'    => ['nullable','image','max:2048'],
-            'gallery.*.path'    => ['nullable','string'],
-            'gallery.*.alt'     => ['nullable','string','max:255'],
-            'gallery.*.caption' => ['nullable','string','max:255'],
+            'gallery' => ['nullable', 'array', 'max:20'],
+            'gallery.*' => ['image', 'max:2048'],
         ];
     }
 }

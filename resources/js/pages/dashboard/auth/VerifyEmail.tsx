@@ -1,174 +1,78 @@
-import React from 'react'
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { Link } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react';
-import Alert from '@/utils/sweetAlert';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { CircleCheck, Info, LoaderCircle, LogOut, Mail } from 'lucide-react';
+import type { FormEvent } from 'react';
 
-export default function Signup({ status }: { status: string }) {
-    const { post, processing } = useForm();
+export default function VerifyEmail({ status }: { status?: string }) {
+    const { post, processing, errors } = useForm();
 
-    const handleResend = (e: React.FormEvent) => {
-        e.preventDefault();
-        post(route('verification.send'), {
-            onSuccess: () => {
-                Alert.success('Email de vérification envoyé avec succès');
-            },
-            onError: () => {
-                Alert.error('Erreur lors de l\'envoi de l\'email de vérification');
-            }
-        });
+    const handleResend = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        post(route('verification.send'), { preserveScroll: true });
     };
 
     return (
-        <Dashboard> 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 font-sans flex items-center justify-center p-4 relative overflow-hidden">
-                {/* Effet de fond subtil */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-blue-50/20 to-transparent"></div>
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-green-50/20 to-transparent"></div>
-                </div>
-                
-                <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-md p-8 relative backdrop-blur-lg animate-slide-up">
-                    {/* Icon de vérification */}
-                    <div className="flex justify-center mb-8">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 text-blue-500">
-                            <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="4 4" className="animate-spin-slow"/>
-                            <path d="M32 12v8m0 24v8m12-20h-8m-24 0h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            <circle cx="32" cy="32" r="3" fill="currentColor"/>
-                        </svg>
+        <Dashboard authPage>
+            <Head title="Vérification de votre adresse email" />
+            <div className="usk-auth-form flex w-full items-center justify-center font-sans">
+                <div className="usk-auth-panel w-full min-w-0">
+                    <div className="mb-6 flex justify-center">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600">
+                            <img src="/assets/usk/logo.png" alt="Université Simon Kimbangu" className="h-full w-full object-contain p-1" />
+                        </div>
                     </div>
 
-                    <div className="text-center">
-                        <h1 className="text-3xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
-                            Vérifiez votre adresse email
-                        </h1>
-                        
-                        <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                            Nous avons envoyé un lien de vérification à votre adresse email. 
-                            Cliquez sur le lien pour activer votre compte et accéder à toutes les fonctionnalités.
+                    <div className="mb-6 text-center">
+                        <h1 className="mb-3 text-2xl font-bold text-gray-800">Vérifiez votre adresse email</h1>
+                        <p className="leading-relaxed text-gray-600">
+                            Cliquez sur le lien reçu par email pour activer votre compte et accéder à votre espace.
                         </p>
+                    </div>
 
-                        <div className="flex items-center justify-center gap-2 bg-blue-50 text-blue-600 p-3 rounded-xl text-sm font-medium mb-8 border border-blue-100">
-                            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 8L12 13L21 8M3 8V16C3 16.5523 3.44772 17 4 17H20C20.5523 17 21 16.5523 21 16V8M3 8C3 7.44772 3.44772 7 4 7H20C20.5523 7 21 7.44772 21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            <span>Vérifiez également votre dossier spam</span>
-                        </div>
+                    <div className="mb-6 flex items-start gap-3 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-700">
+                        <Info size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+                        <p className="leading-relaxed">Vous ne trouvez pas le message ? Vérifiez également votre dossier spam ou renvoyez le lien ci-dessous.</p>
+                    </div>
 
+                    <div aria-live="polite" aria-atomic="true">
                         {status === 'verification-link-sent' && (
-                            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-8 flex items-start gap-2 text-left animate-fade-in">
-                                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                                </svg>
-                                <div>
-                                    <strong className="text-green-600 font-semibold block mb-1">Email envoyé avec succès !</strong>
-                                    <p className="text-green-700 text-sm leading-relaxed">Un nouveau lien de vérification vient d'être envoyé à votre adresse email.</p>
-                                </div>
+                            <div className="mb-6 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700" role="status">
+                                <CircleCheck size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+                                <p>Un nouveau lien de vérification a été envoyé à votre adresse email.</p>
                             </div>
                         )}
+                    </div>
 
-                        <form onSubmit={handleResend} className="mb-8">
-                            <button 
-                                type="submit" 
-                                className={`w-full bg-blue-500 text-white rounded-xl p-4 font-semibold text-base flex items-center justify-center gap-2 min-h-[48px] relative overflow-hidden transition-all duration-200 hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none ${processing ? 'disabled' : ''}`}
-                                disabled={processing}
-                            >
-                                {processing ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white/30 rounded-full border-t-white animate-spin"></div>
-                                        <span>Envoi en cours...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-                                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
-                                            <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
-                                        </svg>
-                                        Renvoyer l'email de vérification
-                                    </>
-                                )}
-                                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-all duration-500"></span>
-                            </button>
-                        </form>
-
-                        <div className="border-t border-gray-100 pt-6">
-                            <p className="text-gray-500 text-sm mb-4">Vous n'avez pas reçu l'email ?</p>
-                            <div className="flex gap-6 justify-center flex-wrap">
-                                <Link 
-                                    href={route('logout')} 
-                                    method="post" 
-                                    as="button" 
-                                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-1 rounded-md transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                    Se déconnecter
-                                </Link>
-                                <button type="button" className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-1 rounded-md transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                        <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        <path d="H12V16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                    Besoin d'aide ?
-                                </button>
-                            </div>
+                    {Object.keys(errors).length > 0 && (
+                        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+                            {Object.values(errors).map((error, index) => <p key={index}>{error}</p>)}
                         </div>
+                    )}
+
+                    <form onSubmit={handleResend}>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-3.5 text-base font-medium text-white transition-colors duration-300 hover:from-emerald-600 hover:to-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
+                        >
+                            {processing ? <LoaderCircle size={20} className="shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Mail size={20} className="shrink-0" aria-hidden="true" />}
+                            <span>{processing ? 'Envoi en cours...' : "Renvoyer l’email de vérification"}</span>
+                        </button>
+                    </form>
+
+                    <div className="mt-6 border-t border-gray-200 pt-6 text-center">
+                        <Link
+                            href={route('logout')}
+                            method="post"
+                            as="button"
+                            className="inline-flex min-h-11 items-center justify-center gap-2 text-sm font-medium text-emerald-600 transition-colors hover:text-emerald-800"
+                        >
+                            <LogOut size={18} aria-hidden="true" />
+                            Se déconnecter
+                        </Link>
                     </div>
                 </div>
             </div>
-
-            <style jsx>{`
-                @keyframes slide-up {
-                    from {
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                @keyframes fade-in {
-                    from { 
-                        opacity: 0; 
-                        transform: scale(0.95); 
-                    }
-                    to { 
-                        opacity: 1; 
-                        transform: scale(1); 
-                    }
-                }
-                
-                @keyframes spin-slow {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                
-                .animate-slide-up {
-                    animation: slide-up 0.6s ease-out;
-                }
-                
-                .animate-fade-in {
-                    animation: fade-in 0.5s ease-out;
-                }
-                
-                .animate-spin-slow {
-                    animation: spin-slow 8s linear infinite;
-                }
-                
-                @media (prefers-reduced-motion: reduce) {
-                    .animate-slide-up,
-                    .animate-fade-in,
-                    .animate-spin-slow {
-                        animation: none;
-                    }
-                }
-            `}</style>
         </Dashboard>
-    )
+    );
 }

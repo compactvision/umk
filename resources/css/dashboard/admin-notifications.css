@@ -1,0 +1,183 @@
+.admin-notifications {
+    position: relative;
+}
+.admin-notifications-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border: 1px solid #dce3d2;
+    background: #f8faf3;
+    border-radius: 7px;
+    color: #547346;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+.admin-topbar .admin-notifications-toggle > span {
+    position: absolute;
+    right: -6px;
+    top: -7px;
+    border: 2px solid white;
+    border-radius: 12px;
+    background: #a77d38;
+    color: white;
+    font-size: 9px;
+    letter-spacing: 0;
+    min-width: 19px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0 3px;
+    margin: 0;
+}
+.admin-notifications-panel {
+    position: absolute;
+    top: 51px;
+    right: 0;
+    width: min(390px, calc(100vw - 30px));
+    background: #fffefa;
+    border: 1px solid #dce4d0;
+    border-radius: 11px;
+    box-shadow: 0 16px 48px #15352020;
+    overflow: hidden;
+    color: #315238;
+}
+.admin-notifications-panel header {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 21px 23px;
+    border-bottom: 1px solid #e9eddf;
+    background: #f6f8ee;
+}
+.admin-topbar .admin-notifications-panel h2 {
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+    color: #315238;
+    line-height: 1.4;
+}
+.admin-notifications-panel p {
+    font-size: 11px;
+    line-height: 1.7;
+    color: #7b8b6d;
+    margin: 6px 0 0;
+}
+.admin-notifications-panel header > button {
+    background: transparent;
+    border: 0;
+    color: #8d9b7d;
+    align-self: start;
+    cursor: pointer;
+}
+.admin-notifications-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: min(470px, 65vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.admin-notifications-panel li {
+    display: flex;
+    align-items: start;
+    position: relative;
+    gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid #edf0e5;
+}
+.admin-notifications-panel li.is-unread {
+    background: #fbf8ed;
+}
+.admin-notifications-panel li > div {
+    min-width: 0;
+    flex: 1;
+}
+.admin-topbar .admin-notification-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: #eef2e3;
+    border-radius: 6px;
+    color: #8b9c6b;
+    margin: 0;
+}
+.admin-topbar .admin-notifications-panel li strong {
+    font-size: 12px;
+    font-weight: 600;
+}
+.admin-notifications-panel .admin-notification-file {
+    font-size: 10px;
+    overflow-wrap: anywhere;
+    color: #8e987e;
+}
+.admin-notifications-panel small {
+    font-size: 9px;
+    color: #9aa48c;
+    display: block;
+    margin-top: 8px;
+}
+.admin-notifications-panel .admin-notification-open {
+    display: block;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid #a9b294;
+    padding: 0 0 3px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: #54733f;
+    text-align: left;
+    cursor: pointer;
+}
+.admin-topbar .admin-notification-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ba9247;
+    flex-shrink: 0;
+    letter-spacing: 0;
+}
+.admin-notifications-read-all {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 0;
+    background: transparent;
+    color: #81936a;
+    font-size: 10px;
+    padding: 13px 22px;
+    width: 100%;
+    cursor: pointer;
+}
+.admin-notifications-empty {
+    padding: 32px 24px;
+    text-align: center;
+    color: #a6b193;
+}
+.admin-topbar .admin-notifications-empty strong {
+    margin-top: 16px;
+    font-size: 14px;
+}
+.review-document-view {
+    scroll-margin-top: 85px;
+}
+@media (max-width: 600px) {
+    .admin-notifications-panel {
+        position: fixed;
+        right: 12px;
+        top: 65px;
+    }
+    .admin-topbar > div {
+        gap: 9px;
+    }
+}
+.admin-notifications-panel .notification-review-comment {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: #f1f4e9;
+    border-left: 2px solid #b1be96;
+    padding: 8px 10px;
+    margin-top: 10px;
+    color: #647950;
+}

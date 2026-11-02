@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
 /**
- * Preloader UMK — premium, fluide, accessible.
+ * Preloader USK — premium, fluide, accessible.
  * Corrigé : timers nettoyés proprement, pas de return dans le callback setTimeout.
  */
 export default function Preloader({
   minDuration = 1800,
-  logoSrc = "/assets/img/logo/logo.png",
-  title = "UMK se prépare…",
+  logoSrc = "/assets/usk/logo.png",
+  title = "USK se prépare…",
   subtitle = "Chargement de votre expérience",
 }: {
   minDuration?: number;
@@ -79,7 +79,7 @@ export default function Preloader({
           <div className="absolute inset-2 rounded-full bg-white/80 backdrop-blur-sm ring-1 ring-white/50 flex items-center justify-center">
             <img
               src={logoSrc}
-              alt="Logo UMK"
+              alt="Logo USK"
               className="h-14 w-14 object-contain sm:h-16 sm:w-16 animate-[pop_600ms_cubic-bezier(.2,.9,.25,1.2)_both]"
             />
           </div>

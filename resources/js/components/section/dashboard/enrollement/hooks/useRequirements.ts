@@ -22,16 +22,18 @@ export function useRequirements(params: Params) {
         if (!params.year_id || !params.level_id) {
             setRequirements({ personal_info: [], academic_info: [], payment: undefined });
             setError(null);
+            setLoading(false);
             return;
         }
 
+        setLoading(true);
+        setError(null);
         const controller = new AbortController();
         const timer = setTimeout(async () => {
             try {
                 setLoading(true);
                 setError(null);
-                // @ts-ignore (Ziggy)
-                const url = route('dashboard.enrollment.requirements');
+                const url = '/dashboard/enrollment/requirements';
 
                 const res = await axios.get(url, {
                     params: {
@@ -71,13 +73,13 @@ export function useRequirements(params: Params) {
                           }
                         : undefined,
                 });
-            } catch (e: any) {
+            } catch (e: unknown) {
                 if (axios.isCancel?.(e)) return;
-                if (e?.response?.status === 422) setError(e?.response?.data?.message || 'Année académique non active.');
+                if (axios.isAxiosError(e) && e.response?.status === 422) setError(e.response?.data?.message || 'Année académique non active.');
                 else setError('Erreur serveur lors du chargement des exigences.');
                 setRequirements({ personal_info: [], academic_info: [], payment: undefined });
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) setLoading(false);
             }
         }, 300);
 

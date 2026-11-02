@@ -21,8 +21,17 @@ final class CreateLevelDetail
         ?string $illustrationImage,
         ?string $courseObjective,
         ?int $fees,
-        ?array $options
+        ?array $options,
+        ?float $priceForeign = null,
+        array $installments = []
     ): LevelDetail {
+        if (isset($installments['price_national_first'], $installments['price_national_second'])) {
+            $price = (round((float) $installments['price_national_first'] * 100) + round((float) $installments['price_national_second'] * 100)) / 100;
+        }
+        if (isset($installments['price_foreign_first'], $installments['price_foreign_second'])) {
+            $priceForeign = (round((float) $installments['price_foreign_first'] * 100) + round((float) $installments['price_foreign_second'] * 100)) / 100;
+        }
+
         $detail = new LevelDetail(
             null,
             $levelId,
@@ -36,7 +45,9 @@ final class CreateLevelDetail
             $illustrationImage,
             $courseObjective,
             $fees,
-            $options
+            $options,
+            priceForeign: $priceForeign,
+            installments: $installments
         );
 
         return $this->repo->save($detail);

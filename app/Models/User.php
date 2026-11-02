@@ -58,6 +58,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
         ]);
     }
 
+    public function studentProfile() { return $this->hasOne(\App\Models\Student\StudentProfile::class); }
+
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class, 'student_id');

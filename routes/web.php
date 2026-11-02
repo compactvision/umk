@@ -27,17 +27,25 @@ use App\Modules\LevelDetail\Infrastructure\Http\Controllers\LevelDetailControlle
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+Route::get('/sitemap.xml', [\App\Modules\Seo\Infrastructure\Http\Controllers\PublicSeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [\App\Modules\Seo\Infrastructure\Http\Controllers\PublicSeoController::class, 'robots'])->name('seo.robots');
+Route::get('/plan-du-site', [\App\Modules\Seo\Infrastructure\Http\Controllers\PublicSeoController::class, 'plan'])->name('site-plan');
+foreach (config('seo.legal') as $key => $definition) {
+    Route::get($definition['path'], [\App\Modules\Seo\Infrastructure\Http\Controllers\PublicSeoController::class, 'legal'])->defaults('key', $key)->name('legal.'.$key);
+}
+Route::post('/analytics/events', \App\Modules\Seo\Infrastructure\Http\Controllers\AudienceController::class)->middleware('throttle:60,1')->name('seo.events');
 // Routes statiques
 Route::get('/', [SwitchPageController::class, 'home'])->name('home');
 Route::get('/admission', [SwitchPageController::class, 'admission'])->name('admission');
 Route::get('/courses', [SwitchPageController::class, 'courses'])->name('courses');
+Route::get('/faculties/{id}', [SwitchPageController::class, 'facultyShow'])->whereNumber('id')->name('faculties.show');
 Route::get('/about', [SwitchPageController::class, 'about'])->name('about');
-Route::get('/course/{id}', [SwitchPageController::class, 'courseShow'])->name('courseShow');
+Route::get('/course/{id}', [SwitchPageController::class, 'courseShow'])->whereNumber('id')->name('courseShow');
 Route::get('/contact', [SwitchPageController::class, 'contact'])->name('contact');
 Route::get('blog', [SwitchPageController::class, 'blog'])->name('blog');
-Route::get('blog/{id}', [SwitchPageController::class, 'blogDetails'])->name('blog.show');
-Route::get('politique', [SwitchPageController::class, 'politique'])->name('politique');
-Route::get('condition', [SwitchPageController::class, 'condition'])->name('condition');
+Route::get('blog/{id}', [SwitchPageController::class, 'blogDetails'])->whereNumber('id')->name('blog.show');
+Route::redirect('/politique', '/politique-de-confidentialite', 301)->name('politique');
+Route::redirect('/condition', '/conditions-generales-utilisation', 301)->name('condition');
 Route::get('tuitions', [SwitchPageController::class, 'tuitions'])->name('tuitions');
 
 // Routes d'authentification
@@ -143,10 +151,60 @@ Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'
 
 // Dashboard accessible uniquement si email vérifié
 Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/', fn() => inertia('dashboard/index/Index'))
+    Route::get('/', \App\Modules\Student\Infrastructure\Http\Controllers\DashboardEntryController::class)
         ->name('index');
 
     Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
+        Route::prefix('seo')->name('seo.')->controller(\App\Modules\Seo\Infrastructure\Http\Controllers\AdminSeoController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::put('/settings', 'settings')->name('settings');
+            Route::put('/pages', 'page')->name('pages');
+            Route::put('/legal/{key}', 'legal')->name('legal');
+        });
+
+        Route::prefix('schedule')->name('schedule.')->controller(\App\Modules\Teaching\Infrastructure\Http\Controllers\ScheduleController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{session}/attendance', [\App\Modules\Teaching\Infrastructure\Http\Controllers\AttendanceController::class, 'show'])->name('attendance');
+            Route::post('/{session}/attendance', [\App\Modules\Teaching\Infrastructure\Http\Controllers\AttendanceController::class, 'save'])->name('attendance.save');
+            Route::post('/', 'save')->name('store');
+            Route::post('/semester', 'semester')->name('semester');
+            Route::post('/semesters', 'saveSemester')->name('semesters.store');
+            Route::put('/{session}', 'save')->name('update');
+            Route::delete('/{session}', 'destroy')->name('destroy');
+        });
+        Route::prefix('professors')->name('professors.')->controller(\App\Modules\Teaching\Infrastructure\Http\Controllers\ProfessorController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::post('/assignments', 'assign')->name('assignments.store');
+            Route::put('/assignments/{offering}', 'assign')->name('assignments.update');
+            Route::get('/{professor}', 'show')->name('show');
+            Route::put('/{professor}', 'update')->name('update');
+        });
+        Route::prefix('student-academic')->name('student-academic.')->controller(\App\Modules\Student\Infrastructure\Http\Controllers\AcademicAdministrationController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/profile', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/password', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'password'])->middleware('throttle:6,1')->name('profile.password');
+        Route::get('/profile/photo', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'photo'])->name('profile.photo');
+        Route::get('/submissions/{submission}/download','downloadSubmission')->name('submissions.download');
+            Route::post('/{academic}/fees', 'assess')->name('fees');
+            Route::post('/{academic}/obligations', 'obligation')->name('obligations');
+            Route::post('/{academic}/payments', 'payment')->name('payments');
+            Route::post('/payments/{payment}/status', 'paymentStatus')->name('payments.status');
+            Route::post('/{academic}/adjustments', 'adjustment')->name('adjustments');
+            Route::post('/adjustments/{adjustment}/revoke', 'revoke')->name('adjustments.revoke');
+            Route::post('/rules/{rule}/deactivate','deactivateRule')->name('rules.deactivate');
+            Route::post('/rules', 'rule')->name('rules');
+            Route::post('/{academic}/status', 'status')->name('status');
+            Route::post('/offerings', 'offering')->name('offerings');
+            Route::post('/sessions', 'session')->name('sessions');
+            Route::post('/resources', 'resource')->name('resources');
+            Route::post('/publication/{type}/{id}', 'publish')->name('publish');
+            Route::post('/{academic}/course-exceptions', 'courseException')->name('exceptions');
+            Route::post('/requests/{ticket}/reply', 'respond')->name('requests.reply');
+        });
+
+    Route::post('/notifications/read-all', [\App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentNotificationController::class, 'readAll'])->name('notifications.read-all');
+        Route::post('/notifications/{notification}/open', [\App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentNotificationController::class, 'open'])->name('notifications.open');
         Route::prefix('/academic-years')->name('academic-years.')->group(function () {
             Route::get('/', [AcademicYearController::class, 'index'])->name('index');
             Route::get('/{id}', [AcademicYearController::class, 'show'])->name('show');
@@ -173,6 +231,8 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
 
             Route::prefix('/details')->name('details.')->group(function () {
                 Route::get('/{id}', [LevelDetailController::class, 'show'])->name('show');
+                Route::post('/{id}/courses', [LevelDetailController::class, 'storeCourse'])->name('courses.store');
+                Route::put('/{id}/courses/{courseId}', [LevelDetailController::class, 'updateCourse'])->name('courses.update');
                 Route::post('/', [LevelDetailController::class, 'store'])->name('store');
                 Route::put('/{id}', [LevelDetailController::class, 'update'])->name('update');
                 Route::delete('/{id}', [LevelDetailController::class, 'destroy'])->name('destroy');
@@ -196,6 +256,23 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         });
     });
 
+    Route::post('/notifications/read-all', [\App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentNotificationController::class, 'readAllStudent'])->name('notifications.read-all');
+    Route::post('/notifications/{notification}/open', [\App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentNotificationController::class, 'openStudent'])->name('notifications.open');
+
+    Route::prefix('student')->name('student.')->controller(\App\Modules\Student\Infrastructure\Http\Controllers\StudentPortalController::class)->group(function () {
+        Route::post('/profile', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/password', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'password'])->middleware('throttle:6,1')->name('profile.password');
+        Route::get('/profile/photo', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentProfileController::class, 'photo'])->name('profile.photo');
+        Route::get('/submissions/{submission}/download','downloadSubmission')->name('submissions.download');
+        Route::get('/resources/{resource}/download','download')->name('resources.download');
+        Route::post('/resources/{resource}/submit','submit')->name('resources.submit');
+        Route::get('/payments/{payment}/receipt','receipt')->name('payments.receipt');
+        Route::post('/welcome/acknowledge', 'acknowledgeWelcome')->name('welcome.acknowledge');
+        Route::post('/requests','requestService')->name('requests');
+        Route::get('/courses/{course}/{section?}', [\App\Modules\Student\Infrastructure\Http\Controllers\StudentCourseController::class, 'show'])->whereNumber('course')->where('section', 'infos|sessions|online|files|evaluations|videos|attendance')->name('courses.show');
+        Route::get('/{section?}','show')->where('section','overview|profile|academics|assessments|services|courses|schedule|materials|assignments|evaluations|results|fees|transactions|documents|announcements|requests')->name('index');
+    });
+
     Route::prefix('enrollments')->name('enrollments.')->group(function () {
         Route::get('/', [EnrollmentController::class, 'index'])->name('index');
         Route::get('/create', [EnrollmentController::class, 'create'])->name('create');
@@ -210,7 +287,9 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         
         // Documents
         Route::post('/documents/upload', [DocumentController::class, 'upload'])->name('documents.upload');
+        Route::get('/documents/{uuid}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
         Route::get('/documents/{uuid}/download', [DocumentController::class, 'download'])->name('documents.download');
+        Route::post('/documents/{uuid}/replace', [DocumentController::class, 'replaceReviewed'])->name('documents.replace');
         Route::delete('/documents/{uuid}', [DocumentController::class, 'delete'])->name('documents.delete');
     });
     
@@ -221,9 +300,14 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
     Route::get('/enrollment/requirements', RequirementsController::class)->name('enrollment.requirements');
     
     // Routes Admin
-    Route::middleware(['admin'])->prefix('admin/enrollments')->name('admin.enrollments.')->group(function () {
+    Route::middleware(['role:admin'])->prefix('admin/enrollments')->name('admin.enrollments.')->group(function () {
         Route::get('/', [EnrollmentManagementController::class, 'index'])->name('index');
+        Route::get('/documents/{uuid}/preview', [EnrollmentManagementController::class, 'preview'])->name('documents.preview');
+        Route::get('/documents/{uuid}/download', [EnrollmentManagementController::class, 'download'])->name('documents.download');
         Route::get('/{id}', [EnrollmentManagementController::class, 'show'])->name('show');
+        Route::post('/{id}/start-analysis', [EnrollmentManagementController::class, 'startAnalysis'])->name('start-analysis');
+        Route::post('/{id}/documents/{uuid}/review', [EnrollmentManagementController::class, 'reviewDocument'])->name('documents.review');
+        Route::post('/{id}/request-corrections', [EnrollmentManagementController::class, 'requestCorrections'])->name('request-corrections');
         Route::post('/{id}/validate', [EnrollmentManagementController::class, 'validate'])->name('validate');
         Route::post('/{id}/reject', [EnrollmentManagementController::class, 'reject'])->name('reject');
     });

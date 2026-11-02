@@ -1,167 +1,307 @@
-import { X, Save, ImageIcon } from 'lucide-react';
+import AdminModal from '@/components/admin/AdminModal';
+import { formatPrice, hasPrice, paymentCategories, paymentTotal } from '@/lib/levelPricing';
+import {
+    Award,
+    Banknote,
+    BookOpen,
+    BriefcaseBusiness,
+    Clock3,
+    Coins,
+    ImageIcon,
+    Info,
+    Languages,
+    Layers3,
+    Pencil,
+    Target,
+    Upload,
+    Users,
+} from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import '../../../../../css/dashboard/level-forms.css';
 import { getFieldLabel } from '../utils/levelUtils';
-
-export default function EditModal({ 
-    isOpen, 
-    editField, 
-    levelDataHook, 
-    onClose, 
-    onSave 
+type FieldValue = string | number | boolean | string[] | File | null | undefined;
+type LevelDataHook = {
+    detailsData: { illustration_image?: string | File };
+    getFieldValue: (field: string) => FieldValue;
+    updateField: (field: string, value: FieldValue) => void;
+};
+const fieldDetails = {
+    credit_required: { icon: Layers3, hint: 'Le nombre de crédits à valider pour ce niveau.', placeholder: 'Ex. : 60', unit: 'crédits' },
+    duration_years: { icon: Clock3, hint: 'La durée totale du parcours, exprimée en années.', placeholder: 'Ex. : 3', unit: 'années' },
+    courses_number: { icon: BookOpen, hint: 'Le nombre de cours proposés dans le programme.', placeholder: 'Ex. : 12', unit: 'cours' },
+    student_number: { icon: Users, hint: 'L’effectif étudiant associé à ce niveau.', placeholder: 'Ex. : 120', unit: 'étudiants' },
+    price: { icon: Banknote, hint: 'Le tarif de la formation pour les étudiants nationaux, en dollars.', placeholder: 'Ex. : 250', unit: 'USD' },
+    price_foreign: {
+        icon: Banknote,
+        hint: 'Le tarif de la formation pour les étudiants étrangers, en dollars.',
+        placeholder: 'Ex. : 350',
+        unit: 'USD',
+    },
+    fees: { icon: Coins, hint: 'Les frais complémentaires, exprimés en dollars.', placeholder: 'Ex. : 50', unit: 'USD' },
+    language: { icon: Languages, hint: 'La langue utilisée pour les enseignements du parcours.', placeholder: 'Ex. : Français', unit: '' },
+    has_certificate: { icon: Award, hint: 'Précisez si une certification est délivrée à l’issue du parcours.', placeholder: '', unit: '' },
+    options: {
+        icon: BriefcaseBusiness,
+        hint: 'Présentez les débouchés accessibles à l’issue de cette formation.',
+        placeholder: 'Ex. : Chargé de projet, Consultant, Chercheur',
+        unit: '',
+    },
+    course_objective: {
+        icon: Target,
+        hint: 'Décrivez les connaissances et les compétences à acquérir.',
+        placeholder: 'À l’issue de ce parcours, les étudiants seront capables de…',
+        unit: '',
+    },
+    illustration_image: { icon: ImageIcon, hint: 'Choisissez un visuel qui représente le programme.', placeholder: '', unit: '' },
+};
+export default function EditModal({
+    isOpen,
+    editField,
+    levelDataHook,
+    onClose,
+    onSave,
+    saving = false,
+    saveErrors = {},
 }: {
     isOpen: boolean;
     editField: string;
-    levelDataHook: any;
+    levelDataHook: LevelDataHook;
     onClose: () => void;
-    onSave: (levelDataHook: any) => void;
+    onSave: (hook: LevelDataHook) => void;
+    saving?: boolean;
+    saveErrors?: Record<string, string | undefined>;
 }) {
+    const [preview, setPreview] = useState('');
+    const [fileError, setFileError] = useState('');
+    const value = levelDataHook.getFieldValue(editField);
+    const image = editField === 'illustration_image' ? levelDataHook.detailsData.illustration_image : undefined;
+    useEffect(() => {
+        setFileError('');
+        if (typeof image === 'string' && image) {
+            setPreview(/^(https?:\/\/|\/)/.test(image) ? image : `/storage/${image}`);
+            return;
+        }
+        if (image instanceof File) {
+            const url = URL.createObjectURL(image);
+            setPreview(url);
+            return () => URL.revokeObjectURL(url);
+        }
+        setPreview('');
+    }, [image, isOpen]);
     if (!isOpen) return null;
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        onSave(levelDataHook);
+    const detail = fieldDetails[editField as keyof typeof fieldDetails] || {
+        icon: Pencil,
+        hint: 'Ajustez cette information du programme.',
+        placeholder: 'Saisissez la nouvelle valeur…',
+        unit: '',
     };
-
-    const renderInputField = () => {
-        if (editField === 'description' ||
-            editField === 'options' ||
-            editField === 'course_objective') {
-            return (
-                <>
-                    {editField === 'options' && (
-                        <div className="mt-2 p-3 bg-slate-50 rounded-lg border-l-4 border-blue-500">
-                            <span className="text-sm text-slate-600">
-                                💡 <strong>Exemples d'opportunités :</strong>
-                                <br />
-                                • Ingénieur logiciel, DevOps, Consultant IT
-                                <br />
-                                • Développeur web, Architecte système, Chef de projet
-                                <br />
-                                • Data Scientist, Cybersécurité, IA/Machine Learning
-                                <br />
-                                <em>Séparez chaque opportunité par une virgule</em>
-                            </span>
-                        </div>
-                    )}
-                    <textarea
-                        className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-                        value={levelDataHook.getFieldValue(editField) || ''}
-                        onChange={(e) => levelDataHook.updateField(editField, e.target.value)}
-                        placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
-                        rows={editField === 'course_objective' ? 6 : 4}
-                    />
-                </>
-            );
-        }
-
-        if (editField === 'illustration_image') {
-            return (
-                <div className="space-y-4">
-                    <div className="relative">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            id="file-upload"
-                            onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (file) {
-                                    levelDataHook.updateField(editField, file);
-                                }
-                            }}
-                        />
-                        <label 
-                            htmlFor="file-upload"
-                            className="flex items-center gap-3 p-4 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
-                        >
-                            <ImageIcon size={20} className="text-slate-500" />
-                            <span className="text-slate-600">Sélectionnez une nouvelle image d'illustration</span>
-                        </label>
-                    </div>
-                    {levelDataHook.levelData.illustration_image &&
-                        typeof levelDataHook.levelData.illustration_image === 'string' && (
-                            <div className="mt-4">
-                                <p className="text-sm text-slate-600 mb-2">Image actuelle :</p>
-                                <img
-                                    src={`/storage/${levelDataHook.levelData.illustration_image}`}
-                                    alt="Image actuelle"
-                                    className="w-full h-48 object-cover rounded-xl border border-slate-200"
-                                />
-                            </div>
-                        )}
-                </div>
-            );
-        }
-
-        const numericFields = [
-            'credit_required',
-            'duration_years',
-            'courses_number',
-            'price',
-            'fees',
-            'student_number',
-        ];
-
-        return (
-            <input
-                type={
-                    editField === 'has_certificate'
-                        ? 'checkbox'
-                        : numericFields.includes(editField)
-                          ? 'number'
-                          : 'text'
-                }
-                className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                value={editField === 'has_certificate' ? undefined : levelDataHook.getFieldValue(editField) || ''}
-                checked={editField === 'has_certificate' ? levelDataHook.getFieldValue(editField) : undefined}
-                onChange={(e) => {
-                    const value =
-                        editField === 'has_certificate'
-                            ? e.target.checked
-                            : numericFields.includes(editField)
-                              ? parseInt(e.target.value) || 0
-                              : e.target.value;
-                    levelDataHook.updateField(editField, value);
-                }}
-                placeholder={`Entrez la nouvelle valeur pour ${getFieldLabel(editField)}`}
-                min={numericFields.includes(editField) ? '0' : undefined}
-            />
-        );
+    const numeric = ['credit_required', 'duration_years', 'courses_number', 'price', 'price_foreign', 'fees', 'student_number'].includes(editField);
+    const textArea = ['description', 'options', 'course_objective'].includes(editField);
+    const pricing = ['price', 'price_foreign'].includes(editField);
+    const label = pricing ? 'Tarifs de la formation' : getFieldLabel(editField);
+    const error = fileError || saveErrors[editField];
+    const submit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!fileError) onSave(levelDataHook);
     };
-
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 opacity-100" onClick={(e) => e.stopPropagation()}>
-                <form onSubmit={handleSubmit}>
-                    <div className="flex items-center justify-between p-6 border-b border-slate-200">
-                        <h2 className="text-2xl font-bold text-slate-800">Modifier {getFieldLabel(editField)}</h2>
-                        <button type="button" className="flex items-center justify-center w-10 h-10 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
-                            <X size={20} />
-                        </button>
+        <AdminModal
+            title="Affiner le programme."
+            description="Une information précise pour un parcours bien défini."
+            onClose={onClose}
+            formId="level-edit-field-form"
+            submitLabel="Enregistrer la modification"
+            busy={saving}
+            errors={saveErrors}
+            className="level-form-modal lf-edit-modal"
+        >
+            <form id="level-edit-field-form" onSubmit={submit} className="admin-modal-form lf-edit-form">
+                <fieldset className="lf-fields" disabled={saving}>
+                    <div className="lf-edit-context">
+                        <span className="lf-context-icon">
+                            <detail.icon size={25} strokeWidth={1.4} />
+                        </span>
+                        <div>
+                            <span className="lf-eyebrow">INFORMATION DU PARCOURS</span>
+                            <h3>{label}</h3>
+                            <p>{pricing ? 'Définissez les montants en dollars pour chaque catégorie d’étudiant.' : detail.hint}</p>
+                        </div>
                     </div>
-                    
-                    <div className="p-6">
-                        <div className="mb-6">
-                            <label className="block font-semibold text-slate-700 mb-2">{getFieldLabel(editField)}</label>
-                            {renderInputField()}
-                            {levelDataHook.errors[editField] && (
-                                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                                    {levelDataHook.errors[editField]}
-                                </div>
+                    {editField === 'has_certificate' ? (
+                        <label className="lf-switch-card" htmlFor="level-edit-field">
+                            <span className="lf-switch-copy">
+                                <strong>Délivrer un certificat</strong>
+                                <small>
+                                    {value ? 'Une certification est prévue à l’issue du parcours.' : 'Ce parcours ne prévoit pas de certificat.'}
+                                </small>
+                            </span>
+                            <input
+                                id="level-edit-field"
+                                type="checkbox"
+                                role="switch"
+                                checked={!!value}
+                                onChange={(e) => levelDataHook.updateField(editField, e.target.checked)}
+                            />
+                            <span className="lf-switch-track" aria-hidden="true" />
+                        </label>
+                    ) : pricing ? (
+                        <div className="lf-pricing-fields">
+                            {paymentCategories.map((category) => {
+                                const first = levelDataHook.getFieldValue(category.first);
+                                const second = levelDataHook.getFieldValue(category.second);
+                                const oldTotal = levelDataHook.getFieldValue(category.total);
+                                const amount = (value: FieldValue) => (typeof value === 'number' || typeof value === 'string' ? value : null);
+                                return (
+                                    <section className="lf-payment-category" key={category.total}>
+                                        <h4>Étudiants {category.label.toLocaleLowerCase('fr')}</h4>
+                                        {[
+                                            { field: category.first, label: 'Première tranche' },
+                                            { field: category.second, label: 'Deuxième tranche' },
+                                        ].map((part) => {
+                                            const value = levelDataHook.getFieldValue(part.field);
+                                            return (
+                                                <div className="lf-payment-input" key={part.field}>
+                                                    <label className="lf-label" htmlFor={`level-tariff-${part.field}`}>
+                                                        {part.label}
+                                                    </label>
+                                                    <div className="lf-value-input">
+                                                        <input
+                                                            id={`level-tariff-${part.field}`}
+                                                            type="number"
+                                                            min="0"
+                                                            max="99999999.99"
+                                                            step="0.01"
+                                                            value={amount(value) ?? ''}
+                                                            onChange={(event) =>
+                                                                levelDataHook.updateField(
+                                                                    part.field,
+                                                                    event.target.value === '' ? '' : Number(event.target.value),
+                                                                )
+                                                            }
+                                                            placeholder="Montant"
+                                                            aria-invalid={!!saveErrors[part.field]}
+                                                        />
+                                                        <span>USD</span>
+                                                    </div>
+                                                    {saveErrors[part.field] && (
+                                                        <p className="lf-error" role="alert">
+                                                            {saveErrors[part.field]}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                        <div className="lf-payment-total">
+                                            <span>Total calculé</span>
+                                            <output aria-live="polite">
+                                                {formatPrice(paymentTotal(amount(first), amount(second), amount(oldTotal)))}
+                                            </output>
+                                        </div>
+                                        {!hasPrice(amount(first)) && !hasPrice(amount(second)) && Number(oldTotal) > 0 && (
+                                            <p className="lf-help">Total existant conservé ; répartition en tranches à renseigner.</p>
+                                        )}
+                                        <p className="lf-help">Renseignez les deux tranches, ou laissez-les toutes deux vides.</p>
+                                    </section>
+                                );
+                            })}
+                        </div>
+                    ) : editField === 'illustration_image' ? (
+                        <div className="lf-upload-section">
+                            <input
+                                id="level-edit-field"
+                                className="lf-file-input"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                aria-label="Choisir une illustration du programme"
+                                aria-describedby="level-field-help"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) {
+                                        setFileError('Choisissez une image JPG, PNG ou WebP de 2 Mo maximum.');
+                                        e.target.value = '';
+                                        return;
+                                    }
+                                    setFileError('');
+                                    levelDataHook.updateField(editField, file);
+                                }}
+                            />
+                            <label className="lf-upload" htmlFor="level-edit-field">
+                                <Upload size={28} strokeWidth={1.4} />
+                                <strong>{image instanceof File ? image.name : 'Choisir une illustration'}</strong>
+                                <span>Cliquez pour sélectionner un fichier</span>
+                            </label>
+                            <p id="level-field-help" className="lf-help">
+                                JPG, PNG ou WebP · 2 Mo maximum
+                            </p>
+                            {preview && (
+                                <figure className="lf-image-preview">
+                                    <img src={preview} alt="Aperçu de l’illustration du programme" />
+                                    <figcaption>
+                                        {image instanceof File
+                                            ? 'Nouvelle illustration · Aperçu avant enregistrement'
+                                            : 'Illustration actuelle du programme'}
+                                    </figcaption>
+                                </figure>
                             )}
                         </div>
+                    ) : (
+                        <div>
+                            <label className="lf-label" htmlFor="level-edit-field">
+                                {label}
+                            </label>
+                            {textArea ? (
+                                <textarea
+                                    id="level-edit-field"
+                                    rows={editField === 'course_objective' ? 7 : 5}
+                                    value={Array.isArray(value) ? value.join(', ') : String(value ?? '')}
+                                    onChange={(e) => levelDataHook.updateField(editField, e.target.value)}
+                                    placeholder={detail.placeholder}
+                                    aria-invalid={!!error}
+                                    aria-describedby="level-field-help"
+                                />
+                            ) : (
+                                <div className="lf-value-input">
+                                    <input
+                                        id="level-edit-field"
+                                        type={numeric ? 'number' : 'text'}
+                                        value={typeof value === 'number' || typeof value === 'string' ? value : ''}
+                                        min={numeric ? 0 : undefined}
+                                        step={['price', 'price_foreign'].includes(editField) ? '0.01' : numeric ? '1' : undefined}
+                                        maxLength={editField === 'language' ? 50 : undefined}
+                                        onChange={(e) =>
+                                            levelDataHook.updateField(
+                                                editField,
+                                                numeric ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value,
+                                            )
+                                        }
+                                        placeholder={detail.placeholder}
+                                        aria-invalid={!!error}
+                                        aria-describedby="level-field-help"
+                                    />
+                                    {detail.unit && <span>{detail.unit}</span>}
+                                </div>
+                            )}
+                            <p id="level-field-help" className="lf-help">
+                                {editField === 'options'
+                                    ? 'Séparez chaque opportunité par une virgule.'
+                                    : numeric
+                                      ? 'Saisissez une valeur positive ou égale à zéro.'
+                                      : detail.hint}
+                            </p>
+                        </div>
+                    )}
+                    {error && (
+                        <p className="lf-error" role="alert">
+                            {error}
+                        </p>
+                    )}
+                    <div className="lf-edit-note">
+                        <Info size={16} strokeWidth={1.6} />
+                        <p>La modification sera appliquée au niveau après l’enregistrement.</p>
                     </div>
-                    
-                    <div className="flex gap-3 justify-end p-6 border-t border-slate-200">
-                        <button type="button" className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-semibold hover:bg-slate-200 transition-colors duration-200" onClick={onClose}>
-                            Annuler
-                        </button>
-                        <button type="submit" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" disabled={levelDataHook.processing}>
-                            <Save size={16} />
-                            {levelDataHook.processing ? 'Enregistrement...' : 'Enregistrer'}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                </fieldset>
+            </form>
+        </AdminModal>
     );
 }

@@ -9,7 +9,7 @@ type Dept = {
   icon: 'law' | 'economics' | 'engineering' | 'health' | 'wellness';
 };
 
-// ✅ Tes 6 filières phares (UMK)
+// ✅ Tes 6 filières phares (USK)
 const DEPARTMENTS: Dept[] = [
   {
     name: 'Droit & Administration des Affaires',

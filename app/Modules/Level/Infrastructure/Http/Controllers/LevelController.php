@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Log;
 
 final class LevelController extends Controller
 {
-    public function index(LevelRepository $repo)
+    public function index()
     {
         return Inertia::render('dashboard/levels/Index', [
-            'levels' => $repo->findAll()
+            'faculties' => \App\Models\Faculty::with('levels')->orderBy('name')->paginate(12)
         ]);
     }
 
@@ -92,9 +92,13 @@ final class LevelController extends Controller
 
     public function destroy(int $id, DeleteLevel $deleteLevel)
     {
+        \App\Models\Level::findOrFail($id);
+        if (\Illuminate\Support\Facades\DB::table('enrollments')->where('level_id', $id)->exists()) {
+            return back()->withErrors(['general' => 'Ce niveau est lié à des inscriptions et ne peut pas être supprimé.']);
+        }
         $deleteLevel->execute($id);
 
-        return redirect()->route('dashboard.admin.faculties.index')
+        return redirect()->route('dashboard.admin.levels.index')
             ->with('success', 'Niveau supprimé avec succès');
     }
 }

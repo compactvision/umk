@@ -1,0 +1,597 @@
+/* Shared presentation for the four administration Apps and their detail pages. */
+.usk-admin-apps {
+    --color-blue-50: #f0f5ed;
+    --color-blue-100: #e0ebd9;
+    --color-blue-200: #c7dabc;
+    --color-blue-300: #a0bd8f;
+    --color-blue-400: #739a65;
+    --color-blue-500: #397653;
+    --color-blue-600: #073e32;
+    --color-blue-700: #062c25;
+    --color-blue-800: #05271e;
+    --color-blue-900: #042119;
+    --color-blue-950: #031a14;
+    --color-indigo-50: #f0f5ed;
+    --color-indigo-100: #e0ebd9;
+    --color-indigo-200: #c7dabc;
+    --color-indigo-300: #a0bd8f;
+    --color-indigo-400: #739a65;
+    --color-indigo-500: #397653;
+    --color-indigo-600: #073e32;
+    --color-indigo-700: #062c25;
+    --color-indigo-800: #05271e;
+    --color-indigo-900: #042119;
+    --color-indigo-950: #031a14;
+    --color-cyan-50: #f0f5ed;
+    --color-cyan-100: #e0ebd9;
+    --color-cyan-200: #c7dabc;
+    --color-cyan-300: #a0bd8f;
+    --color-cyan-400: #739a65;
+    --color-cyan-500: #397653;
+    --color-cyan-600: #073e32;
+    --color-cyan-700: #062c25;
+    --color-cyan-800: #05271e;
+    --color-cyan-900: #042119;
+    --color-cyan-950: #031a14;
+    --color-sky-50: #f0f5ed;
+    --color-sky-100: #e0ebd9;
+    --color-sky-200: #c7dabc;
+    --color-sky-300: #a0bd8f;
+    --color-sky-400: #739a65;
+    --color-sky-500: #397653;
+    --color-sky-600: #073e32;
+    --color-sky-700: #062c25;
+    --color-sky-800: #05271e;
+    --color-sky-900: #042119;
+    --color-sky-950: #031a14;
+    --color-purple-50: #fbf8ef;
+    --color-purple-100: #f5edda;
+    --color-purple-200: #ecdbad;
+    --color-purple-300: #e6c470;
+    --color-purple-400: #c8a456;
+    --color-purple-500: #a58a45;
+    --color-purple-600: #896f31;
+    --color-purple-700: #705922;
+    --color-purple-800: #59471d;
+    --color-purple-900: #433616;
+    --color-purple-950: #2e2510;
+    --color-pink-50: #fbf8ef;
+    --color-pink-100: #f5edda;
+    --color-pink-200: #ecdbad;
+    --color-pink-300: #e6c470;
+    --color-pink-400: #c8a456;
+    --color-pink-500: #a58a45;
+    --color-pink-600: #896f31;
+    --color-pink-700: #705922;
+    --color-pink-800: #59471d;
+    --color-pink-900: #433616;
+    --color-pink-950: #2e2510;
+    --color-violet-50: #fbf8ef;
+    --color-violet-100: #f5edda;
+    --color-violet-200: #ecdbad;
+    --color-violet-300: #e6c470;
+    --color-violet-400: #c8a456;
+    --color-violet-500: #a58a45;
+    --color-violet-600: #896f31;
+    --color-violet-700: #705922;
+    --color-violet-800: #59471d;
+    --color-violet-900: #433616;
+    --color-violet-950: #2e2510;
+    background: #f7f5ef;
+}
+.admin-apps-context {
+    margin-bottom: 30px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #dce3d5;
+}
+.admin-apps-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #819076;
+    margin-bottom: 17px;
+}
+.admin-apps-eyebrow > span:first-child {
+    width: 6px;
+    height: 6px;
+    background: #b59444;
+    border-radius: 50%;
+}
+.admin-apps-context-divider {
+    color: #c3cbb8;
+    margin-inline: 4px;
+}
+.admin-apps-context nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 3px 3px 7px;
+}
+.admin-apps-context nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    white-space: nowrap;
+    padding: 10px 16px;
+    min-height: 42px;
+    font-size: 11px;
+    color: #708067;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    text-decoration: none;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+.admin-apps-context nav a:hover {
+    background: #edf0e5;
+    color: #073e32;
+}
+.admin-apps-context nav a[aria-current='page'] {
+    background: #073e32;
+    color: #f0d593;
+    border-color: #073e32;
+}
+.admin-page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+.admin-page-heading > div > span {
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    color: #a58a4d;
+}
+.usk-admin-apps main .admin-page-heading h1 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: clamp(34px, 4vw, 49px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 9px 0 12px;
+}
+.admin-page-heading p {
+    color: #7c8972;
+    font-size: 12px;
+    line-height: 1.7;
+    max-width: 530px;
+}
+.admin-primary,
+.usk-admin-apps .create-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 45px;
+    padding: 12px 20px;
+    border: 1px solid #073e32;
+    border-radius: 7px;
+    background: #073e32;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: none;
+    white-space: nowrap;
+}
+.admin-primary:hover,
+.usk-admin-apps .create-button:hover {
+    background: #155b43;
+    transform: none;
+    box-shadow: none;
+}
+.usk-admin-apps main {
+    color: #193e31;
+}
+.usk-admin-apps main > div {
+    min-width: 0;
+}
+.usk-admin-apps main > div > [class*='min-h-screen'] {
+    min-height: 0;
+    background: transparent;
+}
+.usk-admin-apps main > div > [class*='min-h-screen'] > .max-w-7xl {
+    padding-inline: 0;
+}
+.usk-admin-apps main :is(.shadow-2xl, .shadow-xl, .shadow-lg) {
+    box-shadow: 0 4px 20px #16352c07;
+}
+.usk-admin-apps main :is(h1, h2, h3) {
+    text-shadow: none;
+    filter: none;
+}
+.usk-admin-apps main h1:not([class*='from-white']) {
+    color: #073e32;
+    background: none;
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 46px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+.usk-admin-apps main h2 {
+    letter-spacing: -0.02em;
+}
+.usk-admin-apps main :is(input:not([type='checkbox']):not([type='radio']):not([type='file']), select, textarea) {
+    min-width: 0;
+    max-width: 100%;
+    border-color: #d5dfcd;
+    background-color: #fdfefa;
+    border-radius: 7px;
+    font-family: inherit;
+}
+.usk-admin-apps main :is(input:not([type='checkbox']):not([type='radio']), select) {
+    min-height: 44px;
+}
+.usk-admin-apps main :is(input, select, textarea):focus-visible {
+    outline: 2px solid #b59444;
+    outline-offset: 2px;
+}
+.usk-admin-apps main input[type='checkbox'] {
+    accent-color: #073e32;
+}
+.usk-admin-apps main table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.usk-admin-apps main thead tr {
+    background: #eff2e8;
+}
+.usk-admin-apps main th {
+    padding: 17px 20px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #6c7c61;
+    border-bottom: 1px solid #dfe6d6;
+    white-space: nowrap;
+}
+.usk-admin-apps main td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #e7ecdf;
+}
+.usk-admin-apps main tbody tr:hover {
+    background-color: #f8faf3;
+}
+.usk-admin-apps main .overflow-x-auto {
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.usk-admin-apps main [class*='hover:-translate']:hover {
+    transform: none;
+}
+.usk-admin-apps main [class*='min-w-'] {
+    min-width: 0;
+}
+.usk-admin-apps main .sticky.top-0 {
+    top: 64px;
+    z-index: 30;
+}
+.usk-admin-apps main .fixed.inset-0 {
+    z-index: 100;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+}
+.usk-admin-apps main .fixed.inset-0 > [class*='max-w-'] {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 12px;
+}
+.usk-admin-apps main .fixed.inset-0 :is(h1, h2) {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: #073e32;
+    background: none;
+}
+.usk-admin-apps .academic-container {
+    background: transparent;
+    font-family: inherit;
+    min-height: 0;
+}
+.usk-admin-apps .academic-wrapper {
+    padding: 0;
+}
+.usk-admin-apps :is(.main-title, .stat-value, .stat-label) {
+    color: #193e31;
+    text-shadow: none;
+}
+.usk-admin-apps .main-subtitle {
+    color: #7c8972;
+    text-shadow: none;
+    font-size: 13px;
+}
+.usk-admin-apps :is(.stat-card, .icon-container) {
+    border: 1px solid #dfe6d6;
+    background: #fff;
+    box-shadow: none;
+    border-radius: 10px;
+}
+.usk-admin-apps .stat-icon--green {
+    background: #e6efdf;
+    color: #49734b;
+}
+.usk-admin-apps .stat-icon--blue {
+    background: #f3ecd6;
+    color: #9a7c34;
+}
+.usk-admin-apps .stat-icon--purple {
+    background: #eaf0e4;
+    color: #607b4e;
+}
+.usk-admin-apps .academic-container :is(.table-container, .table-wrapper) {
+    background: #fff;
+    border: 1px solid #dfe6d6;
+    border-radius: 10px;
+    box-shadow: none;
+}
+@media (max-width: 1100px) {
+    .usk-admin-apps > header :is(nav, div:has(> input[type='search'])) {
+        display: none;
+    }
+}
+@media (max-width: 760px) {
+    .admin-page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+    .admin-apps-context {
+        margin-bottom: 24px;
+    }
+    .admin-apps-context nav a {
+        padding: 10px 13px;
+        font-size: 10px;
+    }
+    .usk-admin-apps main > div {
+        padding-inline: 16px;
+    }
+    .usk-admin-apps main > div > [class*='min-h-screen'] {
+        padding-inline: 0;
+    }
+    .usk-admin-apps main :is(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+        font-size: 16px;
+    }
+    .usk-admin-apps main table {
+        min-width: 650px;
+    }
+    .usk-admin-apps main th,
+    .usk-admin-apps main td {
+        padding: 14px 16px;
+    }
+    .usk-admin-apps main .fixed.inset-0 > [class*='max-w-'] {
+        width: 100%;
+    }
+    .usk-admin-apps main .fixed.inset-0 .grid-cols-2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .usk-admin-apps main .fixed.inset-0 :is(.p-8, .p-10) {
+        padding: 22px;
+    }
+    .usk-admin-apps .header-content {
+        align-items: flex-start;
+    }
+    .usk-admin-apps .title-group {
+        min-width: 0;
+        gap: 12px;
+    }
+    .usk-admin-apps .icon-container {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+    .usk-admin-apps .main-title {
+        font-size: 31px;
+    }
+    .usk-admin-apps .stats-grid {
+        gap: 12px;
+    }
+}
+@media (max-width: 400px) {
+    .admin-page-heading .admin-primary {
+        width: 100%;
+    }
+    .usk-admin-apps main .fixed.inset-0 {
+        padding: 10px;
+    }
+    .usk-admin-apps main .fixed.inset-0 > [class*='max-w-'] {
+        max-height: calc(100dvh - 20px);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .usk-admin-apps main *,
+    .admin-apps-context * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+.admin-topbar {
+    position: fixed;
+    top: 0;
+    left: 80px;
+    right: 0;
+    z-index: 40;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 32px;
+    background: #fffffff5;
+    border-bottom: 1px solid #dfe5d5;
+}
+.admin-topbar > div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.admin-topbar strong {
+    display: block;
+    font-size: 12px;
+    color: #254837;
+    font-weight: 500;
+}
+.admin-topbar span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: #97a08a;
+    margin-top: 3px;
+}
+.admin-site-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: #7a8b6b;
+    white-space: nowrap;
+}
+.admin-mobile-toggle {
+    background: transparent;
+    border: 1px solid #dce4d1;
+    border-radius: 6px;
+    padding: 8px;
+    color: #34543e;
+}
+.admin-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    justify-content: center;
+    padding: 25px 0;
+}
+.admin-pagination :is(a, span) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dce4d1;
+    border-radius: 5px;
+    padding: 9px 13px;
+    min-height: 40px;
+    font-size: 11px;
+    color: #718565;
+    background: #fff;
+    text-decoration: none;
+}
+.admin-pagination [aria-current='page'] {
+    color: #f3dca0;
+    background: #073e32;
+    border-color: #073e32;
+}
+.admin-pagination span {
+    opacity: 0.5;
+}
+@media (max-width: 767px) {
+    .admin-topbar {
+        left: 0;
+        padding-inline: 16px;
+    }
+    .admin-topbar strong {
+        font-size: 10px;
+    }
+    .admin-topbar span {
+        font-size: 7px;
+    }
+    .admin-site-link {
+        font-size: 10px;
+    }
+}
+.usk-admin-apps .admin-table-empty {
+    text-align: center;
+    padding: 42px 20px;
+}
+.admin-table-empty strong {
+    display: block;
+    font-weight: 500;
+    color: #47613b;
+}
+.admin-table-empty p {
+    color: #8a967e;
+    font-size: 11px;
+    margin-top: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .usk-admin-apps main .table-row {
+        opacity: 1;
+    }
+}
+
+/* Detail pages share one return link, before the page heading. */
+.admin-detail-navigation {
+    margin: -8px 0 22px;
+}
+.admin-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 8px 11px;
+    margin-left: -11px;
+    color: #7b8b6b;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+.admin-back-link:hover {
+    background: #ecf0e4;
+    color: #073e32;
+}
+.admin-back-link svg {
+    flex-shrink: 0;
+}
+.admin-detail-context {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #95a087;
+}
+.usk-admin-apps main > div > .academic-container .header-section {
+    margin-top: 0;
+}
+@media (max-width: 760px) {
+    .admin-detail-navigation {
+        margin-bottom: 16px;
+    }
+    .admin-back-link {
+        min-height: 44px;
+        font-size: 11px;
+    }
+}
+
+/* Administration actions use solid fills; article artwork keeps its own styling. */
+.usk-admin-apps main :is(button, a)[class*='bg-gradient-'] {
+    background-image: none;
+    background-color: #073e32;
+    color: #fff;
+    border-color: #073e32;
+    border-radius: 7px;
+    box-shadow: none;
+}
+.usk-admin-apps main :is(button, a)[class*='bg-gradient-']:hover {
+    background-color: #155b43;
+    box-shadow: none;
+}
+.usk-admin-apps main :is(button, a)[class*='bg-gradient-']:is([class*='from-red-'], [class*='from-rose-']) {
+    background-color: #a34535;
+    border-color: #a34535;
+}
+.usk-admin-apps main :is(button, a)[class*='bg-gradient-']:is([class*='from-red-'], [class*='from-rose-']):hover {
+    background-color: #85382b;
+}
+.usk-admin-apps main :is(button, a:not(:has(img))) > .absolute.inset-0[class*='bg-gradient-'] {
+    background-image: none;
+    background-color: transparent;
+}
+.usk-admin-apps main button:not(.rounded-full) {
+    border-radius: 7px;
+}

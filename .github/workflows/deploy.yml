@@ -32,7 +32,7 @@ jobs:
       # ----- Node (build Inertia/Vite) -----
       - name: Setup Node
         uses: actions/setup-node@v4
-        with: { node-version: 18 }
+        with: { node-version: 22 }
 
       - name: Install JS deps & Build
         run: |
@@ -45,7 +45,7 @@ jobs:
           mkdir -p $RELEASE_DIR
           rsync -a --delete \
             --exclude=".git" --exclude=".github" \
-            --exclude="node_modules" --exclude="storage" --exclude=".env" \
+            --exclude="node_modules" --exclude="storage" --exclude=".env" --exclude="release-*" \
             ./ $RELEASE_DIR/
 
       # ----- Upload vers le serveur (SCP) -----
@@ -83,11 +83,11 @@ jobs:
 
             # Optimisations / migrations
             cd $REL
-            ${{ secrets.PHP_CLI }} artisan key:generate --force || true
+            # APP_KEY doit être provisionnée une seule fois dans shared/.env.
             ${{ secrets.PHP_CLI }} artisan config:cache
-            ${{ secrets.PHP_CLI }} artisan route:cache || true
-            ${{ secrets.PHP_CLI }} artisan view:cache || true
-            ${{ secrets.PHP_CLI }} artisan migrate --force || true
+            ${{ secrets.PHP_CLI }} artisan route:cache
+            ${{ secrets.PHP_CLI }} artisan view:cache
+            ${{ secrets.PHP_CLI }} artisan migrate --force
 
             # Bascule atomique
             ln -sfn $REL $BASE/current

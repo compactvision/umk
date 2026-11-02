@@ -16,11 +16,11 @@ export default function Admission() {
             </div>
 
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Vivez l’expérience UMK avec une excellence académique et des opportunités infinies
+              Vivez l’expérience USK avec une excellence académique et des opportunités infinies
             </h2>
 
             <p className="mt-4 text-slate-700">
-              En tant qu’institution publique, l’Université Moderne de Kinkole s’engage à favoriser des changements positifs à
+              En tant qu’institution publique, l’Université Simon Kimbangu s’engage à favoriser des changements positifs à
               travers l’éducation. Nous sommes déterminés.
             </p>
 

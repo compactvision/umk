@@ -1,0 +1,477 @@
+.usk-admin-apps .academic-years-page {
+    min-width: 0;
+    container-type: inline-size;
+    padding-bottom: 30px;
+}
+.usk-admin-apps .academic-years-page button {
+    font: inherit;
+    cursor: pointer;
+}
+.usk-admin-apps .ay-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    background: #fffefa;
+    border: 1px solid #dce5d1;
+    border-radius: 11px;
+    margin: 27px 0;
+}
+.usk-admin-apps .ay-overview > div {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+    color: #829b6f;
+}
+.usk-admin-apps .ay-overview > div + div {
+    border-left: 1px solid #e4eada;
+}
+.usk-admin-apps .ay-overview p {
+    margin: 0;
+}
+.usk-admin-apps .ay-overview strong {
+    display: block;
+    font-size: 28px;
+    font-weight: 500;
+    color: #496d3b;
+    line-height: 1.2;
+}
+.usk-admin-apps .ay-overview span {
+    display: block;
+    font-size: 10px;
+    color: #7f926f;
+    margin-top: 5px;
+}
+.usk-admin-apps .ay-toolbar {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+.usk-admin-apps .ay-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    border: 1px solid #dce4d1;
+    background: #fffefa;
+    border-radius: 8px;
+    flex: 1;
+    color: #8da17a;
+    min-width: 0;
+}
+.usk-admin-apps main .academic-years-page .ay-search input {
+    width: 100%;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    height: 48px;
+    font: inherit;
+    font-size: 12px;
+}
+.usk-admin-apps .ay-search:focus-within {
+    outline: 2px solid #ab9459;
+    outline-offset: 3px;
+}
+.usk-admin-apps main .academic-years-page .ay-search input:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+.usk-admin-apps .ay-status-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #81956e;
+}
+.usk-admin-apps main .academic-years-page .ay-status-filter select {
+    background: #fffefa;
+    border: 1px solid #dce4d1;
+    border-radius: 7px;
+    padding: 10px 30px 10px 13px;
+    height: 49px;
+    font-size: 11px;
+    color: #6f885b;
+}
+.usk-admin-apps .ay-results {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    color: #8e9e7d;
+    font-size: 10px;
+    margin: 17px 0 24px;
+}
+.usk-admin-apps .ay-results button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #708b5c;
+    font-size: 10px;
+}
+.usk-admin-apps .ay-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 27px;
+}
+.usk-admin-apps .ay-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dce4d1;
+    border-radius: 12px;
+    background: #fffefa;
+    overflow: hidden;
+    min-width: 0;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+.usk-admin-apps .ay-card:hover {
+    border-color: #acbf97;
+    box-shadow: 0 6px 22px #26472308;
+}
+.usk-admin-apps .ay-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 26px 26px 23px;
+}
+.usk-admin-apps .ay-calendar-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #dfe7d3;
+    background: #eff4e6;
+    border-radius: 11px;
+    color: #8aa773;
+}
+.usk-admin-apps .ay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #dfdfc7;
+    border-radius: 5px;
+    background: #f6f1df;
+    color: #9c884f;
+    padding: 5px 8px;
+    font-size: 9px;
+}
+.usk-admin-apps .ay-badge.is-open {
+    border-color: #d4e2c4;
+    background: #edf4e2;
+    color: #76935e;
+}
+.usk-admin-apps .ay-badge.is-closed {
+    border-color: #e1e5d8;
+    background: #f2f4ec;
+    color: #8e9980;
+}
+.usk-admin-apps .ay-eyebrow {
+    display: block;
+    margin: 0 26px;
+    font-size: 8px;
+    color: #a08b54;
+    letter-spacing: 0.15em;
+}
+.usk-admin-apps main .academic-years-page .ay-card h2 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 13px 26px 24px;
+    overflow-wrap: anywhere;
+}
+.usk-admin-apps .ay-card h2 a {
+    color: #44673b;
+    text-decoration: none;
+}
+.usk-admin-apps .ay-dates {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 0 26px;
+    padding: 20px 0;
+    border-top: 1px solid #e9eddf;
+    border-bottom: 1px solid #e9eddf;
+    color: #b4bea7;
+}
+.usk-admin-apps .ay-dates span {
+    display: block;
+    font-size: 9px;
+    color: #95a485;
+    margin-bottom: 8px;
+}
+.usk-admin-apps .ay-dates strong {
+    display: block;
+    font-size: 13px;
+    color: #718c5c;
+    font-weight: 500;
+}
+.usk-admin-apps .ay-card-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 19px 26px;
+    font-size: 10px;
+    line-height: 1.8;
+    color: #99a68a;
+}
+.usk-admin-apps .ay-card-note > svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.usk-admin-apps .ay-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 0 26px 24px;
+    margin-top: auto;
+}
+.usk-admin-apps .ay-card-actions > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 12px;
+    font-size: 10px;
+    border: 1px solid #d9e4cb;
+    background: #f1f6e7;
+    color: #7a965f;
+}
+.usk-admin-apps .ay-card-actions > .ay-edit {
+    background: #fffefa;
+    color: #8a9c77;
+    border-color: #e1e7d7;
+}
+.usk-admin-apps .ay-card-actions > .ay-close-year {
+    background: #f7f1e4;
+    border-color: #e6d9ba;
+    color: #a38a51;
+}
+.usk-admin-apps .ay-card-actions > button:disabled {
+    cursor: wait;
+    opacity: 0.5;
+}
+.usk-admin-apps .ay-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 18px 26px;
+    background: #f8faf2;
+    border-top: 1px solid #e4ebd9;
+    font-size: 11px;
+    color: #7e9969;
+    text-decoration: none;
+}
+.usk-admin-apps .ay-card-footer:hover {
+    background: #f0f5e6;
+}
+.usk-admin-apps .ay-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 17px;
+    background: #fcf3e9;
+    border: 1px solid #e8d3bb;
+    color: #a37957;
+    border-radius: 9px;
+    margin-bottom: 24px;
+    font-size: 12px;
+}
+.usk-admin-apps .ay-error p {
+    margin: 0;
+    line-height: 1.8;
+}
+.usk-admin-apps .ay-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 60px 24px;
+    border: 1px dashed #d8e2cc;
+    background: #fafbf5;
+    border-radius: 11px;
+    text-align: center;
+    color: #9cb188;
+}
+.usk-admin-apps .ay-empty h2 {
+    margin: 0;
+    font-size: 27px;
+    font-weight: 400;
+    color: #75965c;
+}
+.usk-admin-apps .ay-empty p {
+    margin: 0;
+    font-size: 12px;
+    color: #8fa57a;
+}
+.usk-admin-apps .academic-years-page :is(button, a):focus-visible {
+    outline: 2px solid #ab9459;
+    outline-offset: 3px;
+}
+.usk-admin-apps .ay-form-modal {
+    width: min(920px, calc(100vw - 48px));
+}
+.usk-admin-apps .ay-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 30px;
+    align-items: start;
+}
+.usk-admin-apps .ay-form-dates {
+    display: grid;
+    gap: 22px;
+}
+.usk-admin-apps .ay-calendar-preview {
+    padding: 25px;
+    border: 1px solid #dce6cf;
+    background: #f1f5e8;
+    border-radius: 10px;
+    min-width: 0;
+}
+.usk-admin-apps .ay-preview-icon {
+    display: grid;
+    place-items: center;
+    width: 65px;
+    height: 65px;
+    border: 1px solid #d9e5c8;
+    background: #e9f0dc;
+    color: #96b07a;
+    border-radius: 14px;
+    margin: 28px 0 23px;
+}
+.usk-admin-apps .level-form-modal .ay-calendar-preview h3 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 33px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #698a51;
+    margin: 0 0 18px;
+    overflow-wrap: anywhere;
+}
+.usk-admin-apps .ay-preview-period {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid #dce6cf;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: #a7b696;
+}
+.usk-admin-apps .ay-preview-period > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.usk-admin-apps .ay-preview-period > svg {
+    margin-left: 2px;
+}
+.usk-admin-apps .ay-preview-period p {
+    margin: 0;
+}
+.usk-admin-apps .ay-preview-period span {
+    display: block;
+    font-size: 9px;
+    color: #a0b08c;
+    margin-bottom: 6px;
+}
+.usk-admin-apps .ay-preview-period strong {
+    display: block;
+    font-size: 12px;
+    color: #85a16d;
+    font-weight: 400;
+}
+.usk-admin-apps .ay-preview-note {
+    padding-top: 24px;
+    border-top: 1px solid #dce6cf;
+    margin: 25px 0 0;
+    font-size: 10px;
+    color: #9fb18a;
+    line-height: 1.9;
+}
+.usk-admin-apps .ay-close-target {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    background: #f5f3e5;
+    border: 1px solid #e5dfc4;
+    border-radius: 9px;
+    color: #ad995f;
+}
+.usk-admin-apps .ay-close-target span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+}
+.usk-admin-apps .ay-close-target strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 400;
+    color: #8c7a4a;
+}
+.usk-admin-apps .ay-close-message {
+    color: #a09675;
+    font-size: 12px;
+    line-height: 1.9;
+    margin: 22px 0 0;
+}
+.usk-admin-apps .ay-close-modal .admin-modal-footer > span {
+    display: none;
+}
+.usk-admin-apps .ay-close-modal .admin-modal-footer {
+    justify-content: flex-end;
+}
+@container (min-width: 1200px) {
+    .usk-admin-apps .ay-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+@container (max-width: 680px) {
+    .usk-admin-apps .ay-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .usk-admin-apps .ay-overview > div {
+        padding: 19px 14px;
+        flex-direction: column;
+        gap: 13px;
+        align-items: flex-start;
+    }
+    .usk-admin-apps .ay-overview span {
+        font-size: 9px;
+    }
+    .usk-admin-apps .ay-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .usk-admin-apps .ay-status-filter {
+        justify-content: space-between;
+    }
+    .usk-admin-apps .ay-status-filter select {
+        flex: 1;
+    }
+}
+@media (max-width: 740px) {
+    .usk-admin-apps .ay-form-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 27px;
+    }
+    .usk-admin-apps .ay-form-modal {
+        width: calc(100vw - 28px);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .usk-admin-apps .ay-card {
+        transition: none;
+    }
+}

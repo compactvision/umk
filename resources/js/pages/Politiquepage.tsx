@@ -1,3 +1,4 @@
+import Breadcrumb from "@/components/UI/home/Breadcumb";
 import App from "@/components/layouts/Home/App";
 import { Shield, Database, Cog, Share2, UserCheck, RefreshCw, Mail, FileText, Info } from 'lucide-react';
 
@@ -19,34 +20,21 @@ export default function PrivacyPolicy() {
     return (
         <App>
             {/* En-tête plus attractif */}
-            <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-12 sm:py-16">
-                <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
-                    <FileText className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 text-white/80" />
-                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
-                        Politique de Confidentialité
-                    </h1>
-                    <p className="text-lg sm:text-xl text-blue-100">
-                        Votre vie privée est notre priorité.
-                    </p>
-                    <p className="text-sm text-blue-200 mt-2">
-                        Dernière mise à jour : {lastUpdatedDate}
-                    </p>
-                </div>
-            </header>
+            <Breadcrumb title="Politique de confidentialité" desc="Les informations relatives à l’utilisation du site et à votre relation avec l’Université Simon Kimbangu." />
 
             <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-12 sm:py-16 bg-gray-50 min-h-screen">
                 {/* Carte pour l'introduction */}
-                <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 mb-8 border-l-4 border-blue-500">
+                <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 mb-8 border-l-4 border-emerald-500">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                        <Info className="w-7 h-7 text-blue-500" />
+                        <Info className="w-7 h-7 text-emerald-500" />
                         Introduction
                     </h2>
                     <div className="prose prose-lg text-gray-700">
                         <p>
-                            Chez <strong>[Nom de votre entreprise]</strong>, nous nous engageons à protéger et à respecter votre vie privée. Cette politique de confidentialité explique quelles informations nous recueillons à votre sujet, comment nous les utilisons, les personnes avec qui nous les partageons et vos droits concernant vos données.
+                            Chez <strong>Université Simon Kimbangu</strong>, nous nous engageons à protéger et à respecter votre vie privée. Cette politique de confidentialité explique quelles informations nous recueillons à votre sujet, comment nous les utilisons, les personnes avec qui nous les partageons et vos droits concernant vos données.
                         </p>
                         <p>
-                            En utilisant notre site web <strong>[URL de votre site]</strong>, vous acceptez les pratiques décrites dans cette politique.
+                            En utilisant notre site web <strong>universitesk.net</strong>, vous acceptez les pratiques décrites dans cette politique.
                         </p>
                     </div>
                 </div>
@@ -55,7 +43,7 @@ export default function PrivacyPolicy() {
                 <div className="space-y-8">
                     {/* Section 1: Collecte des données */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-blue-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Database className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
@@ -72,7 +60,7 @@ export default function PrivacyPolicy() {
 
                     {/* Section 2: Utilisation des données */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-cyan-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Cog className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
@@ -89,7 +77,7 @@ export default function PrivacyPolicy() {
 
                     {/* Section 3: Partage des données */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-indigo-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <Share2 className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
@@ -117,7 +105,7 @@ export default function PrivacyPolicy() {
 
                     {/* Section 5: Vos droits */}
                     <section className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row">
-                        <div className="bg-purple-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
+                        <div className="bg-emerald-500 text-white p-6 sm:w-1/3 flex items-center justify-center">
                             <UserCheck className="w-12 h-12" />
                         </div>
                         <div className="p-6 sm:w-2/3">
@@ -128,7 +116,7 @@ export default function PrivacyPolicy() {
                                 <li><strong>Droit de suppression</strong> de vos informations.</li>
                                 <li><strong>Droit de limitation</strong> du traitement.</li>
                             </ul>
-                            <p className="text-gray-700 mt-3">Pour exercer ces droits, contactez-nous à <strong>[adresse e-mail de contact]</strong>.</p>
+                            <p className="text-gray-700 mt-3">Pour exercer ces droits, contactez-nous à <strong>contact@universitesk.net</strong>.</p>
                         </div>
                     </section>
 
@@ -154,8 +142,8 @@ export default function PrivacyPolicy() {
                         Pour toute question concernant cette politique, veuillez nous contacter :
                     </p>
                     <p className="text-gray-700 mt-2">
-                        Par e-mail : <a href="mailto:[adresse e-mail de contact]" className="text-blue-600 hover:underline font-semibold">[adresse e-mail de contact]</a><br />
-                        Par courrier : <strong>[Adresse postale de votre entreprise]</strong>
+                        Par e-mail : <a href="mailto:contact@universitesk.net" className="text-emerald-600 hover:underline font-semibold">contact@universitesk.net</a><br />
+                        Par courrier : <strong>N° 44, avenue Bongolo, Kauka, Kalamu, Kinshasa, RDC</strong>
                     </p>
                 </footer>
             </main>

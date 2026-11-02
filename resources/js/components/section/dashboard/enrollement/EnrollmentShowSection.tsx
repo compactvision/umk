@@ -1,701 +1,412 @@
-import { Link, router } from '@inertiajs/react';
-import { 
-  AlertCircle, 
-  BookOpen, 
-  Calendar, 
-  CheckCircle, 
-  Clock, 
-  FileCheck2, 
-  FileText, 
-  MapPin, 
-  User, 
-  Download,
-  Mail,
-  Phone,
-  Globe,
-  Home,
-  CreditCard,
-  XCircle,
-  Award,
-  UserCheck,
-  FileX,
-  Eye,
-  Printer,
-  ChevronRight,
-  Info
+import { formatDate, historyLabels, nextStep, paymentLabels, statusLabels, verdictLabels, type StudentEnrollment } from '@/lib/studentEnrollment';
+import { Head, Link } from '@inertiajs/react';
+import {
+    ArrowLeft,
+    CalendarDays,
+    CheckCircle2,
+    Clock3,
+    CreditCard,
+    Download,
+    ExternalLink,
+    FilePenLine,
+    FileText,
+    GraduationCap,
+    History,
+    Info,
+    Printer,
+    UserRound,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
+import '../../../../../css/student-enrollments.css';
+import { ReplacementForm } from './ReviewFeedback';
 
-type Level = { 
-  id: number; 
-  title?: string | null; 
-  title_ar?: string | null; 
-  code?: string | null;
-  faculty?: { name?: string | null };
-  department?: { name?: string | null };
-  duration?: string | null;
-  description?: string | null;
-};
-
-type Document = { 
-  id: number; 
-  type: string; 
-  name: string;
-  verified: boolean;
-  url?: string | null;
-  required: boolean;
-  uploaded_at?: string | null;
-  verified_at?: string | null;
-  rejection_reason?: string | null;
-};
-
-type StatusHistory = {
-  id: number;
-  status: string;
-  created_at: string;
-  notes?: string | null;
-  user?: { name: string } | null;
-};
-
-type Enrollment = {
-    id: number;
-    uuid?: string | null;
-    matricule?: string | null;
-    status: 'draft' | 'submitted' | 'in_review' | 'pending_documents' | 'validated' | 'rejected' | 'archived' | string;
-    payment_status?: 'unpaid' | 'partial' | 'paid' | string | null;
-    created_at?: string | null;
-    updated_at?: string | null;
-    enrolled_at?: string | null;
-    notes?: string | null;
-    rejection_reason?: string | null;
-    level?: Level | null;
-    documents?: Document[] | null;
-    status_history?: StatusHistory[] | null;
-    student?: {
-      first_name: string;
-      last_name: string;
-      email: string;
-      phone?: string | null;
-      address?: string | null;
-      city?: string | null;
-      country?: string | null;
-      birth_date?: string | null;
-      birth_place?: string | null;
-      nationality?: string | null;
-      gender?: string | null;
-    };
-};
-
-type CandidatureDetailProps = {
-  enrollment: Enrollment;
-  canPrint?: boolean;
-  canDownload?: boolean;
-};
-
-export default function CandidatureDetail({ enrollment, canPrint = true, canDownload = true }: CandidatureDetailProps) {
-  const [activeTab, setActiveTab] = useState<'details' | 'documents' | 'history'>('details');
-  
-  // Formater la date
-  const fmtDate = (v?: string | null) => (v ? new Date(v).toLocaleDateString('fr-FR') : '—');
-  const fmtDateTime = (v?: string | null) => (v ? new Date(v).toLocaleString('fr-FR') : '—');
-  
-  // Configuration des statuts
-  const getStatusConfig = (status: Enrollment['status']) => {
-    const map: Record<string, { label: string; className: string; icon: JSX.Element }> = {
-      draft: {
-        label: 'Brouillon',
-        className: 'bg-blue-100 text-blue-600',
-        icon: <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      submitted: { 
-        label: 'Soumise', 
-        className: 'bg-cyan-100 text-cyan-600', 
-        icon: <Clock className="w-4 h-4 sm:w-5 sm:h-5" /> 
-      },
-      in_review: {
-        label: 'En vérification',
-        className: 'bg-amber-100 text-amber-600',
-        icon: <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      pending_documents: {
-        label: 'Compléments requis',
-        className: 'bg-orange-100 text-orange-600',
-        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      validated: {
-        label: 'Validée',
-        className: 'bg-green-100 text-green-600',
-        icon: <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      rejected: {
-        label: 'Rejetée',
-        className: 'bg-red-100 text-red-600',
-        icon: <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      archived: {
-        label: 'Archivée',
-        className: 'bg-gray-100 text-gray-600',
-        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-    };
-    return map[status as string] ?? map['draft'];
-  };
-
-  // Configuration du statut de paiement
-  const getPaymentStatusConfig = (status?: Enrollment['payment_status']) => {
-    const map: Record<string, { label: string; className: string; icon: JSX.Element }> = {
-      paid: {
-        label: 'Payée',
-        className: 'bg-green-100 text-green-600',
-        icon: <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      partial: {
-        label: 'Paiement partiel',
-        className: 'bg-amber-100 text-amber-600',
-        icon: <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-      unpaid: {
-        label: 'Non payée',
-        className: 'bg-gray-100 text-gray-600',
-        icon: <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />,
-      },
-    };
-    return map[status as string] ?? map['unpaid'];
-  };
-
-  // Obtenir la configuration du statut de l'historique
-  const getHistoryStatusConfig = (status: string) => {
-    const map: Record<string, { label: string; className: string; icon: JSX.Element }> = {
-      draft: {
-        label: 'Brouillon',
-        className: 'bg-blue-100 text-blue-600',
-        icon: <Calendar className="w-4 h-4" />,
-      },
-      submitted: { 
-        label: 'Soumise', 
-        className: 'bg-cyan-100 text-cyan-600', 
-        icon: <Clock className="w-4 h-4" /> 
-      },
-      in_review: {
-        label: 'En vérification',
-        className: 'bg-amber-100 text-amber-600',
-        icon: <AlertCircle className="w-4 h-4" />,
-      },
-      pending_documents: {
-        label: 'Compléments requis',
-        className: 'bg-orange-100 text-orange-600',
-        icon: <FileText className="w-4 h-4" />,
-      },
-      validated: {
-        label: 'Validée',
-        className: 'bg-green-100 text-green-600',
-        icon: <CheckCircle className="w-4 h-4" />,
-      },
-      rejected: {
-        label: 'Rejetée',
-        className: 'bg-red-100 text-red-600',
-        icon: <XCircle className="w-4 h-4" />,
-      },
-      archived: {
-        label: 'Archivée',
-        className: 'bg-gray-100 text-gray-600',
-        icon: <FileText className="w-4 h-4" />,
-      },
-    };
-    return map[status] ?? map['draft'];
-  };
-
-  const statusConfig = getStatusConfig(enrollment.status);
-  const paymentConfig = getPaymentStatusConfig(enrollment.payment_status);
-  const student = enrollment.student;
-  const level = enrollment.level;
-  const documents = enrollment.documents || [];
-  const history = enrollment.status_history || [];
-  
-  // Calculer les statistiques des documents
-  const totalDocuments = documents.length;
-  const verifiedDocuments = documents.filter(doc => doc.verified).length;
-  const requiredDocuments = documents.filter(doc => doc.required).length;
-  const requiredVerifiedDocuments = documents.filter(doc => doc.required && doc.verified).length;
-  
-  // Gérer le téléchargement
-  const handleDownload = () => {
-    window.open(route('dashboard.enrollments.download', { uuid: enrollment.uuid }), '_blank');
-  };
-  
-  // Gérer l'impression
-  const handlePrint = () => {
-    window.print();
-  };
-  
-  // Obtenir le nom du type de document
-  const getDocumentTypeName = (type: string) => {
-    const types: Record<string, string> = {
-      'birth_certificate': 'Acte de naissance',
-      'national_id': 'Carte d\'identité nationale',
-      'passport': 'Passeport',
-      'diploma': 'Diplôme',
-      'transcript': 'Relevé de notes',
-      'recommendation_letter': 'Lettre de recommandation',
-      'motivation_letter': 'Lettre de motivation',
-      'cv': 'CV',
-      'photo': 'Photo d\'identité',
-      'medical_certificate': 'Certificat médical',
-      'other': 'Autre'
-    };
-    return types[type] || type;
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100 print:bg-white">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-        {/* Header */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden mb-4 sm:mb-6 print:shadow-none">
-          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-4 sm:p-6 text-white">
-            <div className="flex flex-col gap-3 sm:gap-4">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-                <div className="flex-1">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2">
-                    Détails de la candidature
-                  </h1>
-                  <div className="flex items-center gap-2 text-blue-100">
-                    <span className="text-xs sm:text-sm">Référence:</span>
-                    <span className="font-mono bg-white/20 px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm">
-                      {enrollment.matricule || enrollment.uuid || '—'}
-                    </span>
-                  </div>
+type Props = { enrollment: StudentEnrollment; success?: string };
+export default function EnrollmentShowSection({ enrollment, success }: Props) {
+    const [tab, setTab] = useState<'details' | 'documents' | 'history'>(enrollment.selected_document_uuid ? 'documents' : 'details');
+    useEffect(() => {
+        if (enrollment.selected_document_uuid) setTab('documents');
+    }, [enrollment.selected_document_uuid]);
+    useEffect(() => {
+        if (tab === 'documents' && enrollment.selected_document_uuid) {
+            window.document.getElementById(`student-document-${enrollment.selected_document_uuid}`)?.scrollIntoView({ block: 'start' });
+        }
+    }, [tab, enrollment.selected_document_uuid]);
+    const documents = enrollment.documents || [];
+    const accepted = documents.filter((doc) => doc.review_status === 'accepted').length;
+    const corrections = documents.filter((doc) => doc.can_replace).length;
+    const history = enrollment.status_history || [];
+    const fullName = [enrollment.student?.first_name, enrollment.student?.post_name, enrollment.student?.last_name].filter(Boolean).join(' ');
+    const isFinal = ['validated', 'rejected', 'cancelled'].includes(enrollment.status);
+    const information = [
+        ['Nom déclaré dans le dossier', enrollment.declared_name || fullName],
+        ['Email du dossier', enrollment.declared_email || enrollment.student?.email],
+        ['Nom du compte', fullName],
+        ['Email du compte', enrollment.student?.email],
+    ];
+    return (
+        <div className="student-enrollments student-enrollment-detail">
+            <Head title={`Dossier ${enrollment.reference}`} />
+            <div className="student-detail-toolbar">
+                <Link href="/dashboard/enrollments" className="student-text-button">
+                    <ArrowLeft size={16} />
+                    Mes inscriptions
+                </Link>
+                <div>
+                    {enrollment.academic_portal_url && (
+                        <Link className="student-primary" href={enrollment.academic_portal_url}>
+                            <GraduationCap size={17} />
+                            Mon espace étudiant
+                        </Link>
+                    )}
+                    {enrollment.status === 'draft' && (
+                        <Link className="student-primary" href={`/dashboard/enrollments/${enrollment.uuid}/edit`}>
+                            <FilePenLine size={16} />
+                            Reprendre le brouillon
+                        </Link>
+                    )}
+                    <button
+                        className="student-secondary"
+                        onClick={() => {
+                            flushSync(() => setTab('details'));
+                            window.print();
+                        }}
+                    >
+                        <Printer size={16} />
+                        Imprimer le récapitulatif
+                    </button>
                 </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <div className={`flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold ${statusConfig.className}`}>
-                  {statusConfig.icon}
-                  <span className="hidden xs:inline">{statusConfig.label}</span>
-                  <span className="xs:hidden">{statusConfig.label.split(' ')[0]}</span>
-                </div>
-                
-                {enrollment.payment_status && (
-                  <div className={`flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold ${paymentConfig.className}`}>
-                    {paymentConfig.icon}
-                    <span className="hidden sm:inline">{paymentConfig.label}</span>
-                    <span className="sm:hidden">{paymentConfig.label.split(' ')[0]}</span>
-                  </div>
-                )}
-              </div>
             </div>
-          </div>
-          
-          {/* Actions */}
-          <div className="p-3 sm:p-4 bg-gray-50 border-t flex flex-wrap gap-2 sm:gap-3 justify-end print:hidden">
-            {canDownload && (
-              <button 
-                onClick={handleDownload}
-                className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm"
-              >
-                <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Télécharger</span>
-              </button>
-            )}
-            
-            {canPrint && (
-              <button 
-                onClick={handlePrint}
-                className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm"
-              >
-                <Printer className="w-4 h-4" />
-                <span className="hidden sm:inline">Imprimer</span>
-              </button>
-            )}
-            
-            <Link 
-              href={route('dashboard.enrollments.index')}
-              className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-            >
-              <ChevronRight className="w-4 h-4 rotate-180" />
-              <span>Retour</span>
-            </Link>
-          </div>
-        </div>
-        
-        {/* Tabs */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden mb-4 sm:mb-6 print:shadow-none">
-          <div className="flex border-b overflow-x-auto">
-            <button
-              className={`flex-1 min-w-[100px] px-2 sm:px-4 py-3 text-center font-medium transition-colors text-xs sm:text-sm ${
-                activeTab === 'details' 
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('details')}
-            >
-              <span className="hidden sm:inline">Informations générales</span>
-              <span className="sm:hidden">Informations</span>
-            </button>
-            
-            <button
-              className={`flex-1 min-w-[100px] px-2 sm:px-4 py-3 text-center font-medium transition-colors text-xs sm:text-sm ${
-                activeTab === 'documents' 
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('documents')}
-            >
-              Documents ({verifiedDocuments}/{totalDocuments})
-            </button>
-            
-            <button
-              className={`flex-1 min-w-[100px] px-2 sm:px-4 py-3 text-center font-medium transition-colors text-xs sm:text-sm ${
-                activeTab === 'history' 
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('history')}
-            >
-              Historique
-            </button>
-          </div>
-          
-          {/* Tab Content */}
-          <div className="p-3 sm:p-4 md:p-6">
-            {/* Details Tab */}
-            {activeTab === 'details' && (
-              <div className="space-y-4 sm:space-y-6">
-                {/* Student Information */}
+            <header className="student-dossier-hero">
                 <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                    Informations étudiant
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Nom complet</p>
-                        <p className="font-medium text-sm sm:text-base truncate">{student?.first_name} {student?.last_name}</p>
-                      </div>
+                    <span className="student-eyebrow">MON DOSSIER · {enrollment.reference}</span>
+                    <h1>{enrollment.level?.title || 'Votre candidature'}</h1>
+                    <p>
+                        {enrollment.level?.faculty?.name || 'Formation à compléter'}
+                        {enrollment.academic_year?.title && ` · ${enrollment.academic_year.title}`}
+                    </p>
+                    <div className="student-hero-badges">
+                        <span className={`student-badge is-${enrollment.status}`}>{statusLabels[enrollment.status] || 'Statut à confirmer'}</span>
+                        {enrollment.matricule && <span className="student-matricule">Matricule {enrollment.matricule}</span>}
                     </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Email</p>
-                        <p className="font-medium text-sm sm:text-base truncate">{student?.email}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Téléphone</p>
-                        <p className="font-medium text-sm sm:text-base truncate">{student?.phone || '—'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Date de naissance</p>
-                        <p className="font-medium text-sm sm:text-base">{fmtDate(student?.birth_date)}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Lieu de naissance</p>
-                        <p className="font-medium text-sm sm:text-base truncate">{student?.birth_place || '—'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Nationalité</p>
-                        <p className="font-medium text-sm sm:text-base truncate">{student?.nationality || '—'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3 sm:col-span-2">
-                      <Home className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Adresse</p>
-                        <p className="font-medium text-sm sm:text-base">{student?.address || '—'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-2 sm:gap-3 sm:col-span-2">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm text-gray-500">Ville / Pays</p>
-                        <p className="font-medium text-sm sm:text-base">{student?.city || '—'} {student?.country && `/ ${student.country}`}</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-                
-                {/* Program Information */}
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                    Programme demandé
-                  </h2>
-                  
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div className="sm:col-span-2">
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Programme</p>
-                        <p className="font-medium text-base sm:text-lg">{level?.title || level?.title_ar || '—'}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Code</p>
-                        <p className="font-medium text-base sm:text-lg">{level?.code || '—'}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Durée</p>
-                        <p className="font-medium text-base sm:text-lg">{level?.duration || '—'}</p>
-                      </div>
-                      
-                      <div className="sm:col-span-2">
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Faculté / Département</p>
-                        <p className="font-medium text-sm sm:text-base">{level?.faculty?.name || '—'} {level?.department?.name && `/ ${level.department.name}`}</p>
-                      </div>
-                    </div>
-                    
-                    {level?.description && (
-                      <div className="mt-3 sm:mt-4">
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Description</p>
-                        <p className="font-medium text-sm sm:text-base">{level.description}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Enrollment Information */}
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-                    <FileCheck2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                    Informations sur la candidature
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div>
-                      <p className="text-xs sm:text-sm text-gray-500 mb-1">Date de création</p>
-                      <p className="font-medium text-sm sm:text-base">{fmtDateTime(enrollment.created_at)}</p>
-                    </div>
-                    
-                    <div>
-                      <p className="text-xs sm:text-sm text-gray-500 mb-1">Dernière mise à jour</p>
-                      <p className="font-medium text-sm sm:text-base">{fmtDateTime(enrollment.updated_at)}</p>
-                    </div>
-                    
-                    {enrollment.enrolled_at && (
-                      <div>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Date d'inscription</p>
-                        <p className="font-medium text-sm sm:text-base">{fmtDate(enrollment.enrolled_at)}</p>
-                      </div>
-                    )}
-                    
-                    <div>
-                      <p className="text-xs sm:text-sm text-gray-500 mb-1">Statut actuel</p>
-                      <div className={`inline-flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-semibold ${statusConfig.className}`}>
-                        {statusConfig.icon}
-                        <span className="hidden xs:inline">{statusConfig.label}</span>
-                        <span className="xs:hidden">{statusConfig.label.split(' ')[0]}</span>
-                      </div>
-                    </div>
-                    
-                    {enrollment.payment_status && (
-                      <div className="sm:col-span-2">
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1">Statut de paiement</p>
-                        <div className={`inline-flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-semibold ${paymentConfig.className}`}>
-                          {paymentConfig.icon}
-                          <span className="hidden sm:inline">{paymentConfig.label}</span>
-                          <span className="sm:hidden">{paymentConfig.label.split(' ')[0]}</span>
+                <GraduationCap size={65} strokeWidth={1} aria-hidden="true" />
+            </header>
+            {success && (
+                <p className="student-notice" role="status">
+                    {success}
+                </p>
+            )}
+            {enrollment.analysis_completed_at && (
+                <p className="student-notice">
+                    L’examen de toutes vos pièces est terminé depuis le {formatDate(enrollment.analysis_completed_at)}. Retrouvez les verdicts et les
+                    remarques dans vos justificatifs. La décision finale est communiquée séparément.
+                </p>
+            )}
+            <div className="student-detail-layout">
+                <div className="student-detail-main">
+                    <section className="student-panel student-progress">
+                        <header>
+                            <h2>
+                                <Clock3 size={19} />
+                                Le suivi de votre candidature
+                            </h2>
+                            <p>Votre dossier évolue à chaque étape de son traitement.</p>
+                        </header>
+                        <ol>
+                            {[
+                                { title: 'Préparation', caption: 'Informations et pièces', done: enrollment.status !== 'draft' },
+                                { title: 'Transmission', caption: 'Envoi au service', done: enrollment.status !== 'draft' },
+                                {
+                                    title: 'Examen',
+                                    caption: enrollment.analysis_completed_at ? 'Vérification terminée' : 'Vérification du dossier',
+                                    done: !!enrollment.analysis_started_at || ['validated', 'rejected'].includes(enrollment.status),
+                                },
+                                { title: 'Décision', caption: isFinal ? statusLabels[enrollment.status] || '' : 'Résultat à venir', done: isFinal },
+                            ].map((step, index) => (
+                                <li key={step.title} className={step.done ? 'is-complete' : ''}>
+                                    <span>{step.done ? <CheckCircle2 size={18} /> : `0${index + 1}`}</span>
+                                    <strong>{step.title}</strong>
+                                    <small>{step.caption}</small>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                    <section className="student-panel student-tab-panel">
+                        <div className="student-tabs" role="tablist" aria-label="Contenu du dossier">
+                            {[
+                                { id: 'details' as const, label: 'Informations', icon: UserRound },
+                                { id: 'documents' as const, label: `Justificatifs (${documents.length})`, icon: FileText },
+                                { id: 'history' as const, label: 'Historique', icon: History },
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    id={`tab-${item.id}`}
+                                    role="tab"
+                                    aria-selected={tab === item.id}
+                                    aria-controls={`panel-${item.id}`}
+                                    tabIndex={tab === item.id ? 0 : -1}
+                                    onKeyDown={(event) => {
+                                        const ids = ['details', 'documents', 'history'] as const;
+                                        const position = ids.indexOf(item.id);
+                                        let next = position;
+                                        if (event.key === 'ArrowRight') next = (position + 1) % 3;
+                                        else if (event.key === 'ArrowLeft') next = (position + 2) % 3;
+                                        else if (event.key === 'Home') next = 0;
+                                        else if (event.key === 'End') next = 2;
+                                        else return;
+                                        event.preventDefault();
+                                        setTab(ids[next]);
+                                        document.getElementById(`tab-${ids[next]}`)?.focus();
+                                    }}
+                                    onClick={() => setTab(item.id)}
+                                >
+                                    <item.icon size={17} />
+                                    {item.label}
+                                </button>
+                            ))}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Notes */}
-                  {(enrollment.notes || enrollment.rejection_reason) && (
-                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                      <p className="text-xs sm:text-sm text-gray-500 mb-1">Notes</p>
-                      <p className="font-medium text-sm sm:text-base">{enrollment.notes || enrollment.rejection_reason}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {/* Documents Tab */}
-            {activeTab === 'documents' && (
-              <div>
-                <div className="mb-4 sm:mb-6 flex flex-col gap-3 sm:gap-4">
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
-                    <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                    Documents soumis
-                  </h2>
-                  
-                  <div className="grid grid-cols-3 gap-2 sm:gap-4 sm:flex sm:justify-between">
-                    <div className="text-center p-2 sm:p-0">
-                      <p className="text-xl sm:text-2xl font-bold text-green-600">{verifiedDocuments}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">Vérifiés</p>
-                    </div>
-                    
-                    <div className="text-center p-2 sm:p-0">
-                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{totalDocuments}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">Total</p>
-                    </div>
-                    
-                    <div className="text-center p-2 sm:p-0">
-                      <p className="text-xl sm:text-2xl font-bold text-amber-600">{requiredVerifiedDocuments}/{requiredDocuments}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">Obligatoires</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {documents.length === 0 ? (
-                  <div className="text-center py-8 sm:py-12 text-gray-500">
-                    <FileText className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
-                    <p className="text-sm sm:text-base">Aucun document n'a été soumis avec cette candidature.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 sm:space-y-4">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow">
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-start gap-2 sm:gap-3">
-                            <div className={`p-1.5 sm:p-2 rounded-full ${doc.verified ? 'bg-green-100' : 'bg-gray-100'} flex-shrink-0`}>
-                              {doc.verified ? (
-                                <FileCheck2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                              ) : (
-                                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-                              )}
-                            </div>
-                            
-                            <div className="min-w-0 flex-1">
-                              <h3 className="font-medium text-sm sm:text-base truncate">{doc.name}</h3>
-                              <p className="text-xs sm:text-sm text-gray-500">{getDocumentTypeName(doc.type)}</p>
-                              
-                              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
-                                {doc.required && (
-                                  <span className="text-xs px-2 py-0.5 sm:py-1 bg-amber-100 text-amber-700 rounded-full">
-                                    Obligatoire
-                                  </span>
-                                )}
-                                
-                                <span className="text-xs px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-700 rounded-full">
-                                  Ajouté le {fmtDate(doc.uploaded_at)}
-                                </span>
-                                
-                                {doc.verified && (
-                                  <span className="text-xs px-2 py-0.5 sm:py-1 bg-green-100 text-green-700 rounded-full">
-                                    Vérifié le {fmtDate(doc.verified_at)}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-end">
-                            {doc.url && (
-                              <a 
-                                href={doc.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:py-2 bg-blue-100 text-blue-700 rounded-lg text-xs sm:text-sm hover:bg-blue-200 transition-colors"
-                              >
-                                <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                                Voir
-                              </a>
+                        <div className="student-tab-content" id={`panel-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={0}>
+                            {tab === 'details' && (
+                                <>
+                                    <section className="student-information-section">
+                                        <h2>Vos informations</h2>
+                                        <p>Les coordonnées communiquées lors de votre candidature.</p>
+                                        <dl className="student-information-grid">
+                                            {information.map(([label, value]) => (
+                                                <div key={label}>
+                                                    <dt>{label}</dt>
+                                                    <dd>{value || 'Non renseigné'}</dd>
+                                                </div>
+                                            ))}
+                                        </dl>
+                                    </section>
+                                    <section className="student-information-section">
+                                        <h2>
+                                            <GraduationCap size={20} />
+                                            La formation demandée
+                                        </h2>
+                                        <dl className="student-information-grid">
+                                            {[
+                                                ['Faculté', enrollment.level?.faculty?.name],
+                                                ['Niveau', enrollment.level?.title],
+                                                ['Code du niveau', enrollment.level?.code],
+                                                ['Année académique', enrollment.academic_year?.title],
+                                            ].map(([label, value]) => (
+                                                <div key={label}>
+                                                    <dt>{label}</dt>
+                                                    <dd>{value || 'À compléter'}</dd>
+                                                </div>
+                                            ))}
+                                        </dl>
+                                    </section>
+                                    <section className="student-information-section">
+                                        <h2>
+                                            <CalendarDays size={19} />
+                                            Les dates de votre dossier
+                                        </h2>
+                                        <dl className="student-information-grid">
+                                            {[
+                                                ['Créé le', enrollment.created_at],
+                                                ['Dernière mise à jour', enrollment.updated_at],
+                                                ['Début de l’analyse', enrollment.analysis_started_at],
+                                                ['Fin de vérification des pièces', enrollment.analysis_completed_at],
+                                                ['Validation', enrollment.enrolled_at],
+                                            ].map(([label, value]) => (
+                                                <div key={label}>
+                                                    <dt>{label}</dt>
+                                                    <dd>{value ? formatDate(value) : 'À venir'}</dd>
+                                                </div>
+                                            ))}
+                                        </dl>
+                                    </section>
+                                </>
                             )}
-                          </div>
+                            {tab === 'documents' && (
+                                <>
+                                    <div className="student-documents-heading">
+                                        <div>
+                                            <h2>Vos justificatifs</h2>
+                                            <p>
+                                                {accepted} pièce{accepted > 1 ? 's' : ''} acceptée{accepted > 1 ? 's' : ''} sur {documents.length}{' '}
+                                                transmise{documents.length > 1 ? 's' : ''}.
+                                            </p>
+                                        </div>
+                                        {corrections > 0 && <span className="student-badge is-correction_requested">{corrections} à remplacer</span>}
+                                    </div>
+                                    {documents.length ? (
+                                        <div className="student-document-list">
+                                            {documents.map((doc) => (
+                                                <article
+                                                    className={`student-document is-${doc.review_status} ${doc.version > 1 && doc.review_status === 'pending' ? 'is-replacement-pending' : ''} ${enrollment.selected_document_uuid === doc.uuid ? 'is-notification-target' : ''}`}
+                                                    id={`student-document-${doc.uuid}`}
+                                                    key={`${doc.uuid}-${doc.version}`}
+                                                >
+                                                    <header>
+                                                        <FileText size={22} strokeWidth={1.5} />
+                                                        <div>
+                                                            <h3>{doc.label || doc.name}</h3>
+                                                            {doc.label && <p>{doc.name}</p>}
+                                                            <p>
+                                                                Version {doc.version} {doc.size_human && `· ${doc.size_human}`} · Ajoutée le{' '}
+                                                                {formatDate(doc.uploaded_at)}
+                                                            </p>
+                                                        </div>
+                                                        <span className={`student-badge is-${doc.review_status}`}>
+                                                            {doc.version > 1 && doc.review_status === 'pending'
+                                                                ? 'Nouvelle version · À réexaminer'
+                                                                : verdictLabels[doc.review_status] || 'À examiner'}
+                                                        </span>
+                                                    </header>
+                                                    {doc.review_comment && (
+                                                        <div className="student-document-comment">
+                                                            <strong>Remarque du service</strong>
+                                                            <p>{doc.review_comment}</p>
+                                                        </div>
+                                                    )}
+                                                    <div className="student-document-actions">
+                                                        {doc.preview_url && (
+                                                            <a
+                                                                href={doc.preview_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="student-secondary"
+                                                            >
+                                                                <ExternalLink size={16} />
+                                                                Ouvrir la pièce
+                                                            </a>
+                                                        )}
+                                                        {doc.url && (
+                                                            <a href={doc.url} className="student-secondary">
+                                                                <Download size={16} />
+                                                                Télécharger la pièce
+                                                            </a>
+                                                        )}
+                                                        {doc.review_status === 'accepted' && doc.verified_at && (
+                                                            <small>Acceptée le {formatDate(doc.verified_at)}</small>
+                                                        )}
+                                                    </div>
+                                                    {doc.can_replace && (
+                                                        <ReplacementForm document={doc} limit={enrollment.document_upload_max_kb || 2048} />
+                                                    )}
+                                                </article>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="student-empty student-empty-compact">
+                                            <FileText size={30} />
+                                            <h3>Aucun justificatif transmis</h3>
+                                            <p>
+                                                {enrollment.status === 'draft'
+                                                    ? 'Reprenez votre brouillon pour ajouter les pièces de votre candidature.'
+                                                    : 'Aucune pièce n’est associée à ce dossier.'}
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {tab === 'history' && (
+                                <>
+                                    <h2>L’historique de votre candidature</h2>
+                                    <p className="student-muted">Les actions et décisions enregistrées sur votre dossier.</p>
+                                    {history.length ? (
+                                        <ol className="student-timeline">
+                                            {history.map((event) => (
+                                                <li key={event.id}>
+                                                    <span>
+                                                        <History size={16} />
+                                                    </span>
+                                                    <div>
+                                                        <h3>{historyLabels[event.status] || 'Mise à jour du dossier'}</h3>
+                                                        <small>
+                                                            {formatDate(event.created_at, true)} · {event.user?.name || 'Service des inscriptions'}
+                                                        </small>
+                                                        {event.document_name && (
+                                                            <p>
+                                                                {event.document_name}
+                                                                {event.verdict && ` · ${verdictLabels[event.verdict] || event.verdict}`}
+                                                            </p>
+                                                        )}
+                                                        {event.notes && <p>{event.notes}</p>}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    ) : (
+                                        <div className="student-empty student-empty-compact">
+                                            <History size={30} />
+                                            <h3>Aucune étape enregistrée pour le moment</h3>
+                                            <p>Les prochaines actions du service apparaîtront ici.</p>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
-                        
-                        {doc.rejection_reason && (
-                          <div className="mt-3 p-2 sm:p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
-                            <p className="text-xs sm:text-sm text-red-700">
-                              <span className="font-medium">Raison du rejet:</span> {doc.rejection_reason}
-                            </p>
-                          </div>
+                    </section>
+                </div>
+                <aside className="student-detail-aside">
+                    <section className="student-panel student-next-step">
+                        <span className="student-eyebrow">LA PROCHAINE ÉTAPE</span>
+                        <h2>
+                            {enrollment.status === 'draft'
+                                ? 'Préparez votre candidature.'
+                                : corrections > 0
+                                  ? 'Complétez vos justificatifs.'
+                                  : isFinal
+                                    ? 'Votre décision est disponible.'
+                                    : 'Gardez le fil.'}
+                        </h2>
+                        <p>{nextStep(enrollment)}</p>
+                        {enrollment.status === 'draft' ? (
+                            <Link className="student-primary" href={`/dashboard/enrollments/${enrollment.uuid}/edit`}>
+                                Continuer mon inscription
+                                <ArrowLeft className="student-arrow-forward" size={16} />
+                            </Link>
+                        ) : (
+                            <button
+                                className="student-secondary"
+                                onClick={() => {
+                                    setTab(corrections > 0 ? 'documents' : 'history');
+                                    document.querySelector('.student-tab-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    document.getElementById(`tab-${corrections > 0 ? 'documents' : 'history'}`)?.focus({ preventScroll: true });
+                                }}
+                            >
+                                {corrections > 0 ? 'Corriger mes pièces' : 'Voir le suivi'}
+                            </button>
                         )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* History Tab */}
-            {activeTab === 'history' && (
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                  Historique de la candidature
-                </h2>
-                
-                {history.length === 0 ? (
-                  <div className="text-center py-8 sm:py-12 text-gray-500">
-                    <Clock className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
-                    <p className="text-sm sm:text-base">Aucun historique disponible pour cette candidature.</p>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    {/* Timeline line */}
-                    <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
-                    
-                    <div className="space-y-4 sm:space-y-6">
-                      {history.map((item, index) => {
-                        const statusConfig = getHistoryStatusConfig(item.status);
-                        
-                        return (
-                          <div key={item.id} className="relative flex items-start gap-3 sm:gap-4">
-                            {/* Timeline dot */}
-                            <div className={`relative z-10 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${statusConfig.className} flex-shrink-0`}>
-                              {statusConfig.icon}
+                        {(enrollment.rejection_reason || enrollment.notes) && (
+                            <div className="student-decision-note">
+                                <strong>{enrollment.status === 'rejected' ? 'Motif de la décision' : 'Message du service'}</strong>
+                                <p>{enrollment.rejection_reason || enrollment.notes}</p>
                             </div>
-                            
-                            {/* Content */}
-                            <div className="flex-1 pb-4 sm:pb-6 min-w-0">
-                              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                                <div className="flex flex-col gap-1 sm:gap-2 mb-2">
-                                  <h3 className="font-medium text-sm sm:text-base">{statusConfig.label}</h3>
-                                  <p className="text-xs sm:text-sm text-gray-500">{fmtDateTime(item.created_at)}</p>
-                                </div>
-                                
-                                {item.user && (
-                                  <p className="text-xs sm:text-sm text-gray-600 mb-2">
-                                    Par {item.user.name}
-                                  </p>
-                                )}
-                                
-                                {item.notes && (
-                                  <p className="text-xs sm:text-sm text-gray-700 bg-white p-2 sm:p-3 rounded border-l-4 border-blue-500">
-                                    {item.notes}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                        )}
+                    </section>
+                    <section className="student-panel student-payment">
+                        <h2>
+                            <CreditCard size={19} />
+                            Situation de paiement
+                        </h2>
+                        <strong>{paymentLabels[enrollment.payment_status || 'unpaid'] || 'À confirmer'}</strong>
+                        {enrollment.financial_portal_url && (
+                            <Link className="student-secondary" href={enrollment.financial_portal_url}>
+                                Consulter mes frais
+                                <CreditCard size={15} />
+                            </Link>
+                        )}
+                        <p>
+                            La validation du dossier et le règlement des frais sont deux étapes distinctes. Suivez les modalités communiquées par
+                            l’université.
+                        </p>
+                    </section>
+                    <section className="student-help">
+                        <Info size={18} />
+                        <p>
+                            Pour toute question au service des inscriptions, indiquez la référence <strong>{enrollment.reference}</strong>.
+                        </p>
+                    </section>
+                </aside>
+            </div>
         </div>
-        
-        {/* Footer */}
-        <div className="text-center text-xs sm:text-sm text-gray-500 print:hidden">
-          <p>Cette candidature a été soumise via la plateforme d'inscription en ligne.</p>
-          <p>Pour toute question, veuillez contacter le service des admissions.</p>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }

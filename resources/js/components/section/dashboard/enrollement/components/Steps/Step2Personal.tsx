@@ -1,153 +1,67 @@
-// resources/js/pages/enrollment/components/Steps/Step2Personal.tsx (ajustements)
-
-import { AlertCircle, FileText, Mail, Upload, User, X } from 'lucide-react';
-import { Requirements } from '../../types';
-
-type Props = {
-    formData: any;
+import type { ChangeEvent } from 'react';
+import type { FormData, Requirements } from '../../types';
+import DocumentUpload from '../DocumentUpload';
+export type DocumentStepProps = {
+    formData: FormData;
     errors: Record<string, string>;
-    handleFieldChange: (field: string, value: string) => void;
+    handleFieldChange: (field: keyof FormData, value: string) => void;
     requirements: Requirements;
-    fileInputRefs: React.MutableRefObject<Record<string, HTMLInputElement | null>>;
-    handleFileChange: (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleFileChange: (key: string) => (event: ChangeEvent<HTMLInputElement>) => void;
     removeFile: (key: string) => void;
     previews: Record<string, string>;
-    focusedField: string | null;
-    setFocusedField: (v: string | null) => void;
+    uploadingKeys: string[];
 };
-
 export default function Step2Personal({
     formData,
     errors,
     handleFieldChange,
     requirements,
-    fileInputRefs,
     handleFileChange,
     removeFile,
     previews,
-    focusedField,
-    setFocusedField,
-}: Props) {
+    uploadingKeys,
+}: DocumentStepProps) {
     return (
-        <div className="animate-fadeIn space-y-6">
-            {/* Nom */}
-            <div className={`group ${focusedField === 'name' ? 'scale-105 transform' : ''} transition-all duration-300`}>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    <User className="mr-2 inline h-4 w-4 text-indigo-600" />
-                    Nom complet
-                </label>
-                <input
-                    type="text"
-                    className={`w-full rounded-xl border-2 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'} px-4 py-3 transition-all duration-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100`}
-                    placeholder="Jean Dupont"
-                    value={formData.name}
-                    onChange={(e) => handleFieldChange('name', e.target.value)}
-                    onFocus={() => setFocusedField('name')}
-                    onBlur={() => setFocusedField(null)}
+        <div className="enrollment-fields">
+            <div className="enrollment-info">Vos coordonnées sont préremplies depuis votre compte. Vérifiez-les avant de continuer.</div>
+            {[
+                { key: 'name' as const, label: 'Nom complet', type: 'text', autoComplete: 'name', placeholder: 'Nom, postnom et prénom' },
+                { key: 'email' as const, label: 'Adresse email', type: 'email', autoComplete: 'email', placeholder: 'vous@exemple.com' },
+            ].map(({ key, label, ...attributes }) => (
+                <div className="enrollment-field" key={key}>
+                    <label htmlFor={key}>
+                        {label}
+                        <span className="enrollment-required">*</span>
+                    </label>
+                    <input
+                        {...attributes}
+                        id={key}
+                        value={formData[key]}
+                        required
+                        aria-invalid={!!errors[key]}
+                        aria-describedby={errors[key] ? `${key}-error` : undefined}
+                        onChange={(e) => handleFieldChange(key, e.target.value)}
+                    />
+                    {errors[key] && (
+                        <p id={`${key}-error`} className="enrollment-field-error" role="alert">
+                            {errors[key]}
+                        </p>
+                    )}
+                </div>
+            ))}
+            {!!requirements.personal_info.length && <h3 className="enrollment-subheading">Vos pièces d’identité</h3>}
+            {requirements.personal_info.map((doc) => (
+                <DocumentUpload
+                    key={doc.key}
+                    doc={doc}
+                    document={formData.documents[doc.key]}
+                    preview={previews[doc.key]}
+                    uploading={uploadingKeys.includes(doc.key)}
+                    error={errors[doc.key]}
+                    onChange={handleFileChange(doc.key)}
+                    onRemove={() => removeFile(doc.key)}
                 />
-                {errors.name && (
-                    <div className="mt-1 flex items-center text-sm text-red-600">
-                        <AlertCircle className="mr-1 h-4 w-4" />
-                        {errors.name}
-                    </div>
-                )}
-            </div>
-
-            {/* Email */}
-            <div className={`group ${focusedField === 'email' ? 'scale-105 transform' : ''} transition-all duration-300`}>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    <Mail className="mr-2 inline h-4 w-4 text-purple-600" />
-                    Adresse email
-                </label>
-                <input
-                    type="email"
-                    className={`w-full rounded-xl border-2 ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'} px-4 py-3 transition-all duration-300 focus:border-purple-600 focus:ring-4 focus:ring-purple-100`}
-                    placeholder="jean.dupont@email.com"
-                    value={formData.email}
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
-                    onFocus={() => setFocusedField('email')}
-                    onBlur={() => setFocusedField(null)}
-                />
-                {errors.email && (
-                    <div className="mt-1 flex items-center text-sm text-red-600">
-                        <AlertCircle className="mr-1 h-4 w-4" />
-                        {errors.email}
-                    </div>
-                )}
-            </div>
-
-            {/* Docs personnels dynamiques */}
-            {requirements.personal_info.map((doc) => {
-                const hasFile = formData.documents[doc.key];
-                const preview = previews[doc.key];
-                
-                return (
-                    <div key={doc.key} className={`group ${focusedField === doc.key ? 'scale-105 transform' : ''} transition-all duration-300`}>
-                        <label className="mb-2 block text-sm font-semibold text-gray-700">
-                            <FileText className="mr-2 inline h-4 w-4 text-pink-600" />
-                            {doc.label}
-                            {doc.required && <span className="ml-1 text-rose-500">*</span>}
-                        </label>
-
-                        {!hasFile && !preview && (
-                            <div className="relative">
-                                <input
-                                    type="file"
-                                    id={doc.key}
-                                    ref={(el) => (fileInputRefs.current[doc.key] = el)}
-                                    accept={doc.accept ?? 'image/*,.pdf'}
-                                    className="hidden"
-                                    onChange={handleFileChange(doc.key)}
-                                />
-                                <label
-                                    htmlFor={doc.key}
-                                    className={`group flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border-2 ${errors[doc.key] ? 'border-red-300 bg-red-50' : 'border-dashed border-gray-300 bg-gray-50'} px-4 py-6 transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-50`}
-                                >
-                                    <Upload className="h-5 w-5 text-gray-400 transition-colors group-hover:text-indigo-600" />
-                                    <span className="text-sm font-medium text-gray-600 group-hover:text-indigo-600">
-                                        Cliquez pour télécharger
-                                    </span>
-                                </label>
-                            </div>
-                        )}
-
-                        {/* Preview ou info du fichier uploadé */}
-                        {(hasFile || preview) && (
-                            <div className="mt-3 flex items-center gap-3 rounded-xl border-2 border-green-200 bg-green-50 p-3">
-                                {preview && formData.documents[doc.key]?.mime?.startsWith('image/') ? (
-                                    <img src={preview} alt={doc.label} className="h-24 w-24 rounded-xl border object-cover shadow-md" />
-                                ) : (
-                                    <div className="flex h-24 w-24 items-center justify-center rounded-xl border bg-white text-xs text-gray-600 shadow-md">
-                                        <FileText className="h-8 w-8 text-gray-400" />
-                                    </div>
-                                )}
-                                <div className="flex-1 truncate text-sm text-gray-700">
-                                    {hasFile ? formData.documents[doc.key]?.filename : 'En cours d\'upload...'}
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        removeFile(doc.key);
-                                        if (fileInputRefs.current[doc.key]) {
-                                            fileInputRefs.current[doc.key]!.value = '';
-                                        }
-                                    }}
-                                    className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-600 transition-colors hover:bg-red-100"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            </div>
-                        )}
-                        
-                        {errors[doc.key] && (
-                            <div className="mt-1 flex items-center text-sm text-red-600">
-                                <AlertCircle className="mr-1 h-4 w-4" />
-                                {errors[doc.key]}
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
+            ))}
         </div>
     );
 }

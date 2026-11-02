@@ -260,7 +260,7 @@ export default function Courses(): JSX.Element {
           
           <div className="relative max-w-2xl">
             <h2 className="text-balance text-3xl font-bold text-white sm:text-4xl">
-              Obtenez votre certification professionnelle avec UMK
+              Obtenez votre certification professionnelle avec USK
             </h2>
             <p className="mt-4 text-lg text-amber-100">
               Des programmes conçus avec l'industrie, des enseignants experts, et un accompagnement personnalisé pour accélérer votre carrière.

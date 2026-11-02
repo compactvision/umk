@@ -1,0 +1,87 @@
+
+/* USK identity applied to the original dashboard and authentication layouts. */
+.usk-dashboard {
+    --color-emerald-50: #eef5f0;
+    --color-emerald-100: #dcebe0;
+    --color-emerald-200: #bad5c4;
+    --color-emerald-300: #91bca3;
+    --color-emerald-400: #629c7c;
+    --color-emerald-500: #24694e;
+    --color-emerald-600: #073e32;
+    --color-emerald-700: #062c25;
+    --color-emerald-800: #05281f;
+    --color-emerald-900: #042018;
+    --color-teal-50: #faf6ea;
+    --color-teal-100: #f5ebce;
+    --color-teal-200: #eedba7;
+    --color-teal-400: #e6c470;
+    --color-teal-500: #b59444;
+    --color-teal-600: #8c702e;
+    --color-teal-700: #705923;
+    --color-slate-800: #073e32;
+    --color-slate-900: #062c25;
+    --color-slate-50: #f7f5ef;
+    --color-gray-50: #f7f5ef;
+    --color-gray-100: #f0eee6;
+    font-family: 'DM Sans', sans-serif;
+    background-color: #f7f5ef;
+    color: #16352c;
+}
+.usk-dashboard .font-sans { font-family: 'DM Sans', sans-serif; }
+.usk-dashboard h1 { font-family: 'Libre Caslon Display', Georgia, serif; }
+.usk-dashboard :is(button, a, input, select):focus-visible { outline-color: #b59444; }
+.usk-dashboard input[type='checkbox'] { accent-color: #073e32; }
+
+/* One continuous background for the original authentication forms. */
+.usk-auth-page {
+    --auth-background: #f7f5ef;
+    background: var(--auth-background);
+}
+.usk-auth-page .usk-auth-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding-top: 80px;
+    background: var(--auth-background);
+}
+.usk-auth-content {
+    width: 100%;
+    max-width: 480px;
+    min-width: 0;
+    margin: auto;
+    padding: 32px 24px 40px;
+}
+.usk-auth-form,
+.usk-auth-panel,
+.usk-auth-divider {
+    background: var(--auth-background);
+}
+.usk-auth-panel { min-width: 0; }
+.usk-auth-form :is(input, select) {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+}
+.usk-auth-form input:not([type='checkbox']),
+.usk-auth-form select {
+    min-height: 48px;
+}
+.usk-auth-form button[type='submit'] { min-height: 48px; }
+.usk-auth-form form > .flex.flex-wrap { font-size: 13px; }
+.usk-auth-form form > .flex.flex-wrap label { min-height: 44px; }
+.usk-auth-form .grid > div { min-width: 0; }
+.usk-auth-form .grid.grid-cols-3 > button { min-height: 44px; }
+.usk-auth-form h1 { font-size: clamp(28px, 5vw, 36px); line-height: 1.2; }
+@media (max-width: 1100px) {
+    .usk-auth-page > header :is(nav, div:has(> input[type='search'])) { display: none; }
+}
+@media (max-width: 479px) {
+    .usk-auth-content { padding: 24px 20px 32px; }
+    .usk-auth-form > div > .flex.justify-center > div { width: 64px; height: 64px; }
+    .usk-auth-form .text-center { overflow-wrap: anywhere; }
+    .usk-auth-page > header > div { gap: 8px; padding-inline: 12px; }
+    .usk-auth-page > header button { font-size: 12px; }
+}
+@media (max-height: 650px) {
+    .usk-auth-content { margin-block: 0; padding-top: 24px; }
+}

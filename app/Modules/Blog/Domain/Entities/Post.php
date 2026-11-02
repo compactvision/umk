@@ -28,5 +28,6 @@ final class Post
         public ?DateTimeInterface $publishedAt,
         public ?Category $category = null,
         public ?User $author = null,
+        public ?string $videoUrl = null,
     ) {}
 }

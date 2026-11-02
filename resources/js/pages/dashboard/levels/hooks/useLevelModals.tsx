@@ -5,6 +5,8 @@ import Alert from '@/utils/sweetAlert';
 export function useLevelModals(level) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editField, setEditField] = useState('');
+    const [editSaving, setEditSaving] = useState(false);
+    const [editErrors, setEditErrors] = useState<Record<string, string>>({});
     const [isConditionModalOpen, setIsConditionModalOpen] = useState(false);
     const [conditionMode, setConditionMode] = useState('add');
     const [editIndex, setEditIndex] = useState(null);
@@ -17,6 +19,8 @@ export function useLevelModals(level) {
         post: postCondition,
         put: putCondition,
         processing: conditionProcessing,
+        errors: conditionErrors,
+        clearErrors: clearConditionErrors,
         reset: resetCondition,
     } = useForm({
         faculty_id: level?.faculty_id || '',
@@ -30,6 +34,7 @@ export function useLevelModals(level) {
     console.log("conditionData", conditionData)
 
     const openEditModal = (field, value) => {
+        setEditErrors({});
         setEditField(field);
         setIsEditModalOpen(true);
     };
@@ -74,23 +79,20 @@ export function useLevelModals(level) {
         
         
     
-        // debug pour vérifier
-        for (const [key, value] of formData.entries()) {
-            console.log("✅", key, value);
-        }
     
         // ⚡ bien utiliser POST + _method=PUT
         formData.append("_method", "PUT");
     
         router.post(route("dashboard.admin.levels.details.update", level.id), formData, {
             forceFormData: true,
+            onStart: () => setEditSaving(true),
+            onFinish: () => setEditSaving(false),
             onSuccess: () => {
-                Alert.success("Niveau mis à jour avec succès");
                 setIsEditModalOpen(false);
-                router.reload({ only: ['level_details'] });
+                router.reload({ only: ['levelDetail'] });
             },
             onError: (errors) => {
-                Alert.error("Erreur lors de la mise à jour du niveau");
+                setEditErrors(errors);
                 console.error("Erreur update level:", errors);
             },
         });
@@ -125,6 +127,7 @@ export function useLevelModals(level) {
             });
         }
         
+        clearConditionErrors();
         setIsConditionModalOpen(true);
     };
 
@@ -137,24 +140,24 @@ export function useLevelModals(level) {
             console.log("conditionDataForm", conditionData)
             postCondition(route('dashboard.admin.levels.admission-conditions.store'), {
                 onSuccess: () => {
-                    Alert.success("Condition d'admission ajoutée avec succès");
+
                     setIsConditionModalOpen(false);
                     resetCondition();
                 },
                 onError: (errors) => {
-                    Alert.error("Erreur lors de l'ajout de la condition d'admission");
+
                     console.error("Erreur lors de l'ajout de la condition d'admission:", errors);
                 },
             });
         } else if (conditionMode === 'edit' && conditionData.id) {
             putCondition(route('dashboard.admin.levels.admission-conditions.update', conditionData.id), {
                 onSuccess: () => {
-                    Alert.success("Condition d'admission mise à jour avec succès");
+
                     setIsConditionModalOpen(false);
                     resetCondition();
                 },
                 onError: (errors) => {
-                    Alert.error("Erreur lors de la mise à jour de la condition d'admission");
+
                     console.error("Erreur lors de la mise à jour de la condition d'admission:", errors);
                 },
             });
@@ -182,6 +185,8 @@ export function useLevelModals(level) {
         isEditModalOpen,
         setIsEditModalOpen,
         editField,
+        editSaving,
+        editErrors,
         setEditField,
         isConditionModalOpen,
         setIsConditionModalOpen,
@@ -196,6 +201,7 @@ export function useLevelModals(level) {
         conditionData,
         setConditionData,
         conditionProcessing,
+        conditionErrors,
         
         // Actions
         openEditModal,

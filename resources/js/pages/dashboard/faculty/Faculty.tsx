@@ -1,10 +1,10 @@
+import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { useState } from 'react';
-import { Link } from '@inertiajs/react';
-import { useForm, router, usePage } from '@inertiajs/react';
 import ErrorText from '@/components/UI/ErrorText';
 import Alert from '@/utils/sweetAlert';
-import LevelPopup from '@/components/form/LevelPopup';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { BookOpen, GraduationCap, Landmark, Users } from 'lucide-react';
+import { useState } from 'react';
 
 const Faculty = () => {
     const { faculties, levelCodes } = usePage().props;
@@ -12,8 +12,8 @@ const Faculty = () => {
     console.log(faculties, levelCodes);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
-    const [levelEdit, setLevelEdit] = useState(false)
-    const [selectedLevel, setSelectedLevel] = useState(null)
+    const [levelEdit, setLevelEdit] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState(null);
     const [hoveredCard, setHoveredCard] = useState(null);
 
     const { data, setData, errors, post, put, processing, reset } = useForm({
@@ -37,15 +37,15 @@ const Faculty = () => {
             code: faculty.code,
             description: faculty.description,
             duration_years: faculty.duration_years,
-            is_active: faculty.is_active
+            is_active: faculty.is_active,
         });
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setIsEdit(false)
-        setLevelEdit(false)
+        setIsEdit(false);
+        setLevelEdit(false);
         document.body.style.overflow = 'auto';
         reset();
     };
@@ -53,26 +53,26 @@ const Faculty = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if(isEdit){
+        if (isEdit) {
             Alert.loading('Mise à jour en cours...');
             put(route('dashboard.faculties.update', data.id), {
                 onSuccess: () => {
-                    Alert.success("Faculté mise à jour avec succès!")
+                    Alert.success('Faculté mise à jour avec succès!');
                     closeModal();
                 },
                 onError: (errors) => {
-                    console.error('Erreurs:', errors)
+                    console.error('Erreurs:', errors);
                     Alert.error("Une erreur s'est produite");
                     Alert.close();
                 },
                 onFinish: () => {
                     Alert.close();
-                }
-            })
+                },
+            });
         } else {
             post(route('dashboard.faculties.store'), {
                 onSuccess: () => {
-                    Alert.success("Faculté créée avec succès!")
+                    Alert.success('Faculté créée avec succès!');
                     reset();
                     closeModal();
                 },
@@ -99,18 +99,18 @@ const Faculty = () => {
             },
             onFinish: () => {
                 Alert.close();
-            }
+            },
         });
     };
 
     const viewLevel = (level) => {
-        router.visit(route('dashboard.levels.show', level))
+        router.visit(route('dashboard.levels.show', level));
     };
 
     const editLevel = (level) => {
-        setLevelEdit(true)
-        setSelectedLevel(level)
-    }
+        setLevelEdit(true);
+        setSelectedLevel(level);
+    };
 
     const deleteLevel = async (levelId) => {
         const confirmed = await Alert.deleteConfirm('ce niveau');
@@ -129,28 +129,38 @@ const Faculty = () => {
             },
             onFinish: () => {
                 Alert.close();
-            }
+            },
         });
     };
-
 
     return (
         <Dashboard>
             <div className="container">
                 <div className="headerr">
-                    <h1>🎓 Gestion des Facultés</h1>
+                    <h1>
+                        <GraduationCap size={18} strokeWidth={1.8} aria-hidden="true" className="inline-block shrink-0 align-middle" /> Gestion des
+                        Facultés
+                    </h1>
                     <p>Créez et gérez les facultés avec leurs niveaux d'études</p>
                 </div>
 
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <button className="create-btn" onClick={openModal}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <g fill="none" stroke="currentColor" strokeDasharray="16" strokeDashoffset="16" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                            <g
+                                fill="none"
+                                stroke="currentColor"
+                                strokeDasharray="16"
+                                strokeDashoffset="16"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                            >
                                 <path d="M5 12h14">
-                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="16;0"/>
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="16;0" />
                                 </path>
                                 <path d="M12 5v14">
-                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="16;0"/>
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="16;0" />
                                 </path>
                             </g>
                         </svg>
@@ -178,15 +188,28 @@ const Faculty = () => {
                                     <div className={`faculty-card ${hoveredCard === faculty.id ? 'hovered' : ''}`}>
                                         <div className="faculty-header">
                                             <div>
-                                                <Link href={route('dashboard.levels.index')} className="faculty-name">{faculty.name}</Link>
+                                                <Link href={route('dashboard.levels.index')} className="faculty-name">
+                                                    {faculty.name}
+                                                </Link>
                                                 <div className="faculty-code">{faculty.code}</div>
                                             </div>
-                                            <div style={{display: "flex", gap: "10px"}}>
+                                            <div style={{ display: 'flex', gap: '10px' }}>
                                                 <button className="btn edit-btn" onClick={() => openEditModal(faculty)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"/></svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                        <path
+                                                            fill="currentColor"
+                                                            d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
+                                                        />
+                                                    </svg>
                                                 </button>
                                                 <button className="btn delete-btn" onClick={() => deleteFaculty(faculty.id)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512"><rect width="448" height="80" x="32" y="48" fill="currentColor" rx="32" ry="32"/><path fill="currentColor" d="M74.45 160a8 8 0 0 0-8 8.83l26.31 252.56a1.5 1.5 0 0 0 0 .22A48 48 0 0 0 140.45 464h231.09a48 48 0 0 0 47.67-42.39v-.21l26.27-252.57a8 8 0 0 0-8-8.83Zm248.86 180.69a16 16 0 1 1-22.63 22.62L256 318.63l-44.69 44.68a16 16 0 0 1-22.63-22.62L233.37 296l-44.69-44.69a16 16 0 0 1 22.63-22.62L256 273.37l44.68-44.68a16 16 0 0 1 22.63 22.62L278.62 296Z"/></svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512">
+                                                        <rect width="448" height="80" x="32" y="48" fill="currentColor" rx="32" ry="32" />
+                                                        <path
+                                                            fill="currentColor"
+                                                            d="M74.45 160a8 8 0 0 0-8 8.83l26.31 252.56a1.5 1.5 0 0 0 0 .22A48 48 0 0 0 140.45 464h231.09a48 48 0 0 0 47.67-42.39v-.21l26.27-252.57a8 8 0 0 0-8-8.83Zm248.86 180.69a16 16 0 1 1-22.63 22.62L256 318.63l-44.69 44.68a16 16 0 0 1-22.63-22.62L233.37 296l-44.69-44.69a16 16 0 0 1 22.63-22.62L256 273.37l44.68-44.68a16 16 0 0 1 22.63 22.62L278.62 296Z"
+                                                        />
+                                                    </svg>
                                                 </button>
                                             </div>
                                         </div>
@@ -200,7 +223,14 @@ const Faculty = () => {
                                     <div className={`levels-submenu ${hoveredCard === faculty.id ? 'show' : ''}`}>
                                         <div className="submenu-header">
                                             <div className="submenu-title">
-                                                <span className="levels-icon">📚</span>
+                                                <span className="levels-icon">
+                                                    <BookOpen
+                                                        size={18}
+                                                        strokeWidth={1.8}
+                                                        aria-hidden="true"
+                                                        className="inline-block shrink-0 align-middle"
+                                                    />
+                                                </span>
                                                 <span>Niveaux d'études</span>
                                             </div>
                                             <div className="submenu-count">
@@ -215,16 +245,19 @@ const Faculty = () => {
                                                 </div>
                                             ) : (
                                                 levels.map((level, index) => (
-                                                    <div
-                                                        key={level.id}
-                                                        className="level-item"
-                                                        style={{ animationDelay: `${index * 0.1}s` }}
-                                                    >
+                                                    <div key={level.id} className="level-item" style={{ animationDelay: `${index * 0.1}s` }}>
                                                         <div className="level-info">
                                                             <div className="level-name">{level.level_name}</div>
                                                             <div className="level-code">{level.level_code}</div>
                                                             <div className="level-students">
-                                                                <span className="student-icon">👥</span>
+                                                                <span className="student-icon">
+                                                                    <Users
+                                                                        size={18}
+                                                                        strokeWidth={1.8}
+                                                                        aria-hidden="true"
+                                                                        className="inline-block shrink-0 align-middle"
+                                                                    />
+                                                                </span>
                                                                 {level.student_number} étudiants
                                                             </div>
                                                         </div>
@@ -234,7 +267,12 @@ const Faculty = () => {
                                                                 onClick={() => editLevel(level)}
                                                                 title="Voir le niveau"
                                                             >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16"><path fill="currentColor" d="M14.236 1.764a2.62 2.62 0 0 0-3.707 0L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l7.872-7.872a2.62 2.62 0 0 0 0-3.707m-3 .707a1.621 1.621 0 1 1 2.293 2.293l-.779.779l-2.293-2.293zM9.75 3.957l2.293 2.293l-6.386 6.386a1.95 1.95 0 0 1-.896.51l-2.567.66l.66-2.567a1.94 1.94 0 0 1 .51-.896z"/></svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16">
+                                                                    <path
+                                                                        fill="currentColor"
+                                                                        d="M14.236 1.764a2.62 2.62 0 0 0-3.707 0L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l7.872-7.872a2.62 2.62 0 0 0 0-3.707m-3 .707a1.621 1.621 0 1 1 2.293 2.293l-.779.779l-2.293-2.293zM9.75 3.957l2.293 2.293l-6.386 6.386a1.95 1.95 0 0 1-.896.51l-2.567.66l.66-2.567a1.94 1.94 0 0 1 .51-.896z"
+                                                                    />
+                                                                </svg>
                                                             </button>
                                                             <button
                                                                 className="level-btn view-btn"
@@ -242,7 +280,10 @@ const Faculty = () => {
                                                                 title="Voir le niveau"
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
-                                                                    <path fill="#fff" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/>
+                                                                    <path
+                                                                        fill="#fff"
+                                                                        d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"
+                                                                    />
                                                                 </svg>
                                                             </button>
                                                             <button
@@ -251,7 +292,10 @@ const Faculty = () => {
                                                                 title="Supprimer le niveau"
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
+                                                                    <path
+                                                                        fill="currentColor"
+                                                                        d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"
+                                                                    />
                                                                 </svg>
                                                             </button>
                                                         </div>
@@ -271,8 +315,17 @@ const Faculty = () => {
                     <div className="modall" onClick={(e) => e.target.className === 'modal' && closeModal()}>
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h2>{isEdit ? data.name : "🏛️ Nouvelle Faculté"}</h2>
-                                <p>{isEdit ? "Modifiez " : "Remplissez "} les informations de la faculté</p>
+                                <h2>
+                                    {isEdit ? (
+                                        data.name
+                                    ) : (
+                                        <>
+                                            <Landmark size={18} strokeWidth={1.8} aria-hidden="true" className="inline-block shrink-0 align-middle" />{' '}
+                                            Nouvelle Faculté
+                                        </>
+                                    )}
+                                </h2>
+                                <p>{isEdit ? 'Modifiez ' : 'Remplissez '} les informations de la faculté</p>
                             </div>
 
                             <form onSubmit={handleSubmit}>
@@ -348,14 +401,17 @@ const Faculty = () => {
                                 </div>
 
                                 <div className="modal-actions">
-                                    <button type="button" className="btn btn-secondary" onClick={closeModal}
-                                            disabled={processing}>
+                                    <button type="button" className="btn btn-secondary" onClick={closeModal} disabled={processing}>
                                         Annuler
                                     </button>
                                     <button type="submit" className="btn btn-primary" disabled={processing}>
                                         {processing
-                                            ? (isEdit ? 'Mise à jour...' : 'Création...')
-                                            : (isEdit ? 'Mettre à jour la faculté' : 'Créer la faculté')}
+                                            ? isEdit
+                                                ? 'Mise à jour...'
+                                                : 'Création...'
+                                            : isEdit
+                                              ? 'Mettre à jour la faculté'
+                                              : 'Créer la faculté'}
                                     </button>
                                 </div>
                             </form>
@@ -364,7 +420,7 @@ const Faculty = () => {
                 )}
 
                 {levelEdit && (
-                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel} levelCodes={levelCodes?.data}/>
+                    <LevelPopup faculties={faculties} onClose={closeModal} isOpen={levelEdit} level={selectedLevel} levelCodes={levelCodes?.data} />
                 )}
 
                 <style>{`
@@ -959,7 +1015,7 @@ const Faculty = () => {
                 `}</style>
             </div>
         </Dashboard>
-    )
-}
+    );
+};
 
 export default Faculty;

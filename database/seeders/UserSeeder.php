@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
 
         // Admin
         $admin = User::firstOrCreate(
-            ['email' => 'admin@umk.test'],
+            ['email' => 'admin@usk.test'],
             [
                 'first_name' => 'Super',
                 'last_name'  => 'Admin',
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
 
         // Instructor
         $instructor = User::firstOrCreate(
-            ['email' => 'instructor@umk.test'],
+            ['email' => 'instructor@usk.test'],
             [
                 'first_name' => 'Prof',
                 'last_name'  => 'Smith',
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
 
         // Student
         $student = User::firstOrCreate(
-            ['email' => 'student@umk.test'],
+            ['email' => 'student@usk.test'],
             [
                 'first_name' => 'Juan',
                 'last_name'  => 'Etudiant',

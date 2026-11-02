@@ -1,5 +1,5 @@
 
 
 export default function CourseCard() {
-    return ();
+    return null;
 }

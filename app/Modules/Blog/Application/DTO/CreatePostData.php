@@ -21,5 +21,6 @@ class CreatePostData
         public readonly ?\DateTimeInterface $publishedAt,
         public readonly ?string $seoTitle = null,
         public readonly ?string $seoDescription = null,
+        public readonly ?string $videoUrl = null,
     ) {}
 }

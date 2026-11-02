@@ -1,3 +1,4 @@
+import { Accessibility, Palette, Smartphone } from 'lucide-react';
 export default function Presentation() {
     return (
         <>
@@ -19,7 +20,7 @@ export default function Presentation() {
                 <p
                     style={{
                         marginBottom: '1.5rem',
-                        color: '#f59e0b',
+                        color: '#073e32',
                     }}
                 >
                     Cette interface utilise les dernières tendances en matière de design web avec une approche mobile-first. Cliquez sur les icônes de
@@ -37,7 +38,7 @@ export default function Presentation() {
                     <div
                         style={{
                             padding: '1.5rem',
-                            background: '#f59e0b',
+                            background: '#f0eee6',
                             borderRadius: 'var(--radius-md)',
                             border: '1px solid var(--color-border)',
                         }}
@@ -46,14 +47,14 @@ export default function Presentation() {
                             style={{
                                 marginBottom: '0.75rem',
                                 fontWeight: '600',
-                                color: '#f59e0b',
+                                color: '#073e32',
                             }}
                         >
-                            🎨 Design System
+                            <Palette size={18} strokeWidth={1.8} aria-hidden="true" className="inline-block shrink-0 align-middle" /> Design System
                         </h3>
                         <p
                             style={{
-                                color: '#f59e0b',
+                                color: '#073e32',
                                 fontSize: '0.875rem',
                             }}
                         >
@@ -64,7 +65,7 @@ export default function Presentation() {
                     <div
                         style={{
                             padding: '1.5rem',
-                            background: '#f59e0b',
+                            background: '#f0eee6',
                             borderRadius: 'var(--radius-md)',
                             border: '1px solid var(--color-border)',
                         }}
@@ -73,14 +74,14 @@ export default function Presentation() {
                             style={{
                                 marginBottom: '0.75rem',
                                 fontWeight: '600',
-                                color: '#f59e0b',
+                                color: '#073e32',
                             }}
                         >
-                            📱 Responsive
+                            <Smartphone size={18} strokeWidth={1.8} aria-hidden="true" className="inline-block shrink-0 align-middle" /> Responsive
                         </h3>
                         <p
                             style={{
-                                color: '#f59e0b',
+                                color: '#073e32',
                                 fontSize: '0.875rem',
                             }}
                         >
@@ -91,7 +92,7 @@ export default function Presentation() {
                     <div
                         style={{
                             padding: '1.5rem',
-                            background: '#f59e0b',
+                            background: '#f0eee6',
                             borderRadius: 'var(--radius-md)',
                             border: '1px solid var(--color-border)',
                         }}
@@ -100,14 +101,15 @@ export default function Presentation() {
                             style={{
                                 marginBottom: '0.75rem',
                                 fontWeight: '600',
-                                color: '#f59e0b',
+                                color: '#073e32',
                             }}
                         >
-                            ♿ Accessibilité
+                            <Accessibility size={18} strokeWidth={1.8} aria-hidden="true" className="inline-block shrink-0 align-middle" />{' '}
+                            Accessibilité
                         </h3>
                         <p
                             style={{
-                                color: '#f59e0b',
+                                color: '#073e32',
                                 fontSize: '0.875rem',
                             }}
                         >

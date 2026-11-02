@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+import ts from 'typescript';
+const source = await readFile(new URL('../../resources/js/components/section/dashboard/enrollement/utils/validators.ts', import.meta.url), 'utf8');
+const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 } });
+const { validateStep } = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
+const requirements = { personal_info: [{ key: 'identity', label: 'Identité', required: true }, { key: 'photo', label: 'Photo', required: false }], academic_info: [{ key: 'diploma', label: 'Diplôme', required: true }] };
+const form = { faculty_id: '1', level_id: '2', year_id: '3', name: 'Test Étudiant', email: 'test@example.com', program: 'Droit', documents: {} };
+test('La formation incomplète bloque la première étape', () => assert.deepEqual(Object.keys(validateStep(1, { ...form, faculty_id: '', level_id: '', year_id: '' }, requirements, false, false)), ['faculty_id', 'level_id', 'year_id']));
+test('Un niveau indisponible reste bloquant', () => assert.ok(validateStep(1, form, requirements, true, false).level_id));
+test('L’identité vérifie nom, email et pièces obligatoires', () => assert.deepEqual(Object.keys(validateStep(2, { ...form, name: '  ', email: 'invalide' }, requirements, false, false)), ['name', 'email', 'identity']));
+test('Un document transféré temporaire est accepté sans exiger les pièces facultatives', () => assert.deepEqual(validateStep(2, { ...form, documents: { identity: { temp: { token: 'token' } } } }, requirements, false, false), {}));
+test('Un document sauvegardé est reconnu à la reprise du brouillon', () => assert.deepEqual(validateStep(3, { ...form, documents: { diploma: { uuid: 'saved-document' } } }, requirements, false, false), {}));
+test('Un transfert incomplet ne valide pas la pièce', () => assert.ok(validateStep(3, { ...form, documents: { diploma: { filename: 'diploma.pdf' } } }, requirements, false, false).diploma));
+test('Le programme ne peut pas être vide', () => assert.ok(validateStep(3, { ...form, program: ' ' }, requirements, false, false).program));
+test('La soumission exige une certification explicite', () => { assert.ok(validateStep(4, form, requirements, false, false).confirmed); assert.deepEqual(validateStep(4, form, requirements, false, true), {}); });

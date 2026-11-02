@@ -40,6 +40,8 @@ final class UpdatePostService
         // if ($dto->seoTitle !== null)    $post->seoTitle    = $dto->seoTitle;
         // if ($dto->seoDescription !== null) $post->seoDescription = $dto->seoDescription;
 
+        if ($dto->videoUrl !== null) $post->videoUrl = $dto->videoUrl === UpdatePostData::REMOVE ? null : $dto->videoUrl;
+
         // 3) Images principales (main1/main2)
         $currentMain1 = $post->images->main1 ?? null;
         $currentMain2 = $post->images->main2 ?? null;

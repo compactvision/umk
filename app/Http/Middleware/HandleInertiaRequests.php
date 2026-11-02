@@ -60,10 +60,44 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'site' => $this->getSiteInfo->execute(),
-            'ziggy' => fn(): array => [
+            'studentPortalActive' => fn () => $request->user()?->hasRole('student') && $request->user()->studentProfile()->exists(),
+            'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'adminNotifications' => function () use ($request) {
+                if (! $request->user()?->hasRole('admin')) {
+                    return null;
+                }
+                $query = $request->user()->notifications()->where('type', \App\Notifications\EnrollmentDocumentReplacement::class);
+
+                return [
+                    'unread_count' => (clone $query)->whereNull('read_at')->count(),
+                    'items' => $query->orderByRaw('read_at IS NOT NULL')->latest()->limit(15)->get()->map(fn ($notice) => [
+                        'id' => $notice->id, 'reference' => $notice->data['reference'], 'student_name' => $notice->data['student_name'],
+                        'filename' => $notice->data['filename'], 'version' => $notice->data['version'],
+                        'created_at' => $notice->created_at->toISOString(), 'read_at' => $notice->read_at?->toISOString(),
+                        'open_url' => route('dashboard.admin.notifications.open', $notice->id),
+                    ]),
+                ];
+            },
+            'studentNotifications' => function () use ($request) {
+                if (! $request->user()) {
+                    return null;
+                }
+                $query = $request->user()->notifications()->whereIn('type', [\App\Notifications\EnrollmentDocumentReviewed::class, \App\Notifications\StudentAdmissionActivated::class]);
+
+                return [
+                    'unread_count' => (clone $query)->whereNull('read_at')->count(),
+                    'items' => $query->orderByRaw('read_at IS NOT NULL')->latest()->limit(15)->get()->map(fn ($notice) => [
+                        'id' => $notice->id, 'reference' => $notice->data['reference'], 'filename' => $notice->data['filename'] ?? '',
+                        'kind' => $notice->type === \App\Notifications\StudentAdmissionActivated::class ? 'admission' : 'document',
+                        'version' => $notice->data['version'] ?? null, 'verdict' => $notice->data['verdict'] ?? null, 'comment' => $notice->data['comment'] ?? null,
+                        'created_at' => $notice->created_at->toISOString(), 'read_at' => $notice->read_at?->toISOString(),
+                        'open_url' => route('dashboard.notifications.open', $notice->id),
+                    ]),
+                ];
+            },
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

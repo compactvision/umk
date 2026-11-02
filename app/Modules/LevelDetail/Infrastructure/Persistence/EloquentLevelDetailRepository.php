@@ -16,6 +16,7 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
 
         $model->level_id          = $detail->levelId();
         $model->price             = $detail->price();
+        $model->price_foreign     = $detail->priceForeign();
         $model->has_certificate   = $detail->hasCertificate();
         $model->language          = $detail->language();
         $model->duration_years    = $detail->durationYears();
@@ -27,6 +28,9 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
         $model->fees              = $detail->fees();
         $model->options           = $detail->options();
 
+        foreach (['price_national_first', 'price_national_second', 'price_foreign_first', 'price_foreign_second'] as $field) {
+            $model->{$field} = $detail->installments()[$field] ?? null;
+        }
         $model->save();
 
         return $this->mapToEntity($model);
@@ -90,6 +94,8 @@ final class EloquentLevelDetailRepository implements LevelDetailRepository
             $model->level?->faculty?->name,
             $model->level?->faculty?->code,
             $model->level?->faculty?->id,
+            $model->price_foreign === null ? null : (float) $model->price_foreign,
+            $model->only(['price_national_first', 'price_national_second', 'price_foreign_first', 'price_foreign_second']),
         );
     }
 

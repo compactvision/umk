@@ -16,7 +16,12 @@ export function useLevelData(level) {
         credit_required: level?.credit_required || 0,
         duration_years: level?.duration_years || 0,
         courses_number: level?.courses_number || 0,
-        price: level?.price || 0,
+        price: level?.price ?? '',
+        price_foreign: level?.price_foreign ?? '',
+        price_national_first: level?.price_national_first ?? '',
+        price_national_second: level?.price_national_second ?? '',
+        price_foreign_first: level?.price_foreign_first ?? '',
+        price_foreign_second: level?.price_foreign_second ?? '',
         language: level?.language || 'Non spécifiée',
         student_number: level?.student_number || 0,
         has_certificate: level?.has_certificate || false,
@@ -48,15 +53,20 @@ export function useLevelData(level) {
         setDetailsData(field, value);
     };
 
-    const saveEdit = (levelDetailId) => {        
+    const saveEdit = (levelDetailId) => {
         const processedOptions = processOptionsValue(detailsData.options);
 
         const formData = new FormData();
-        
+
         formData.append('credit_required', detailsData.credit_required || 0);
         formData.append('duration_years', detailsData.duration_years || 0);
         formData.append('courses_number', detailsData.courses_number || 0);
-        formData.append('price', detailsData.price || 0);
+        formData.append('price', detailsData.price ?? '');
+        formData.append('price_foreign', detailsData.price_foreign ?? '');
+        formData.append('price_national_first', detailsData.price_national_first ?? '');
+        formData.append('price_national_second', detailsData.price_national_second ?? '');
+        formData.append('price_foreign_first', detailsData.price_foreign_first ?? '');
+        formData.append('price_foreign_second', detailsData.price_foreign_second ?? '');
         formData.append('language', detailsData.language || '');
         formData.append('has_certificate', detailsData.has_certificate ? '1' : '0');
         formData.append('student_number', detailsData.student_number || 0);

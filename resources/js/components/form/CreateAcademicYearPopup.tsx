@@ -1,188 +1,167 @@
-import Alert from "@/utils/sweetAlert";
-import { useForm } from "@inertiajs/react";
-
-type AcademicYear = {
-    id?: number;
-    title: string;
-    start_date: string;
-    end_date: string;
-    status?: "draft" | "open" | "closed";
+import AdminModal from '@/components/admin/AdminModal';
+import { useForm } from '@inertiajs/react';
+import { ArrowDown, CalendarDays, CalendarRange, Clock3, Info } from 'lucide-react';
+import type { FormEvent } from 'react';
+import '../../../css/dashboard/academic-years.css';
+import '../../../css/dashboard/level-forms.css';
+type AcademicYear = { id?: number; title: string; start_date: string; end_date: string; status?: 'draft' | 'open' | 'closed' };
+const format = (value: string) => {
+    if (!value) return 'Date à choisir';
+    const parsed = new Date(`${value}T12:00:00`);
+    return Number.isNaN(parsed.getTime()) ? 'Date à choisir' : parsed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 };
-
 export default function CreateOrEditAcademicYearPopup({
     closeModal,
-    academicYear = null, // si null → création, sinon édition
+    academicYear = null,
 }: {
     closeModal: () => void;
     academicYear?: AcademicYear | null;
 }) {
-    const isEdit = !!academicYear;
-
     const form = useForm({
-        title: academicYear?.title || "",
-        start_date: academicYear?.start_date || "",
-        end_date: academicYear?.end_date || "",
+        title: academicYear?.title || '',
+        start_date: academicYear?.start_date?.slice(0, 10) || '',
+        end_date: academicYear?.end_date?.slice(0, 10) || '',
     });
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        Alert.loading(isEdit ? "Mise à jour en cours..." : "Création en cours...");
-
-        const routeName = isEdit
-            ? route("dashboard.admin.academic-years.update", academicYear?.id)
-            : route("dashboard.admin.academic-years.store");
-
-        const method = isEdit ? form.put : form.post;
-
-        method(routeName, {
-            onSuccess: () => {
-                Alert.success(
-                    isEdit ? "Année académique mise à jour avec succès" : "Année académique créée avec succès"
-                );
-                form.reset();
-                closeModal();
-            },
-            onError: () => {
-                Alert.error(
-                    isEdit
-                        ? "Une erreur est survenue lors de la mise à jour"
-                        : "Une erreur est survenue lors de la création"
-                );
-            },
-        });
+    const isEdit = !!academicYear;
+    const error = (key: keyof typeof form.data) =>
+        form.errors[key] ? (
+            <p id={`academic-${key}-error`} className="lf-error" role="alert">
+                {form.errors[key]}
+            </p>
+        ) : null;
+    const minimumEnd = form.data.start_date ? new Date(`${form.data.start_date}T00:00:00Z`) : null;
+    if (minimumEnd) minimumEnd.setUTCDate(minimumEnd.getUTCDate() + 1);
+    const submit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const options = { preserveScroll: true, onSuccess: closeModal };
+        if (academicYear) form.put(route('dashboard.admin.academic-years.update', academicYear.id), options);
+        else form.post(route('dashboard.admin.academic-years.store'), options);
     };
-
+    const status = academicYear?.status || 'draft';
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={closeModal}>
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-100 opacity-100" onClick={(e) => e.stopPropagation()}>
-                <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-                    <h2 className="text-xl font-bold text-gray-800">
-                        {isEdit ? "Modifier l'année académique" : "Créer une nouvelle année académique"}
-                    </h2>
-                    <button 
-                        onClick={closeModal} 
-                        className="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-500 text-gray-500 flex items-center justify-center transition-all duration-200"
-                    >
-                        <span>✕</span>
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="p-6">
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Titre de l'année <span className="text-red-500">*</span>
-                            <span className="block text-xs text-gray-500 mt-1">Ex: 2025-2026</span>
+        <AdminModal
+            wide
+            className="level-form-modal ay-form-modal"
+            title={isEdit ? 'Affiner le calendrier.' : 'Une nouvelle année.'}
+            description="Définissez une période claire pour organiser la vie académique."
+            onClose={closeModal}
+            formId="academic-year-form"
+            submitLabel={isEdit ? 'Enregistrer les modifications' : 'Créer l’année'}
+            busy={form.processing}
+            errors={form.errors}
+        >
+            <form id="academic-year-form" onSubmit={submit} className="admin-modal-form ay-form-layout">
+                <fieldset className="lf-fields" disabled={form.processing}>
+                    <section className="lf-form-section">
+                        <div className="lf-section-title">
+                            <span>01</span>
+                            <div>
+                                <h3>L’identité de l’année</h3>
+                                <p>Un intitulé facile à retrouver dans votre calendrier.</p>
+                            </div>
+                        </div>
+                        <label className="lf-label" htmlFor="academic-title">
+                            Titre de l’année <span>*</span>
                         </label>
                         <input
-                            type="text"
+                            id="academic-title"
+                            name="title"
                             value={form.data.title}
-                            onChange={(e) => form.setData("title", e.target.value)}
-                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition-colors duration-200 ${
-                                form.errors.title 
-                                    ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500' 
-                                    : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500'
-                            }`}
-                            placeholder="Entrez le titre de l'année..."
+                            onChange={(event) => form.setData('title', event.target.value)}
+                            placeholder="Ex. : 2026–2027"
+                            required
+                            maxLength={255}
+                            aria-invalid={!!form.errors.title}
+                            aria-describedby={form.errors.title ? 'academic-title-error' : undefined}
                         />
-                        {form.errors.title && (
-                            <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                                </svg>
-                                {form.errors.title}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="mb-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Date de début <span className="text-red-500">*</span>
-                                <span className="block text-xs text-gray-500 mt-1">Premier jour de l'année</span>
-                            </label>
-                            <input
-                                type="date"
-                                value={form.data.start_date}
-                                onChange={(e) => form.setData("start_date", e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition-colors duration-200 ${
-                                    form.errors.start_date 
-                                        ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500' 
-                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500'
-                                }`}
-                            />
-                            {form.errors.start_date && (
-                                <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                                    </svg>
-                                    {form.errors.start_date}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="mb-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Date de fin <span className="text-red-500">*</span>
-                                <span className="block text-xs text-gray-500 mt-1">Dernier jour de l'année</span>
-                            </label>
-                            <input
-                                type="date"
-                                value={form.data.end_date}
-                                onChange={(e) => form.setData("end_date", e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition-colors duration-200 ${
-                                    form.errors.end_date 
-                                        ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500' 
-                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500'
-                                }`}
-                            />
-                            {form.errors.end_date && (
-                                <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
-                                    </svg>
-                                    {form.errors.end_date}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {!isEdit && (
-                        <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                            <div className="text-xl">💡</div>
-                            <div className="text-sm text-blue-700">
-                                L'année sera créée en tant que brouillon. Vous pourrez l'ouvrir une fois configurée.
+                        {error('title')}
+                    </section>
+                    <section className="lf-form-section">
+                        <div className="lf-section-title">
+                            <span>02</span>
+                            <div>
+                                <h3>La période académique</h3>
+                                <p>Choisissez les dates de début et de fin du cursus annuel.</p>
                             </div>
                         </div>
-                    )}
-
-                    <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
-                        <button 
-                            type="button" 
-                            onClick={closeModal} 
-                            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
-                        >
-                            Annuler
-                        </button>
-                        <button 
-                            type="submit" 
-                            disabled={form.processing} 
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {form.processing ? (
-                                <>
-                                    <div className="w-4 h-4 border-2 border-white/30 rounded-full border-t-white animate-spin"></div>
-                                    <span>{isEdit ? "Mise à jour en cours..." : "Création en cours..."}</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span>✓</span>
-                                    <span>{isEdit ? "Mettre à jour" : "Créer l'année"}</span>
-                                </>
-                            )}
-                        </button>
+                        <div className="ay-form-dates">
+                            <div>
+                                <label className="lf-label" htmlFor="academic-start_date">
+                                    Date de début <span>*</span>
+                                </label>
+                                <input
+                                    id="academic-start_date"
+                                    type="date"
+                                    name="start_date"
+                                    required
+                                    value={form.data.start_date}
+                                    onChange={(event) => form.setData('start_date', event.target.value)}
+                                    aria-invalid={!!form.errors.start_date}
+                                    aria-describedby={form.errors.start_date ? 'academic-start_date-error' : undefined}
+                                />
+                                {error('start_date')}
+                            </div>
+                            <div>
+                                <label className="lf-label" htmlFor="academic-end_date">
+                                    Date de fin <span>*</span>
+                                </label>
+                                <input
+                                    id="academic-end_date"
+                                    type="date"
+                                    name="end_date"
+                                    required
+                                    min={minimumEnd && !Number.isNaN(minimumEnd.getTime()) ? minimumEnd.toISOString().slice(0, 10) : undefined}
+                                    value={form.data.end_date}
+                                    onChange={(event) => form.setData('end_date', event.target.value)}
+                                    aria-invalid={!!form.errors.end_date}
+                                    aria-describedby="academic-date-help"
+                                />
+                                {error('end_date')}
+                            </div>
+                        </div>
+                        <p className="lf-help" id="academic-date-help">
+                            La date de fin doit être postérieure à la date de début.
+                        </p>
+                    </section>
+                    <div className="lf-edit-note">
+                        <Info size={17} />
+                        <p>
+                            {isEdit
+                                ? 'Les modifications du calendrier ne changent pas le statut de l’année.'
+                                : 'L’année sera créée en brouillon. Ouvrez ensuite les inscriptions depuis sa fiche ou la liste des années.'}
+                        </p>
                     </div>
-                </form>
-            </div>
-        </div>
+                </fieldset>
+                <aside className="ay-calendar-preview">
+                    <span className="lf-eyebrow">APERÇU DU CALENDRIER</span>
+                    <div className="ay-preview-icon">
+                        <CalendarRange size={37} strokeWidth={1.2} />
+                    </div>
+                    <h3>{form.data.title.trim() || 'Votre année académique'}</h3>
+                    <span className={`ay-badge is-${status}`}>
+                        <Clock3 size={12} />
+                        {status === 'open' ? 'Ouverte' : status === 'closed' ? 'Clôturée' : 'Brouillon'}
+                    </span>
+                    <div className="ay-preview-period">
+                        <div>
+                            <CalendarDays size={18} />
+                            <p>
+                                <span>Premier jour</span>
+                                <strong>{format(form.data.start_date)}</strong>
+                            </p>
+                        </div>
+                        <ArrowDown size={15} />
+                        <div>
+                            <CalendarDays size={18} />
+                            <p>
+                                <span>Dernier jour</span>
+                                <strong>{format(form.data.end_date)}</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <p className="ay-preview-note">Un calendrier bien défini accompagne chaque étape du parcours étudiant.</p>
+                </aside>
+            </form>
+        </AdminModal>
     );
 }

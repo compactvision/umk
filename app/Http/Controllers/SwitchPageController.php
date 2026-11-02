@@ -13,6 +13,7 @@ use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use App\Services\FacultyService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Modules\Seo\Application\PublicPage;
 
 class SwitchPageController extends Controller
 {
@@ -24,24 +25,20 @@ class SwitchPageController extends Controller
     //
     public function home(Request $request)
     {
-        $allFaculties = $this->facultyService->getWithLevels();
+        $allFaculties = \App\Models\Faculty::where('is_active', true)->with(['levels' => fn ($query) => $query->where('is_active', true)->select('id', 'faculty_id', 'title')->orderBy('title')])->orderBy('name')->get(['id', 'name', 'description']);
 
-        $page = $request->input('page', 1);
-
-        $posts = $this->postRepository->getAll(10, $page);
-        $categories = $this->categoryRepository->getAll();
-
-        return Inertia::render('Homepage', [
-            'faculties' => FacultyResource::collection($allFaculties),
-            'posts' => $posts,
-            'categories' => $categories,
+        $posts = PostModel::where('status', 'published')->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->orderByDesc('published_at')->limit(6)->get(['id', 'title', 'excerpt', 'main_image_1', 'published_at']);
+        return app(PublicPage::class)->render('Homepage', [
+            'faculties' => ['data' => $allFaculties->map(fn ($faculty) => $faculty->only(['id', 'name', 'description']) + ['levels' => $faculty->levels->map->only(['id', 'title'])])],
+            'posts' => ['data' => $posts],
         ]);
     }
 
     public function admission()
     {
         $allFaculties = $this->facultyService->getWithLevels();
-        return Inertia::render('Admissionpage', [
+        return app(PublicPage::class)->render('Admissionpage', [
             'faculties' => FacultyResource::collection($allFaculties),
         ]);
     }
@@ -50,150 +47,115 @@ class SwitchPageController extends Controller
     {
         $allFaculties = $this->facultyService->getWithLevels();
 
-        return Inertia::render('courses/Coursespage', [
+        return app(PublicPage::class)->render('courses/Coursespage', [
             'faculties' => FacultyResource::collection($allFaculties),
         ]);
     }
 
-    public function courseShow($id)
+    public function facultyShow(int $id)
     {
-        $course = Level::findOrFail($id);
-        $course->load(['faculty', 'admissionConditions', 'detail']);
-
-        $mayLike = Level::where('id', '!=', $course->id)
-            ->with(['detail', 'faculty'])
-            ->inRandomOrder()
-            ->take(4)
-            ->get();
-
-        return Inertia::render('courses/CourseShow', [
-            'course' => $course,
-            'mayLike' => $mayLike
+        $faculty = \App\Models\Faculty::where('is_active', true)
+            ->with(['levels' => fn ($query) => $query->where('is_active', true)->orderBy('code')->orderBy('title'), 'levels.detail'])
+            ->findOrFail($id);
+        $data = $faculty->only(['id', 'name', 'code', 'description', 'duration_years']);
+        $data['levels'] = $faculty->levels->map(fn ($level) => [
+            'id' => $level->id, 'title' => $level->title, 'code' => $level->code,
+            'description' => $level->description, 'image' => $level->image,
+            'detail' => $level->detail?->only(['duration_years', 'language', 'illustration_image', 'course_objective']),
         ]);
+
+        return app(PublicPage::class)->render('faculties/FacultyShow', [
+            'faculty' => $data,
+            'otherFaculties' => \App\Models\Faculty::where('is_active', true)->where('id', '!=', $id)
+                ->orderBy('name')->limit(4)->get(['id', 'name', 'code']),
+        ], ['title' => $faculty->name.' — Faculté à Kinshasa', 'description' => $faculty->description ?: 'Découvrez les formations et niveaux de '.$faculty->name.' à l’Université Simon Kimbangu.', 'heading' => $faculty->name]);
+    }
+
+    public function courseShow(int $id)
+    {
+        $course = Level::where('is_active', true)
+            ->whereHas('faculty', fn ($query) => $query->where('is_active', true))
+            ->with(['faculty', 'detail'])->findOrFail($id);
+        $data = $course->only(['id', 'title', 'code', 'description', 'image']);
+        $data['faculty'] = $course->faculty->only(['id', 'name', 'code', 'description']);
+        $data['detail'] = $course->detail?->only([
+            'price', 'price_foreign', 'price_national_first', 'price_national_second', 'price_foreign_first', 'price_foreign_second', 'fees', 'duration_years', 'language', 'courses_number', 'credit_required',
+            'has_certificate', 'illustration_image', 'course_objective', 'options',
+        ]);
+        $data['courses'] = \App\Models\Courses::where('level_id', $course->id)
+            ->orderBy('semester')->orderBy('title')
+            ->get(['id', 'title', 'code', 'credits', 'semester']);
+        $data['admission_conditions'] = $course->admissionConditions()
+            ->where(fn ($query) => $query->where('faculty_id', $course->faculty_id)->orWhereNull('faculty_id'))
+            ->orderBy('section')->orderBy('id')
+            ->get(['id', 'title', 'description', 'section', 'is_required']);
+
+        return app(PublicPage::class)->render('courses/CourseShow', [
+            'course' => $data,
+            'mayLike' => Level::where('is_active', true)->where('id', '!=', $id)
+                ->whereHas('faculty', fn ($query) => $query->where('is_active', true))
+                ->with('faculty:id,name')->orderBy('title')->limit(3)
+                ->get(['id', 'faculty_id', 'title', 'code', 'image']),
+        ], ['title' => $course->title.' — '.$course->faculty->name.' à Kinshasa', 'description' => $course->description ?: 'Découvrez '.$course->title.' en '.$course->faculty->name.' : programme et conditions d’admission à l’USK.', 'heading' => $course->title, 'image' => $course->detail?->illustration_image ?: $course->image, 'schema' => ['@type' => 'Course', 'name' => $course->title, 'description' => $course->description ?: 'Formation de '.$course->faculty->name, 'provider' => ['@id' => app(PublicPage::class)->origin().'/#university']]]);
     }
 
     public function about()
     {
-        return Inertia::render('Aboutpage');
+        return app(PublicPage::class)->render('Aboutpage');
     }
 
     public function contact()
     {
-        return Inertia::render('Contactpage');
+        return app(PublicPage::class)->render('Contactpage');
     }
 
     public function blog(Request $request)
     {
-        $q = $request->query('q');
-        $sort = $request->query('sort', 'latest'); 
-        $category = $request->query('category'); 
-        $page = (int) $request->query('page', 1);
-        $perPage = (int) $request->query('per_page', 10);
+        $posts = PostModel::query()
+            ->where('status', 'published')
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->with(['category', 'author:id,first_name,last_name'])
+            ->orderByDesc('published_at')->orderByDesc('id')
+            ->paginate(12)->withQueryString();
+        abort_if($posts->currentPage() > $posts->lastPage(), 404);
 
-        $posts = $this->postRepository->getAll($perPage, $page);
-
-        if (method_exists($this->postRepository, 'getFeatured')) {
-            $featured = $this->postRepository->getFeatured(3); 
-        } else {
-            $featuredQuery = PostModel::query()
-                ->where('status', 'published')
-                ->where('featured', 1)
-                ->with(['category:id,name,slug', 'author:id,name,avatar'])
-                ->orderBy('published_at', 'desc')
-                ->limit(3)
-                ->get(['id', 'title', 'excerpt', 'slug', 'main_image_1', 'read_time', 'published_at', 'category_id', 'author_id']);
-
-            $featured = $featuredQuery->map(function ($m) {
-                return [
-                    'id' => $m->id,
-                    'title' => $m->title,
-                    'excerpt' => $m->excerpt,
-                    'slug' => $m->slug,
-                    'main_image_1' => $m->main_image_1,
-                    'read_time' => $m->read_time,
-                    'published_at' => $m->published_at?->toIso8601String(),
-                    'category' => $m->category ? ['id' => $m->category->id, 'name' => $m->category->name, 'slug' => $m->category->slug] : null,
-                    'author' => $m->author ? ['id' => $m->author->id, 'name' => $m->author->name, 'avatar' => $m->author->avatar] : null,
-                ];
-            })->toArray();
-        }
-
-        // categories : normaliser pour sidebar (id, name, count, color)
-        if (method_exists($this->categoryRepository, 'getAllWithCount')) {
-            $categories = $this->categoryRepository->getAllWithCount();
-        } else {
-            // fallback : récupérer catégories avec count
-            $cats = CategoryModel::withCount('posts')->get(['id', 'name', 'slug', 'color', 'description']);
-            $categories = $cats->map(fn($c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug ?? null,
-                'count' => $c->posts_count ?? 0,
-                'color' => $c->color ?? null,
-                'description' => $c->description ?? null,
-            ])->toArray();
-        }
-
-        // Optionnel : tags populaires (si tu en veux)
-        // $tags = Tag::withCount('posts')->orderBy('posts_count','desc')->limit(20)->pluck('name')->toArray();
-
-        // Retour Inertia : posts est déjà un array paginé par ton repository (data/current_page/last_page/...)
-        return Inertia::render('Blogpage', [
-            'posts' => $posts,          // structure attendue : { data: [...], current_page, last_page, per_page, total }
-            'featured' => $featured,    // tableau d'items pour carrousel
-            'categories' => $categories,
-            // 'tags' => $tags,
-            // renvoie aussi les filtres actuels (pratique pour initialiser les contrôles côté client)
-            'filters' => [
-                'q' => $q,
-                'sort' => $sort,
-                'category' => $category,
-                'page' => $page,
-                'per_page' => $perPage,
-            ],
-        ]);
+        return app(PublicPage::class)->render('Blogpage', ['posts' => $posts]);
     }
 
     public function blogDetails($id)
     {
         $post = PostModel::query()
-                ->with(['category', 'author'])
-                ->findOrFail($id);
+            ->where('status', 'published')
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->with(['category', 'author:id,first_name,last_name'])->findOrFail($id);
+        $this->postRepository->incrementViews($id);
 
-        $incrementViews = $this->postRepository->incrementViews($id);
+        $related = PostModel::query()
+            ->where('status', 'published')->where('id', '!=', $post->id)
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->with('category')->orderByDesc('published_at')->limit(3)
+            ->get(['id', 'title', 'excerpt', 'main_image_1', 'video_url', 'published_at', 'category_id']);
 
-        if (method_exists($this->categoryRepository, 'getAllWithCount')) {
-            $categories = $this->categoryRepository->getAllWithCount();
-        } else {
-            // fallback : récupérer catégories avec count
-            $cats = CategoryModel::withCount('posts')->get(['id', 'name', 'slug', 'color', 'description']);
-            $categories = $cats->map(fn($c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug ?? null,
-                'count' => $c->posts_count ?? 0,
-                'color' => $c->color ?? null,
-                'description' => $c->description ?? null,
-            ])->toArray();
-        }
-        return Inertia::render('BlogDetailsPage', [
-            'post' => $post,
-            'categories' => $categories,
-        ]);
+        // Render editorial text safely, including older HTML articles.
+        $text = preg_replace('/<\/(p|div|h[1-6]|li|blockquote)>|<br\s*\/?\s*>/i', "\n\n", $post->content ?? '');
+        $postData = $post->toArray();
+        $postData['body_text'] = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return app(PublicPage::class)->render('BlogDetailsPage', ['post' => $postData, 'related' => $related], ['title' => $post->seo_title ?: $post->title, 'description' => $post->seo_description ?: ($post->excerpt ?: \Illuminate\Support\Str::limit($postData['body_text'], 170)), 'heading' => $post->title, 'image' => $post->main_image_1, 'type' => 'article', 'schema' => array_filter(['@type' => 'NewsArticle', 'headline' => $post->title, 'datePublished' => $post->published_at?->toIso8601String(), 'image' => app(PublicPage::class)->absolute($post->main_image_1), 'publisher' => ['@id' => app(PublicPage::class)->origin().'/#university'], 'mainEntityOfPage' => app(PublicPage::class)->origin().'/blog/'.$post->id])]);
     }
 
     public function politique()
     {
-        return Inertia::render('Politiquepage');
+        return app(PublicPage::class)->render('Politiquepage');
     }
 
     public function condition()
     {
-        return Inertia::render('Conditionpage');
+        return app(PublicPage::class)->render('Conditionpage');
     }
 
     public function tuitions()
     {
-        return Inertia::render('Tuitionspage');
+        return app(PublicPage::class)->render('Tuitionspage');
     }
 }

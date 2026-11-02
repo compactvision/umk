@@ -60,40 +60,41 @@ const DashboardSignup = () => {
     };
 
     return (
-        <div className="w-full flex items-center justify-center font-sans bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
-            <div className="w-full max-w-md px-6">
+        <div className="usk-auth-form w-full flex items-center justify-center font-sans">
+            <div className="usk-auth-panel w-full min-w-0">
                 {/* Logo */}
                 <div className="flex justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center font-bold text-white text-3xl transition-all duration-500 hover:scale-110 hover:rotate-6">
-                        D
+                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center font-bold text-white text-3xl transition-all duration-500 hover:scale-110 hover:rotate-6">
+                        <img src="/assets/usk/logo.png" alt="Université Simon Kimbangu" className="h-full w-full object-contain p-1" />
                     </div>
                 </div>
-                
+
                 {/* Titre */}
                 <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 mb-1">Créer un compte</h1>
                     <p className="text-gray-600">Rejoignez notre plateforme</p>
                 </div>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Champs de nom en grille */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-4">
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'last_name' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'last_name' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
                             <input
                                 type="text"
                                 name="last_name"
+                            autoComplete="family-name"
                                 value={data.last_name}
                                 onChange={handleInputChange}
                                 onFocus={() => setFocusedField('last_name')}
                                 onBlur={() => setFocusedField(null)}
                                 className={`w-full pl-11 pr-3 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                    ${focusedField === 'last_name' 
-                                        ? 'border-b-2 border-indigo-500' 
+                                    ${focusedField === 'last_name'
+                                        ? 'border-b-2 border-emerald-500'
                                         : 'border-b border-gray-300'
                                     }`}
                                 placeholder="Nom"
@@ -104,20 +105,21 @@ const DashboardSignup = () => {
 
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'first_name' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'first_name' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
                             <input
                                 type="text"
                                 name="first_name"
+                            autoComplete="given-name"
                                 value={data.first_name}
                                 onChange={handleInputChange}
                                 onFocus={() => setFocusedField('first_name')}
                                 onBlur={() => setFocusedField(null)}
                                 className={`w-full pl-11 pr-3 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                    ${focusedField === 'first_name' 
-                                        ? 'border-b-2 border-indigo-500' 
+                                    ${focusedField === 'first_name'
+                                        ? 'border-b-2 border-emerald-500'
                                         : 'border-b border-gray-300'
                                     }`}
                                 placeholder="Prénom"
@@ -129,20 +131,21 @@ const DashboardSignup = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'post_name' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'post_name' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
                         <input
                             type="text"
                             name="post_name"
+                            autoComplete="additional-name"
                             value={data.post_name}
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('post_name')}
                             onBlur={() => setFocusedField(null)}
                             className={`w-full pl-11 pr-4 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                ${focusedField === 'post_name' 
-                                    ? 'border-b-2 border-indigo-500' 
+                                ${focusedField === 'post_name'
+                                    ? 'border-b-2 border-emerald-500'
                                     : 'border-b border-gray-300'
                                 }`}
                             placeholder="Postnom"
@@ -152,7 +155,7 @@ const DashboardSignup = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'gender' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'gender' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                             </svg>
                         </div>
@@ -161,8 +164,8 @@ const DashboardSignup = () => {
                             value={data.gender}
                             onChange={handleSelectChange}
                             className={`w-full pl-11 pr-4 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 appearance-none
-                                ${focusedField === 'gender' 
-                                    ? 'border-b-2 border-indigo-500' 
+                                ${focusedField === 'gender'
+                                    ? 'border-b-2 border-emerald-500'
                                     : 'border-b border-gray-300'
                                 }`}
                             onFocus={() => setFocusedField('gender')}
@@ -178,20 +181,21 @@ const DashboardSignup = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'email' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                             </svg>
                         </div>
                         <input
                             type="email"
                             name="email"
+                            autoComplete="email"
                             value={data.email}
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('email')}
                             onBlur={() => setFocusedField(null)}
                             className={`w-full pl-11 pr-4 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                ${focusedField === 'email' 
-                                    ? 'border-b-2 border-indigo-500' 
+                                ${focusedField === 'email'
+                                    ? 'border-b-2 border-emerald-500'
                                     : 'border-b border-gray-300'
                                 }`}
                             placeholder="Adresse email"
@@ -201,23 +205,24 @@ const DashboardSignup = () => {
                     </div>
 
                     {/* Champs de mot de passe en grille */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-4">
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'password' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
                             <input
                                 type="password"
                                 name="password"
+                            autoComplete="new-password"
                                 value={data.password}
                                 onChange={handleInputChange}
                                 onFocus={() => setFocusedField('password')}
                                 onBlur={() => setFocusedField(null)}
                                 className={`w-full pl-11 pr-3 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                    ${focusedField === 'password' 
-                                        ? 'border-b-2 border-indigo-500' 
+                                    ${focusedField === 'password'
+                                        ? 'border-b-2 border-emerald-500'
                                         : 'border-b border-gray-300'
                                     }`}
                                 placeholder="Mot de passe"
@@ -228,20 +233,21 @@ const DashboardSignup = () => {
 
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'password_confirmation' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className={`h-5 w-5 transition-colors duration-300 ${focusedField === 'password_confirmation' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
                             </div>
                             <input
                                 type="password"
                                 name="password_confirmation"
+                            autoComplete="new-password"
                                 value={data.password_confirmation}
                                 onChange={handleInputChange}
                                 onFocus={() => setFocusedField('password_confirmation')}
                                 onBlur={() => setFocusedField(null)}
                                 className={`w-full pl-11 pr-3 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                    ${focusedField === 'password_confirmation' 
-                                        ? 'border-b-2 border-indigo-500' 
+                                    ${focusedField === 'password_confirmation'
+                                        ? 'border-b-2 border-emerald-500'
                                         : 'border-b border-gray-300'
                                     }`}
                                 placeholder="Confirmation"
@@ -251,9 +257,9 @@ const DashboardSignup = () => {
                         </div>
                     </div>
 
-                    <button 
-                        type="submit" 
-                        className="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 text-base mt-3" 
+                    <button
+                        type="submit"
+                        className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium rounded-lg transition-all duration-300 hover:from-emerald-600 hover:to-teal-700 text-base mt-3"
                         disabled={processing}
                     >
                         {getButtonText()}
@@ -265,7 +271,7 @@ const DashboardSignup = () => {
                         <div className="w-full border-t border-gray-300"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-gradient-to-br from-slate-50 to-gray-100 text-gray-500">ou</span>
+                        <span className="usk-auth-divider px-4 text-gray-500">ou</span>
                     </div>
                 </div>
 
@@ -292,7 +298,7 @@ const DashboardSignup = () => {
 
                 <div className="text-center text-gray-600">
                     Déjà un compte ?{' '}
-                    <Link href={route('login')} className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors duration-200">
+                    <Link href={route('login')} className="text-emerald-600 font-medium hover:text-emerald-800 transition-colors duration-200">
                         Se connecter
                     </Link>
                 </div>

@@ -68,6 +68,16 @@ final class FacultyController extends Controller
             return back()->withErrors(['general' => 'Faculté introuvable.']);
         }
 
+        $levelIds = \App\Models\Level::where('faculty_id', $id)->select('id');
+        $enrollmentCount = \Illuminate\Support\Facades\DB::table('enrollments')->whereIn('level_id', $levelIds)->count();
+        if ($enrollmentCount > 0) {
+            return back()->withErrors(['general' => 'Suppression impossible : cette faculté possède des niveaux liés à '. $enrollmentCount .' inscription(s). Les niveaux et les inscriptions doivent être conservés.']);
+        }
+        $levelCount = \App\Models\Level::where('faculty_id', $id)->count();
+        if ($levelCount > 0) {
+            return back()->withErrors(['general' => 'Suppression impossible : cette faculté contient '. $levelCount .' niveau(x) de formation. Supprimez ou réaffectez ces niveaux avant de supprimer la faculté.']);
+        }
+
         $deleteFaculty->execute($faculty);
 
         return redirect()
@@ -75,18 +85,10 @@ final class FacultyController extends Controller
             ->with('success', 'Faculté supprimée avec succès.');
     }
 
-    public function show(int $id, FacultyRepository $repository)
+    public function show(int $id)
     {
-        $faculty = $repository->findById($id);
-        $faculties = $repository->paginate(6);
+        $faculty = \App\Models\Faculty::with(['levels' => fn ($query) => $query->orderBy('code')->orderBy('title')])->findOrFail($id);
 
-        if (!$faculty) {
-            return back()->withErrors(['general' => 'Faculté introuvable.']);
-        }
-
-        return Inertia::render('dashboard/faculties/Show', [
-            'faculty' => $faculty,
-            'faculties' => $faculties,
-        ]);
+        return Inertia::render('dashboard/faculties/Show', ['faculty' => $faculty]);
     }
 }

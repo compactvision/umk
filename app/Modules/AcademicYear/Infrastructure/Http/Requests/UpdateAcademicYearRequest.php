@@ -20,6 +20,18 @@ class UpdateAcademicYearRequest extends FormRequest
         ];
     }
 
+    public function after(): array
+    {
+        return [function (\Illuminate\Validation\Validator $validator) {
+            if ($validator->errors()->any()) return;
+            $start = $this->date('start_date')->toDateString();
+            $end = $this->date('end_date')->toDateString();
+            $outside = \App\Models\Student\AcademicSemester::where('academic_year_id', $this->route('id'))
+                ->where(fn ($q) => $q->whereDate('start_date', '<', $start)->orWhereDate('end_date', '>', $end))->exists();
+            if ($outside) $validator->errors()->add('end_date', 'Les semestres existants doivent rester compris dans les dates de l’année académique.');
+        }];
+    }
+
     public function messages(): array
     {
         return [

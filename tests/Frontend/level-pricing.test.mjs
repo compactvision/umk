@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+import ts from 'typescript';
+const source = await readFile(new URL('../../resources/js/lib/levelPricing.ts', import.meta.url), 'utf8');
+const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 } });
+const { paymentTotal } = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
+test('Les deux tranches utilisent les centimes et remplacent le total précédent', () => assert.equal(paymentTotal('250.10', '155.20', 100), 405.3));
+test('Une répartition incomplète ne présente pas un total trompeur', () => assert.equal(paymentTotal(250, '', 405), null));
+test('Le total existant reste visible sans répartition inventée', () => assert.equal(paymentTotal(null, '', 405), 405));
+test('Des tranches explicitement nulles en montant donnent un total nul', () => assert.equal(paymentTotal(0, 0, 405), 0));
+test('Un tarif absent reste à confirmer', () => assert.equal(paymentTotal('', '', null), null));

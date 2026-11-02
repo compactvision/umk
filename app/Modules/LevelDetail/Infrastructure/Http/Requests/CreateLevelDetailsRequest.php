@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateLevelDetailsRequest extends FormRequest
 {
+    use ValidatesLevelInstallments;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,8 +24,9 @@ class CreateLevelDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'price_foreign' => ['nullable', 'numeric', 'min:0', 'max:99999999.99', 'decimal:0,2'],
             'level_id'        => ['required', 'exists:levels,id'],
-            'price'           => ['nullable', 'numeric'],
+            'price'           => ['nullable', 'numeric', 'min:0', 'max:99999999.99', 'decimal:0,2'],
             'has_certificate' => ['required', 'boolean'],
             'language'        => ['nullable', 'string', 'max:50'],
             'duration_years'  => ['required', 'integer'],
@@ -34,7 +37,7 @@ class CreateLevelDetailsRequest extends FormRequest
             'course_objective'=> ['nullable', 'string'],
             'fees'            => ['nullable', 'integer'],
             'options'         => ['nullable', 'array'],
-        ];
+        ] + $this->installmentRules();
     }
 
     public function messages(): array

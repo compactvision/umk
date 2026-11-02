@@ -24,9 +24,11 @@ class SubmitController extends Controller
             $dto = SubmitEnrollmentDTO::fromRequest($uuid, $validated, $request->user()->id);
             $enrollment = $this->submitEnrollmentUseCase->execute($dto);
 
+            app(\App\Modules\Seo\Application\Audience::class)->record('admission_submitted', '/admission');
+
             return redirect()
                 ->route('dashboard.enrollments.index')
-                ->with('success', 'Inscriptions enregistrer avec succes');
+                ->with('success', 'Votre dossier a été soumis avec succès. Vous pouvez suivre son traitement ici.');
                 
         } catch (EnrollmentException $e) {
             return back()->withErrors([

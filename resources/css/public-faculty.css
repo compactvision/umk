@@ -1,0 +1,522 @@
+.public-faculty {
+    background: #f8f7f2;
+}
+.pf-hero {
+    background: #073e32;
+    padding: 26px 0 55px;
+    color: #fff;
+}
+.pf-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    color: #9db3a3;
+    font-size: 10px;
+    margin-bottom: 39px;
+}
+.pf-breadcrumb a {
+    color: #bdcbbb;
+}
+.pf-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.88fr;
+    align-items: center;
+    gap: 65px;
+}
+.pf-hero-copy {
+    min-width: 0;
+}
+.pf-hero-copy .usk-eyebrow {
+    color: #c8b27b;
+    font-size: 8px;
+}
+.usk-site .pf-hero h1 {
+    font-size: clamp(45px, 4.7vw, 72px);
+    line-height: 1.04;
+    color: white;
+    margin: 24px 0;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+.pf-hero-copy > p {
+    max-width: 550px;
+    color: #b7c9b6;
+    font-size: 14px;
+    line-height: 1.9;
+    white-space: pre-line;
+}
+.pf-hero-copy .usk-actions {
+    gap: 23px;
+    margin-top: 30px;
+}
+.pf-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    color: #d3dcc8;
+    font-size: 11px;
+}
+.pf-hero-signature {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 43px;
+    color: #b4c3a8;
+}
+.pf-hero-signature > span:first-child {
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    border: 1px solid #c3d0b43d;
+    padding: 8px 12px;
+    border-radius: 3px;
+}
+.pf-hero-signature > span:last-child {
+    font-size: 7px;
+    letter-spacing: 0.15em;
+    color: #9aad94;
+}
+.pf-hero-photo {
+    position: relative;
+    min-width: 0;
+}
+.pf-hero-photo img {
+    width: 100%;
+    height: 440px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.pf-hero-photo > span {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #f1f3e9;
+    background: #073e32c9;
+    border: 1px solid #ffffff25;
+    padding: 13px 16px;
+    backdrop-filter: blur(6px);
+    font-size: 10px;
+    border-radius: 3px;
+}
+.pf-introduction {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 90px;
+    padding-top: 79px;
+    padding-bottom: 68px;
+}
+.pf-introduction h2 {
+    margin-top: 18px;
+}
+.public-faculty h2 em {
+    color: #7c5a18;
+}
+.usk-site .pf-lead {
+    font-size: 20px;
+    line-height: 1.7;
+    color: #41623e;
+    margin-bottom: 20px;
+}
+.pf-introduction p:not(.pf-lead) {
+    font-size: 13px;
+    line-height: 1.9;
+    color: #849474;
+}
+.pf-introduction .usk-link {
+    margin-top: 24px;
+}
+.pf-horizons {
+    padding-bottom: 76px;
+}
+.pf-horizons h2 {
+    font-size: 43px;
+    margin-top: 15px;
+}
+.pf-horizon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 23px;
+    margin-top: 31px;
+}
+.pf-horizon-grid article {
+    padding: 26px;
+    border: 1px solid #dce4cf;
+    background: #fffefa;
+    border-radius: 5px;
+}
+.pf-horizon-grid article > span {
+    color: #bea667;
+    font-size: 11px;
+}
+.usk-site .pf-horizon-grid h3 {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 22px 0 25px;
+    color: #64804b;
+}
+.pf-horizon-grid article > svg {
+    color: #9ab381;
+}
+.pf-programmes {
+    background: #eaf0e1;
+    padding: 72px 0;
+    scroll-margin-top: 100px;
+}
+.pf-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 26px;
+    margin-bottom: 35px;
+}
+.pf-section-heading h2 {
+    font-size: clamp(36px, 4vw, 55px);
+    margin-top: 15px;
+}
+.pf-section-heading > p {
+    font-size: 11px;
+    line-height: 1.9;
+    color: #8b9b79;
+}
+.pf-programme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+}
+.pf-programme {
+    display: flex;
+    flex-direction: column;
+    background: #fffefa;
+    border: 1px solid #dce5cf;
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 0;
+}
+.pf-programme-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+.pf-programme-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+.pf-programme:hover img {
+    transform: scale(1.03);
+}
+.pf-programme-image > span {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #fffffff0;
+    border: 1px solid #fff9;
+    color: #7c9666;
+    padding: 6px 10px;
+    font-size: 10px;
+    border-radius: 3px;
+}
+.pf-programme-copy {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    flex: 1;
+}
+.pf-programme-copy .usk-eyebrow {
+    font-size: 8px;
+    color: #ad975d;
+}
+.usk-site .pf-programme h3 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 31px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #51723e;
+    margin: 14px 0;
+}
+.pf-programme-copy > p {
+    font-size: 11px;
+    line-height: 1.9;
+    color: #8e9f7b;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.pf-programme-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+    margin: 20px 0;
+}
+.pf-programme-facts > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #99ad85;
+    font-size: 10px;
+}
+.pf-programme-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 18px;
+    margin-top: auto;
+    border-top: 1px solid #e5ebdb;
+    color: #7a995e;
+    font-size: 11px;
+}
+.pf-programme-empty {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    background: #f8faf2;
+    border: 1px solid #d6e1c7;
+    border-radius: 6px;
+    padding: 35px;
+    color: #a2b48c;
+}
+.pf-programme-empty > svg {
+    flex-shrink: 0;
+}
+.usk-site .pf-programme-empty h3 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #6f8b54;
+    margin-bottom: 13px;
+}
+.pf-programme-empty p {
+    font-size: 12px;
+    color: #93a57f;
+    line-height: 1.9;
+    max-width: 580px;
+}
+.pf-programme-empty > a {
+    margin-left: auto;
+    white-space: nowrap;
+}
+.pf-admission {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 90px;
+    padding-top: 83px;
+    padding-bottom: 83px;
+}
+.pf-admission h2 {
+    margin-top: 19px;
+}
+.pf-admission > div > p {
+    font-size: 13px;
+    color: #8c9d7a;
+    line-height: 1.9;
+    max-width: 390px;
+    margin: 23px 0 28px;
+}
+.pf-admission ol {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.pf-admission li {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 25px 0;
+    border-bottom: 1px solid #dce5d0;
+}
+.pf-admission li:first-child {
+    padding-top: 0;
+}
+.pf-admission li > span {
+    color: #b6a16a;
+    font-family: Georgia, serif;
+    font-size: 24px;
+}
+.pf-admission li > div {
+    flex: 1;
+}
+.usk-site .pf-admission h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #65844e;
+    margin: 0 0 11px;
+}
+.pf-admission li p {
+    font-size: 12px;
+    color: #94a47f;
+    line-height: 1.9;
+}
+.pf-admission li > svg {
+    color: #a1b68b;
+    flex-shrink: 0;
+}
+.pf-admission li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: #8da975;
+    font-size: 10px;
+    margin-top: 13px;
+}
+.pf-other {
+    background: #eff3e8;
+    padding: 64px 0 70px;
+}
+.pf-other-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.pf-other-grid > a {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+    border: 1px solid #dbe5cf;
+    border-radius: 4px;
+    background: #fffefa;
+    color: #a2b68b;
+}
+.pf-other-grid > a > span {
+    font-size: 9px;
+    color: #baa36a;
+    min-width: 35px;
+}
+.usk-site .pf-other-grid h3 {
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #718f58;
+    flex: 1;
+}
+.pf-other-grid > a > svg {
+    flex-shrink: 0;
+}
+.pf-other-grid > a:hover {
+    border-color: #a7be91;
+}
+@media (max-width: 1050px) {
+    .pf-hero-grid {
+        gap: 35px;
+    }
+    .pf-hero-photo img {
+        height: 400px;
+    }
+    .pf-introduction,
+    .pf-admission {
+        gap: 45px;
+    }
+    .pf-programme-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pf-programme-empty {
+        flex-wrap: wrap;
+    }
+    .pf-programme-empty > a {
+        margin-left: 62px;
+    }
+}
+@media (max-width: 760px) {
+    .pf-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    .pf-hero-photo img {
+        height: 320px;
+    }
+    .pf-hero {
+        padding-bottom: 35px;
+    }
+    .pf-hero h1 {
+        font-size: 48px;
+    }
+    .pf-hero-signature {
+        margin-top: 29px;
+    }
+    .pf-introduction,
+    .pf-admission {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    .pf-horizons {
+        padding-bottom: 48px;
+    }
+    .pf-horizon-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+    .pf-horizon-grid article {
+        display: flex;
+        align-items: center;
+        gap: 19px;
+        padding: 22px;
+    }
+    .usk-site .pf-horizon-grid h3 {
+        flex: 1;
+        margin: 0;
+        font-size: 17px;
+    }
+    .pf-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+    .pf-programmes {
+        padding: 48px 0;
+    }
+    .pf-other-grid {
+        grid-template-columns: 1fr;
+    }
+    .pf-other {
+        padding: 45px 0;
+    }
+    .pf-programme-copy {
+        padding: 22px;
+    }
+}
+@media (max-width: 480px) {
+    .pf-programme-grid {
+        grid-template-columns: 1fr;
+    }
+    .pf-programme-empty {
+        padding: 25px;
+        gap: 18px;
+    }
+    .pf-programme-empty > a {
+        margin-left: 0;
+    }
+    .pf-hero-photo img {
+        height: 260px;
+    }
+    .pf-hero-copy .usk-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .pf-hero-photo > span {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        padding: 11px;
+        font-size: 9px;
+    }
+    .pf-other-grid > a {
+        padding: 20px;
+        gap: 12px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .public-faculty * {
+        transition: none !important;
+    }
+}

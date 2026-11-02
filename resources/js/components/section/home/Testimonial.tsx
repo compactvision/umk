@@ -13,7 +13,7 @@ const DATA: Testimonial[] = [
     mainImg: "https://commons.wikimedia.org/wiki/Special:FilePath/ULPGL%20GOMA%2C%20Campus%20Mo%C3%AFse%20vue%20de%20devant.jpg?width=1600",
     thumbImg: "https://ui-avatars.com/api/?name=Prisca+Mbuyi&background=F59E0B&color=fff&size=128",
     quote:
-      "À l’UMK, j’ai trouvé un encadrement sérieux et des pratiques de terrain adaptées aux réalités congolaises. Les stages m’ont donné une vraie confiance.",
+      "À l’USK, j’ai trouvé un encadrement sérieux et des pratiques de terrain adaptées aux réalités congolaises. Les stages m’ont donné une vraie confiance.",
     name: "Prisca Mbuyi",
     role: "Étudiante en Santé Publique",
   },

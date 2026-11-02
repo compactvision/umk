@@ -117,10 +117,10 @@ export default function Hero() {
                         {/* Titre principal avec animation responsive améliorée */}
                         <h1 className={`mx-auto max-w-5xl text-3xl leading-tight font-bold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                             <span className="block bg-gradient-to-r from-white via-blue-50 to-amber-100 bg-clip-text text-transparent animate-gradient hover:animate-gradient-slow">
-                                Université Moderne
+                                Université Simon
                             </span>
                             <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-200 bg-clip-text text-transparent animate-gradient delay-300">
-                                De Kinkole
+                                Kimbangu
                             </span>
                             <span className="block mt-2 sm:mt-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/95">
                                 Le moyen de predire l'
@@ -147,7 +147,7 @@ export default function Hero() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent rounded-2xl sm:rounded-3xl group-hover:from-white/20 transition-all duration-500" />
                                 <img
                                     src="/assets/img/hero/hero3.png"
-                                    alt="Diplômés UMK - Excellence Académique"
+                                    alt="Diplômés USK - Excellence Académique"
                                     className="mx-auto h-auto w-full max-w-2xl lg:max-w-4xl object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-2xl"
                                     loading="eager"
                                 />

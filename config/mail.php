@@ -108,9 +108,11 @@ return [
     |
     */
 
+    'admissions_address' => env('ADMISSIONS_NOTIFICATION_EMAIL', 'contact@universitesk.net'),
+
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'contact@universitesk.net'),
+        'name' => env('MAIL_FROM_NAME', 'Université Simon Kimbangu'),
     ],
 
 ];

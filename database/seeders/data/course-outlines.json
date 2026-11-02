@@ -1,0 +1,1622 @@
+{
+  "MED:L1:Biologie cellulaire et moléculaire": {
+    "profile": "lab",
+    "topics": [
+      "Organisation cellulaire et membranes",
+      "Cycle cellulaire et division",
+      "ADN, ARN et expression génique",
+      "Microscopie et interprétation de documents biologiques"
+    ]
+  },
+  "MED:L1:Chimie générale et organique": {
+    "profile": "lab",
+    "topics": [
+      "Structure atomique et liaisons chimiques",
+      "Solutions, concentrations et équilibres",
+      "Fonctions organiques et réactions essentielles",
+      "Mesures, sécurité et calculs de laboratoire"
+    ]
+  },
+  "MED:L1:Physique médicale": {
+    "profile": "applied",
+    "topics": [
+      "Mécanique et biomécanique",
+      "Fluides et pression dans les systèmes biologiques",
+      "Électricité, ondes et optique",
+      "Principes physiques de l’imagerie médicale"
+    ]
+  },
+  "MED:L1:Anatomie générale": {
+    "profile": "theory",
+    "topics": [
+      "Terminologie anatomique et plans du corps",
+      "Tissus, organes et grandes cavités",
+      "Ostéologie, arthrologie et myologie",
+      "Repérage anatomique sur schémas et modèles"
+    ]
+  },
+  "MED:L1:Mathématiques et biostatistique": {
+    "profile": "applied",
+    "topics": [
+      "Fonctions et calculs utiles en sciences de la santé",
+      "Description et représentation des données",
+      "Probabilités et distributions usuelles",
+      "Lecture critique de résultats statistiques"
+    ]
+  },
+  "MED:L1:Méthodologie du travail universitaire": {
+    "profile": "research",
+    "topics": [
+      "Organisation du travail et prise de notes",
+      "Recherche documentaire et sources fiables",
+      "Rédaction scientifique et citation",
+      "Intégrité académique et présentation orale"
+    ]
+  },
+  "MED:L1:Anatomie des appareils locomoteur et cardiovasculaire": {
+    "profile": "lab",
+    "topics": [
+      "Appareil locomoteur et anatomie fonctionnelle",
+      "Cœur et gros vaisseaux",
+      "Circulation artérielle, veineuse et lymphatique",
+      "Lecture de planches et repérage sur modèles"
+    ]
+  },
+  "MED:L1:Histologie et embryologie générales": {
+    "profile": "lab",
+    "topics": [
+      "Techniques histologiques et tissus fondamentaux",
+      "Épithéliums et tissus conjonctifs",
+      "Développement embryonnaire précoce",
+      "Lecture de lames et corrélations morphologiques"
+    ]
+  },
+  "MED:L1:Biochimie structurale": {
+    "profile": "lab",
+    "topics": [
+      "Structure des glucides et des lipides",
+      "Acides aminés et protéines",
+      "Enzymes et cinétique enzymatique",
+      "Méthodes de dosage et interprétation expérimentale"
+    ]
+  },
+  "MED:L1:Physiologie générale": {
+    "profile": "theory",
+    "topics": [
+      "Homéostasie et compartiments hydriques",
+      "Transport membranaire et potentiels électriques",
+      "Communication cellulaire et régulation",
+      "Intégration des principales fonctions physiologiques"
+    ]
+  },
+  "MED:L1:Introduction à la santé publique": {
+    "profile": "theory",
+    "topics": [
+      "Concepts, déterminants et indicateurs de santé",
+      "Prévention et promotion de la santé",
+      "Organisation des systèmes de santé",
+      "Enjeux de santé communautaire en RDC"
+    ]
+  },
+  "MED:L1:Éthique et communication en santé": {
+    "profile": "applied",
+    "topics": [
+      "Principes de bioéthique et dignité humaine",
+      "Consentement et confidentialité",
+      "Communication avec les personnes et les équipes",
+      "Analyse de situations éthiques en santé"
+    ]
+  },
+  "MED:L2:Anatomie des systèmes nerveux et viscéraux": {
+    "profile": "lab",
+    "topics": [
+      "Organisation du système nerveux central",
+      "Voies nerveuses et système périphérique",
+      "Anatomie des viscères thoraciques et abdominaux",
+      "Repérage topographique et intégration fonctionnelle"
+    ]
+  },
+  "MED:L2:Physiologie cardiovasculaire et respiratoire": {
+    "profile": "theory",
+    "topics": [
+      "Cycle cardiaque et régulation circulatoire",
+      "Hémodynamique et contrôle de la pression",
+      "Ventilation, diffusion et échanges gazeux",
+      "Intégration cardio-respiratoire à l’effort"
+    ]
+  },
+  "MED:L2:Biochimie métabolique": {
+    "profile": "lab",
+    "topics": [
+      "Métabolisme des glucides",
+      "Métabolisme des lipides et des protéines",
+      "Bioénergétique et chaîne respiratoire",
+      "Régulations et interprétation de profils métaboliques"
+    ]
+  },
+  "MED:L2:Histologie spéciale": {
+    "profile": "lab",
+    "topics": [
+      "Histologie des appareils digestif et respiratoire",
+      "Histologie rénale et endocrine",
+      "Organisation histologique des organes lymphoïdes",
+      "Identification de structures sur lames"
+    ]
+  },
+  "MED:L2:Microbiologie générale": {
+    "profile": "lab",
+    "topics": [
+      "Classification et structure des microorganismes",
+      "Croissance microbienne et interactions avec l’hôte",
+      "Principes d’identification et de biosécurité",
+      "Lecture de résultats microbiologiques simples"
+    ]
+  },
+  "MED:L2:Biostatistique appliquée": {
+    "profile": "applied",
+    "topics": [
+      "Construction d’un jeu de données biomédicales",
+      "Estimation et intervalles de confiance",
+      "Tests statistiques et conditions d’application",
+      "Analyse et restitution avec un outil statistique"
+    ]
+  },
+  "MED:L2:Physiologie rénale et endocrinienne": {
+    "profile": "theory",
+    "topics": [
+      "Filtration, réabsorption et équilibre hydrominéral",
+      "Équilibre acido-basique",
+      "Axes endocriniens et rétrocontrôle",
+      "Intégration des régulations rénales et hormonales"
+    ]
+  },
+  "MED:L2:Immunologie fondamentale": {
+    "profile": "theory",
+    "topics": [
+      "Immunité innée et adaptative",
+      "Cellules, organes et médiateurs immunitaires",
+      "Antigènes, anticorps et réponses immunitaires",
+      "Principes de vaccination et immunopathologie"
+    ]
+  },
+  "MED:L2:Parasitologie médicale": {
+    "profile": "lab",
+    "topics": [
+      "Cycles des principaux parasites humains",
+      "Relations hôte-parasite et transmission",
+      "Reconnaissance morphologique de documents parasitologiques",
+      "Prévention, biosécurité et interprétation des examens"
+    ]
+  },
+  "MED:L2:Génétique humaine": {
+    "profile": "applied",
+    "topics": [
+      "Transmission mendélienne et arbres généalogiques",
+      "Anomalies chromosomiques et variations génétiques",
+      "Interactions entre gènes et environnement",
+      "Enjeux éthiques de l’information génétique"
+    ]
+  },
+  "MED:L2:Sémiologie générale": {
+    "profile": "clinical",
+    "topics": [
+      "Vocabulaire et démarche sémiologique",
+      "Entretien, anamnèse et recueil des symptômes",
+      "Principes de l’examen clinique supervisé",
+      "Synthèse et rédaction d’une observation"
+    ]
+  },
+  "MED:L2:Travaux pratiques de sciences biomédicales": {
+    "profile": "lab",
+    "topics": [
+      "Organisation et sécurité du laboratoire",
+      "Mesures, pipetage et préparation d’échantillons",
+      "Observations microscopiques et analyses guidées",
+      "Traçabilité, qualité et compte rendu expérimental"
+    ]
+  },
+  "MED:L3:Anatomie pathologique générale": {
+    "profile": "lab",
+    "topics": [
+      "Lésions cellulaires et adaptations",
+      "Inflammation et réparation tissulaire",
+      "Troubles circulatoires et processus tumoraux",
+      "Lecture de documents anatomopathologiques"
+    ]
+  },
+  "MED:L3:Pharmacologie générale": {
+    "profile": "theory",
+    "topics": [
+      "Pharmacocinétique et pharmacodynamie",
+      "Cibles, mécanismes et interactions",
+      "Effets indésirables et pharmacovigilance",
+      "Analyse raisonnée de documents pharmacologiques"
+    ]
+  },
+  "MED:L3:Physiopathologie": {
+    "profile": "applied",
+    "topics": [
+      "Mécanismes des déséquilibres physiologiques",
+      "Hypoxie, inflammation et défaillances d’organes",
+      "Troubles métaboliques et endocriniens",
+      "Analyse intégrée de situations physiopathologiques"
+    ]
+  },
+  "MED:L3:Bactériologie et virologie médicales": {
+    "profile": "lab",
+    "topics": [
+      "Principaux groupes bactériens et viraux",
+      "Pathogénicité et interactions avec l’hôte",
+      "Principes du diagnostic microbiologique",
+      "Biosécurité, prévention et résistance antimicrobienne"
+    ]
+  },
+  "MED:L3:Sémiologie médicale": {
+    "profile": "clinical",
+    "topics": [
+      "Sémiologie cardiovasculaire et respiratoire",
+      "Sémiologie digestive, rénale et neurologique",
+      "Organisation des signes et syndromes",
+      "Présentation structurée de cas sous supervision"
+    ]
+  },
+  "MED:L3:Techniques de laboratoire biomédical": {
+    "profile": "lab",
+    "topics": [
+      "Circuit des prélèvements et traçabilité",
+      "Principes des analyses biochimiques et hématologiques",
+      "Assurance qualité et contrôle analytique",
+      "Interprétation encadrée et limites des examens"
+    ]
+  },
+  "MED:L3:Pathologie médicale intégrée": {
+    "profile": "clinical",
+    "topics": [
+      "Mécanismes des grandes affections systémiques",
+      "Lecture intégrée des tableaux cliniques",
+      "Articulation entre clinique et examens complémentaires",
+      "Discussion de cas et raisonnement médical supervisé"
+    ]
+  },
+  "MED:L3:Introduction à la pathologie chirurgicale": {
+    "profile": "clinical",
+    "topics": [
+      "Principes de la démarche chirurgicale",
+      "Réponse tissulaire, cicatrisation et complications",
+      "Asepsie et sécurité du parcours opératoire",
+      "Observation encadrée de situations médico-chirurgicales"
+    ]
+  },
+  "MED:L3:Pharmacologie des principaux systèmes": {
+    "profile": "applied",
+    "topics": [
+      "Grandes classes cardiovasculaires et respiratoires",
+      "Médicaments des systèmes digestif et endocrinien",
+      "Principes de l’anti-infectiologie",
+      "Analyse de bénéfices, risques et interactions"
+    ]
+  },
+  "MED:L3:Épidémiologie et prévention": {
+    "profile": "applied",
+    "topics": [
+      "Mesures de fréquence et de risque",
+      "Plans d’études épidémiologiques",
+      "Évaluation des stratégies de prévention",
+      "Lecture critique d’études en santé"
+    ]
+  },
+  "MED:L3:Initiation clinique supervisée": {
+    "profile": "field",
+    "topics": [
+      "Accueil et observation du parcours du patient",
+      "Observation clinique et communication supervisées",
+      "Hygiène, sécurité et respect de la confidentialité",
+      "Carnet de stage et analyse réflexive"
+    ]
+  },
+  "MED:L3:Projet de recherche biomédicale": {
+    "profile": "research",
+    "topics": [
+      "Question de recherche et revue bibliographique",
+      "Protocole, éthique et choix méthodologiques",
+      "Collecte ou exploitation de données autorisées",
+      "Analyse, rapport et présentation scientifique"
+    ]
+  },
+  "SP:L1:Introduction à la santé publique": {
+    "profile": "theory",
+    "topics": [
+      "Définitions et champs de la santé publique",
+      "Déterminants sociaux et environnementaux",
+      "Indicateurs et priorités sanitaires",
+      "Système de santé et soins de santé primaires"
+    ]
+  },
+  "SP:L1:Biologie humaine": {
+    "profile": "theory",
+    "topics": [
+      "Cellules, tissus et fonctions vitales",
+      "Génétique et reproduction humaines",
+      "Interactions entre organisme et environnement",
+      "Bases biologiques de la prévention"
+    ]
+  },
+  "SP:L1:Statistique descriptive": {
+    "profile": "applied",
+    "topics": [
+      "Types de variables et collecte des données",
+      "Tableaux et représentations graphiques",
+      "Indicateurs de position et de dispersion",
+      "Description d’un jeu de données sanitaires"
+    ]
+  },
+  "SP:L1:Chimie et environnement": {
+    "profile": "lab",
+    "topics": [
+      "Composants chimiques des milieux",
+      "Eau, air et contaminants",
+      "Principes de mesure et d’échantillonnage",
+      "Interprétation de données environnementales"
+    ]
+  },
+  "SP:L1:Sociologie de la santé": {
+    "profile": "applied",
+    "topics": [
+      "Représentations sociales de la santé",
+      "Inégalités et déterminants socioculturels",
+      "Parcours de soins et comportements de santé",
+      "Observation et analyse de situations communautaires"
+    ]
+  },
+  "SP:L1:Méthodologie universitaire": {
+    "profile": "research",
+    "topics": [
+      "Gestion du temps et méthodes d’apprentissage",
+      "Recherche documentaire et évaluation des sources",
+      "Rédaction et références bibliographiques",
+      "Présentation orale et intégrité académique"
+    ]
+  },
+  "SP:L1:Épidémiologie descriptive": {
+    "profile": "applied",
+    "topics": [
+      "Population, cas et dénominateurs",
+      "Incidence, prévalence et mortalité",
+      "Répartition selon le temps, le lieu et les personnes",
+      "Description d’une situation sanitaire"
+    ]
+  },
+  "SP:L1:Anatomie et physiologie humaines": {
+    "profile": "theory",
+    "topics": [
+      "Organisation des appareils du corps humain",
+      "Fonctions cardiovasculaires et respiratoires",
+      "Nutrition, excrétion et régulation hormonale",
+      "Liens entre fonctionnement humain et prévention"
+    ]
+  },
+  "SP:L1:Hygiène et assainissement": {
+    "profile": "field",
+    "topics": [
+      "Hygiène de l’eau et du milieu",
+      "Gestion des déchets et assainissement",
+      "Évaluation des risques sanitaires locaux",
+      "Projet pratique d’amélioration de l’hygiène"
+    ]
+  },
+  "SP:L1:Nutrition humaine": {
+    "profile": "applied",
+    "topics": [
+      "Besoins et groupes d’aliments",
+      "Évaluation nutritionnelle de base",
+      "Malnutrition et déterminants alimentaires",
+      "Éducation nutritionnelle et actions communautaires"
+    ]
+  },
+  "SP:L1:Communication pour la santé": {
+    "profile": "applied",
+    "topics": [
+      "Analyse des publics et des besoins d’information",
+      "Conception de messages accessibles",
+      "Communication interpersonnelle et mobilisation sociale",
+      "Évaluation d’une action de communication"
+    ]
+  },
+  "SP:L1:Informatique et gestion des données": {
+    "profile": "lab",
+    "topics": [
+      "Organisation et qualité d’une base de données",
+      "Saisie, nettoyage et sécurité des données",
+      "Tableurs et outils d’analyse introductifs",
+      "Visualisation et restitution d’indicateurs"
+    ]
+  },
+  "SP:L2:Épidémiologie analytique": {
+    "profile": "applied",
+    "topics": [
+      "Comparaison des plans d’études",
+      "Mesures d’association et de risque",
+      "Biais, confusion et validité",
+      "Lecture critique d’enquêtes épidémiologiques"
+    ]
+  },
+  "SP:L2:Biostatistique inférentielle": {
+    "profile": "applied",
+    "topics": [
+      "Échantillonnage et estimation",
+      "Intervalles de confiance et tests",
+      "Comparaison de groupes et associations",
+      "Interprétation raisonnée des résultats"
+    ]
+  },
+  "SP:L2:Santé environnementale": {
+    "profile": "field",
+    "topics": [
+      "Expositions et risques environnementaux",
+      "Eau, habitat, air et déchets",
+      "Évaluation et gestion des risques",
+      "Observation de terrain et communication préventive"
+    ]
+  },
+  "SP:L2:Systèmes et politiques de santé": {
+    "profile": "theory",
+    "topics": [
+      "Organisation et fonctions d’un système de santé",
+      "Politiques publiques et couverture sanitaire",
+      "Acteurs, gouvernance et ressources",
+      "Analyse comparative des dispositifs sanitaires"
+    ]
+  },
+  "SP:L2:Microbiologie et maladies transmissibles": {
+    "profile": "lab",
+    "topics": [
+      "Agents infectieux et mécanismes de transmission",
+      "Chaînes de contamination et réservoirs",
+      "Principes de diagnostic et de surveillance",
+      "Prévention communautaire des maladies transmissibles"
+    ]
+  },
+  "SP:L2:Méthodes de recherche en santé": {
+    "profile": "research",
+    "topics": [
+      "Problématique et revue de littérature",
+      "Méthodes quantitatives, qualitatives et mixtes",
+      "Éthique, outils et qualité de la collecte",
+      "Protocole et plan d’analyse"
+    ]
+  },
+  "SP:L2:Planification sanitaire": {
+    "profile": "applied",
+    "topics": [
+      "Analyse de situation et identification des besoins",
+      "Définition des objectifs et priorités",
+      "Programmation des activités et ressources",
+      "Indicateurs de suivi et ajustement d’un plan"
+    ]
+  },
+  "SP:L2:Prévention et contrôle des maladies": {
+    "profile": "applied",
+    "topics": [
+      "Stratégies de prévention primaire et secondaire",
+      "Interventions sur les facteurs de risque",
+      "Organisation des campagnes sanitaires",
+      "Suivi et évaluation des actions de contrôle"
+    ]
+  },
+  "SP:L2:Santé maternelle et infantile": {
+    "profile": "field",
+    "topics": [
+      "Continuum de santé maternelle et infantile",
+      "Déterminants du recours aux services",
+      "Prévention, nutrition et promotion de la santé",
+      "Organisation d’actions communautaires adaptées"
+    ]
+  },
+  "SP:L2:Économie de la santé": {
+    "profile": "applied",
+    "topics": [
+      "Ressources, coûts et financement de la santé",
+      "Demande, offre et accès aux soins",
+      "Principes d’évaluation économique",
+      "Analyse budgétaire d’une intervention"
+    ]
+  },
+  "SP:L2:Surveillance épidémiologique": {
+    "profile": "applied",
+    "topics": [
+      "Objectifs et composantes de la surveillance",
+      "Définition des cas et notification",
+      "Analyse des tendances et signaux d’alerte",
+      "Qualité des données et rétro-information"
+    ]
+  },
+  "SP:L2:Diagnostic communautaire de terrain": {
+    "profile": "field",
+    "topics": [
+      "Préparation d’un diagnostic participatif",
+      "Cartographie des ressources et acteurs",
+      "Collecte et hiérarchisation des besoins",
+      "Restitution communautaire et proposition d’action"
+    ]
+  },
+  "SP:L3:Gestion des programmes de santé": {
+    "profile": "applied",
+    "topics": [
+      "Cycle de gestion d’un programme",
+      "Ressources, budget et coordination",
+      "Supervision et qualité de mise en œuvre",
+      "Pilotage à partir des résultats"
+    ]
+  },
+  "SP:L3:Évaluation des interventions sanitaires": {
+    "profile": "applied",
+    "topics": [
+      "Questions évaluatives et théorie du changement",
+      "Indicateurs, plans et outils d’évaluation",
+      "Analyse de résultats et limites",
+      "Rapport évaluatif et recommandations"
+    ]
+  },
+  "SP:L3:Santé au travail": {
+    "profile": "field",
+    "topics": [
+      "Risques professionnels et prévention",
+      "Conditions de travail et santé des travailleurs",
+      "Démarche d’évaluation des risques",
+      "Plan d’amélioration et sensibilisation"
+    ]
+  },
+  "SP:L3:Gestion des urgences sanitaires": {
+    "profile": "applied",
+    "topics": [
+      "Préparation aux situations sanitaires exceptionnelles",
+      "Organisation de la réponse et coordination",
+      "Communication de crise et continuité des services",
+      "Exercices de simulation et retour d’expérience"
+    ]
+  },
+  "SP:L3:Analyse des données de santé": {
+    "profile": "lab",
+    "topics": [
+      "Préparation et documentation des données",
+      "Analyses descriptives et comparatives",
+      "Visualisation et tableaux de bord",
+      "Interprétation et communication des résultats"
+    ]
+  },
+  "SP:L3:Droit et éthique en santé publique": {
+    "profile": "applied",
+    "topics": [
+      "Responsabilités et droits en santé publique",
+      "Consentement, confidentialité et données personnelles",
+      "Équité et arbitrages collectifs",
+      "Analyse de dilemmes et de cadres institutionnels"
+    ]
+  },
+  "SP:L3:Stage de santé communautaire": {
+    "profile": "field",
+    "topics": [
+      "Définition des objectifs et du terrain de stage",
+      "Participation supervisée aux activités communautaires",
+      "Documentation, suivi et communication",
+      "Rapport de stage et analyse réflexive"
+    ]
+  },
+  "SP:L3:Travail de fin de cycle en santé publique": {
+    "profile": "research",
+    "topics": [
+      "Problématique et protocole validé",
+      "Collecte ou exploitation éthique des données",
+      "Analyse et discussion des résultats",
+      "Rédaction du mémoire et soutenance"
+    ]
+  },
+  "SP:L3:Promotion et éducation pour la santé": {
+    "profile": "field",
+    "topics": [
+      "Diagnostic éducatif et publics cibles",
+      "Méthodes participatives d’éducation sanitaire",
+      "Conception de supports et animation",
+      "Évaluation des apprentissages et des actions"
+    ]
+  },
+  "SP:L3:Management des services de santé": {
+    "profile": "applied",
+    "topics": [
+      "Organisation et gouvernance des services",
+      "Gestion des équipes et des ressources",
+      "Qualité, sécurité et parcours des usagers",
+      "Tableau de bord et amélioration continue"
+    ]
+  },
+  "SP:L3:Suivi des indicateurs sanitaires": {
+    "profile": "lab",
+    "topics": [
+      "Définition et calcul des indicateurs",
+      "Qualité, complétude et fiabilité des données",
+      "Suivi des cibles et interprétation des écarts",
+      "Conception et présentation d’un tableau de bord"
+    ]
+  },
+  "SP:L3:Séminaire de recherche appliquée": {
+    "profile": "research",
+    "topics": [
+      "Discussion critique de travaux scientifiques",
+      "Choix méthodologiques et limites",
+      "Présentation et retour des pairs",
+      "Finalisation d’un projet de recherche appliquée"
+    ]
+  },
+  "SSPA:L1:Introduction à la sociologie": {
+    "profile": "theory",
+    "topics": [
+      "Objets et démarches de la sociologie",
+      "Socialisation, normes et institutions",
+      "Groupes, stratification et changements sociaux",
+      "Lecture de situations sociales congolaises"
+    ]
+  },
+  "SSPA:L1:Introduction à la science politique": {
+    "profile": "theory",
+    "topics": [
+      "Pouvoir, autorité et légitimité",
+      "État, institutions et régimes politiques",
+      "Acteurs et participation politique",
+      "Analyse de phénomènes politiques contemporains"
+    ]
+  },
+  "SSPA:L1:Introduction à l’administration publique": {
+    "profile": "theory",
+    "topics": [
+      "Finalités et principes de l’action administrative",
+      "Organisation des services publics",
+      "Agents, usagers et responsabilité",
+      "Études introductives de fonctionnement administratif"
+    ]
+  },
+  "SSPA:L1:Histoire des institutions politiques": {
+    "profile": "theory",
+    "topics": [
+      "Formation historique de l’État",
+      "Évolution des institutions représentatives",
+      "Trajectoires politiques africaines",
+      "Analyse contextualisée de documents historiques"
+    ]
+  },
+  "SSPA:L1:Expression et communication françaises": {
+    "profile": "applied",
+    "topics": [
+      "Expression écrite et argumentation",
+      "Compréhension et synthèse de textes",
+      "Communication orale et prise de parole",
+      "Rédaction de documents universitaires"
+    ]
+  },
+  "SSPA:L1:Méthodologie du travail universitaire": {
+    "profile": "research",
+    "topics": [
+      "Prise de notes et organisation du travail",
+      "Recherche et critique des sources",
+      "Rédaction, citation et prévention du plagiat",
+      "Présentation d’un dossier universitaire"
+    ]
+  },
+  "SSPA:L1:Sociologie générale": {
+    "profile": "theory",
+    "topics": [
+      "Grands courants de la pensée sociologique",
+      "Institutions et rapports sociaux",
+      "Inégalités, culture et mobilités",
+      "Analyse comparée de textes et situations sociales"
+    ]
+  },
+  "SSPA:L1:Institutions politiques congolaises": {
+    "profile": "theory",
+    "topics": [
+      "Organisation constitutionnelle des pouvoirs",
+      "Institutions centrales et territoriales",
+      "Processus de représentation et de contrôle",
+      "Lecture critique de documents institutionnels"
+    ]
+  },
+  "SSPA:L1:Introduction à l’économie politique": {
+    "profile": "theory",
+    "topics": [
+      "Production, échanges et répartition",
+      "Marchés, monnaie et intervention publique",
+      "Développement et inégalités économiques",
+      "Analyse de questions économiques africaines"
+    ]
+  },
+  "SSPA:L1:Introduction au droit public": {
+    "profile": "theory",
+    "topics": [
+      "Sources et branches du droit public",
+      "État, constitution et hiérarchie des normes",
+      "Service public et responsabilité",
+      "Méthode de lecture d’un texte juridique"
+    ]
+  },
+  "SSPA:L1:Statistiques en sciences sociales": {
+    "profile": "applied",
+    "topics": [
+      "Variables, enquêtes et échantillonnage",
+      "Statistiques descriptives et représentations",
+      "Indicateurs de comparaison et associations",
+      "Interprétation de données sociales"
+    ]
+  },
+  "SSPA:L1:Informatique appliquée aux sciences sociales": {
+    "profile": "lab",
+    "topics": [
+      "Outils bureautiques et recherche documentaire",
+      "Constitution et nettoyage d’un fichier d’enquête",
+      "Tableurs, graphiques et bases statistiques",
+      "Présentation numérique et protection des données"
+    ]
+  },
+  "SSPA:L2:Sociologie des organisations": {
+    "profile": "applied",
+    "topics": [
+      "Théories des organisations",
+      "Rôles, pouvoir et culture organisationnelle",
+      "Coordination, conflits et changement",
+      "Diagnostic d’une organisation publique ou associative"
+    ]
+  },
+  "SSPA:L2:Systèmes politiques comparés": {
+    "profile": "theory",
+    "topics": [
+      "Typologie des régimes et systèmes politiques",
+      "Institutions et modes de représentation",
+      "Partis, participation et compétition politique",
+      "Méthode de comparaison de cas"
+    ]
+  },
+  "SSPA:L2:Droit administratif": {
+    "profile": "theory",
+    "topics": [
+      "Organisation et principes de l’administration",
+      "Actes, contrats et services publics",
+      "Contrôle, responsabilité et contentieux",
+      "Analyse de situations administratives"
+    ]
+  },
+  "SSPA:L2:Méthodes d’enquête quantitative": {
+    "profile": "applied",
+    "topics": [
+      "Question d’enquête et opérationnalisation",
+      "Échantillonnage et questionnaire",
+      "Collecte, codage et qualité des données",
+      "Analyse descriptive et restitution"
+    ]
+  },
+  "SSPA:L2:Finances publiques": {
+    "profile": "applied",
+    "topics": [
+      "Fonctions des finances publiques",
+      "Budget, recettes et dépenses",
+      "Exécution, contrôle et transparence",
+      "Lecture et analyse de documents budgétaires"
+    ]
+  },
+  "SSPA:L2:Histoire politique de l’Afrique": {
+    "profile": "theory",
+    "topics": [
+      "Transformations politiques précoloniales et coloniales",
+      "Indépendances et construction des États",
+      "Régimes, mobilisations et transitions",
+      "Critique de sources et comparaison de trajectoires"
+    ]
+  },
+  "SSPA:L2:Analyse des politiques publiques": {
+    "profile": "applied",
+    "topics": [
+      "Mise à l’agenda et décision publique",
+      "Acteurs, instruments et mise en œuvre",
+      "Effets attendus et effets observés",
+      "Étude de cas d’une politique sectorielle"
+    ]
+  },
+  "SSPA:L2:Gestion des ressources humaines publiques": {
+    "profile": "applied",
+    "topics": [
+      "Planification des effectifs et recrutement",
+      "Compétences, formation et évaluation",
+      "Motivation, relations de travail et déontologie",
+      "Étude de pratiques de gestion publique"
+    ]
+  },
+  "SSPA:L2:Relations internationales": {
+    "profile": "theory",
+    "topics": [
+      "Principaux cadres d’analyse des relations internationales",
+      "Acteurs étatiques et non étatiques",
+      "Institutions, coopération et sécurité",
+      "Analyse d’enjeux régionaux africains"
+    ]
+  },
+  "SSPA:L2:Méthodes d’enquête qualitative": {
+    "profile": "field",
+    "topics": [
+      "Entretien, observation et analyse documentaire",
+      "Construction d’un guide et accès au terrain",
+      "Codage, interprétation et réflexivité",
+      "Éthique et restitution d’une enquête qualitative"
+    ]
+  },
+  "SSPA:L2:Décentralisation et gouvernance locale": {
+    "profile": "applied",
+    "topics": [
+      "Principes et acteurs de la décentralisation",
+      "Compétences et ressources territoriales",
+      "Participation et redevabilité locales",
+      "Diagnostic d’un dispositif de gouvernance"
+    ]
+  },
+  "SSPA:L2:Démographie et développement": {
+    "profile": "applied",
+    "topics": [
+      "Sources et indicateurs démographiques",
+      "Natalité, mortalité et migrations",
+      "Transitions démographiques et urbanisation",
+      "Liens entre population et politiques de développement"
+    ]
+  },
+  "SSPA:L3:Management des administrations publiques": {
+    "profile": "applied",
+    "topics": [
+      "Stratégie et pilotage de l’action publique",
+      "Organisation des services et des processus",
+      "Gestion des équipes et conduite du changement",
+      "Qualité du service et mesure de la performance"
+    ]
+  },
+  "SSPA:L3:Sociologie du développement": {
+    "profile": "theory",
+    "topics": [
+      "Théories et modèles du développement",
+      "Inégalités, transformations et rapports de pouvoir",
+      "Dynamiques territoriales et initiatives locales",
+      "Analyse critique de programmes de développement"
+    ]
+  },
+  "SSPA:L3:Analyse électorale et participation citoyenne": {
+    "profile": "applied",
+    "topics": [
+      "Systèmes électoraux et comportements politiques",
+      "Participation et mobilisation citoyennes",
+      "Données électorales et observation",
+      "Analyse contextualisée de résultats"
+    ]
+  },
+  "SSPA:L3:Conception et gestion de projets": {
+    "profile": "applied",
+    "topics": [
+      "Diagnostic et identification d’un projet",
+      "Cadre logique, planification et budget",
+      "Gestion des risques et parties prenantes",
+      "Suivi, évaluation et présentation d’un dossier"
+    ]
+  },
+  "SSPA:L3:Évaluation des politiques publiques": {
+    "profile": "applied",
+    "topics": [
+      "Critères et questions d’évaluation",
+      "Construction d’indicateurs et collecte",
+      "Analyse des résultats et attribution",
+      "Rapport évaluatif et recommandations"
+    ]
+  },
+  "SSPA:L3:Éthique et déontologie administratives": {
+    "profile": "theory",
+    "topics": [
+      "Valeurs du service public",
+      "Conflits d’intérêts et intégrité",
+      "Transparence, responsabilité et redevabilité",
+      "Analyse de dilemmes professionnels"
+    ]
+  },
+  "SSPA:L3:Stage en organisation publique ou associative": {
+    "profile": "field",
+    "topics": [
+      "Définition d’une mission et objectifs de stage",
+      "Participation supervisée aux activités de l’organisation",
+      "Observation des processus et collecte autorisée",
+      "Rapport de stage et retour critique"
+    ]
+  },
+  "SSPA:L3:Travail de fin de cycle en sciences sociales": {
+    "profile": "research",
+    "topics": [
+      "Délimitation du sujet et problématique",
+      "Cadre théorique et méthode d’enquête",
+      "Analyse et discussion des données",
+      "Rédaction scientifique et soutenance"
+    ]
+  },
+  "SSPA:L3:Gouvernance et gestion des conflits": {
+    "profile": "applied",
+    "topics": [
+      "Acteurs, causes et dynamiques des conflits",
+      "Prévention, médiation et négociation",
+      "Participation et reconstruction de la confiance",
+      "Mises en situation et analyse de cas"
+    ]
+  },
+  "SSPA:L3:Coopération internationale": {
+    "profile": "theory",
+    "topics": [
+      "Acteurs et instruments de coopération",
+      "Organisations régionales et internationales",
+      "Aide, partenariats et développement",
+      "Analyse critique d’accords et projets"
+    ]
+  },
+  "SSPA:L3:Entrepreneuriat social": {
+    "profile": "applied",
+    "topics": [
+      "Besoins sociaux et proposition de valeur",
+      "Modèle économique et impact social",
+      "Organisation, financement et partenariats",
+      "Construction d’un projet d’initiative sociale"
+    ]
+  },
+  "SSPA:L3:Séminaire de recherche en sciences politiques": {
+    "profile": "research",
+    "topics": [
+      "Analyse critique d’articles en science politique",
+      "Discussion des choix théoriques et méthodologiques",
+      "Présentation et évaluation par les pairs",
+      "Amélioration d’un projet de recherche"
+    ]
+  },
+  "DR:L1:Introduction générale au droit": {
+    "profile": "theory",
+    "topics": [
+      "Règle de droit et branches juridiques",
+      "Sources et hiérarchie des normes",
+      "Droits subjectifs et preuve",
+      "Qualification et raisonnement juridiques"
+    ]
+  },
+  "DR:L1:Droit constitutionnel : théorie générale": {
+    "profile": "theory",
+    "topics": [
+      "État, souveraineté et constitution",
+      "Séparation des pouvoirs et représentation",
+      "Régimes politiques et contrôle constitutionnel",
+      "Comparaison de textes institutionnels"
+    ]
+  },
+  "DR:L1:Droit civil : personnes et famille": {
+    "profile": "theory",
+    "topics": [
+      "Personnalité et capacité juridiques",
+      "État des personnes et protection",
+      "Liens familiaux et obligations",
+      "Qualification de situations familiales"
+    ]
+  },
+  "DR:L1:Histoire du droit et des institutions": {
+    "profile": "theory",
+    "topics": [
+      "Traditions juridiques et formation des institutions",
+      "Évolution des sources du droit",
+      "Trajectoires institutionnelles africaines",
+      "Lecture critique de textes historiques"
+    ]
+  },
+  "DR:L1:Expression juridique française": {
+    "profile": "applied",
+    "topics": [
+      "Terminologie et précision du langage juridique",
+      "Compréhension de textes et synthèse",
+      "Argumentation écrite et orale",
+      "Rédaction de documents juridiques introductifs"
+    ]
+  },
+  "DR:L1:Méthodologie juridique": {
+    "profile": "applied",
+    "topics": [
+      "Recherche et hiérarchisation des sources",
+      "Fiche d’arrêt et commentaire de texte",
+      "Cas pratique et dissertation juridique",
+      "Citation, références et intégrité académique"
+    ]
+  },
+  "DR:L1:Droit constitutionnel congolais": {
+    "profile": "theory",
+    "topics": [
+      "Sources du droit constitutionnel congolais",
+      "Organisation et relations des pouvoirs",
+      "Droits fondamentaux et mécanismes de contrôle",
+      "Lecture de textes et décisions constitutionnels"
+    ]
+  },
+  "DR:L1:Droit civil : biens": {
+    "profile": "theory",
+    "topics": [
+      "Classification juridique des biens",
+      "Propriété, possession et droits réels",
+      "Protection et circulation des biens",
+      "Résolution de cas de qualification"
+    ]
+  },
+  "DR:L1:Introduction au droit pénal": {
+    "profile": "applied",
+    "topics": [
+      "Principes et fonctions du droit pénal",
+      "Éléments de l’infraction",
+      "Responsabilité et catégories de sanctions",
+      "Analyse introductive de situations pénales"
+    ]
+  },
+  "DR:L1:Institutions judiciaires": {
+    "profile": "theory",
+    "topics": [
+      "Organisation des juridictions",
+      "Compétences et acteurs judiciaires",
+      "Principes du procès et accès à la justice",
+      "Lecture de schémas procéduraux"
+    ]
+  },
+  "DR:L1:Sociologie juridique": {
+    "profile": "applied",
+    "topics": [
+      "Droit comme phénomène social",
+      "Normes, pratiques et pluralisme juridique",
+      "Professions juridiques et justiciables",
+      "Analyse de situations sociojuridiques"
+    ]
+  },
+  "DR:L1:Informatique et recherche documentaire juridique": {
+    "profile": "lab",
+    "topics": [
+      "Bases documentaires et recherche de sources",
+      "Vérification et actualité des textes",
+      "Organisation d’une bibliographie juridique",
+      "Rédaction numérique et protection des informations"
+    ]
+  },
+  "DR:L2:Droit civil : théorie des obligations": {
+    "profile": "applied",
+    "topics": [
+      "Sources et classification des obligations",
+      "Formation et effets des contrats",
+      "Responsabilité civile et réparation",
+      "Régime, transmission et extinction des obligations"
+    ]
+  },
+  "DR:L2:Droit administratif général": {
+    "profile": "theory",
+    "topics": [
+      "Organisation administrative et service public",
+      "Actes et contrats administratifs",
+      "Pouvoirs de police et responsabilité",
+      "Contrôle de l’action administrative"
+    ]
+  },
+  "DR:L2:Droit pénal général": {
+    "profile": "applied",
+    "topics": [
+      "Légalité et application de la loi pénale",
+      "Éléments constitutifs des infractions",
+      "Responsabilité, participation et tentative",
+      "Peines et méthode du cas pratique pénal"
+    ]
+  },
+  "DR:L2:Droit commercial général": {
+    "profile": "theory",
+    "topics": [
+      "Acteurs et actes de commerce",
+      "Fonds de commerce et obligations professionnelles",
+      "Relations commerciales et preuve",
+      "Lecture des sources commerciales applicables"
+    ]
+  },
+  "DR:L2:Droit international public": {
+    "profile": "theory",
+    "topics": [
+      "Sujets et sources du droit international",
+      "Traités et relations entre États",
+      "Responsabilité et règlement des différends",
+      "Analyse de documents et de cas internationaux"
+    ]
+  },
+  "DR:L2:Méthodes de recherche juridique": {
+    "profile": "research",
+    "topics": [
+      "Question de recherche et problématique juridique",
+      "État des sources, doctrine et jurisprudence",
+      "Méthodes d’analyse et construction d’un plan",
+      "Rédaction, citation et argumentation scientifique"
+    ]
+  },
+  "DR:L2:Droit civil : contrats spéciaux": {
+    "profile": "applied",
+    "topics": [
+      "Qualification des principaux contrats",
+      "Formation, obligations et exécution",
+      "Inexécution et protection des parties",
+      "Analyse comparative de clauses contractuelles"
+    ]
+  },
+  "DR:L2:Procédure civile": {
+    "profile": "applied",
+    "topics": [
+      "Compétence et introduction de l’instance",
+      "Déroulement du procès civil",
+      "Preuve, jugement et voies de recours",
+      "Analyse guidée de dossiers procéduraux"
+    ]
+  },
+  "DR:L2:Droit pénal spécial": {
+    "profile": "applied",
+    "topics": [
+      "Méthode d’étude des incriminations",
+      "Infractions contre les personnes",
+      "Infractions contre les biens et la confiance",
+      "Qualification et analyse de cas"
+    ]
+  },
+  "DR:L2:Finances publiques et droit budgétaire": {
+    "profile": "applied",
+    "topics": [
+      "Principes et sources du droit budgétaire",
+      "Élaboration et adoption du budget",
+      "Exécution et contrôle des finances publiques",
+      "Analyse de documents financiers publics"
+    ]
+  },
+  "DR:L2:Droit du travail": {
+    "profile": "applied",
+    "topics": [
+      "Sources et acteurs des relations de travail",
+      "Formation et exécution du contrat",
+      "Conditions de travail et protection sociale",
+      "Rupture, conflits et mécanismes de règlement"
+    ]
+  },
+  "DR:L2:Droits humains et libertés publiques": {
+    "profile": "theory",
+    "topics": [
+      "Fondements et catégories des droits humains",
+      "Garanties constitutionnelles et internationales",
+      "Restrictions, proportionnalité et protection",
+      "Analyse de situations et mécanismes de recours"
+    ]
+  },
+  "DR:L3:Droit des sociétés": {
+    "profile": "applied",
+    "topics": [
+      "Formes sociales et choix d’organisation",
+      "Constitution, fonctionnement et gouvernance",
+      "Droits des associés et responsabilité",
+      "Transformations et difficultés de la société"
+    ]
+  },
+  "DR:L3:Procédure pénale": {
+    "profile": "applied",
+    "topics": [
+      "Principes et acteurs du procès pénal",
+      "Enquête et garanties procédurales",
+      "Instruction, jugement et voies de recours",
+      "Analyse de dossiers et simulations d’audience"
+    ]
+  },
+  "DR:L3:Droit fiscal": {
+    "profile": "applied",
+    "topics": [
+      "Sources et principes de l’imposition",
+      "Assiette, liquidation et recouvrement",
+      "Obligations déclaratives et contrôle",
+      "Contentieux fiscal et études de cas"
+    ]
+  },
+  "DR:L3:Droit international privé": {
+    "profile": "theory",
+    "topics": [
+      "Conflits de lois et qualifications",
+      "Compétence internationale des juridictions",
+      "Reconnaissance des décisions étrangères",
+      "Analyse de situations privées transfrontalières"
+    ]
+  },
+  "DR:L3:Droit foncier et immobilier": {
+    "profile": "applied",
+    "topics": [
+      "Sources et catégories de droits fonciers",
+      "Accès à la terre et sécurisation des titres",
+      "Opérations immobilières et publicité",
+      "Analyse documentaire de litiges fonciers"
+    ]
+  },
+  "DR:L3:Contentieux administratif": {
+    "profile": "applied",
+    "topics": [
+      "Organisation du contrôle juridictionnel",
+      "Recevabilité et types de recours",
+      "Instruction et effets des décisions",
+      "Rédaction d’arguments dans un cas administratif"
+    ]
+  },
+  "DR:L3:Stage et clinique juridique": {
+    "profile": "field",
+    "topics": [
+      "Accueil, écoute et confidentialité",
+      "Observation supervisée des pratiques juridiques",
+      "Recherche et préparation de dossiers encadrés",
+      "Rapport de stage et réflexion déontologique"
+    ]
+  },
+  "DR:L3:Travail de fin de cycle en droit": {
+    "profile": "research",
+    "topics": [
+      "Délimitation d’une problématique juridique",
+      "Analyse croisée des sources pertinentes",
+      "Construction d’une démonstration critique",
+      "Rédaction du mémoire et soutenance"
+    ]
+  },
+  "DR:L3:Droit des affaires OHADA": {
+    "profile": "applied",
+    "topics": [
+      "Institutions et instruments de l’OHADA",
+      "Sociétés et activité commerciale",
+      "Sûretés et règlement des difficultés",
+      "Recherche et analyse des actes uniformes applicables"
+    ]
+  },
+  "DR:L3:Droit des successions et libéralités": {
+    "profile": "applied",
+    "topics": [
+      "Ouverture et dévolution successorales",
+      "Administration et partage de la succession",
+      "Libéralités et protection des intéressés",
+      "Résolution de cas patrimoniaux"
+    ]
+  },
+  "DR:L3:Droit de l’environnement": {
+    "profile": "theory",
+    "topics": [
+      "Principes et sources du droit de l’environnement",
+      "Acteurs et instruments de protection",
+      "Responsabilité et accès à la justice",
+      "Analyse de projets et de contentieux environnementaux"
+    ]
+  },
+  "DR:L3:Déontologie des professions juridiques": {
+    "profile": "applied",
+    "topics": [
+      "Indépendance, probité et secret professionnel",
+      "Conflits d’intérêts et relations avec les clients",
+      "Responsabilité et discipline professionnelles",
+      "Analyse de dilemmes et simulations de situations"
+    ]
+  },
+  "THEO:L1:Introduction à l’Ancien Testament": {
+    "profile": "theory",
+    "topics": [
+      "Formation et organisation du corpus vétérotestamentaire",
+      "Contextes historiques et littéraires",
+      "Genres et principaux ensembles de livres",
+      "Méthodes introductives de lecture critique"
+    ]
+  },
+  "THEO:L1:Introduction au Nouveau Testament": {
+    "profile": "theory",
+    "topics": [
+      "Milieux historiques du christianisme naissant",
+      "Formation et organisation du corpus néotestamentaire",
+      "Genres, traditions et questions de transmission",
+      "Lecture contextualisée des principaux écrits"
+    ]
+  },
+  "THEO:L1:Histoire du christianisme ancien": {
+    "profile": "theory",
+    "topics": [
+      "Communautés chrétiennes des premiers siècles",
+      "Débats doctrinaux et formation des institutions",
+      "Christianisme et transformations de l’Empire",
+      "Analyse de sources historiques anciennes"
+    ]
+  },
+  "THEO:L1:Introduction à la philosophie": {
+    "profile": "theory",
+    "topics": [
+      "Questions et méthodes philosophiques",
+      "Logique, connaissance et argumentation",
+      "Éthique et philosophie de la personne",
+      "Lecture critique de textes philosophiques"
+    ]
+  },
+  "THEO:L1:Expression et communication françaises": {
+    "profile": "applied",
+    "topics": [
+      "Compréhension et synthèse de textes",
+      "Argumentation et expression écrite",
+      "Communication orale et écoute",
+      "Production de documents universitaires"
+    ]
+  },
+  "THEO:L1:Méthodologie des études théologiques": {
+    "profile": "research",
+    "topics": [
+      "Recherche documentaire en théologie",
+      "Lecture, prise de notes et problématisation",
+      "Citation, bibliographie et intégrité académique",
+      "Rédaction et présentation d’un dossier"
+    ]
+  },
+  "THEO:L1:Pentateuque et livres historiques": {
+    "profile": "applied",
+    "topics": [
+      "Composition et grands thèmes du Pentateuque",
+      "Récits fondateurs et traditions légales",
+      "Livres historiques et construction narrative",
+      "Lecture contextualisée et discussion interprétative"
+    ]
+  },
+  "THEO:L1:Évangiles synoptiques": {
+    "profile": "applied",
+    "topics": [
+      "Contexte et structure des évangiles synoptiques",
+      "Traditions communes et particularités narratives",
+      "Paraboles, récits et discours",
+      "Comparaison et analyse de péricopes"
+    ]
+  },
+  "THEO:L1:Grec biblique : initiation": {
+    "profile": "applied",
+    "topics": [
+      "Alphabet, prononciation et outils de travail",
+      "Morphologie nominale et éléments verbaux",
+      "Syntaxe introductive et vocabulaire fréquent",
+      "Lecture et traduction de phrases simples"
+    ]
+  },
+  "THEO:L1:Histoire du christianisme en Afrique": {
+    "profile": "theory",
+    "topics": [
+      "Premières implantations et échanges religieux",
+      "Missions, traductions et institutions",
+      "Églises africaines et dynamiques locales",
+      "Lecture critique des mémoires et des sources"
+    ]
+  },
+  "THEO:L1:Sociologie des religions": {
+    "profile": "applied",
+    "topics": [
+      "Approches sociologiques du fait religieux",
+      "Institutions, pratiques et appartenances",
+      "Religions et transformations sociales",
+      "Observation et analyse de situations religieuses"
+    ]
+  },
+  "THEO:L1:Introduction à la théologie systématique": {
+    "profile": "theory",
+    "topics": [
+      "Sources et méthodes de la théologie systématique",
+      "Révélation, foi et raison",
+      "Grands domaines de la réflexion doctrinale",
+      "Construction et discussion d’une question théologique"
+    ]
+  },
+  "THEO:L2:Exégèse de l’Ancien Testament": {
+    "profile": "applied",
+    "topics": [
+      "Établissement du contexte et du genre littéraire",
+      "Analyse de la structure et du vocabulaire",
+      "Interprétation historique et thématique",
+      "Rédaction d’une étude exégétique"
+    ]
+  },
+  "THEO:L2:Exégèse du Nouveau Testament": {
+    "profile": "applied",
+    "topics": [
+      "Critique textuelle et contextes des écrits",
+      "Analyse littéraire des passages choisis",
+      "Discussion des principales interprétations",
+      "Rédaction et présentation d’une exégèse"
+    ]
+  },
+  "THEO:L2:Théologie systématique : Dieu et création": {
+    "profile": "theory",
+    "topics": [
+      "Langage et connaissance de Dieu",
+      "Création, providence et responsabilité humaine",
+      "Principales formulations doctrinales",
+      "Discussion critique de textes théologiques"
+    ]
+  },
+  "THEO:L2:Hébreu biblique : initiation": {
+    "profile": "applied",
+    "topics": [
+      "Alphabet et conventions de lecture",
+      "Morphologie nominale et verbale élémentaire",
+      "Syntaxe introductive et lexique biblique",
+      "Lecture guidée et outils de traduction"
+    ]
+  },
+  "THEO:L2:Histoire de la Réforme": {
+    "profile": "theory",
+    "topics": [
+      "Contextes et acteurs des réformes",
+      "Débats doctrinaux et évolutions ecclésiales",
+      "Réformes, sociétés et cultures",
+      "Analyse comparative de documents historiques"
+    ]
+  },
+  "THEO:L2:Éthique chrétienne fondamentale": {
+    "profile": "applied",
+    "topics": [
+      "Sources et méthodes du raisonnement éthique",
+      "Conscience, liberté et responsabilité",
+      "Normes, vertus et discernement",
+      "Discussion de situations éthiques"
+    ]
+  },
+  "THEO:L2:Lettres pauliniennes": {
+    "profile": "applied",
+    "topics": [
+      "Contexte historique et forme épistolaire",
+      "Grands thèmes de la pensée paulinienne",
+      "Analyse de passages et de leur argumentation",
+      "Questions d’interprétation et réception"
+    ]
+  },
+  "THEO:L2:Théologie systématique : christologie": {
+    "profile": "theory",
+    "topics": [
+      "Sources et questions de la christologie",
+      "Formulations historiques et débats doctrinaux",
+      "Figures et interprétations contemporaines",
+      "Analyse critique de textes et arguments"
+    ]
+  },
+  "THEO:L2:Herméneutique biblique": {
+    "profile": "applied",
+    "topics": [
+      "Théories et histoire de l’interprétation",
+      "Texte, auteur, contexte et lecteur",
+      "Pluralité des méthodes et de la réception",
+      "Justification d’une démarche interprétative"
+    ]
+  },
+  "THEO:L2:Grec biblique : lecture de textes": {
+    "profile": "applied",
+    "topics": [
+      "Révision de la morphologie et de la syntaxe",
+      "Analyse grammaticale de péricopes",
+      "Usage raisonné des lexiques et outils",
+      "Traduction argumentée de textes choisis"
+    ]
+  },
+  "THEO:L2:Homilétique et communication pastorale": {
+    "profile": "applied",
+    "topics": [
+      "Analyse du texte et préparation du message",
+      "Structuration et adaptation au public",
+      "Expression orale, écoute et communication",
+      "Ateliers de présentation et retours critiques"
+    ]
+  },
+  "THEO:L2:Religions africaines et dialogue interreligieux": {
+    "profile": "theory",
+    "topics": [
+      "Diversité des traditions religieuses africaines",
+      "Pratiques, représentations et transformations",
+      "Méthodes et éthique du dialogue interreligieux",
+      "Analyse de rencontres et de situations de coexistence"
+    ]
+  },
+  "THEO:L3:Théologie systématique : ecclésiologie": {
+    "profile": "theory",
+    "topics": [
+      "Fondements et figures de l’Église",
+      "Ministères, communion et mission",
+      "Diversité ecclésiale et dialogue œcuménique",
+      "Discussion de textes et de modèles ecclésiologiques"
+    ]
+  },
+  "THEO:L3:Éthique sociale chrétienne": {
+    "profile": "applied",
+    "topics": [
+      "Dignité, justice et bien commun",
+      "Travail, économie et solidarités",
+      "Vie publique, paix et responsabilité collective",
+      "Analyse de questions sociales contextualisées"
+    ]
+  },
+  "THEO:L3:Théologie africaine et contextualisation": {
+    "profile": "theory",
+    "topics": [
+      "Émergence et courants des théologies africaines",
+      "Culture, mémoire et expérience religieuse",
+      "Méthodes de contextualisation et de critique",
+      "Étude comparée de contributions théologiques"
+    ]
+  },
+  "THEO:L3:Exégèse des livres prophétiques": {
+    "profile": "applied",
+    "topics": [
+      "Contextes historiques des écrits prophétiques",
+      "Genres, images et structures littéraires",
+      "Justice, alliance et espérance",
+      "Analyse et interprétation de passages choisis"
+    ]
+  },
+  "THEO:L3:Accompagnement et relation d’aide": {
+    "profile": "applied",
+    "topics": [
+      "Écoute active et relation d’accompagnement",
+      "Cadre éthique, confidentialité et limites du rôle",
+      "Situations de vulnérabilité et orientation adaptée",
+      "Mises en situation et analyse réflexive"
+    ]
+  },
+  "THEO:L3:Administration des communautés religieuses": {
+    "profile": "applied",
+    "topics": [
+      "Organisation, responsabilités et gouvernance",
+      "Gestion administrative et financière de base",
+      "Animation des équipes et planification",
+      "Transparence, prévention des abus et redevabilité"
+    ]
+  },
+  "THEO:L3:Stage pastoral supervisé": {
+    "profile": "field",
+    "topics": [
+      "Définition d’une mission pastorale supervisée",
+      "Observation et participation aux activités",
+      "Communication, éthique et analyse des pratiques",
+      "Carnet de stage et rapport réflexif"
+    ]
+  },
+  "THEO:L3:Travail de fin de cycle en théologie": {
+    "profile": "research",
+    "topics": [
+      "Question théologique et état de la recherche",
+      "Choix des sources et méthode d’analyse",
+      "Discussion et construction d’une argumentation",
+      "Rédaction, présentation et soutenance"
+    ]
+  },
+  "THEO:L3:Missiologie et engagement communautaire": {
+    "profile": "field",
+    "topics": [
+      "Fondements et débats de la missiologie",
+      "Contextes culturels et engagement communautaire",
+      "Conception d’un projet et partenariats",
+      "Évaluation et réflexion sur les pratiques"
+    ]
+  },
+  "THEO:L3:Liturgie et pratiques cultuelles": {
+    "profile": "applied",
+    "topics": [
+      "Histoire et fonctions de la liturgie",
+      "Textes, symboles et formes cultuelles",
+      "Organisation d’une célébration selon la tradition étudiée",
+      "Analyse et présentation de pratiques liturgiques"
+    ]
+  },
+  "THEO:L3:Théologie et développement durable": {
+    "profile": "applied",
+    "topics": [
+      "Création, responsabilité et écologie",
+      "Justice sociale et enjeux environnementaux",
+      "Communautés religieuses et développement local",
+      "Conception d’une initiative socio-environnementale"
+    ]
+  },
+  "THEO:L3:Séminaire de recherche théologique": {
+    "profile": "research",
+    "topics": [
+      "Discussion de textes et travaux de recherche",
+      "Évaluation des méthodes et des sources",
+      "Présentation et critique constructive des projets",
+      "Finalisation d’un travail scientifique en théologie"
+    ]
+  }
+}

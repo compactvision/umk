@@ -41,7 +41,7 @@ class Enrollment extends Model
         'payment_status' => PaymentStatus::class,
     ];
 
-    protected $appends = ['status_label', 'payment_status_label'];
+    protected $appends = ['reference', 'status_label', 'payment_status_label'];
 
     protected static function booted(): void
     {
@@ -49,6 +49,8 @@ class Enrollment extends Model
             $model->uuid ??= (string) Str::uuid();
         });
     }
+
+    public function academicEnrollment() { return $this->hasOne(\App\Models\Student\AcademicEnrollment::class, 'application_id'); }
 
     /** RELATIONS **/
     public function student()
@@ -79,6 +81,12 @@ class Enrollment extends Model
     public function events()
     {
         return $this->hasMany(EnrollmentEvent::class);
+    }
+
+    /** Référence courte, stable et unique pour les échanges avec le candidat. */
+    public function getReferenceAttribute(): string
+    {
+        return 'USK-'.str_pad((string) $this->id, 6, '0', STR_PAD_LEFT);
     }
 
     /** ACCESSORS **/

@@ -4,14 +4,31 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
 import { type RouteName, route } from 'ziggy-js';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'Université Simon Kimbangu';
 
 createServer((page) =>
     createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
-        title: (title) => `${title} - ${appName}`,
-        resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
+        title: (title) => (title.includes(appName) ? title : `${title} — ${appName}`),
+        resolve: (name) => {
+            const publicPages = [
+                'Homepage',
+                'Aboutpage',
+                'Admissionpage',
+                'Contactpage',
+                'Tuitionspage',
+                'Blogpage',
+                'BlogDetailsPage',
+                'courses/Coursespage',
+                'courses/CourseShow',
+                'faculties/FacultyShow',
+                'legal/LegalPage',
+                'legal/SitePlan',
+            ];
+            if (!publicPages.includes(name)) throw new Error('SSR réservé aux pages publiques');
+            return resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
+        },
         setup: ({ App, props }) => {
             /* eslint-disable */
             // @ts-expect-error

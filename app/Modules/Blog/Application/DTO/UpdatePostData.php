@@ -39,6 +39,7 @@ final class UpdatePostData
 
         // Slug
         public readonly bool $regenerateSlug = false,
+        public readonly ?string $videoUrl = null,
     ) {}
 
     public const REMOVE = '__REMOVE__';

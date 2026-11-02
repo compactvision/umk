@@ -3,7 +3,7 @@ export default function PageHeader({ onCreate, onCreateCategory }: { onCreate: (
         <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent">Blog</h1>
-                <p className="mt-2 text-slate-600">Gérez et publiez les actualités de l'UMK.</p>
+                <p className="mt-2 text-slate-600">Gérez et publiez les actualités de l'USK.</p>
             </div>
             <div className="flex items-center gap-3">
                 <button

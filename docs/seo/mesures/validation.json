@@ -1,0 +1,21 @@
+{
+  "targeted": {
+    "tests_passed": 45,
+    "assertions": 556,
+    "command": "php artisan test --compact tests/Feature/SeoPublicTest.php tests/Feature/SeoAudienceTest.php tests/Feature/EnrollmentJourneyTest.php tests/Feature/NewsVideoTest.php tests/Feature/AdminAppsTest.php"
+  },
+  "full_suite_last_run": {
+    "passed": 177,
+    "failed": 22,
+    "assertions": 5967,
+    "note": "Avant ajout des derniers cas ciblés. Erreurs User::factory absent, ancien scénario de création de compte et SiteModule 200 attendu au lieu de 302."
+  },
+  "client_and_ssr_build": "passed",
+  "eslint_seo_components": "passed",
+  "php_format_pint": "passed",
+  "global_typescript": {
+    "status": "failed",
+    "diagnostics": 349,
+    "note": "Code existant, notamment Sidebar, anciens écrans blog et professeur ; non déclaré valide globalement."
+  }
+}

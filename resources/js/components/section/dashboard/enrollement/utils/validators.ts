@@ -1,32 +1,34 @@
-// resources/js/pages/enrollment/utils/validators.ts
-import { FormData, PaymentStage, Requirements } from '../types';
-
+import type { FormData, Requirements } from '../types';
 export function validateStep(
     step: number,
     formData: FormData,
     requirements: Requirements,
     noLevelsForSelectedFaculty: boolean,
     isConfirmed: boolean,
-    paymentStage: PaymentStage,
-    isFree: boolean = false,
 ) {
     const errors: Record<string, string> = {};
-
-    switch (step) {
-        // ... cases 1, 2, 3 unchanged
-
-        case 4:
-            if (!isConfirmed) errors.confirmed = "Veuillez confirmer l'exactitude des informations";
-            // Si payant et à l'étape de paiement, on valide la carte
-            if (paymentStage === 'pay' && !isFree) {
-                if (!formData.cardNumber) errors.cardNumber = 'Veuillez entrer votre numéro de carte';
-                else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ''))) errors.cardNumber = 'Numéro de carte invalide';
-
-                if (!formData.cvv) errors.cvv = 'Veuillez entrer votre code CVV';
-                else if (!/^\d{3}$/.test(formData.cvv)) errors.cvv = 'Code CVV invalide';
-            }
-            break;
+    const validateDocuments = (documents: Requirements['personal_info']) => {
+        documents
+            .filter((doc) => doc.required)
+            .forEach((doc) => {
+                const value = formData.documents[doc.key];
+                if (!value?.uuid && !value?.temp?.token) errors[doc.key] = `Ajoutez le document « ${doc.label} » pour continuer.`;
+            });
+    };
+    if (step === 1) {
+        if (!formData.faculty_id) errors.faculty_id = 'Choisissez une faculté.';
+        if (!formData.level_id || noLevelsForSelectedFaculty) errors.level_id = 'Choisissez un niveau disponible.';
+        if (!formData.year_id) errors.year_id = 'Choisissez une année académique.';
     }
-
+    if (step === 2) {
+        if (!formData.name.trim()) errors.name = 'Indiquez votre nom complet.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) errors.email = 'Indiquez une adresse email valide.';
+        validateDocuments(requirements.personal_info);
+    }
+    if (step === 3) {
+        if (!formData.program.trim()) errors.program = 'Indiquez votre programme d’études.';
+        validateDocuments(requirements.academic_info);
+    }
+    if (step === 4 && !isConfirmed) errors.confirmed = 'Confirmez l’exactitude des informations avant de soumettre votre dossier.';
     return errors;
 }

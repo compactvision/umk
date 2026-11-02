@@ -3,7 +3,7 @@ import DashboardLogin from '@/components/section/dashboard/auth/DashboardLogin';
 
 export default function Login() {
     return (
-        <Dashboard>
+        <Dashboard authPage>
             <DashboardLogin />
         </Dashboard>
     );

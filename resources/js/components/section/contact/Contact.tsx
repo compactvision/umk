@@ -181,8 +181,8 @@ export default function Contact() {
                         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:shadow-3xl">
                             <div className="h-96 lg:h-full min-h-[400px]">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d497.30809873161564!2d15.511390394230279!3d-4.323441389480845!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a4facb0bb2a1b%3A0x3e21b9f521803de8!2sUMK%20(universit%C3%A9%20moderne%20de%20kinkole)!5e0!3m2!1sfr!2sfr!4v1751294876823!5m2!1sfr!2sfr"
-                                    title="Localisation UMK sur Google Maps"
+                                    src="https://maps.google.com/maps?q=Universit%C3%A9%20Simon%20Kimbangu%20Kalamu%20Kinshasa&output=embed"
+                                    title="Localisation USK sur Google Maps"
                                     className="w-full h-full border-0"
                                     loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
@@ -203,7 +203,7 @@ export default function Contact() {
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Appelez-nous</h4>
                                         <p className="text-gray-600 text-sm">Du lundi au vendredi de 9h à 18h</p>
-                                        <p className="text-yellow-600 font-medium">{site.contactPhone}</p>
+                                        <p className="text-yellow-600 font-medium">{site?.contactPhone}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-4 group">
@@ -215,7 +215,7 @@ export default function Contact() {
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Écrivez-nous</h4>
                                         <p className="text-gray-600 text-sm">Notre équipe est à votre écoute</p>
-                                        <p className="text-yellow-600 font-medium">{site.contactEmail}</p>
+                                        <p className="text-yellow-600 font-medium">{site?.contactEmail}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-4 group sm:col-span-2">
@@ -227,8 +227,8 @@ export default function Contact() {
                                     </div>
                                     <div>
                                         <h4 className="text-lg font-semibold text-gray-900">Notre campus</h4>
-                                        <p className="text-gray-600 text-sm">Venez visiter l'université UMK</p>
-                                        <p className="text-green-600 font-medium">{site.address}</p>
+                                        <p className="text-gray-600 text-sm">Venez visiter l'université USK</p>
+                                        <p className="text-green-600 font-medium">{site?.address}</p>
                                     </div>
                                 </div>
                             </div>

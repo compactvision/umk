@@ -52,11 +52,21 @@ class DraftController extends Controller
             $dto = SaveProgressDTO::fromRequest($validated, $request->user()->id);
             $enrollment = $this->saveProgressUseCase->execute($dto);
 
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => true, 'draft' => [
+                    'uuid' => $enrollment->uuid,
+                    'last_step' => $enrollment->last_step,
+                    'form_snapshot' => $enrollment->form_snapshot,
+                ]]);
+            }
             return back()->with('success', 'Progression sauvegardée');
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => false, 'message' => 'Impossible de sauvegarder le dossier. Réessayez.'], 422);
+            }
+            return back()->withErrors(['error' => 'Impossible de sauvegarder le dossier. Réessayez.']);
         }
     }
 }

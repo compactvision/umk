@@ -1,8 +1,9 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import { Head, Link, useForm } from '@inertiajs/react';
+import VideoPlayer from '@/components/news/VideoPlayer';
+import { gradientOptions } from '@/components/section/dashboard/blog/utils/gradientOptions';
+import { Head, useForm } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import EditPostModal from './EditPostModal';
-import { gradientOptions } from '@/components/section/dashboard/blog/utils/gradientOptions';
 
 // ---- Types ----
 type GalleryItem = { path: string; alt?: string | null; caption?: string | null };
@@ -10,6 +11,7 @@ type GalleryItem = { path: string; alt?: string | null; caption?: string | null 
 type Post = {
     id: number;
     uuid: string;
+    video_url?: string | null;
     title: string;
     slug: string;
     excerpt?: string | null;
@@ -83,39 +85,9 @@ export default function Show({ post, can }: PageProps) {
                 <div className="mx-auto max-w-6xl px-6 py-8 md:px-8">
                     {/* Breadcrumb + Actions */}
                     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center text-sm">
-                            <Link
-                                href={route('dashboard.admin.posts.index')}
-                                className="group flex items-center gap-2 text-slate-500 transition-colors hover:text-slate-700"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4 transition-transform group-hover:-translate-x-1"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                                Articles
-                            </Link>
-                            <span className="mx-2 text-slate-400">/</span>
-                            <span className="max-w-xs truncate font-medium text-slate-700 sm:max-w-md">{post.title}</span>
-                        </div>
+                        <span className="admin-detail-context">GESTION DES ACTUALITÉS</span>
 
                         <div className="flex items-center gap-3">
-                            <Link
-                                href={route('dashboard.admin.posts.index')}
-                                className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-medium text-slate-700 shadow-sm transition-all hover:shadow-md"
-                            >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                    </svg>
-                                    Retour
-                                </span>
-                                <div className="absolute inset-0 bg-gradient-to-r from-slate-500/10 to-slate-600/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
-                            </Link>
                             <button
                                 onClick={() => setOpenEdit(true)}
                                 className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-medium text-slate-700 shadow-sm transition-all hover:shadow-md"
@@ -383,6 +355,12 @@ export default function Show({ post, can }: PageProps) {
                 </div>
             </div>
 
+            {post.video_url && (
+                <section className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white p-5">
+                    <h2 className="mb-4 text-xl font-semibold">La vidéo de l’actualité</h2>
+                    <VideoPlayer source={post.video_url} poster={cover1 || undefined} title={post.title} />
+                </section>
+            )}
             {/* Image Modal */}
             {selectedImage !== null && (
                 <div

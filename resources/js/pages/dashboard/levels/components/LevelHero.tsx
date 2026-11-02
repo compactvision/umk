@@ -1,28 +1,47 @@
-import { Building } from 'lucide-react';
-
-export default function LevelHero({ levelData, levelDetail }: { levelData: any; levelDetail: any }) {
+import { Award, Building2, Clock3, GraduationCap } from 'lucide-react';
+export default function LevelHero({
+    levelData,
+    levelDetail,
+}: {
+    levelData: { duration_years?: number; has_certificate?: boolean };
+    levelDetail?: { faculty_name?: string; level_title?: string; level_description?: string; level_code?: string };
+}) {
     return (
-        <div className="relative h-96 overflow-hidden -mt-[5%] mb-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-black/20 z-20"></div>
-            <img
-                src={levelData.image ? `/storage/${levelData.image}` : '/assets/img/bg/hero.jpg'}
-                alt={levelData.level_name || 'Niveau'}
-                className="w-full h-full object-cover brightness-110 contrast-105"
-            />
-            <div className="absolute inset-0 z-30 flex items-center px-12">
-                <div className="max-w-[50rem] text-white">
-                    <div className="flex items-center gap-3 mb-2 text-indigo-300 font-medium">
-                        <Building size={20} />
-                        <span>{levelDetail?.faculty_name || levelDetail.faculty_name}</span>
-                    </div>
-                    <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent leading-tight">
-                        {levelDetail.level_title || 'Nom du niveau non défini'}
-                    </h1>
-                    <p className="text-xl text-gray-200 leading-relaxed mb-8 max-w-[42rem]">
-                        {levelDetail.level_description || 'Description non disponible'}
-                    </p>
+        <header className="ld-hero">
+            <div className="ld-hero-content">
+                <span className="ld-eyebrow">OFFRE DE FORMATION · USK</span>
+                <div className="ld-faculty">
+                    <Building2 size={15} strokeWidth={1.7} />
+                    {levelDetail?.faculty_name || 'Université Simon Kimbangu'}
+                </div>
+                <h1>{levelDetail?.level_title || 'Niveau de formation'}</h1>
+                <p>{levelDetail?.level_description || 'Retrouvez les informations du programme et les conditions pour rejoindre ce parcours.'}</p>
+                <div className="ld-hero-tags">
+                    {levelDetail?.level_code && (
+                        <span>
+                            <GraduationCap size={15} />
+                            {levelDetail.level_code}
+                        </span>
+                    )}
+                    {levelData.duration_years > 0 && (
+                        <span>
+                            <Clock3 size={15} />
+                            {levelData.duration_years} an{levelData.duration_years > 1 ? 's' : ''}
+                        </span>
+                    )}
+                    {levelData.has_certificate && (
+                        <span>
+                            <Award size={15} />
+                            Certificat délivré
+                        </span>
+                    )}
                 </div>
             </div>
-        </div>
+            <div className="ld-hero-seal" aria-hidden="true">
+                <GraduationCap size={65} strokeWidth={1} />
+                <span>SCIENCE · CONSCIENCE · VÉRITÉ</span>
+                <strong>USK</strong>
+            </div>
+        </header>
     );
 }

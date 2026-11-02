@@ -53,38 +53,39 @@ const DashboardLogin = () => {
     };
 
     return (
-        <div className="w-full flex items-center justify-center font-sans bg-gradient-to-br from-slate-50 to-gray-100">
-            <div className="w-full max-w-md px-6">
+        <div className="usk-auth-form w-full flex items-center justify-center font-sans">
+            <div className="usk-auth-panel w-full min-w-0">
                 {/* Logo */}
                 <div className="flex justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center font-bold text-white text-3xl transition-all duration-500 hover:scale-110 hover:rotate-6">
-                        D
+                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center font-bold text-white text-3xl transition-all duration-500 hover:scale-110 hover:rotate-6">
+                        <img src="/assets/usk/logo.png" alt="Université Simon Kimbangu" className="h-full w-full object-contain p-1" />
                     </div>
                 </div>
-                
+
                 {/* Titre */}
                 <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 mb-1">Bienvenue</h1>
                     <p className="text-gray-600">Connectez-vous à votre espace</p>
                 </div>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'email' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                             </svg>
                         </div>
                         <input
                             type="email"
                             name="email"
+                            autoComplete="email"
                             value={data.email}
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('email')}
                             onBlur={() => setFocusedField(null)}
                             className={`w-full pl-12 pr-4 py-3.5 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                ${focusedField === 'email' 
-                                    ? 'border-b-2 border-indigo-500' 
+                                ${focusedField === 'email'
+                                    ? 'border-b-2 border-emerald-500'
                                     : 'border-b border-gray-300'
                                 }`}
                             placeholder="Adresse email"
@@ -95,20 +96,21 @@ const DashboardLogin = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-6 w-6 transition-colors duration-300 ${focusedField === 'password' ? 'text-emerald-500' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
                         <input
                             type="password"
                             name="password"
+                            autoComplete="current-password"
                             value={data.password}
                             onChange={handleInputChange}
                             onFocus={() => setFocusedField('password')}
                             onBlur={() => setFocusedField(null)}
                             className={`w-full pl-12 pr-4 py-3.5 bg-transparent transition-all duration-300 outline-none text-gray-700 placeholder-gray-400
-                                ${focusedField === 'password' 
-                                    ? 'border-b-2 border-indigo-500' 
+                                ${focusedField === 'password'
+                                    ? 'border-b-2 border-emerald-500'
                                     : 'border-b border-gray-300'
                                 }`}
                             placeholder="Mot de passe"
@@ -117,25 +119,25 @@ const DashboardLogin = () => {
                         {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
                     </div>
 
-                    <div className="flex justify-between items-center py-2">
+                    <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-3 py-2">
                         <label className="flex items-center gap-3 text-gray-600 cursor-pointer">
                             <input
                                 type="checkbox"
                                 name="remember"
                                 checked={data.remember}
                                 onChange={handleInputChange}
-                                className="w-5 h-5 text-indigo-600 bg-transparent border-gray-300 rounded focus:ring-indigo-500"
+                                className="w-5 h-5 text-emerald-600 bg-transparent border-gray-300 rounded focus:ring-emerald-500"
                             />
                             Se souvenir
                         </label>
-                        <Link href={route('password.request')} className="text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+                        <Link href={route('password.request')} className="text-emerald-600 hover:text-emerald-800 transition-colors duration-200">
                             Mot de passe oublié ?
                         </Link>
                     </div>
 
-                    <button 
-                        type="submit" 
-                        className="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 text-base" 
+                    <button
+                        type="submit"
+                        className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium rounded-lg transition-all duration-300 hover:from-emerald-600 hover:to-teal-700 text-base"
                         disabled={processing}
                     >
                         {getButtonText()}
@@ -147,7 +149,7 @@ const DashboardLogin = () => {
                         <div className="w-full border-t border-gray-300"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-gradient-to-br from-slate-50 to-gray-100 text-gray-500">ou</span>
+                        <span className="usk-auth-divider px-4 text-gray-500">ou</span>
                     </div>
                 </div>
 
@@ -174,7 +176,7 @@ const DashboardLogin = () => {
 
                 <div className="text-center text-gray-600">
                     Pas encore de compte ?{' '}
-                    <Link href={route('register')} className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors duration-200">
+                    <Link href={route('register')} className="text-emerald-600 font-medium hover:text-emerald-800 transition-colors duration-200">
                         Créer un compte
                     </Link>
                 </div>

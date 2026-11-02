@@ -26,7 +26,8 @@ class EnrollmentSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Confirmation de réception de votre candidature',
+            from: new \Illuminate\Mail\Mailables\Address(config('mail.from.address'), 'Université Simon Kimbangu'),
+            subject: 'USK — Votre candidature a bien été reçue',
         );
     }
 
@@ -36,12 +37,26 @@ class EnrollmentSubmitted extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.enrollment.submitted',
+            view: 'emails.enrollment.submitted',
+            text: 'emails.transactional-text',
             with: [
-                'studentName' => $this->enrollment->student->name ?? 'Étudiant',
-                'levelName' => $this->enrollment->level->name ?? $this->enrollment->level->title ?? 'Non spécifié',
-                'matricule' => $this->enrollment->matricule,
-                'submittedAt' => $this->enrollment->updated_at->format('d/m/Y à H:i'),
+                'preheader' => 'Votre dossier a été transmis au service des inscriptions de l’USK.',
+                'eyebrow' => 'SUIVI DE VOTRE CANDIDATURE',
+                'heading' => 'Votre projet prend forme.',
+                'recipientName' => $this->enrollment->student ? TransactionalEmail::recipientName($this->enrollment->student) : 'Madame, Monsieur',
+                'paragraphs' => ['Nous vous confirmons la réception de votre candidature à l’Université Simon Kimbangu. Vous pouvez retrouver votre dossier et suivre son évolution depuis votre espace candidat.'],
+                'details' => array_filter([
+                    'Formation' => $this->enrollment->level?->title,
+                    'Année académique' => $this->enrollment->academicYear?->title,
+                    'Référence du dossier' => $this->enrollment->reference,
+                    'Matricule' => $this->enrollment->matricule,
+                    'Date de réception' => $this->enrollment->updated_at?->timezone('Africa/Kinshasa')->format('d/m/Y à H:i').' (Kinshasa)',
+                ], fn ($value) => $value !== null && $value !== ''),
+                'actionUrl' => url('/dashboard/enrollments/'.$this->enrollment->uuid),
+                'actionLabel' => 'Suivre ma candidature',
+                'noticeTitle' => 'La prochaine étape',
+                'notice' => 'Le service des inscriptions procédera à l’examen de votre dossier. Cet accusé de réception ne vaut pas confirmation d’admission. Consultez votre espace pour connaître l’état de votre demande.',
+                'signature' => 'Le service des inscriptions',
             ],
         );
     }

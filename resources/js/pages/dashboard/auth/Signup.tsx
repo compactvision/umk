@@ -4,7 +4,7 @@ import DashboardSignup from '@/components/section/dashboard/auth/DashboardSignup
 
 export default function Signup() {
   return (
-    <Dashboard>
+    <Dashboard authPage>
         <DashboardSignup />
     </Dashboard>
   )

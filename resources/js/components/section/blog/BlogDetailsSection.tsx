@@ -56,7 +56,7 @@ const BlogDetailsSection = ({ post, categories }) => {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('fr-CD', {
             month: '2-digit',
             day: '2-digit',
             year: 'numeric',
@@ -105,7 +105,7 @@ const BlogDetailsSection = ({ post, categories }) => {
                 id: comments.length + 1,
                 author: newComment.name,
                 avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.name)}&background=random`,
-                date: new Date().toLocaleString('en-US', {
+                date: new Date().toLocaleString('fr-CD', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
@@ -130,9 +130,9 @@ const BlogDetailsSection = ({ post, categories }) => {
                             ...comment.replies,
                             {
                                 id: Date.now(),
-                                author: newComment.name || 'Anonymous',
-                                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.name || 'Anonymous')}&background=random`,
-                                date: new Date().toLocaleString('en-US', {
+                                author: newComment.name || 'Université Simon Kimbangu',
+                                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.name || 'Université Simon Kimbangu')}&background=random`,
+                                date: new Date().toLocaleString('fr-CD', {
                                     month: 'short',
                                     day: 'numeric',
                                     year: 'numeric',
@@ -188,7 +188,7 @@ const BlogDetailsSection = ({ post, categories }) => {
                     {/* Contenu principal */}
                     <div className="lg:col-span-2">
                         {/* Image principale */}
-                        <div className="group relative mb-8 overflow-hidden rounded-2xl shadow-2xl">
+                        <div className="group relative mb-8 overflow-hidden rounded-sm shadow-sm">
                             <img
                                 src={`/storage/${post.main_image_1}` || 'https://picsum.photos/seed/blog_single/1200/600.jpg'}
                                 alt={post.title}
@@ -250,8 +250,8 @@ const BlogDetailsSection = ({ post, categories }) => {
                                     <User className="h-5 w-5 text-white" />
                                 </div>
                                 <div>
-                                    <span className="text-sm font-medium text-gray-800 sm:text-base">{post.author?.last_name || 'Anonymous'}</span>
-                                    <div className="text-xs text-gray-500 sm:text-sm">{post.author?.role || 'Administarteur'}</div>
+                                    <span className="text-sm font-medium text-gray-800 sm:text-base">{post.author?.last_name || 'Université Simon Kimbangu'}</span>
+                                    <div className="text-xs text-gray-500 sm:text-sm">{post.author?.role || 'Administration'}</div>
                                 </div>
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-gray-500">
@@ -374,19 +374,19 @@ const BlogDetailsSection = ({ post, categories }) => {
                                 <span className="text-sm text-gray-600">Partager:</span>
                                 <a
                                     href="#"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white transition-colors hover:bg-emerald-700"
                                 >
                                     <FaFacebookF className="text-sm" />
                                 </a>
                                 <a
                                     href="#"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-400 text-white transition-colors hover:bg-blue-500"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 text-white transition-colors hover:bg-emerald-500"
                                 >
                                     <FaTwitter className="text-sm" />
                                 </a>
                                 <a
                                     href="#"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-700 text-white transition-colors hover:bg-blue-800"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-700 text-white transition-colors hover:bg-emerald-800"
                                 >
                                     <FaLinkedinIn className="text-sm" />
                                 </a>
@@ -425,7 +425,7 @@ const BlogDetailsSection = ({ post, categories }) => {
 
                         {/* Section des commentaires */}
                         {/* <div className="py-8">
-                            <h2 className="mb-6 text-2xl font-bold text-gray-800">Comments ({post.comments_count || comments.length})</h2>
+                            <h2 className="mb-6 text-2xl font-bold text-gray-800">Commentaires ({post.comments_count || comments.length})</h2>
 
                             {comments.length > 0 && (
                                 <div className="mb-8 space-y-6">

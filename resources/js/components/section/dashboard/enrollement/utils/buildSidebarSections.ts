@@ -1,8 +1,8 @@
 // resources/js/pages/enrollment/utils/buildSidebarSections.ts
-import { BookOpen, Building2, Calendar, CheckCircle2, CreditCard, FileText, GraduationCap, Lock, Mail, User } from 'lucide-react';
-import { PaymentStage, Requirements, Section, SectionField } from '../types';
+import { BookOpen, Building2, Calendar, CheckCircle2, CreditCard, FileText, GraduationCap, Mail, User } from 'lucide-react';
+import { Requirements, Section, SectionField } from '../types';
 
-export function buildSidebarSections(requirements: Requirements, paymentStage: PaymentStage): Section[] {
+export function buildSidebarSections(requirements: Requirements): Section[] {
     const personalDocFields: SectionField[] = (requirements.personal_info ?? []).map((d) => ({
         key: d.key,
         label: d.label ?? d.key,
@@ -17,15 +17,7 @@ export function buildSidebarSections(requirements: Requirements, paymentStage: P
         type: 'doc',
     }));
 
-    const paymentFields: SectionField[] = [
-        { key: 'confirmed', label: 'Certification', icon: CheckCircle2, type: 'confirm' },
-        ...(paymentStage === 'pay' && requirements.payment
-            ? [
-                  { key: 'cardNumber', label: 'Numéro de carte', icon: CreditCard, type: 'payment' },
-                  { key: 'cvv', label: 'Code CVV', icon: Lock, type: 'payment' },
-              ]
-            : []),
-    ];
+    const paymentFields: SectionField[] = [{ key: 'confirmed', label: 'Certification', icon: CheckCircle2, type: 'confirm' }];
 
     return [
         {
@@ -48,7 +40,7 @@ export function buildSidebarSections(requirements: Requirements, paymentStage: P
             fields: [{ key: 'program', label: "Programme d'études", icon: BookOpen }, ...academicDocFields],
         },
         {
-            title: 'Paiement & Confirmation',
+            title: 'Vérification du dossier',
             icon: CreditCard,
             fields: paymentFields,
         },

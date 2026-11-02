@@ -34,6 +34,7 @@ class CreatePostService
             commentsCount: 0,
             status: $data->status,
             publishedAt: $data->publishedAt,
+            videoUrl: $data->videoUrl,
         );
 
         return $this->posts->save($post);

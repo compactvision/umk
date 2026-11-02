@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
             'last_login_ip' => $request->ip(),
         ]);
 
-        $user->assignRole('admin');
+        $user->assignRole(\Spatie\Permission\Models\Role::findOrCreate('user','web'));
 
         event(new Registered($user));
 
