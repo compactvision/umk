@@ -1,8 +1,9 @@
+import HomeHero from '@/components/home/HomeHero';
 import App from '@/components/layouts/Home/App';
 import PublicImage from '@/components/seo/PublicImage';
 import { fields } from '@/lib/usk';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Globe2, GraduationCap, MoveUpRight } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Globe2, GraduationCap, MoveUpRight } from 'lucide-react';
 
 type Faculty = { id: number; name: string; levels?: { id: number }[] };
 type News = {
@@ -20,65 +21,7 @@ export default function Homepage() {
     const posts = (props.posts as { data?: News[] } | undefined)?.data ?? [];
     return (
         <App>
-            <section className="usk-hero">
-                <PublicImage
-                    className="usk-hero-image"
-                    src="/assets/usk/academic.jpg"
-                    alt="Étudiants de l’Université Simon Kimbangu réunis lors d’une activité académique"
-                    fetchPriority="high"
-                    loading="eager"
-                    sizes="100vw"
-                />
-                <div className="usk-container usk-hero-content">
-                    <div className="usk-hero-topline">
-                        <span className="usk-eyebrow">Un héritage. Une ambition. Votre avenir.</span>
-                        <span className="usk-hero-location">KINSHASA · RDC</span>
-                    </div>
-                    <div className="usk-hero-copy">
-                        <h1>
-                            Le savoir pour
-                            <br />
-                            grandir.
-                            <br />
-                            <em>
-                                La conscience
-                                <br />
-                                pour agir.
-                            </em>
-                        </h1>
-                        <p>À l’Université Simon Kimbangu, faites de votre ambition une force pour vous-même et pour la société.</p>
-                        <div className="usk-actions">
-                            <Link href="/courses" className="usk-button usk-button-gold">
-                                Trouver ma formation <ArrowUpRight size={19} />
-                            </Link>
-                            <Link href="/about" className="usk-text-link">
-                                Découvrir l’université <ArrowRight size={18} />
-                            </Link>
-                        </div>
-                    </div>
-                    <div className="usk-hero-bottom">
-                        <a href="#explorer">
-                            Explorer l’USK <ArrowDown size={16} />
-                        </a>
-                        <span>
-                            SCIENCE <i /> CONSCIENCE <i /> VÉRITÉ
-                        </span>
-                        <span className="usk-photo-credit">Au cœur de notre communauté</span>
-                    </div>
-                </div>
-                <Link href="/admission" className="usk-hero-note">
-                    <span className="usk-note-icon">
-                        <GraduationCap size={24} />
-                    </span>
-                    <div>
-                        <small>VOTRE PROCHAINE ÉTAPE</small>
-                        <strong>Un avenir à votre hauteur.</strong>
-                        <span>
-                            Découvrez les admissions <ArrowUpRight size={16} />
-                        </span>
-                    </div>
-                </Link>
-            </section>
+            <HomeHero />
             <div className="usk-quicklinks" id="explorer">
                 <div className="usk-container">
                     {[
