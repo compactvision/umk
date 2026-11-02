@@ -473,3 +473,63 @@
         padding-bottom: 50px;
     }
 }
+
+/* Keep section navigation in place while the form scrolls independently. */
+.student-portal.is-profile .student-profile-form {
+    max-height: min(68dvh, 820px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #a7b89c transparent;
+    scrollbar-gutter: stable;
+    padding: 16px 12px 4px 4px;
+    scroll-padding-top: 16px;
+}
+.student-portal.is-profile .student-profile-form:focus-visible {
+    outline: 2px solid #809b71;
+    outline-offset: 4px;
+}
+.student-portal.is-profile .profile-section-nav a[aria-current='location'] {
+    color: #234f38;
+    background: #eaf2e2;
+    font-weight: 600;
+}
+.student-portal.is-profile .profile-save-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 15;
+    background: #fffefb;
+    border: 1px solid #dfe6d9;
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 -6px 24px #173b280a;
+}
+@media (max-width: 768px) {
+    .student-portal.is-profile .profile-section-nav {
+        position: sticky;
+        top: 64px;
+        z-index: 20;
+        gap: 8px;
+        padding: 10px 4px;
+        background: #f8f7f2;
+        border-bottom: 1px solid #dfe6d9;
+        scrollbar-width: thin;
+    }
+    .student-portal.is-profile .profile-section-nav a {
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid #e2e8da;
+        font-size: 11px;
+    }
+    .student-portal.is-profile .student-profile-form {
+        max-height: 65dvh;
+        padding-right: 8px;
+    }
+    .student-portal.is-profile .profile-save-bar p {
+        display: none;
+    }
+    .student-portal.is-profile .profile-save-bar {
+        padding: 10px;
+    }
+}

@@ -1,3 +1,4 @@
+import NetworkFailureNotice from '@/components/system/NetworkFailureNotice';
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';
@@ -10,8 +11,14 @@ createInertiaApp({
     title: (title) => (title.includes(appName) ? title : `${title} — ${appName}`),
     resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
     setup({ el, App, props }) {
-        if (el.dataset.ssr === 'true') hydrateRoot(el, <App {...props} />);
-        else createRoot(el).render(<App {...props} />);
+        const content = (
+            <>
+                <App {...props} />
+                <NetworkFailureNotice />
+            </>
+        );
+        if (el.dataset.ssr === 'true') hydrateRoot(el, content);
+        else createRoot(el).render(content);
     },
     progress: {
         color: '#4B5563',

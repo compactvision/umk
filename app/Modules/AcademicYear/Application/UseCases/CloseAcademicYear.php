@@ -10,12 +10,18 @@ final class CloseAcademicYear
 
     public function execute(int $id): void
     {
-        $year = $this->repo->findById($id);
-        if (!$year) {
-            throw new \DomainException("Année académique introuvable.");
-        }
+        \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            \App\Models\AcademicYear::orderBy('id')->lockForUpdate()->get();
+            $year = $this->repo->findById($id);
+            if (! $year) {
+                throw new \DomainException('Année académique introuvable.');
+            }
 
-        $year->close();
-        $this->repo->save($year);
+            if ($year->status() === 'closed') {
+                return;
+            }
+            $year->close();
+            $this->repo->save($year);
+        }, 3);
     }
 }

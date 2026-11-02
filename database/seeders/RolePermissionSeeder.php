@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -45,7 +44,7 @@ class RolePermissionSeeder extends Seeder
             'faculties.update',
 
             // Super Admin
-            'super admin'
+            'super admin',
         ];
 
         foreach ($permissions as $permission) {
@@ -59,12 +58,12 @@ class RolePermissionSeeder extends Seeder
             'candidate' => ['apply to programs', 'view application status'],
             'professor' => ['view dashboard', 'manage courses', 'grade assignments', 'manage students'],
             'admin' => ['manage academic access', 'manage academic finance', 'publish academic content', 'view dashboard', 'manage users', 'manage content', 'configure settings', 'faculties.create', 'faculties.update'],
-            'super admin' => Permission::pluck('name')->toArray()
+            'super admin' => Permission::pluck('name')->toArray(),
         ];
 
         foreach ($roles as $role => $rolePermissions) {
             $role = Role::firstOrCreate(['name' => $role]);
-            $role->syncPermissions($rolePermissions);
+            $role->givePermissionTo($rolePermissions);
         }
     }
 }

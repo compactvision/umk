@@ -15,3 +15,5 @@
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+.network-failure-notice{position:fixed;bottom:24px;right:24px;z-index:10000;max-width:460px;padding:24px;border:1px solid #be8c38;border-radius:12px;background:#fffaf0;color:#153e34;font:15px/1.6 system-ui;box-shadow:0 8px 40px #0002}.network-failure-notice p{margin:12px 0}.network-failure-notice div{display:flex;gap:12px;flex-wrap:wrap}.network-failure-notice button{border:1px solid #153e34;padding:8px 14px;border-radius:6px;cursor:pointer}.network-failure-notice button:first-child{background:#153e34;color:white}.network-failure-notice button:focus-visible{outline:3px solid #9a6916;outline-offset:3px}@media(max-width:600px){.network-failure-notice{left:12px;right:12px;bottom:12px}}

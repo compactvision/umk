@@ -25,8 +25,10 @@ export default function StudentProfileForm({
 }) {
     const values = Object.fromEntries(Object.entries(profile.values).map(([key, value]) => [key, value == null ? '' : String(value)]));
     const form = useForm<ProfileData>({ ...values, email_current_password: '', photo: null, remove_photo: false });
+    const [activeSection, setActiveSection] = useState<string>('identity');
     const [preview, setPreview] = useState<string | null>(null);
     const photoInput = useRef<HTMLInputElement>(null);
+    const formViewport = useRef<HTMLFormElement>(null);
     useEffect(() => {
         const file = form.data.photo;
         if (!(file instanceof File)) {
@@ -37,6 +39,28 @@ export default function StudentProfileForm({
         setPreview(url);
         return () => URL.revokeObjectURL(url);
     }, [form.data.photo]);
+    useEffect(() => {
+        const viewport = formViewport.current;
+        if (!viewport) return;
+        let frame = 0;
+        const updateActiveSection = () => {
+            let current = sections[0][0];
+            for (const [id] of sections) {
+                const node = document.getElementById(`profile-section-${id}`);
+                if (node && node.getBoundingClientRect().top <= viewport.getBoundingClientRect().top + 48) current = id;
+            }
+            setActiveSection(current);
+            frame = 0;
+        };
+        const onScroll = () => {
+            if (!frame) frame = window.requestAnimationFrame(updateActiveSection);
+        };
+        viewport.addEventListener('scroll', onScroll, { passive: true });
+        return () => {
+            viewport.removeEventListener('scroll', onScroll);
+            window.cancelAnimationFrame(frame);
+        };
+    }, []);
     const field = (name: string, label: string, type = 'text', options?: { value: string; label: string }[], required = false, wide = false) => (
         <div className={`profile-field ${wide ? 'is-wide' : ''}`} key={name}>
             <label htmlFor={`profile-${name}`}>
@@ -143,7 +167,23 @@ export default function StudentProfileForm({
             <div className="profile-editor-layout">
                 <nav className="profile-section-nav" aria-label="Sections du formulaire de profil">
                     {sections.map(([id, title, Icon]) => (
-                        <a key={id} href={`#profile-section-${id}`}>
+                        <a
+                            key={id}
+                            href={`#profile-section-${id}`}
+                            aria-current={activeSection === id ? 'location' : undefined}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                setActiveSection(id);
+                                const viewport = formViewport.current;
+                                const target = document.getElementById(`profile-section-${id}`);
+                                if (viewport && target) {
+                                    viewport.scrollTo({
+                                        top: viewport.scrollTop + target.getBoundingClientRect().top - viewport.getBoundingClientRect().top - 16,
+                                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+                                    });
+                                }
+                            }}
+                        >
                             <Icon size={17} />
                             {title}
                         </a>
@@ -151,6 +191,9 @@ export default function StudentProfileForm({
                 </nav>
                 <form
                     className="student-profile-form"
+                    ref={formViewport}
+                    tabIndex={0}
+                    aria-label="Informations du profil, contenu défilant"
                     encType="multipart/form-data"
                     onSubmit={(event) => {
                         event.preventDefault();

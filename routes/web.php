@@ -207,11 +207,11 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         Route::post('/notifications/{notification}/open', [\App\Modules\Enrollment\Infrastructure\Http\Controllers\EnrollmentNotificationController::class, 'open'])->name('notifications.open');
         Route::prefix('/academic-years')->name('academic-years.')->group(function () {
             Route::get('/', [AcademicYearController::class, 'index'])->name('index');
-            Route::get('/{id}', [AcademicYearController::class, 'show'])->name('show');
+            Route::get('/{id}', [AcademicYearController::class, 'show'])->whereNumber('id')->name('show');
             Route::post('/', [AcademicYearController::class, 'store'])->name('store');
-            Route::put('/{id}', [AcademicYearController::class, 'update'])->name('update');
-            Route::patch('/{id}/open', [AcademicYearController::class, 'open'])->name('open');
-            Route::patch('/{id}/close', [AcademicYearController::class, 'close'])->name('close');
+            Route::put('/{id}', [AcademicYearController::class, 'update'])->whereNumber('id')->name('update');
+            Route::patch('/{id}/open', [AcademicYearController::class, 'open'])->whereNumber('id')->name('open');
+            Route::patch('/{id}/close', [AcademicYearController::class, 'close'])->whereNumber('id')->name('close');
         });
 
         Route::prefix('/faculties')->name('faculties.')->group(function () {

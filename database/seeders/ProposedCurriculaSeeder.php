@@ -10,14 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class ProposedCurriculaSeeder extends Seeder
 {
-    public function run(): void
+    public function run(?array $levelIds = null): void
     {
         // Editorial proposals, not an official accredited curriculum.
         $programs = json_decode(file_get_contents(__DIR__.'/data/proposed-curricula.json'), true, flags: JSON_THROW_ON_ERROR);
-        DB::transaction(function () use ($programs) {
-            foreach (Level::with('faculty')->orderBy('id')->get() as $level) {
+        DB::transaction(function () use ($programs, $levelIds) {
+            foreach (Level::with('faculty')->when($levelIds !== null, fn ($query) => $query->whereKey($levelIds))->orderBy('id')->get() as $level) {
                 $semesters = $programs[$level->faculty->code][$level->code] ?? null;
-                if (!$semesters) throw new \RuntimeException("Programme absent pour le niveau {$level->id}.");
+                if (! $semesters) {
+                    throw new \RuntimeException("Programme absent pour le niveau {$level->id}.");
+                }
                 Level::whereKey($level->id)->lockForUpdate()->firstOrFail();
                 $detail = LevelDetail::firstOrCreate(['level_id' => $level->id]);
                 if ($detail->credit_required === null) {
@@ -29,7 +31,9 @@ class ProposedCurriculaSeeder extends Seeder
                 foreach ($semesters as $index => $titles) {
                     foreach ($titles as $position => $title) {
                         $code = $level->faculty->code.'-'.$level->code.'-'.($index + 1).str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT);
-                        if (Courses::where('level_id', $level->id)->where(fn ($q) => $q->where('code', $code)->orWhere('title', $title))->exists()) continue;
+                        if (Courses::where('level_id', $level->id)->where(fn ($q) => $q->where('code', $code)->orWhere('title', $title))->exists()) {
+                            continue;
+                        }
                         $missing[] = ['level_id' => $level->id, 'title' => $title, 'code' => $code, 'semester' => $index + 1, 'credits' => $weights[$position], 'description' => 'Proposition pédagogique à valider par la faculté.'];
                     }
                 }

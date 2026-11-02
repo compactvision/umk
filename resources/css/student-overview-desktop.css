@@ -1,0 +1,470 @@
+/* Desktop composition only: the existing mobile portal keeps its layout. */
+.student-desktop-intro {
+    display: none;
+}
+@media (min-width: 1100px) {
+    .portal-welcome-trigger.is-inline-on-desktop {
+        display: none;
+    }
+    .usk-student-overview-shell {
+        overflow: clip;
+        background: #f0f3ee;
+    }
+    .usk-student-overview-shell .student-desktop-container {
+        max-width: none;
+        width: 100%;
+        padding: 28px clamp(28px, 3vw, 64px) 56px;
+    }
+    .is-overview .portal-toolbar {
+        margin-bottom: 18px;
+    }
+    .is-overview .portal-toolbar select {
+        max-width: 460px;
+        background: white;
+        border-color: #dce3d9;
+        min-height: 42px;
+    }
+    .student-desktop-intro {
+        display: block;
+    }
+    .student-desktop-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #647568;
+        font-size: 12px;
+        margin: 0 0 25px;
+    }
+    .student-desktop-breadcrumb a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #315c47;
+        text-decoration: none;
+    }
+    .student-desktop-breadcrumb > span:not(.student-desktop-year) {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .student-desktop-year {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        white-space: nowrap;
+        font-size: 11px;
+        color: #6c7d68;
+    }
+    .student-desktop-welcome {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 32px 36px;
+        margin-bottom: 28px;
+        border: 1px solid #254e3c;
+        border-radius: 12px;
+        color: white;
+        background: radial-gradient(ellipse at 96% 0%, #b79b4c26, transparent 50%), linear-gradient(110deg, #164f3b, #073e32 65%, #052a24);
+        box-shadow: 0 8px 28px #183b2910;
+    }
+    .student-desktop-welcome::after {
+        content: '';
+        position: absolute;
+        right: 22%;
+        top: -100px;
+        height: 300px;
+        width: 300px;
+        border: 1px solid #ffffff09;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .student-desktop-welcome-icon {
+        display: grid;
+        place-items: center;
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+        border: 1px solid #ffffff24;
+        border-radius: 12px;
+        background: #ffffff08;
+        color: #e8d397;
+    }
+    .student-desktop-welcome > div:nth-child(2) {
+        min-width: 0;
+        flex: 1;
+    }
+    .student-desktop-welcome > div > span {
+        color: #d5c69d;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+    }
+    .student-desktop-welcome p {
+        margin: 6px 0 8px;
+        font:
+            500 clamp(25px, 2.3vw, 36px) / 1.2 'DM Sans',
+            sans-serif;
+        letter-spacing: -0.04em;
+    }
+    .student-desktop-welcome small {
+        font-size: 12px;
+        color: #d3e0d7;
+        line-height: 1.7;
+    }
+    .student-desktop-welcome button {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-shrink: 0;
+        padding: 12px 16px;
+        border: 1px solid #ffffff45;
+        border-radius: 7px;
+        font-size: 11px;
+        color: #fff;
+        background: #ffffff07;
+        cursor: pointer;
+    }
+    .student-desktop-welcome button:hover {
+        background: #ffffff14;
+        border-color: #e6c470;
+    }
+    .student-desktop-alerts {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .student-desktop-alert {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 17px 20px;
+        background: #fbf3df;
+        border: 1px solid #e8d8af;
+        border-radius: 8px;
+        color: #765b24;
+    }
+    .student-desktop-alert > svg {
+        flex-shrink: 0;
+    }
+    .student-desktop-alert > div {
+        flex: 1;
+        min-width: 0;
+    }
+    .student-desktop-alert strong {
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .student-desktop-alert p {
+        font-size: 11px;
+        line-height: 1.7;
+        margin: 4px 0 0;
+    }
+    .student-desktop-alert a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+        font-size: 11px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    .is-overview .portal-content-layout {
+        display: grid;
+        grid-template-columns: minmax(290px, min(32%, 440px)) minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+    }
+    .is-overview .portal-content-layout > .portal-alert {
+        grid-column: 1/-1;
+    }
+    .is-overview .portal-profile-cover-card {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0;
+        border: 1px solid #dfe6dc;
+        border-radius: 12px;
+        box-shadow: 0 5px 22px #163d2810;
+        min-width: 0;
+    }
+    .is-overview .portal-profile-cover {
+        height: 180px;
+        background-image: linear-gradient(110deg, #09281e66, #112e2338), url('/assets/usk/students-800.webp');
+    }
+    .is-overview .portal-profile-portrait {
+        width: 120px;
+        height: 120px;
+        margin-top: -60px;
+        margin-bottom: 20px;
+    }
+    .is-overview .portal-profile-content {
+        padding: 0 24px 30px;
+    }
+    .usk-dashboard .student-portal.is-overview .portal-profile-cover-card h1 {
+        font-size: 25px;
+        line-height: 1.35;
+        margin: 12px 0 8px;
+        overflow-wrap: anywhere;
+    }
+    .is-overview .portal-profile-eyebrow {
+        font-size: 8px;
+        color: #6d7f68;
+        letter-spacing: 0.13em;
+    }
+    .is-overview .portal-profile-faculty {
+        font-size: 12px;
+        line-height: 1.8;
+        color: #6f7f68;
+        margin-bottom: 20px;
+    }
+    .is-overview .portal-profile-contact {
+        font-size: 12px;
+        color: #4d6650;
+        line-height: 1.8;
+        max-width: 100%;
+    }
+    .is-overview .portal-profile-identifier {
+        margin: 22px 0;
+        padding: 9px 15px;
+        background: #edf3e8;
+        color: #31563d;
+        border: 1px solid #d8e3d0;
+    }
+    .is-overview .portal-profile-identifier span {
+        font-size: 9px;
+        opacity: 1;
+        color: #657a5b;
+    }
+    .is-overview .portal-profile-identifier strong {
+        font-size: 12px;
+    }
+    .is-overview .portal-profile-course-total {
+        align-self: stretch;
+        padding-top: 22px;
+        border-top: 1px solid #e2e8dd;
+    }
+    .is-overview .portal-profile-course-total > strong {
+        color: #214e35;
+        font-size: 35px;
+    }
+    .is-overview .portal-profile-course-total > span {
+        font-size: 12px;
+        color: #64785b;
+    }
+    .is-overview .portal-profile-course-total small {
+        font-size: 10px;
+        color: #59734f;
+    }
+    .is-overview .portal-content-layout > .portal-body {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        padding-top: 0;
+    }
+    .is-overview .student-overview {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        align-items: start;
+    }
+    .is-overview .overview-home-section {
+        min-width: 0;
+        padding: 25px;
+        border: 1px solid #dfe6dc;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 5px 22px #163d2808;
+    }
+    .is-overview .overview-home-section[aria-labelledby='home-courses-title'] {
+        order: -1;
+        grid-column: 1/-1;
+    }
+    .is-overview .overview-home-section[aria-labelledby='home-fees-title'] {
+        grid-column: 1/-1;
+    }
+    .is-overview .overview-home-section > header {
+        margin-bottom: 14px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e8ede4;
+        gap: 14px;
+    }
+    .is-overview .overview-panel-title {
+        gap: 10px;
+    }
+    .usk-dashboard .is-overview .overview-panel-title h2 {
+        font-size: 19px;
+        color: #244d38;
+        font-weight: 500;
+    }
+    .is-overview .overview-panel-title > svg {
+        color: #7c906d;
+        flex-shrink: 0;
+    }
+    .is-overview .overview-home-section > header > a {
+        font-size: 11px;
+        color: #426c4d;
+    }
+    .is-overview .overview-section-description {
+        font-size: 12px;
+        line-height: 1.7;
+        color: #6d7c66;
+        margin-bottom: 20px;
+    }
+    .is-overview .overview-level-courses {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .is-overview .overview-level-courses article {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: start;
+        min-width: 0;
+        padding: 18px 16px;
+        border: 1px solid #e3e9de;
+        border-radius: 9px;
+        background: #fdfefb;
+        transition:
+            border-color 0.18s,
+            box-shadow 0.18s;
+    }
+    .is-overview .overview-level-courses article:hover {
+        border-color: #b8caae;
+        box-shadow: 0 3px 15px #173b2508;
+    }
+    .is-overview .overview-level-courses article > span {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #edf4e8;
+        color: #42643a;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+    }
+    .is-overview .overview-level-courses article > div {
+        min-width: 0;
+    }
+    .usk-dashboard .is-overview .overview-level-courses h3 {
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 5px 0 !important;
+        font-weight: 500;
+        overflow-wrap: anywhere;
+    }
+    .is-overview .overview-level-courses small {
+        font-size: 9px;
+        color: #708264;
+        line-height: 1.6;
+    }
+    .is-overview .overview-level-courses p {
+        font-size: 10px;
+        color: #6f8066;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+    .is-overview .overview-level-courses article > strong {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding-top: 2px;
+        white-space: nowrap;
+        color: #3e6237;
+        font-size: 17px;
+    }
+    .is-overview .overview-level-courses article > strong > small {
+        font-size: 8px;
+        font-weight: 400;
+        color: #708264;
+    }
+    .is-overview .overview-fee-table article p {
+        color: #4d6846;
+    }
+    .is-overview .overview-fee-labels,
+    .is-overview .overview-fee-table article > div > span,
+    .is-overview .overview-caption {
+        color: #6f7e67;
+    }
+    .is-overview .overview-fee-total {
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .is-overview .overview-lessons article {
+        padding: 16px 0;
+    }
+    .is-overview .overview-active-evaluations article {
+        align-items: start;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .is-overview .overview-active-evaluations article h3 {
+        line-height: 1.6;
+    }
+    .is-overview .overview-active-evaluations article > div {
+        min-width: 0;
+    }
+    .is-overview .overview-active-evaluations article span,
+    .is-overview .overview-active-evaluations article p {
+        color: #6f7e67;
+        font-size: 10px;
+        line-height: 1.7;
+    }
+}
+@media (min-width: 1100px) and (max-width: 1350px) {
+    .student-desktop-welcome {
+        padding: 28px;
+        gap: 16px;
+    }
+    .student-desktop-welcome-icon {
+        display: none;
+    }
+    .student-desktop-welcome small {
+        font-size: 11px;
+    }
+    .student-desktop-welcome button {
+        font-size: 10px;
+        padding: 11px;
+    }
+    .is-overview .portal-content-layout {
+        gap: 22px;
+    }
+    .is-overview .overview-home-section {
+        padding: 20px;
+    }
+    .is-overview .overview-level-courses article {
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 10px;
+        padding: 15px;
+    }
+    .is-overview .overview-level-courses article > span {
+        width: 30px;
+        height: 30px;
+    }
+    .is-overview .overview-level-courses article > strong {
+        grid-column: 2;
+        flex-direction: row;
+        gap: 5px;
+        font-size: 13px;
+    }
+}
+@media (min-width: 1100px) and (min-height: 850px) {
+    .is-overview .portal-profile-cover-card {
+        position: sticky;
+        top: 92px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .is-overview .overview-level-courses article {
+        transition: none;
+    }
+}

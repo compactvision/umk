@@ -2,13 +2,11 @@
 
 namespace App\Modules\AcademicYear\Infrastructure\Http\Controllers;
 
-use Inertia\Inertia;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Modules\AcademicYear\Application\UseCases\CloseAcademicYear;
 use App\Modules\AcademicYear\Application\UseCases\CreateAcademicYear;
 use App\Modules\AcademicYear\Application\UseCases\ListAcademicYears;
 use App\Modules\AcademicYear\Application\UseCases\OpenAcademicYear;
-use App\Modules\AcademicYear\Application\UseCases\CloseAcademicYear;
 use App\Modules\AcademicYear\Application\UseCases\UpdateAcademicYear;
 use App\Modules\AcademicYear\Domain\Exceptions\DuplicateAcademicYearException;
 use App\Modules\AcademicYear\Domain\Repositories\AcademicYearRepository;
@@ -17,6 +15,7 @@ use App\Modules\AcademicYear\Infrastructure\Http\Requests\UpdateAcademicYearRequ
 use App\Modules\AcademicYear\Infrastructure\Http\Resources\AcademicYearResource;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class AcademicYearController extends Controller
 {
@@ -33,7 +32,7 @@ class AcademicYearController extends Controller
     {
         $year = $academicYearRepository->findById($id);
 
-        if (!$year) {
+        if (! $year) {
             abort(404, 'Année académique introuvable');
         }
 
@@ -41,6 +40,7 @@ class AcademicYearController extends Controller
             'academicYear' => AcademicYearResource::make($year),
             'enrollmentStats' => (function () use ($id) {
                 $counts = \App\Models\Enrollment::where('academic_year_id', $id)->selectRaw('status, COUNT(*) AS total')->groupBy('status')->pluck('total', 'status');
+
                 return [
                     'total' => (int) $counts->sum(),
                     'validated' => (int) ($counts['validated'] ?? 0),
@@ -62,8 +62,6 @@ class AcademicYearController extends Controller
         ]);
     }
 
-
-
     public function store(CreateAcademicYearRequest $request, CreateAcademicYear $createAcademicYear)
     {
         try {
@@ -80,6 +78,8 @@ class AcademicYearController extends Controller
             // Cette exception est un "filet de sécurité" au cas où la contrainte DB saute malgré la validation
             return back()->withErrors(['title' => $e->getMessage()]);
         } catch (\Throwable $e) {
+            report($e);
+
             return back()->withErrors(['general' => 'Une erreur est survenue.']);
         }
     }
@@ -87,7 +87,7 @@ class AcademicYearController extends Controller
     public function update(int $id, UpdateAcademicYearRequest $request, UpdateAcademicYear $updateAcademicYear)
     {
         try {
-            $validated = $request->validated(); 
+            $validated = $request->validated();
 
             $updateAcademicYear->execute(
                 $id,
@@ -100,6 +100,10 @@ class AcademicYearController extends Controller
                 ->with('success', 'Année académique mise à jour avec succès.');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            report($e);
+
+            return back()->withErrors(['general' => 'La base de données est momentanément indisponible. Vérifiez l’état de l’année avant de réessayer.']);
         }
     }
 
@@ -109,9 +113,13 @@ class AcademicYearController extends Controller
             $useCase->execute($id);
 
             return back()
-                ->with('success', "Année académique ouverte avec succès.");
+                ->with('success', 'Année académique ouverte avec succès.');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            report($e);
+
+            return back()->withErrors(['general' => 'La base de données est momentanément indisponible. Vérifiez l’état de l’année avant de réessayer.']);
         }
     }
 
@@ -124,6 +132,10 @@ class AcademicYearController extends Controller
                 ->with('success', 'Année académique clôturée');
         } catch (DomainException $e) {
             return back()->withErrors(['general' => $e->getMessage()]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            report($e);
+
+            return back()->withErrors(['general' => 'La base de données est momentanément indisponible. Vérifiez l’état de l’année avant de réessayer.']);
         }
     }
 }

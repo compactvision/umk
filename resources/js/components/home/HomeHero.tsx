@@ -1,7 +1,7 @@
 import PublicImage from '@/components/seo/PublicImage';
 import { Link } from '@inertiajs/react';
 import { ArrowDown, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GraduationCap, Pause, Play } from 'lucide-react';
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react';
 import '../../../css/home-hero.css';
 import { HERO_DURATION, heroSlides } from './heroSlides';
 
@@ -69,7 +69,10 @@ export default function HomeHero() {
         setCycle((value) => value + 1);
         setPaused(true);
     };
-    const pauseForInteraction = () => setPaused(true);
+    const pauseForInteraction = (event: FocusEvent<HTMLElement>) => {
+        if ((event.target as Element).closest('.usk-cinema-toggle')) return;
+        setPaused(true);
+    };
     const handleKeys = (event: KeyboardEvent<HTMLElement>) => {
         if (event.key === 'ArrowRight') {
             event.preventDefault();

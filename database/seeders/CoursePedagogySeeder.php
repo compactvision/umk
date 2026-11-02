@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class CoursePedagogySeeder extends Seeder
 {
-    public function run(): void
+    public function run(?array $courseIds = null): void
     {
         $outlines = json_decode(file_get_contents(__DIR__.'/data/course-outlines.json'), true, flags: JSON_THROW_ON_ERROR);
         $methods = [
@@ -28,17 +28,21 @@ class CoursePedagogySeeder extends Seeder
             'field' => 'Objectifs de stage, carnet de bord, appréciation de l’encadrement et rapport présenté oralement.',
             'research' => 'Qualité des sources, rigueur de la méthode, dossier écrit et présentation argumentée.',
         ];
-        DB::transaction(function () use ($outlines, $methods, $assessments) {
-            foreach (Courses::with('level.faculty')->orderBy('id')->lockForUpdate()->get() as $course) {
+        DB::transaction(function () use ($outlines, $methods, $assessments, $courseIds) {
+            foreach (Courses::with('level.faculty')->when($courseIds !== null, fn ($query) => $query->whereKey($courseIds))->orderBy('id')->lockForUpdate()->get() as $course) {
                 $key = $course->level->faculty->code.':'.$course->level->code.':'.$course->title;
-                if (!isset($outlines[$key])) throw new \RuntimeException("Plan pédagogique manquant pour le cours {$course->id} : {$course->title}.");
+                if (! isset($outlines[$key])) {
+                    throw new \RuntimeException("Plan pédagogique manquant pour le cours {$course->id} : {$course->title}.");
+                }
                 $outline = $outlines[$key];
                 $hours = app(CourseWorkload::class)->allocate((int) $course->credits, $outline['profile'], $course->only(['cmi_hours', 'td_hours', 'tp_hours']));
                 $updates = [];
                 foreach (['cmi_hours', 'td_hours', 'tp_hours'] as $field) {
-                    if ($course->$field === null) $updates[$field] = $hours[$field];
+                    if ($course->$field === null) {
+                        $updates[$field] = $hours[$field];
+                    }
                 }
-                if (!trim((string) $course->pedagogical_content)) {
+                if (! trim((string) $course->pedagogical_content)) {
                     $topics = $outline['topics'];
                     $plan = implode("\n", array_map(fn ($topic, $index) => ($index + 1).'. '.$topic.'.', $topics, array_keys($topics)));
                     $progression = match ($course->level->code) {
@@ -58,7 +62,9 @@ class CoursePedagogySeeder extends Seeder
                         ."ÉVALUATION PROPOSÉE\n{$assessments[$outline['profile']]} Les modalités, critères et pondérations seront précisés par l’équipe enseignante.\n\n"
                         ."RESSOURCES\nSupports et bibliographie à communiquer par le titulaire. Aucun support de cours ni ouvrage non disponible n’est présumé fourni.";
                 }
-                if ($updates) $course->forceFill($updates)->save();
+                if ($updates) {
+                    $course->forceFill($updates)->save();
+                }
             }
         });
     }

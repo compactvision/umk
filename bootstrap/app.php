@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->prepend(\App\Http\Middleware\EnsureApplicationKey::class);
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'usk_audience']);
         $middleware->alias([
             'role' => RoleMiddleware::class,

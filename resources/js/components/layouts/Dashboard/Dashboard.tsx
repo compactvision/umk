@@ -12,8 +12,11 @@ const Dashboard = ({ children, authPage = false }: { children: React.ReactNode; 
     const [currentActiveMenu, setCurrentActiveMenu] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    const { props, component } = usePage<{ auth: { user: { roles?: ComponentProps<typeof Sidebar>['userRole'] } | null } }>();
+    const { props, component } = usePage<{ auth: { user: { roles?: ComponentProps<typeof Sidebar>['userRole'] } | null }; section?: string }>();
     const isAdminApps = /^dashboard\/(academicYear|faculties|levels|blog|adminEnrollments|studentAcademic|professors|schedule|seo)\//.test(component);
+    const isStudentOverview = component === 'dashboard/student/Portal' && props.section === 'overview';
+    const isStudentProfile = component === 'dashboard/student/Portal' && props.section === 'profile';
+    const isStudentCourse = component === 'dashboard/student/Course';
     const user = props.auth?.user;
 
     useEffect(() => {
@@ -70,7 +73,7 @@ const Dashboard = ({ children, authPage = false }: { children: React.ReactNode; 
 
     return (
         <div
-            className={`usk-dashboard ${authPage ? 'usk-auth-page' : ''} ${isAdminApps ? 'usk-admin-apps' : ''} relative min-h-screen overflow-hidden bg-gray-50`}
+            className={`usk-dashboard ${authPage ? 'usk-auth-page' : ''} ${isAdminApps ? 'usk-admin-apps' : ''} ${isStudentOverview ? 'usk-student-overview-shell' : ''} ${isStudentCourse ? 'usk-student-course-shell' : ''} ${isStudentProfile ? 'usk-student-profile-shell' : ''} relative min-h-screen overflow-hidden bg-gray-50`}
         >
             {/* Overlay pour mobile */}
             <div
@@ -108,7 +111,13 @@ const Dashboard = ({ children, authPage = false }: { children: React.ReactNode; 
                 className={`${authPage ? 'usk-auth-main' : ''} min-h-screen pt-16 transition-transform duration-300 ease-out md:ml-20 lg:ml-20`}
                 ref={mainRef}
             >
-                <div className={authPage ? 'usk-auth-content' : 'mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'}>
+                <div
+                    className={
+                        authPage
+                            ? 'usk-auth-content'
+                            : `mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 ${isStudentOverview ? 'student-desktop-container' : isStudentCourse ? 'student-course-container' : isStudentProfile ? 'student-profile-container' : ''}`
+                    }
+                >
                     {isAdminApps && (
                         <>
                             <AppsNavigation />

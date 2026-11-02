@@ -42,13 +42,29 @@ const steps = [
     },
 ];
 
-export default function StudentWelcome({ academic, pending }: { academic: Academic; pending: boolean }) {
+export default function StudentWelcome({
+    academic,
+    pending,
+    openRequest = 0,
+    desktopInline = false,
+}: {
+    academic: Academic;
+    pending: boolean;
+    openRequest?: number;
+    desktopInline?: boolean;
+}) {
     const [open, setOpen] = useState(pending);
     const [step, setStep] = useState(0);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(false);
     const dialog = useRef<HTMLDivElement>(null);
     const closeButton = useRef<HTMLButtonElement>(null);
+    useEffect(() => {
+        if (openRequest > 0) {
+            setStep(0);
+            setOpen(true);
+        }
+    }, [openRequest]);
     const current = steps[step];
     const Icon = current.icon;
     const finish = () => {
@@ -109,7 +125,7 @@ export default function StudentWelcome({ academic, pending }: { academic: Academ
                 createPortal(
                     <button
                         type="button"
-                        className="portal-welcome-trigger"
+                        className={`portal-welcome-trigger ${desktopInline ? 'is-inline-on-desktop' : ''}`}
                         aria-label="Ouvrir le guide de mon espace"
                         aria-haspopup="dialog"
                         aria-expanded={open}
