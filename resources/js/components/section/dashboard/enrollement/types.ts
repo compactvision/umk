@@ -14,6 +14,7 @@ export type SectionField = { key: string; label: string; icon: ComponentType<SVG
 export type Section = { title: string; icon: ComponentType<SVGProps<SVGSVGElement>>; fields: SectionField[] };
 export type PaymentStage = 'confirm' | 'pay';
 export type FormData = {
+    academic_program_id?: string;
     faculty_id: string;
     level_id: string;
     year_id: string;

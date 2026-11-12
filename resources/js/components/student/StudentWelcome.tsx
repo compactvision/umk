@@ -1,6 +1,7 @@
+import { DashboardArrivalContext } from '@/components/system/DashboardArrival';
 import { router } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, BookOpen, Check, Compass, GraduationCap, LifeBuoy, Wallet, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { Academic } from './types';
 
@@ -54,6 +55,8 @@ export default function StudentWelcome({
     desktopInline?: boolean;
 }) {
     const [open, setOpen] = useState(pending);
+    const openingDashboard = useContext(DashboardArrivalContext);
+    const visible = open && !openingDashboard;
     const [step, setStep] = useState(0);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(false);
@@ -88,7 +91,7 @@ export default function StudentWelcome({
         );
     };
     useEffect(() => {
-        if (!open) return;
+        if (!visible) return;
         const previous = document.activeElement as HTMLElement | null;
         const overflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -118,7 +121,7 @@ export default function StudentWelcome({
             document.removeEventListener('keydown', trap);
             previous?.focus();
         };
-    }, [open]);
+    }, [visible]);
     return (
         <>
             {typeof document !== 'undefined' &&
@@ -128,7 +131,7 @@ export default function StudentWelcome({
                         className={`portal-welcome-trigger ${desktopInline ? 'is-inline-on-desktop' : ''}`}
                         aria-label="Ouvrir le guide de mon espace"
                         aria-haspopup="dialog"
-                        aria-expanded={open}
+                        aria-expanded={visible}
                         title="Guide de mon espace"
                         onClick={() => {
                             setStep(0);
@@ -140,7 +143,7 @@ export default function StudentWelcome({
                     </button>,
                     document.body,
                 )}
-            {open &&
+            {visible &&
                 createPortal(
                     <div className="student-welcome-backdrop">
                         {step === 0 && (

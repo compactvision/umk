@@ -24,22 +24,22 @@ class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
     public function findByIdOrFail(int $id): Enrollment
     {
         $enrollment = $this->findById($id);
-        
-        if (!$enrollment) {
+
+        if (! $enrollment) {
             throw EnrollmentNotFoundException::withId($id);
         }
-        
+
         return $enrollment;
     }
 
     public function findByUuidOrFail(string $uuid): Enrollment
     {
         $enrollment = $this->findByUuid($uuid);
-        
-        if (!$enrollment) {
+
+        if (! $enrollment) {
             throw EnrollmentNotFoundException::withUuid($uuid);
         }
-        
+
         return $enrollment;
     }
 
@@ -58,17 +58,18 @@ class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
     public function findByStudent(int $studentId, ?EnrollmentStatus $status = null): Collection
     {
         $query = Enrollment::where('student_id', $studentId);
-        
+
         if ($status) {
             $query->where('status', $status->value);
         }
-        
+
         return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function save(Enrollment $enrollment): Enrollment
     {
         $enrollment->save();
+
         return $enrollment->fresh();
     }
 
@@ -84,7 +85,7 @@ class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
             ->whereNotNull('matricule')
             ->orderBy('matricule', 'desc')
             ->value('matricule');
-            
+
         return $last ?? '';
     }
 
@@ -105,7 +106,9 @@ class EloquentEnrollmentRepository implements EnrollmentRepositoryInterface
         $query = Enrollment::where('student_id', $studentId)
             ->where('level_id', $levelId)
             ->where('academic_year_id', $yearId)
-            ->where('status', '!=', EnrollmentStatus::CANCELLED->value);
+            ->where('status', '!=', EnrollmentStatus::CANCELLED->value)
+            ->where(fn ($q) => $q->where('status', '!=', EnrollmentStatus::DRAFT->value)
+                ->orWhereNull('draft_expires_at')->orWhere('draft_expires_at', '>', now()));
 
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);

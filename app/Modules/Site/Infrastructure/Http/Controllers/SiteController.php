@@ -20,6 +20,7 @@ class SiteController extends Controller
     public function index()
     {
         $site = $this->getSiteInfo->execute();
+
         return Inertia::render('dashboard/site/Index', [
             'site' => $site,
         ]);
@@ -28,6 +29,7 @@ class SiteController extends Controller
     public function show(): JsonResponse
     {
         $site = $this->getSiteInfo->execute();
+
         return response()->json($site);
     }
 
@@ -38,7 +40,11 @@ class SiteController extends Controller
 
     public function update(SaveSiteRequest $request, $id = null)
     {
-        $quest = $this->save($request);
+        $response = $this->save($request);
+        if ($request->is('api/*')) {
+            return $response;
+        }
+
         return redirect()->back()->with('success', 'Site updated successfully');
     }
 

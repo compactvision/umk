@@ -3,6 +3,7 @@ import PageHeading from '@/components/admin/PageHeading';
 import Pagination from '@/components/admin/Pagination';
 import CreateAcademicYearPopup from '@/components/form/CreateAcademicYearPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import { usePanelFade } from '@/hooks/use-panel-fade';
 import { Head, Link, useForm } from '@inertiajs/react';
 import {
     ArrowRight,
@@ -47,6 +48,7 @@ export default function AcademicYearManager({ academicYears }: { academicYears: 
     const filtered = years.filter(
         (year) => year.title.toLocaleLowerCase('fr').includes(search.trim().toLocaleLowerCase('fr')) && (status === 'all' || year.status === status),
     );
+    const resultsPanel = usePanelFade(filtered.map((year) => year.id).join(','));
     const openYear = (year: AcademicYear) => {
         if (!action.processing) action.patch(route('dashboard.admin.academic-years.open', year.id), { preserveScroll: true });
     };
@@ -57,7 +59,7 @@ export default function AcademicYearManager({ academicYears }: { academicYears: 
     };
     const messages = Object.values(action.errors);
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title="Années académiques" />
             <div className="academic-years-page">
                 <PageHeading
@@ -141,12 +143,12 @@ export default function AcademicYearManager({ academicYears }: { academicYears: 
                         <Info size={17} />
                         <div>
                             {messages.map((message) => (
-                                <p key={message}>{message}</p>
+                                <p key={String(message)}>{String(message)}</p>
                             ))}
                         </div>
                     </div>
                 )}
-                <div className="ay-grid">
+                <div className="ay-grid" ref={filtered.length ? resultsPanel : undefined}>
                     {filtered.map((year) => (
                         <article className="ay-card" key={year.id}>
                             <div className="ay-card-top">
@@ -238,7 +240,7 @@ export default function AcademicYearManager({ academicYears }: { academicYears: 
                     ))}
                 </div>
                 {!filtered.length && (
-                    <div className="ay-empty">
+                    <div className="ay-empty" ref={resultsPanel}>
                         <CalendarRange size={37} strokeWidth={1.3} />
                         <h2>{years.length ? 'Aucune année ne correspond.' : 'Un nouveau calendrier commence ici.'}</h2>
                         <p>

@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import type { LevelDetails, AdmissionCondition } from '@/types/academic';
+import type { useLevelData } from './useLevelData';
+import { SetStateAction, useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import Alert from '@/utils/sweetAlert';
+import { processOptionsValue } from '../utils/levelUtils';
 
-export function useLevelModals(level) {
+export function useLevelModals(level: LevelDetails) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editField, setEditField] = useState('');
     const [editSaving, setEditSaving] = useState(false);
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
     const [isConditionModalOpen, setIsConditionModalOpen] = useState(false);
     const [conditionMode, setConditionMode] = useState('add');
-    const [editIndex, setEditIndex] = useState(null);
+    const [editIndex, setEditIndex] = useState<number | null>(null);
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
     // Formulaire pour les conditions
@@ -28,79 +31,43 @@ export function useLevelModals(level) {
         title: '',
         description: '',
         section: '',
-        id: null,
+        is_required: false,
+        id: null as number | null,
     });
 
     console.log("conditionData", conditionData)
 
-    const openEditModal = (field, value) => {
+    const openEditModal = (field: SetStateAction<string>) => {
         setEditErrors({});
         setEditField(field);
         setIsEditModalOpen(true);
     };
 
-    const saveEdit = (levelDataHook) => {
-        if (!levelDataHook || !levelDataHook.levelData) {
-            console.error("❌ levelDataHook ou levelData est undefined !");
-            return;
-        }
-    
+    const saveEdit = ({ draft }: ReturnType<typeof useLevelData>) => {
+        const { illustration_image, options, has_certificate, ...fields } = draft;
         const formData = new FormData();
-    
-        Object.entries(levelDataHook.detailsData).forEach(([key, value]) => {
-            if (value instanceof File) {
-                formData.append(key, value);
-            } else if (key === "illustration_image") {
-                // on saute l'ancien chemin (string) → pas envoyé
-                return;
-            } else if (key === "has_certificate") {
-                // on force en entier 1 ou 0
-                formData.append(key, value ? 1 : 0);
-            } else if (typeof value === "object" && value !== null) {
-                Object.entries(value).forEach(([k, v]) => {
-                    formData.append(`${key}[${k}]`, v ?? "");
-                });
-            } else if (key === "options") {
-                // Si c'est une string => on la découpe en tableau
-                if (typeof value === "string") {
-                    const arr = value.split(",").map((v) => v.trim());
-                    arr.forEach((opt, i) => {
-                        formData.append(`options[${i}]`, opt);
-                    });
-                } else if (Array.isArray(value)) {
-                    value.forEach((opt, i) => {
-                        formData.append(`options[${i}]`, opt);
-                    });
-                }
-            } else {
-                formData.append(key, value ?? "");
-            }
+        for (const [key, value] of Object.entries(fields)) {
+            formData.append(key, String(value));
+        }
+        formData.append('has_certificate', has_certificate ? '1' : '0');
+        if (illustration_image instanceof File) {
+            formData.append('illustration_image', illustration_image);
+        }
+        processOptionsValue(options).forEach((option, index) => {
+            formData.append(`options[${index}]`, option);
         });
-        
-        
-    
-    
-        // ⚡ bien utiliser POST + _method=PUT
-        formData.append("_method", "PUT");
-    
-        router.post(route("dashboard.admin.levels.details.update", level.id), formData, {
+        formData.append('_method', 'PUT');
+
+        router.post(route('dashboard.admin.levels.details.update', level.id), formData, {
             forceFormData: true,
             onStart: () => setEditSaving(true),
             onFinish: () => setEditSaving(false),
-            onSuccess: () => {
-                setIsEditModalOpen(false);
-                router.reload({ only: ['levelDetail'] });
-            },
-            onError: (errors) => {
-                setEditErrors(errors);
-                console.error("Erreur update level:", errors);
-            },
+            onSuccess: () => setIsEditModalOpen(false),
+            onError: setEditErrors,
         });
     };
-    
-    
 
-    const openConditionModal = (mode, conditionId = null, condition = null) => {
+    const openConditionModal = (mode: string, conditionId: number | null = null, condition: AdmissionCondition | null = null) => {
         setConditionMode(mode);
         setEditIndex(conditionId);
         
@@ -131,7 +98,7 @@ export function useLevelModals(level) {
         setIsConditionModalOpen(true);
     };
 
-    const saveCondition = (e) => {
+    const saveCondition = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
         // alert(conditionMode)
@@ -164,7 +131,7 @@ export function useLevelModals(level) {
         }
     };
 
-    const deleteCondition = async (conditionId) => {
+    const deleteCondition = async (conditionId: number) => {
         const confirmed = await Alert.deleteConfirm('cette condition');
         if (!confirmed) return;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 
 type Testimonial = {
   mainImg: string;
@@ -44,7 +44,7 @@ const DATA: Testimonial[] = [
 ];
 
 
-export default function Testimonial(): JSX.Element {
+export default function Testimonial(): React.JSX.Element {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -65,8 +65,8 @@ export default function Testimonial(): JSX.Element {
   );
 
   // ------- Helpers
-  const go = (n: number) => setActive((i) => (n + total) % total);
-  const next = () => go(active + 1);
+  const go = (n: number) => setActive(() => (n + total) % total);
+  const next = useCallback(() => setActive(index => (index + 1) % total), [total]);
   const prev = () => go(active - 1);
 
   // Pré-charger l'image suivante pour adoucir la transition
@@ -84,6 +84,7 @@ export default function Testimonial(): JSX.Element {
   // Autoplay + barre de progression
   useEffect(() => {
     if (reduced) return;
+    const progressElement = progressRef.current;
     let id: number | null = null;
     const run = () => {
       if (!playing || hoverRef.current || focusRef.current || offscreenRef.current) return;
@@ -93,7 +94,7 @@ export default function Testimonial(): JSX.Element {
       }, 6000);
     };
     const animateProgress = () => {
-      const el = progressRef.current;
+      const el = progressElement;
       if (!el) return;
       el.style.transition = "none";
       el.style.width = "0%";
@@ -108,13 +109,13 @@ export default function Testimonial(): JSX.Element {
 
     return () => {
       if (id) clearTimeout(id);
-      const el = progressRef.current;
+      const el = progressElement;
       if (el) {
         el.style.transition = "none";
         el.style.width = "0%";
       }
     };
-  }, [active, playing, reduced]);
+  }, [active, playing, reduced, next]);
 
   // Pause si la section sort de l'écran
   useEffect(() => {
@@ -181,7 +182,7 @@ export default function Testimonial(): JSX.Element {
     const dt = Date.now() - touch.current.t;
     touch.current = null;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40 && dt < 600) {
-      dx < 0 ? next() : prev();
+      if (dx < 0) next(); else prev();
     }
   };
 

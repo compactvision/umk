@@ -1,0 +1,258 @@
+
+> build
+> vite build
+
+vite v6.4.5 building for production...
+
+/assets/fonts/dm-sans-latin-400-normal.woff2 referenced in /assets/fonts/dm-sans-latin-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-400-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-500-normal.woff2 referenced in /assets/fonts/dm-sans-latin-500-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-500-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-500-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-600-normal.woff2 referenced in /assets/fonts/dm-sans-latin-600-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-600-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-600-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-700-normal.woff2 referenced in /assets/fonts/dm-sans-latin-700-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-700-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-700-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/libre-caslon-display-latin-400-normal.woff2 referenced in /assets/fonts/libre-caslon-display-latin-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/libre-caslon-display-latin-ext-400-normal.woff2 referenced in /assets/fonts/libre-caslon-display-latin-ext-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/img/bg/pro-banner.png referenced in /assets/img/bg/pro-banner.png didn't resolve at build time, it will remain unchanged to be resolved at runtime
+transforming...
+
+/assets/usk/students.jpg referenced in /assets/usk/students.jpg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/usk/students-800.webp referenced in /assets/usk/students-800.webp didn't resolve at build time, it will remain unchanged to be resolved at runtime
+✓ 2609 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/manifest.json                               115.34 kB │ gzip:  10.43 kB
+public/build/assets/Index-XGdYbzvK.css                     0.91 kB │ gzip:   0.46 kB
+public/build/assets/DeleteConfirmation-CEd9GNn7.css        1.16 kB │ gzip:   0.44 kB
+public/build/assets/FeedbackToast-BzKkg4wJ.css             1.54 kB │ gzip:   0.71 kB
+public/build/assets/card-issuance-Ods0CBcJ.css             1.95 kB │ gzip:   0.86 kB
+public/build/assets/Index-C0mILNal.css                     2.31 kB │ gzip:   0.77 kB
+public/build/assets/card-requests-BknsM2a7.css             2.36 kB │ gzip:   0.89 kB
+public/build/assets/Calendar-CGokyI0n.css                  2.44 kB │ gzip:   0.92 kB
+public/build/assets/teaching-Cow5DYQA.css                  2.96 kB │ gzip:   0.91 kB
+public/build/assets/Faculty-BkEYfiz1.css                   4.02 kB │ gzip:   1.17 kB
+public/build/assets/Homepage-AWwo3u5E.css                  4.68 kB │ gzip:   1.59 kB
+public/build/assets/FacultyShow-X17YXWOs.css               4.79 kB │ gzip:   1.32 kB
+public/build/assets/student-course-BqMb_cP5.css            4.83 kB │ gzip:   1.26 kB
+public/build/assets/Show-CxThXUyz.css                      6.18 kB │ gzip:   1.58 kB
+public/build/assets/AdminModal-BVl_QLq-.css                6.19 kB │ gzip:   1.92 kB
+public/build/assets/public-faculty-BfP3PBhw.css            7.39 kB │ gzip:   2.03 kB
+public/build/assets/CardArtwork-BVHarEmM.css               7.93 kB │ gzip:   2.57 kB
+public/build/assets/academic-years-j2xOXB7g.css            8.31 kB │ gzip:   2.08 kB
+public/build/assets/academic-structure-CepabFyb.css        8.89 kB │ gzip:   2.36 kB
+public/build/assets/schedule-fUIPryf9.css                  9.01 kB │ gzip:   2.40 kB
+public/build/assets/levels-catalog-Ca7m4pEL.css            9.36 kB │ gzip:   2.23 kB
+public/build/assets/BlogDetailsPage-C8E8yxdB.css           9.89 kB │ gzip:   2.55 kB
+public/build/assets/CourseShow-DCmZwzEA.css               10.03 kB │ gzip:   2.45 kB
+public/build/assets/Blogpage-ugWzc1yp.css                 10.45 kB │ gzip:   2.73 kB
+public/build/assets/Course-B3ByGUau.css                   11.74 kB │ gzip:   2.90 kB
+public/build/assets/Enrollment-BMoI2dhB.css               11.98 kB │ gzip:   3.00 kB
+public/build/assets/student-academic-BBxJXC65.css         12.18 kB │ gzip:   2.99 kB
+public/build/assets/test--nhCeun7.css                     14.24 kB │ gzip:   3.19 kB
+public/build/assets/student-enrollments-CM2pgXk2.css      14.96 kB │ gzip:   3.47 kB
+public/build/assets/level-forms-B3mUoZ10.css              16.36 kB │ gzip:   3.56 kB
+public/build/assets/Dashboard-DXfocG1i.css                16.61 kB │ gzip:   4.15 kB
+public/build/assets/admin-enrollments-ChWdMd7o.css        20.49 kB │ gzip:   4.72 kB
+public/build/assets/Portal-PvMyWluW.css                   29.34 kB │ gzip:   6.10 kB
+public/build/assets/Admissionpage-CokMo_gb.css            41.56 kB │ gzip:   8.23 kB
+public/build/assets/App-xKHwTH0p.css                      44.32 kB │ gzip:   9.11 kB
+public/build/assets/student-portal-CjE285rr.css           50.88 kB │ gzip:   9.96 kB
+public/build/assets/app-zqGwzEoy.css                     182.58 kB │ gzip:  21.96 kB
+public/build/assets/types-MDtVkrLz.js                      0.06 kB │ gzip:   0.07 kB
+public/build/assets/app-CF3cHloQ.js                        0.12 kB │ gzip:   0.13 kB
+public/build/assets/PageHeading-DN-S0uuq.js                0.29 kB │ gzip:   0.22 kB
+public/build/assets/check-DApvzVDY.js                      0.30 kB │ gzip:   0.25 kB
+public/build/assets/chevron-down-D5BeCufA.js               0.31 kB │ gzip:   0.25 kB
+public/build/assets/chevron-left-0lNi1ttU.js               0.31 kB │ gzip:   0.25 kB
+public/build/assets/chevron-right-CvmrT4XU.js              0.31 kB │ gzip:   0.25 kB
+public/build/assets/play-CGZR-Te5.js                       0.32 kB │ gzip:   0.26 kB
+public/build/assets/loader-circle-D9TX-O35.js              0.33 kB │ gzip:   0.27 kB
+public/build/assets/plus-8Cp-n1d7.js                       0.34 kB │ gzip:   0.26 kB
+public/build/assets/x-BSzIappc.js                          0.34 kB │ gzip:   0.26 kB
+public/build/assets/arrow-down-BZpSs0Vu.js                 0.35 kB │ gzip:   0.27 kB
+public/build/assets/arrow-right-DZ_K4EnL.js                0.35 kB │ gzip:   0.27 kB
+public/build/assets/arrow-left-E9fOVMfl.js                 0.35 kB │ gzip:   0.27 kB
+public/build/assets/arrow-up-right-BwTI-7Yb.js             0.35 kB │ gzip:   0.27 kB
+public/build/assets/search-CEYdjQdH.js                     0.35 kB │ gzip:   0.28 kB
+public/build/assets/user-round-BGjWJ1zp.js                 0.36 kB │ gzip:   0.29 kB
+public/build/assets/clock-3-B40ySPVV.js                    0.37 kB │ gzip:   0.28 kB
+public/build/assets/info-DVUx8U6F.js                       0.38 kB │ gzip:   0.29 kB
+public/build/assets/credit-card-DahL5WEz.js                0.39 kB │ gzip:   0.30 kB
+public/build/assets/mail-DFpmb4I6.js                       0.39 kB │ gzip:   0.31 kB
+public/build/assets/history-B0KLSqUx.js                    0.42 kB │ gzip:   0.31 kB
+public/build/assets/link-2--nPJmb0e.js                     0.43 kB │ gzip:   0.32 kB
+public/build/assets/menu-9_oleQZk.js                       0.43 kB │ gzip:   0.29 kB
+public/build/assets/compass-0gwkLmSO.js                    0.43 kB │ gzip:   0.32 kB
+public/build/assets/camera-C0fucBFz.js                     0.43 kB │ gzip:   0.32 kB
+public/build/assets/circle-alert-a_rWFvdc.js               0.43 kB │ gzip:   0.30 kB
+public/build/assets/external-link-QCAVJR3o.js              0.43 kB │ gzip:   0.31 kB
+public/build/assets/eye-tHHzKGdL.js                        0.44 kB │ gzip:   0.31 kB
+public/build/assets/map-pin-CPUFimTg.js                    0.44 kB │ gzip:   0.33 kB
+public/build/assets/lock-keyhole-IlLWmhd8.js               0.44 kB │ gzip:   0.33 kB
+public/build/assets/file-check-2-uRNuo7UO.js               0.44 kB │ gzip:   0.31 kB
+public/build/assets/upload-CmLJzUqj.js                     0.44 kB │ gzip:   0.33 kB
+public/build/assets/download-BuElEyEo.js                   0.45 kB │ gzip:   0.33 kB
+public/build/assets/triangle-alert-OtLyFoiF.js             0.45 kB │ gzip:   0.32 kB
+public/build/assets/shield-DPX5vQjK.js                     0.45 kB │ gzip:   0.34 kB
+public/build/assets/award-DGynTbPB.js                      0.45 kB │ gzip:   0.34 kB
+public/build/assets/image-Cgqk6x4q.js                      0.45 kB │ gzip:   0.33 kB
+public/build/assets/pencil-Ck0_xQvS.js                     0.46 kB │ gzip:   0.34 kB
+public/build/assets/book-open-jI94abU8.js                  0.46 kB │ gzip:   0.32 kB
+public/build/assets/folder-open-Bu4R40jn.js                0.48 kB │ gzip:   0.33 kB
+public/build/assets/maximize-2-DnqZcaBq.js                 0.48 kB │ gzip:   0.32 kB
+public/build/assets/clipboard-check-DdJrS8Wc.js            0.49 kB │ gzip:   0.34 kB
+public/build/assets/users-BSs-tC6_.js                      0.49 kB │ gzip:   0.34 kB
+public/build/assets/languages-Cn2mbqWG.js                  0.50 kB │ gzip:   0.33 kB
+public/build/assets/shield-check-NhHIdCDG.js               0.50 kB │ gzip:   0.36 kB
+public/build/assets/printer-oOE9hUjg.js                    0.50 kB │ gzip:   0.34 kB
+public/build/assets/Pagination-BqT4mM0P.js                 0.51 kB │ gzip:   0.36 kB
+public/build/assets/save-BLMDU2fs.js                       0.51 kB │ gzip:   0.34 kB
+public/build/assets/graduation-cap-DW253TSm.js             0.52 kB │ gzip:   0.36 kB
+public/build/assets/key-round-C6uz5Dpl.js                  0.53 kB │ gzip:   0.37 kB
+public/build/assets/trash-2-BXGcw_dH.js                    0.54 kB │ gzip:   0.36 kB
+public/build/assets/scale-gP2AulaS.js                      0.55 kB │ gzip:   0.35 kB
+public/build/assets/earth-CfBNNWsW.js                      0.58 kB │ gzip:   0.38 kB
+public/build/assets/phone-CLwRupuq.js                      0.58 kB │ gzip:   0.37 kB
+public/build/assets/landmark-DUe85CVJ.js                   0.59 kB │ gzip:   0.35 kB
+public/build/assets/layers-2O712F_1.js                     0.61 kB │ gzip:   0.35 kB
+public/build/assets/package-check-DnG__a9l.js              0.61 kB │ gzip:   0.40 kB
+public/build/assets/eye-off-CSG2wAew.js                    0.61 kB │ gzip:   0.39 kB
+public/build/assets/types-BARhd3B5.js                      0.62 kB │ gzip:   0.42 kB
+public/build/assets/building-2-KD1S2b2v.js                 0.62 kB │ gzip:   0.36 kB
+public/build/assets/Breadcumb-CKu_algv.js                  0.64 kB │ gzip:   0.38 kB
+public/build/assets/calendar-days-pQihhl4w.js              0.68 kB │ gzip:   0.38 kB
+public/build/assets/levelPricing-Cc7g0_cZ.js               0.74 kB │ gzip:   0.42 kB
+public/build/assets/scheduleDates-DvUW3dOv.js              0.76 kB │ gzip:   0.41 kB
+public/build/assets/types-ZNg3AKvZ.js                      0.76 kB │ gzip:   0.48 kB
+public/build/assets/sliders-horizontal-D2E9_W8J.js         0.77 kB │ gzip:   0.38 kB
+public/build/assets/coins-13gR1Y-m.js                      0.83 kB │ gzip:   0.43 kB
+public/build/assets/types-BGk4Of1r.js                      0.84 kB │ gzip:   0.51 kB
+public/build/assets/target-B8EHOOhi.js                     0.85 kB │ gzip:   0.42 kB
+public/build/assets/SitePlan-DTfwBPTi.js                   0.87 kB │ gzip:   0.47 kB
+public/build/assets/user-check-8dxULtsM.js                 0.88 kB │ gzip:   0.45 kB
+public/build/assets/wallet-CoHKfXpr.js                     0.93 kB │ gzip:   0.42 kB
+public/build/assets/DeleteConfirmation-Dzcils3g.js         0.97 kB │ gzip:   0.49 kB
+public/build/assets/InfosTab-CW6sYuS2.js                   1.00 kB │ gzip:   0.54 kB
+public/build/assets/FeedbackToast-DIkgenP6.js              1.11 kB │ gzip:   0.64 kB
+public/build/assets/scheduleCalendar-8pCkC1cp.js           1.17 kB │ gzip:   0.58 kB
+public/build/assets/file-pen-line-Dk6uHZmU.js              1.21 kB │ gzip:   0.49 kB
+public/build/assets/ImagePreviewModal-C3zpTHlb.js          1.27 kB │ gzip:   0.64 kB
+public/build/assets/LevelNavigation-DGRoAX6_.js            1.31 kB │ gzip:   0.75 kB
+public/build/assets/IllustrationSection-C3ucv1DU.js        1.36 kB │ gzip:   0.69 kB
+public/build/assets/LevelCard-B6HKoO1J.js                  1.39 kB │ gzip:   0.69 kB
+public/build/assets/LevelHero-C97S5q4r.js                  1.46 kB │ gzip:   0.69 kB
+public/build/assets/createLucideIcon-70CB7JD_.js           1.57 kB │ gzip:   0.66 kB
+public/build/assets/sweetAlert-BT_SC03W.js                 1.58 kB │ gzip:   0.64 kB
+public/build/assets/DepartmentOptionsEditor-BCPgZFd3.js    1.62 kB │ gzip:   0.87 kB
+public/build/assets/LegalPage-CyCxWSAY.js                  1.66 kB │ gzip:   0.81 kB
+public/build/assets/Tuitionspage-BL9ViTFq.js               1.68 kB │ gzip:   0.88 kB
+public/build/assets/ProfessorsTab-dDRHOLfs.js              1.74 kB │ gzip:   0.85 kB
+public/build/assets/Semesters-BngQ9yz5.js                  1.88 kB │ gzip:   0.96 kB
+public/build/assets/studentEnrollment-D1sXDbuq.js          2.14 kB │ gzip:   1.06 kB
+public/build/assets/AdminModal-DuY8Ccas.js                 2.21 kB │ gzip:   1.04 kB
+public/build/assets/VideoPlayer-C3mrj9cK.js                2.30 kB │ gzip:   1.25 kB
+public/build/assets/ProfessorForm-BtnkIcI8.js              2.32 kB │ gzip:   0.90 kB
+public/build/assets/Contactpage-4UWTtWIm.js                2.44 kB │ gzip:   1.08 kB
+public/build/assets/StatsGrid-BxYMXSNP.js                  2.62 kB │ gzip:   1.08 kB
+public/build/assets/LevelContent-DebZfO_2.js               2.68 kB │ gzip:   1.17 kB
+public/build/assets/PublicImage-CUumCC0n.js                2.74 kB │ gzip:   0.77 kB
+public/build/assets/VideoFields-DmanXtku.js                2.76 kB │ gzip:   1.25 kB
+public/build/assets/Renewals-C5pI8slj.js                   2.92 kB │ gzip:   1.21 kB
+public/build/assets/Coursespage-O2GIwXpb.js                2.93 kB │ gzip:   1.34 kB
+public/build/assets/levelUtils-BWiWTG86.js                 2.96 kB │ gzip:   1.52 kB
+public/build/assets/useLevelData-B-J0ZLdG.js               2.99 kB │ gzip:   1.04 kB
+public/build/assets/DetailsSection-9CO5Fh5O.js             3.03 kB │ gzip:   1.10 kB
+public/build/assets/Closure-vBdACHVO.js                    3.03 kB │ gzip:   1.45 kB
+public/build/assets/useLevelModals-CkSfvo57.js             3.20 kB │ gzip:   1.31 kB
+public/build/assets/test-CgvHqyEd.js                       3.30 kB │ gzip:   1.46 kB
+public/build/assets/Printing-BvNiVIXe.js                   3.36 kB │ gzip:   1.45 kB
+public/build/assets/Attendance-Bw8zDYdn.js                 3.37 kB │ gzip:   1.56 kB
+public/build/assets/WeeklyScheduleForm-C_RFe4-m.js         3.43 kB │ gzip:   1.50 kB
+public/build/assets/DocumentReview-CJqQ8eWS.js             3.46 kB │ gzip:   1.62 kB
+public/build/assets/AcademicForm-CqYh5F5q.js               3.54 kB │ gzip:   1.48 kB
+public/build/assets/SemesterManager-lFFNvgPR.js            3.57 kB │ gzip:   1.56 kB
+public/build/assets/SessionCalendar-w2ITKD88.js            3.67 kB │ gzip:   1.63 kB
+public/build/assets/Show-BeZkQlhd.js                       3.77 kB │ gzip:   1.65 kB
+public/build/assets/MyEnrollments-D3NqC5LO.js              3.86 kB │ gzip:   1.67 kB
+public/build/assets/VerifyEmail-D487H-B5.js                3.96 kB │ gzip:   1.66 kB
+public/build/assets/CardArtwork-DKgESxB-.js                4.05 kB │ gzip:   1.84 kB
+public/build/assets/ConditionsTab-JZE9Qpbc.js              4.11 kB │ gzip:   1.57 kB
+public/build/assets/Preview-Bo_YdxBM.js                    4.19 kB │ gzip:   2.03 kB
+public/build/assets/Professor-DSg3RelR.js                  4.28 kB │ gzip:   1.63 kB
+public/build/assets/Delivery-DFjR6Vsw.js                   4.57 kB │ gzip:   1.93 kB
+public/build/assets/Index-JXQ3Ha11.js                      4.74 kB │ gzip:   1.83 kB
+public/build/assets/StudentSchedule-CKT3NhO5.js            4.80 kB │ gzip:   1.95 kB
+public/build/assets/PortalCards-c1vninXB.js                5.66 kB │ gzip:   2.17 kB
+public/build/assets/AssignmentForm-Dy-ddSUG.js             5.80 kB │ gzip:   1.89 kB
+public/build/assets/Index-CVApqO7l.js                      5.81 kB │ gzip:   2.34 kB
+public/build/assets/ConditionModal-DbRKFD5f.js             5.89 kB │ gzip:   2.11 kB
+public/build/assets/FacultyShow-Dp0e7gc4.js                5.95 kB │ gzip:   2.24 kB
+public/build/assets/Campaigns-BTHd770H.js                  6.12 kB │ gzip:   2.21 kB
+public/build/assets/Index-Duz1ePvs.js                      6.14 kB │ gzip:   2.52 kB
+public/build/assets/Index-BEFIZ8Pt.js                      6.31 kB │ gzip:   2.36 kB
+public/build/assets/Overview-BvLMyAhp.js                   6.52 kB │ gzip:   2.45 kB
+public/build/assets/CreateAcademicYearPopup-DU8mGeZL.js    6.55 kB │ gzip:   2.39 kB
+public/build/assets/VersionDialogs-DYQ1TUAM.js             6.72 kB │ gzip:   2.20 kB
+public/build/assets/CreateFacultyPopup-dq9Owx-K.js         6.89 kB │ gzip:   2.30 kB
+public/build/assets/Index-DTd9B6eM.js                      6.97 kB │ gzip:   2.72 kB
+public/build/assets/CoursesTab-DqBonRXD.js                 7.09 kB │ gzip:   2.68 kB
+public/build/assets/Calendar-BmojOLky.js                   7.71 kB │ gzip:   2.84 kB
+public/build/assets/QueueList-BqnswupA.js                  7.74 kB │ gzip:   2.86 kB
+public/build/assets/Faculty-LRohOotp.js                    7.76 kB │ gzip:   2.51 kB
+public/build/assets/Index-BfYXX__P.js                      7.79 kB │ gzip:   2.79 kB
+public/build/assets/FacultyShow-Bs18v9Kq.js                7.98 kB │ gzip:   2.59 kB
+public/build/assets/Show-CPtNlUI4.js                       8.06 kB │ gzip:   3.03 kB
+public/build/assets/Index-f83luNLM.js                      8.12 kB │ gzip:   2.93 kB
+public/build/assets/Login-DBD3iilt.js                      8.15 kB │ gzip:   3.10 kB
+public/build/assets/Index-BVTssTLJ.js                      8.51 kB │ gzip:   3.29 kB
+public/build/assets/LevelSchedule-B3tRCQYF.js              8.63 kB │ gzip:   3.29 kB
+public/build/assets/EditModal-BOTi4DcL.js                  8.73 kB │ gzip:   3.37 kB
+public/build/assets/LevelPopup-L1yg__Ll.js                 9.05 kB │ gzip:   3.10 kB
+public/build/assets/BlogDetailsPage-CcxN5Nkh.js            9.16 kB │ gzip:   3.26 kB
+public/build/assets/admissions-zMBxLGk7.js                 9.29 kB │ gzip:   3.55 kB
+public/build/assets/Conditionpage-DXTjMDJR.js              9.70 kB │ gzip:   2.67 kB
+public/build/assets/Politiquepage-DVeKc_n7.js              9.83 kB │ gzip:   2.85 kB
+public/build/assets/Index-BOIOOD_p.js                     10.03 kB │ gzip:   3.17 kB
+public/build/assets/ReferenceEditor-8kFj04ES.js           10.61 kB │ gzip:   2.97 kB
+public/build/assets/CurriculumEditor-Bjw6CFZA.js          11.18 kB │ gzip:   3.72 kB
+public/build/assets/CourseShow-BBdoORlW.js                11.41 kB │ gzip:   3.71 kB
+public/build/assets/ResetPassword-CdViP3_C.js             11.67 kB │ gzip:   3.00 kB
+public/build/assets/Blogpage-BRygt-vY.js                  12.22 kB │ gzip:   4.58 kB
+public/build/assets/App-BANB0ilG.js                       12.40 kB │ gzip:   4.25 kB
+public/build/assets/Show-BvO3CLK8.js                      12.70 kB │ gzip:   3.75 kB
+public/build/assets/Signup-Cdp8--Fj.js                    13.42 kB │ gzip:   3.56 kB
+public/build/assets/Show-BQc0x6Bs.js                      14.23 kB │ gzip:   4.90 kB
+public/build/assets/EnrollmentManagement-D0BjP09E.js      14.26 kB │ gzip:   4.39 kB
+public/build/assets/Course-BAiAM2fz.js                    14.93 kB │ gzip:   4.80 kB
+public/build/assets/Homepage-CfF_uaYf.js                  15.42 kB │ gzip:   5.03 kB
+public/build/assets/Show-54zirxfr.js                      15.53 kB │ gzip:   5.37 kB
+public/build/assets/ForgotPassword-9naL2c5y.js            15.78 kB │ gzip:   3.73 kB
+public/build/assets/Index-72QUlU3y.js                     16.16 kB │ gzip:   3.84 kB
+public/build/assets/Aboutpage-BZswF_-I.js                 16.18 kB │ gzip:   5.28 kB
+public/build/assets/Index-z44E2FDC.js                     17.98 kB │ gzip:   5.58 kB
+public/build/assets/EditPostModal-D5Q5LPJj.js             18.62 kB │ gzip:   4.43 kB
+public/build/assets/Index-CKZ-uF-m.js                     19.56 kB │ gzip:   5.98 kB
+public/build/assets/Show-CM3h7g6l.js                      21.95 kB │ gzip:   6.92 kB
+public/build/assets/Index-Dc_E1cO1.js                     22.54 kB │ gzip:   6.28 kB
+public/build/assets/Enrollment-djPPNMe3.js                24.19 kB │ gzip:   8.21 kB
+public/build/assets/Admissionpage-CtAY133T.js             36.76 kB │ gzip:  10.96 kB
+public/build/assets/Index-BYvGXvJU.js                     36.80 kB │ gzip:  10.45 kB
+public/build/assets/index-Cro8qonr.js                     40.71 kB │ gzip:  13.78 kB
+public/build/assets/Dashboard-DXYnSVZR.js                 59.21 kB │ gzip:  19.55 kB
+public/build/assets/Portal-VYZQsqK4.js                    60.13 kB │ gzip:  17.81 kB
+public/build/assets/sweetalert2.esm.all-C2Wuf_dN.js       79.01 kB │ gzip:  21.00 kB
+public/build/assets/Index-xqDZJiUz.js                    107.75 kB │ gzip:  33.89 kB
+public/build/assets/app-CWItxJ-v.js                      474.26 kB │ gzip: 153.18 kB
+✓ built in 10.82s

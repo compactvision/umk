@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Modules\Identity\Application\UseCases;
 
+use App\Modules\Identity\Application\Services\RevokeCredentials;
 use App\Modules\Identity\Domain\Repositories\UserRepository;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
@@ -20,7 +23,8 @@ final class ResetPassword
             ],
             function ($eloquentUser, $password) {
                 $eloquentUser->password = Hash::make($password);
-                $eloquentUser->save();
+                app(RevokeCredentials::class)->execute($eloquentUser);
+                event(new PasswordReset($eloquentUser));
             }
         );
 

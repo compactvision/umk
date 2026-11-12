@@ -8,16 +8,16 @@
 .usk-admin-apps .fd-topline > span {
     font-size: 8px;
     letter-spacing: 0.15em;
-    color: #a18d5c;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a18d5c));
 }
 .usk-admin-apps .fd-edit {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 10px 13px;
-    border: 1px solid #d9e2ce;
-    background: #fffefa;
-    color: #6b8957;
+    border: 1px solid var(--usk-night-border, #d9e2ce);
+    background: var(--usk-night-surface, #fffefa);
+    color: var(--usk-night-mint, var(--usk-day-green, #6b8957));
     font-size: 11px !important;
 }
 .usk-admin-apps .fd-hero {
@@ -25,9 +25,9 @@
     align-items: center;
     gap: 36px;
     justify-content: space-between;
-    background: #eef3e6;
+    background: var(--usk-night-raised, #eef3e6);
     padding: 37px;
-    border: 1px solid #dce5d0;
+    border: 1px solid var(--usk-night-border, #dce5d0);
     border-radius: 12px;
 }
 .usk-admin-apps .fd-hero-copy {
@@ -43,42 +43,42 @@
 .usk-admin-apps .fd-code-row > span:first-child {
     font-size: 10px;
     letter-spacing: 0.12em;
-    color: #a18b52;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a18b52));
     padding-right: 15px;
-    border-right: 1px solid #d2ddc3;
+    border-right: 1px solid var(--usk-night-border, #d2ddc3);
 }
 .usk-admin-apps .fd-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-size: 10px;
-    color: #83a06a;
+    color: var(--usk-night-mint, var(--usk-day-green, #83a06a));
 }
 .usk-admin-apps .fd-status:before {
     content: '';
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #8ba971;
+    background: var(--usk-night-brand, #8ba971);
 }
 .usk-admin-apps .fd-status.is-inactive {
-    color: #9fa98f;
+    color: var(--usk-night-muted, #9fa98f);
 }
 .usk-admin-apps .fd-status.is-inactive:before {
-    background: #b3bba8;
+    background: var(--usk-night-hover, #b3bba8);
 }
 .usk-admin-apps main .faculty-detail-page .fd-hero h1 {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-size: clamp(35px, 4vw, 54px);
     font-weight: 400;
     line-height: 1.12;
-    color: #365c37;
+    color: var(--usk-night-mint, #365c37);
     margin: 19px 0;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .fd-hero-copy > p {
     font-size: 13px;
-    color: #859977;
+    color: var(--usk-night-mint, var(--usk-day-green, #859977));
     line-height: 1.9;
     margin: 0;
     max-width: 680px;
@@ -90,11 +90,11 @@
     gap: 8px;
     margin-top: 23px;
     padding: 7px 11px;
-    border: 1px solid #dce5cf;
-    background: #fffef9;
+    border: 1px solid var(--usk-night-border, #dce5cf);
+    background: var(--usk-night-surface, #fffef9);
     border-radius: 5px;
     font-size: 10px;
-    color: #89a071;
+    color: var(--usk-night-mint, var(--usk-day-green, #89a071));
 }
 .usk-admin-apps .fd-emblem {
     display: flex;
@@ -104,9 +104,9 @@
     gap: 23px;
     width: 180px;
     height: 180px;
-    border: 1px solid #d3dfc1;
+    border: 1px solid var(--usk-night-border, #d3dfc1);
     border-radius: 50%;
-    color: #9bb187;
+    color: var(--usk-night-muted, var(--usk-day-green, #9bb187));
     flex-shrink: 0;
 }
 .usk-admin-apps .fd-emblem > span {
@@ -116,8 +116,8 @@
 .usk-admin-apps .fd-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    background: #fffefa;
-    border: 1px solid #dfe6d6;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dfe6d6);
     border-radius: 10px;
     margin: 25px 0 43px;
 }
@@ -126,10 +126,10 @@
     align-items: center;
     gap: 18px;
     padding: 23px;
-    color: #99ae86;
+    color: var(--usk-night-muted, #99ae86);
 }
 .usk-admin-apps .fd-stats > div + div {
-    border-left: 1px solid #e7ecdf;
+    border-left: 1px solid var(--usk-night-border, #e7ecdf);
 }
 .usk-admin-apps .fd-stats p {
     margin: 0;
@@ -138,13 +138,13 @@
     display: block;
     font-size: 28px;
     font-weight: 500;
-    color: #6f8f59;
+    color: var(--usk-night-mint, #6f8f59);
     line-height: 1.2;
 }
 .usk-admin-apps .fd-stats p > span {
     display: block;
     font-size: 10px;
-    color: #9cab8b;
+    color: var(--usk-night-muted, var(--usk-day-muted, #9cab8b));
     margin-top: 5px;
 }
 .usk-admin-apps .fd-section-heading {
@@ -157,17 +157,17 @@
 .usk-admin-apps .fd-section-heading > div > span {
     font-size: 8px;
     letter-spacing: 0.15em;
-    color: #aa965f;
+    color: var(--usk-night-gold, var(--usk-day-gold, #aa965f));
 }
 .usk-admin-apps main .faculty-detail-page .fd-section-heading h2 {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-weight: 400;
     font-size: 36px;
-    color: #698650;
+    color: var(--usk-night-mint, #698650);
     margin: 10px 0;
 }
 .usk-admin-apps .fd-section-heading p {
-    color: #9aa98a;
+    color: var(--usk-night-muted, var(--usk-day-muted, #9aa98a));
     font-size: 11px;
     line-height: 1.8;
     margin: 0;
@@ -182,16 +182,16 @@
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
-    color: #8f9e7d;
+    color: var(--usk-night-mint, var(--usk-day-muted, #8f9e7d));
     font-size: 10px;
 }
 .usk-admin-apps main .faculty-detail-page .fd-status-select select {
     min-height: 49px;
-    border: 1px solid #dce3d5;
-    background: #fffefa;
+    border: 1px solid var(--usk-night-border, #dce3d5);
+    background: var(--usk-night-background, #fffefa);
     padding: 10px 30px 10px 13px;
     font-size: 11px;
-    color: #819968;
+    color: var(--usk-night-mint, var(--usk-day-green, #819968));
     border-radius: 7px;
 }
 .usk-admin-apps .fd-level-grid {
@@ -259,14 +259,14 @@
     justify-content: center;
     gap: 8px;
     padding: 10px 13px;
-    border: 1px solid #e7d9cc;
-    background: #fcf8f2;
-    color: #a0715e;
+    border: 1px solid var(--usk-night-border, #e7d9cc);
+    background: var(--usk-night-surface, #fcf8f2);
+    color: var(--usk-night-danger, var(--usk-day-danger, #a0715e));
     font-size: 11px !important;
 }
 .usk-admin-apps .fd-delete:hover {
-    background: #f5e9df;
-    border-color: #cba895;
+    background: var(--usk-night-raised, #f5e9df);
+    border-color: var(--usk-night-gold, #cba895);
 }
 .usk-admin-apps .fd-delete:disabled {
     cursor: wait;

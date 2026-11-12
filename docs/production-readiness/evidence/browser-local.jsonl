@@ -1,0 +1,4 @@
+{"screen":"login-mobile","viewport":390,"width":390,"inputs":3,"missingLabels":0,"headings":1,"keyboardFocus":"BUTTON"}
+{"screen":"inscription-mobile","viewport":390,"width":390,"inputs":7,"missingLabels":0,"headings":1,"keyboardFocus":"BUTTON"}
+{"screen":"profil-mobile","viewport":390,"width":390,"inputs":27,"missingLabels":0,"headings":1,"keyboardFocus":"BUTTON"}
+{"screen":"profil-bureau","viewport":1440,"width":1440,"inputs":27,"missingLabels":0,"headings":1,"keyboardFocus":"BUTTON"}

@@ -20,14 +20,18 @@ class CurrentYearTeachingAssignments
         $matches = json_decode(file_get_contents(database_path('seeders/data/course-teaching-specialities.json')), true, flags: JSON_THROW_ON_ERROR);
         $professors = Professor::where('is_active', true)->orderBy('id')->get()->groupBy('speciality');
         $existing = AcademicOffering::where('academic_year_id', $year->id)->with('professor:id,first_name,last_name')->get()->groupBy('course_id');
+        $specializedCourses = AcademicOffering::whereNotNull('academic_department_id')->distinct()->pluck('course_id')->flip();
         $plan = [];
         foreach (Courses::with('level.faculty')->orderBy('id')->get() as $course) {
+            $offerings = $existing->get($course->id, collect());
+            if ($offerings->isEmpty() && $specializedCourses->has($course->id)) {
+                continue;
+            }
             $key = $course->level->faculty->code.':'.$course->level->code.':'.$course->title;
             $speciality = $matches[$key] ?? null;
             $candidates = $speciality ? $professors->get($speciality) : null;
             if (!$candidates || $candidates->isEmpty()) throw new RuntimeException("Aucun enseignant actif de la spécialité attendue pour {$course->title}.");
             // Keep a matching existing lecturer; otherwise use the configured specialist.
-            $offerings = $existing->get($course->id, collect());
             if ($offerings->isEmpty()) {
                 $plan[] = ['course_id' => $course->id, 'title' => $course->title, 'level_id' => $course->level_id, 'faculty' => $course->level->faculty->code, 'level' => $course->level->code,
                     'academic_year_id' => $year->id, 'professor_id' => $candidates->first()->id, 'professor' => $candidates->first()->full_name, 'speciality' => $speciality,

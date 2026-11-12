@@ -1,0 +1,753 @@
+/* Day contrast tokens use the existing USK palette. */
+body:has(#app .usk-dashboard[data-dashboard-theme='light']) {
+    --usk-day-muted: #526247;
+    --usk-day-green: #345b42;
+    --usk-day-gold: #775b27;
+    --usk-day-danger: #882d24;
+    --usk-day-info: #365677;
+    --usk-day-field-border: #78866d;
+}
+
+:is(.usk-dashboard[data-dashboard-theme='light'], body:has(#app .usk-dashboard[data-dashboard-theme='light']) .admin-modal)
+    :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), select, textarea) {
+    border-color: var(--usk-day-field-border);
+}
+
+:is(.usk-dashboard[data-dashboard-theme='light'], body:has(#app .usk-dashboard[data-dashboard-theme='light']) .admin-modal)
+    :is(input, select, textarea)[aria-invalid='true'] {
+    border-color: var(--usk-day-danger);
+}
+
+:is(.usk-dashboard[data-dashboard-theme='light'], body:has(#app .usk-dashboard[data-dashboard-theme='light']) .admin-modal)
+    :is(input, textarea)::placeholder {
+    color: var(--usk-day-muted);
+    opacity: 1;
+}
+
+/* Night tokens also reach dashboard dialogs and toasts portalled to body.
+   The scope disappears when the authenticated dashboard leaves the document. */
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) {
+    --usk-night-background: #0d151d;
+    --usk-night-sidebar: #0d2022;
+    --usk-night-surface: #15232c;
+    --usk-night-raised: #1c2d35;
+    --usk-night-hover: #25383e;
+    --usk-night-border: #374e50;
+    --usk-night-field-border: #63827c;
+    --usk-night-text: #eef4ed;
+    --usk-night-muted: #b2c5bd;
+    --usk-night-brand: #205c47;
+    --usk-night-brand-deep: #112e29;
+    --usk-night-mint: #91d8ae;
+    --usk-night-chart-soft: #588f83;
+    --usk-night-gold: #e6c470;
+    --usk-night-positive: #193a30;
+    --usk-night-warm: #3a3023;
+    --usk-night-info: #b1cce0;
+    --usk-night-info-surface: #233744;
+    --usk-night-danger: #ffb7ad;
+    --usk-night-danger-surface: #422a2e;
+    --usk-night-overlay: #091216e8;
+    --usk-night-skeleton: #24383c;
+    --usk-night-glint: #34504c;
+    --usk-night-white: #fffaf0;
+    background-color: var(--usk-night-background);
+}
+
+.usk-dashboard[data-dashboard-theme='dark'],
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    > :is([data-radix-popper-content-wrapper], .admin-modal-root, .swal2-container, [data-headlessui-portal]) {
+    color-scheme: dark;
+}
+
+#app .usk-dashboard[data-dashboard-theme='dark'] {
+    color: var(--usk-night-text);
+    background: radial-gradient(ellipse at 94% 0, #19322c 0%, transparent 34rem), var(--usk-night-background);
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .swal2-popup {
+    background: var(--usk-night-raised);
+    color: var(--usk-night-text);
+    border: 1px solid var(--usk-night-border);
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .swal2-popup .swal2-confirm {
+    background-color: var(--usk-night-brand);
+    color: var(--usk-night-white);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) .bg-clip-text.text-transparent {
+    background-image: none;
+    color: var(--usk-night-text);
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .network-failure-notice {
+    background: var(--usk-night-warm);
+    color: var(--usk-night-text);
+    border-color: var(--usk-night-gold);
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .network-failure-notice button {
+    border-color: var(--usk-night-gold);
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .network-failure-notice button:first-child {
+    background: var(--usk-night-gold);
+    color: var(--usk-night-brand-deep);
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] .admin-topbar {
+    background: color-mix(in srgb, var(--usk-night-surface) 96%, transparent);
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] [data-dashboard-rail] {
+    background: linear-gradient(180deg, var(--usk-night-sidebar), var(--usk-night-background));
+    border-color: var(--usk-night-border);
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] [data-dashboard-rail] [data-menu][aria-expanded='true'] {
+    color: var(--usk-night-gold);
+    background: var(--usk-night-positive);
+    box-shadow: inset 2px 0 var(--usk-night-gold);
+}
+
+:is(.usk-dashboard[data-dashboard-theme='dark'], body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .admin-modal)
+    :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), select, textarea) {
+    border-color: var(--usk-night-field-border);
+}
+
+:is(.usk-dashboard[data-dashboard-theme='dark'], body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .admin-modal)
+    :is(input, select, textarea)[aria-invalid='true'] {
+    border-color: var(--usk-night-danger);
+}
+
+:is(.usk-dashboard[data-dashboard-theme='dark'], body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .admin-modal)
+    :is(input, textarea)::placeholder {
+    color: var(--usk-night-muted);
+    opacity: 1;
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] .finance-hero .finance-export-xlsx {
+    background: var(--usk-night-gold);
+    color: var(--usk-night-brand-deep);
+    border-color: var(--usk-night-gold);
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] .finance-hero .finance-export-xlsx:hover {
+    background: color-mix(in srgb, var(--usk-night-gold) 82%, var(--usk-night-white));
+}
+
+body:has(#app .usk-dashboard[data-dashboard-theme='dark']) .admin-modal-overlay {
+    background: var(--usk-night-overlay);
+}
+
+.admin-topbar:has(.usk-theme-trigger) > div:last-child {
+    gap: clamp(6px, 1vw, 14px);
+}
+
+.admin-topbar .admin-site-link > .usk-site-link-label {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+}
+
+@media (max-width: 360px) {
+    .admin-topbar:has(.usk-theme-trigger) {
+        gap: 0.5rem;
+    }
+
+    .admin-topbar:has(.usk-theme-trigger) > div:first-child {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-topbar:has(.usk-theme-trigger) .admin-site-link {
+        justify-content: center;
+        min-width: 24px;
+        min-height: 24px;
+    }
+
+    .admin-topbar:has(.usk-theme-trigger) .usk-site-link-label {
+        display: none;
+    }
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is(.admin-modal, .admin-notifications-panel, .usk-theme-menu) {
+    box-shadow: 0 18px 55px #0008;
+}
+
+.usk-dashboard[data-dashboard-theme='dark'] :focus-visible,
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is(.admin-modal, .usk-theme-menu) :focus-visible {
+    outline-color: var(--usk-night-gold);
+}
+
+.usk-theme-trigger {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 42px;
+    min-height: 42px;
+    border: 1px solid var(--usk-night-field-border, #dce5d7);
+    border-radius: 0.65rem;
+    color: var(--usk-night-gold, #24694e);
+    background: var(--usk-night-raised, #fffefa);
+}
+
+.usk-theme-trigger:hover,
+.usk-theme-trigger[data-state='open'] {
+    background: var(--usk-night-hover, #eef5f0);
+}
+
+.usk-theme-trigger:focus-visible {
+    outline: 2px solid var(--usk-night-gold, #24694e);
+    outline-offset: 2px;
+}
+
+.usk-dashboard-skip {
+    position: fixed;
+    z-index: 1500;
+    inset-block-start: 0.75rem;
+    inset-inline-start: 0.75rem;
+    transform: translateY(-200%);
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.5rem;
+    color: var(--usk-night-text, #073e32);
+    background: var(--usk-night-raised, #fffefa);
+}
+
+.usk-dashboard-skip:focus {
+    transform: none;
+    outline: 2px solid var(--usk-night-gold, #073e32);
+    outline-offset: 2px;
+}
+
+.usk-dashboard[data-dashboard-theme] :is(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--usk-night-gold, #073e32);
+    outline-offset: 2px;
+    scroll-margin-block-start: 5rem;
+}
+
+.usk-dashboard[data-dashboard-theme] :is(.student-desktop-breadcrumb a, .student-profile-back) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    min-width: 24px;
+}
+
+.usk-theme-menu {
+    z-index: 1200;
+    min-width: 9.5rem;
+    padding: 0.35rem;
+    border: 1px solid var(--usk-night-border, #dce5d7);
+    border-radius: 0.75rem;
+    background: var(--usk-night-raised, #fffefa);
+    color: var(--usk-night-text, #16352c);
+    font:
+        600 0.875rem/1.35 'DM Sans',
+        sans-serif;
+    box-shadow: 0 14px 38px #0003;
+}
+
+.usk-theme-option {
+    display: grid;
+    grid-template-columns: 1rem 1fr 1rem;
+    gap: 0.6rem;
+    align-items: center;
+    min-height: 2.35rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.45rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.usk-theme-option[data-state='checked'] {
+    color: var(--usk-night-gold, #24694e);
+}
+
+.usk-theme-option[data-highlighted] {
+    background: var(--usk-night-hover, #eaf3eb);
+}
+
+.usk-theme-option:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--usk-night-gold, #24694e);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .usk-dashboard[data-dashboard-theme],
+    .usk-dashboard[data-dashboard-theme] > header,
+    .usk-theme-trigger {
+        transition:
+            color 180ms ease,
+            background-color 180ms ease,
+            border-color 180ms ease;
+    }
+
+    .usk-theme-menu[data-state='open'] {
+        animation: usk-theme-menu-in 150ms ease-out;
+        transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+    }
+}
+
+@keyframes usk-theme-menu-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+}
+
+/* Dashboard utilities that serve both surface and foreground roles in Tailwind. */
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-emerald-500/0']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-brand) 0%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-indigo-500/10']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-brand) 10%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='from-emerald-500/20'], [class~='from-green-500/20'], [class~='from-indigo-500/20'], [class~='from-purple-500/20']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-brand) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-emerald-500/5']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-brand) 5%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-emerald-500/90']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-brand) 90%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-red-500/20']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-danger-surface) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-red-500/90']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-danger-surface) 90%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-blue-500/20']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-info-surface) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-yellow-500/20']) {
+    --tw-gradient-from: color-mix(in srgb, var(--usk-night-warm) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='from-emerald-400'],
+        [class~='from-emerald-500'],
+        [class~='from-emerald-600'],
+        [class~='from-green-500'],
+        [class~='from-indigo-400'],
+        [class~='from-indigo-500'],
+        [class~='from-indigo-600'],
+        [class~='from-indigo-700'],
+        [class~='hover:from-emerald-600']:hover
+    ) {
+    --tw-gradient-from: var(--usk-night-brand);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-rose-500'], [class~='from-rose-600']) {
+    --tw-gradient-from: var(--usk-night-danger-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-blue-500']) {
+    --tw-gradient-from: var(--usk-night-info-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='from-emerald-100'],
+        [class~='from-emerald-50'],
+        [class~='from-green-50'],
+        [class~='from-indigo-100'],
+        [class~='from-indigo-50'],
+        [class~='from-purple-100'],
+        [class~='hover:from-emerald-50']:hover
+    ) {
+    --tw-gradient-from: var(--usk-night-positive);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-slate-700'], [class~='from-slate-900']) {
+    --tw-gradient-from: var(--usk-night-raised);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-gray-50'], [class~='from-slate-50']) {
+    --tw-gradient-from: var(--usk-night-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='from-amber-100'], [class~='from-amber-400']) {
+    --tw-gradient-from: var(--usk-night-warm);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-teal-500/0']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-brand) 0%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-purple-500/10']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-brand) 10%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='to-cyan-500/20'],
+        [class~='to-emerald-600/20'],
+        [class~='to-indigo-600/20'],
+        [class~='to-purple-600/20'],
+        [class~='to-teal-500/20']
+    ) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-brand) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-teal-500/5']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-brand) 5%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-teal-600/90']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-brand) 90%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-blue-50/30']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-info-surface) 30%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-orange-600/20']) {
+    --tw-gradient-to: color-mix(in srgb, var(--usk-night-warm) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='hover:to-teal-700']:hover,
+        [class~='to-cyan-500'],
+        [class~='to-emerald-500'],
+        [class~='to-emerald-600'],
+        [class~='to-purple-500'],
+        [class~='to-purple-600'],
+        [class~='to-purple-700'],
+        [class~='to-teal-600']
+    ) {
+    --tw-gradient-to: var(--usk-night-brand);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='hover:to-teal-50']:hover,
+        [class~='to-emerald-50'],
+        [class~='to-indigo-50'],
+        [class~='to-purple-100'],
+        [class~='to-purple-50'],
+        [class~='to-teal-50']
+    ) {
+    --tw-gradient-to: var(--usk-night-positive);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-slate-100'], [class~='to-slate-700'], [class~='to-slate-900']) {
+    --tw-gradient-to: var(--usk-night-raised);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-white']) {
+    --tw-gradient-to: var(--usk-night-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='to-amber-50'], [class~='to-orange-500']) {
+    --tw-gradient-to: var(--usk-night-warm);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-emerald-500/10']) {
+    --tw-gradient-via: color-mix(in srgb, var(--usk-night-brand) 10%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-white/20']) {
+    --tw-gradient-via: color-mix(in srgb, var(--usk-night-surface) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-white/30']) {
+    --tw-gradient-via: color-mix(in srgb, var(--usk-night-surface) 30%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='via-emerald-600'], [class~='via-purple-600'], [class~='via-teal-500']) {
+    --tw-gradient-via: var(--usk-night-brand);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-emerald-50']) {
+    --tw-gradient-via: var(--usk-night-positive);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-slate-800']) {
+    --tw-gradient-via: var(--usk-night-raised);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='via-white']) {
+    --tw-gradient-via: var(--usk-night-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='ring-white/50']) {
+    --tw-ring-color: color-mix(in srgb, var(--usk-night-border) 50%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='focus:ring-indigo-500/20']:focus) {
+    --tw-ring-color: color-mix(in srgb, var(--usk-night-field-border) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='focus:ring-blue-500']:focus,
+        [class~='focus:ring-emerald-500']:focus,
+        [class~='focus:ring-indigo-500']:focus,
+        [class~='ring-indigo-500']
+    ) {
+    --tw-ring-color: var(--usk-night-field-border);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-emerald-400/20'], [class~='bg-teal-400/20']) {
+    background-color: color-mix(in srgb, var(--usk-night-brand) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-emerald-500/5']) {
+    background-color: color-mix(in srgb, var(--usk-night-brand) 5%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='hover:bg-red-500/10']:hover) {
+    background-color: color-mix(in srgb, var(--usk-night-danger-surface) 10%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='hover:bg-indigo-50/50']:hover) {
+    background-color: color-mix(in srgb, var(--usk-night-positive) 50%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-slate-200/60'], [class~='hover:bg-slate-800/60']:hover) {
+    background-color: color-mix(in srgb, var(--usk-night-raised) 60%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/10']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 10%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='hover:bg-white/20']:hover) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/50']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 50%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/70']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 70%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/80']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 80%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/95']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 95%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-white/98']) {
+    background-color: color-mix(in srgb, var(--usk-night-surface) 98%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='bg-emerald-400'], [class~='bg-green-500'], [class~='bg-green-600'], [class~='bg-indigo-600']) {
+    background-color: var(--usk-night-brand);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='bg-red-50'],
+        [class~='bg-red-500'],
+        [class~='bg-rose-50'],
+        [class~='bg-rose-500'],
+        [class~='hover:bg-rose-100']:hover,
+        [class~='hover:bg-rose-600']:hover
+    ) {
+    background-color: var(--usk-night-danger-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-blue-100'], [class~='bg-blue-50']) {
+    background-color: var(--usk-night-info-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='bg-emerald-100'],
+        [class~='bg-emerald-50'],
+        [class~='bg-green-100'],
+        [class~='bg-green-50'],
+        [class~='bg-indigo-100'],
+        [class~='bg-purple-100'],
+        [class~='hover:bg-emerald-50']:hover
+    ) {
+    background-color: var(--usk-night-positive);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='bg-gray-100'],
+        [class~='bg-gray-200'],
+        [class~='bg-gray-300'],
+        [class~='bg-slate-100'],
+        [class~='bg-slate-200'],
+        [class~='hover:bg-gray-100']:hover,
+        [class~='hover:bg-gray-300']:hover,
+        [class~='hover:bg-gray-50']:hover,
+        [class~='hover:bg-slate-100']:hover,
+        [class~='hover:bg-slate-200']:hover,
+        [class~='hover:bg-slate-50']:hover
+    ) {
+    background-color: var(--usk-night-raised);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='bg-gray-50'], [class~='bg-slate-50'], [class~='bg-white'], [class~='focus:bg-white']:focus) {
+    background-color: var(--usk-night-surface);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='bg-amber-100'], [class~='bg-orange-500'], [class~='bg-yellow-500']) {
+    background-color: var(--usk-night-warm);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-white/20']) {
+    border-color: color-mix(in srgb, var(--usk-night-border) 20%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-white/30']) {
+    border-color: color-mix(in srgb, var(--usk-night-border) 30%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-white/50'], [class~='hover:border-slate-200/50']:hover) {
+    border-color: color-mix(in srgb, var(--usk-night-border) 50%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-slate-200/60']) {
+    border-color: color-mix(in srgb, var(--usk-night-border) 60%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-slate-200/80']) {
+    border-color: color-mix(in srgb, var(--usk-night-border) 80%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='hover:border-red-500/40']:hover) {
+    border-color: color-mix(in srgb, var(--usk-night-danger) 40%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-emerald-400/40']) {
+    border-color: color-mix(in srgb, var(--usk-night-field-border) 40%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-slate-700/50']) {
+    border-color: color-mix(in srgb, var(--usk-night-field-border) 50%, transparent);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='border-emerald-100'],
+        [class~='border-emerald-200'],
+        [class~='border-gray-100'],
+        [class~='border-gray-200'],
+        [class~='border-green-100'],
+        [class~='border-indigo-200'],
+        [class~='border-red-200'],
+        [class~='border-rose-200'],
+        [class~='border-slate-200'],
+        [class~='border-white']
+    ) {
+    border-color: var(--usk-night-border);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark'])) :is([class~='border-red-500']) {
+    border-color: var(--usk-night-danger);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='border-emerald-500'],
+        [class~='border-gray-300'],
+        [class~='border-green-500'],
+        [class~='border-indigo-500'],
+        [class~='border-slate-300'],
+        [class~='focus:border-blue-500']:focus,
+        [class~='focus:border-emerald-500']:focus,
+        [class~='focus:border-indigo-500']:focus,
+        [class~='hover:border-blue-400']:hover,
+        [class~='hover:border-indigo-400']:hover
+    ) {
+    border-color: var(--usk-night-field-border);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='hover:text-red-400']:hover, [class~='text-red-500'], [class~='text-red-700'], [class~='text-rose-600'], [class~='text-rose-700']) {
+    color: var(--usk-night-danger);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is([class~='text-amber-600'], [class~='text-amber-700'], [class~='text-orange-500'], [class~='text-yellow-500']) {
+    color: var(--usk-night-gold);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='hover:text-blue-600']:hover,
+        [class~='hover:text-blue-700']:hover,
+        [class~='text-blue-500'],
+        [class~='text-blue-600'],
+        [class~='text-blue-700']
+    ) {
+    color: var(--usk-night-info);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='hover:text-cyan-500']:hover,
+        [class~='hover:text-emerald-500']:hover,
+        [class~='hover:text-emerald-600']:hover,
+        [class~='hover:text-emerald-800']:hover,
+        [class~='hover:text-indigo-700']:hover,
+        [class~='hover:text-teal-600']:hover,
+        [class~='text-cyan-500'],
+        [class~='text-emerald-500'],
+        [class~='text-emerald-600'],
+        [class~='text-emerald-700'],
+        [class~='text-emerald-800'],
+        [class~='text-green-500'],
+        [class~='text-green-600'],
+        [class~='text-green-700'],
+        [class~='text-indigo-600'],
+        [class~='text-indigo-800'],
+        [class~='text-purple-600']
+    ) {
+    color: var(--usk-night-mint);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='text-gray-400'],
+        [class~='text-gray-500'],
+        [class~='text-gray-600'],
+        [class~='text-slate-300'],
+        [class~='text-slate-400'],
+        [class~='text-slate-500'],
+        [class~='text-slate-600']
+    ) {
+    color: var(--usk-night-muted);
+}
+
+:where(body:has(#app .usk-dashboard[data-dashboard-theme='dark']))
+    :is(
+        [class~='hover:text-gray-900']:hover,
+        [class~='hover:text-slate-900']:hover,
+        [class~='text-gray-200'],
+        [class~='text-gray-700'],
+        [class~='text-gray-800'],
+        [class~='text-gray-900'],
+        [class~='text-slate-700'],
+        [class~='text-slate-800'],
+        [class~='text-slate-900']
+    ) {
+    color: var(--usk-night-text);
+}

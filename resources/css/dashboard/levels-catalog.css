@@ -1,70 +1,12 @@
 .usk-admin-apps .levels-catalog {
     min-width: 0;
-    color: #193e31;
+    color: var(--usk-night-text, #193e31);
     padding-bottom: 30px;
     container-type: inline-size;
 }
 .usk-admin-apps .levels-catalog button {
     cursor: pointer;
     font: inherit;
-}
-.usk-admin-apps .levels-overview {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1.35fr;
-    margin: 26px 0;
-    border: 1px solid #dfe5da;
-    border-radius: 12px;
-    background: #fffefb;
-}
-.usk-admin-apps .levels-overview > div {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 24px;
-    min-width: 0;
-}
-.usk-admin-apps .levels-overview > div + div {
-    border-left: 1px solid #e7eadf;
-}
-.usk-admin-apps .levels-overview-icon {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: #edf2e8;
-    color: #41694e;
-    flex-shrink: 0;
-}
-.usk-admin-apps .levels-overview p {
-    margin: 0;
-}
-.usk-admin-apps .levels-overview p > strong {
-    display: block;
-    font-size: 27px;
-    line-height: 1.15;
-    font-weight: 500;
-}
-.usk-admin-apps .levels-overview p > span {
-    display: block;
-    font-size: 11px;
-    color: #818a79;
-    margin-top: 5px;
-}
-.usk-admin-apps .levels-overview .levels-overview-note {
-    color: #92753d;
-    gap: 13px;
-}
-.usk-admin-apps .levels-overview-note p {
-    font-size: 12px;
-    line-height: 1.8;
-    color: #7b8373;
-}
-.usk-admin-apps .levels-overview-note p > strong {
-    display: inline;
-    font-size: 12px;
-    color: #3e5b42;
-    font-weight: 500;
 }
 .usk-admin-apps .levels-filter-panel {
     margin: 0 0 40px;
@@ -79,11 +21,11 @@
     align-items: center;
     flex: 1;
     gap: 12px;
-    background: #fffefb;
-    border: 1px solid #dce3d5;
+    background: var(--usk-night-surface, #fffefb);
+    border: 1px solid var(--usk-night-border, #dce3d5);
     border-radius: 8px;
     padding: 0 17px;
-    color: #7d8b73;
+    color: var(--usk-night-mint, #7d8b73);
     min-width: 0;
 }
 .usk-admin-apps main .levels-catalog .levels-search input {
@@ -98,7 +40,7 @@
     font-size: 12px;
 }
 .usk-admin-apps .levels-search:focus-within {
-    outline: 2px solid #a38a53;
+    outline: 2px solid var(--usk-night-gold, #a38a53);
     outline-offset: 2px;
 }
 .usk-admin-apps main .levels-catalog .levels-search input:focus-visible {
@@ -112,19 +54,19 @@
     gap: 9px;
     padding: 0 20px;
     height: 51px;
-    background: #fffefb;
-    border: 1px solid #dce3d5;
+    background: var(--usk-night-surface, #fffefb);
+    border: 1px solid var(--usk-night-border, #dce3d5);
     font-size: 12px;
-    color: #476144;
+    color: var(--usk-night-mint, #476144);
     flex-shrink: 0;
 }
 .usk-admin-apps .levels-filter-toggle.is-active {
-    background: #edf2e8;
-    border-color: #8fa581;
+    background: var(--usk-night-raised, #edf2e8);
+    border-color: var(--usk-night-field-border, #8fa581);
 }
 .usk-admin-apps .levels-filter-toggle > span {
-    background: #073e32;
-    color: #fff;
+    background: var(--usk-night-brand-deep, #073e32);
+    color: var(--usk-night-white, #fff);
     padding: 1px 6px;
     border-radius: 4px;
     font-size: 10px;
@@ -135,25 +77,25 @@
     gap: 10px;
     padding: 18px;
     margin-top: 14px;
-    border: 1px solid #dfe5d9;
+    border: 1px solid var(--usk-night-border, #dfe5d9);
     border-radius: 9px;
-    background: #fffefb;
+    background: var(--usk-night-surface, #fffefb);
 }
 .usk-admin-apps .levels-filter-options button {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #f5f6ef;
+    background: var(--usk-night-surface, #f5f6ef);
     border: 1px solid transparent;
-    color: #6a7c60;
+    color: var(--usk-night-mint, #6a7c60);
     padding: 9px 12px;
     font-size: 11px;
     text-align: left;
 }
 .usk-admin-apps .levels-filter-options button.is-selected {
-    background: #e8efe2;
-    border-color: #a3b797;
-    color: #193e31;
+    background: var(--usk-night-raised, #e8efe2);
+    border-color: var(--usk-night-border, #a3b797);
+    color: var(--usk-night-text, #193e31);
 }
 .usk-admin-apps .levels-filter-options button > span {
     font-size: 10px;
@@ -166,7 +108,7 @@
     gap: 16px;
     margin-top: 16px;
     font-size: 11px;
-    color: #86917c;
+    color: var(--usk-night-mint, var(--usk-day-muted, #86917c));
 }
 .usk-admin-apps .levels-results button {
     display: flex;
@@ -176,7 +118,7 @@
     border: 0;
     padding: 0;
     font-size: 11px;
-    color: #536f47;
+    color: var(--usk-night-mint, #536f47);
 }
 .usk-admin-apps .levels-faculty-list {
     display: flex;
@@ -189,22 +131,14 @@
     gap: 17px;
     padding-bottom: 23px;
     margin-bottom: 25px;
-    border-bottom: 1px solid #dce3d5;
-}
-.usk-admin-apps .levels-faculty-number {
-    font-family: Georgia, serif;
-    font-size: 30px;
-    color: #b4a16b;
-    line-height: 1;
-    border-right: 1px solid #d9dfd0;
-    padding-right: 17px;
+    border-bottom: 1px solid var(--usk-night-border, #dce3d5);
 }
 .usk-admin-apps .levels-faculty-title {
     min-width: 0;
 }
 .usk-admin-apps .levels-faculty-title > span {
     display: block;
-    color: #8d7a45;
+    color: var(--usk-night-gold, var(--usk-day-gold, #8d7a45));
     font-size: 9px;
     letter-spacing: 0.14em;
     margin-bottom: 5px;
@@ -215,7 +149,7 @@
     line-height: 1.3;
     font-weight: 500;
     margin: 0;
-    color: #173f2e;
+    color: var(--usk-night-text, #173f2e);
 }
 .usk-admin-apps .levels-faculty-count {
     display: inline-flex;
@@ -224,9 +158,9 @@
     margin-left: auto;
     white-space: nowrap;
     font-size: 11px;
-    color: #728469;
-    background: #eaf0e4;
-    border: 1px solid #dce5d4;
+    color: var(--usk-night-mint, var(--usk-day-green, #728469));
+    background: var(--usk-night-raised, #eaf0e4);
+    border: 1px solid var(--usk-night-border, #dce5d4);
     border-radius: 6px;
     padding: 7px 11px;
 }
@@ -239,28 +173,28 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    background: #fffefb;
-    border: 1px solid #dfe5d9;
+    background: var(--usk-night-surface, #fffefb);
+    border: 1px solid var(--usk-night-border, #dfe5d9);
     border-radius: 11px;
     overflow: hidden;
     text-decoration: none;
-    color: #193e31;
+    color: var(--usk-night-text, #193e31);
     transition:
         border-color 0.2s,
         box-shadow 0.2s;
 }
 .usk-admin-apps .levels-card:hover {
-    border-color: #9eb48c;
+    border-color: var(--usk-night-border, #9eb48c);
     box-shadow: 0 7px 24px #1b422d0a;
 }
 .usk-admin-apps .levels-card:focus-visible {
-    outline: 3px solid #b09553;
+    outline: 3px solid var(--usk-night-gold, #b09553);
     outline-offset: 4px;
 }
 .usk-admin-apps .levels-card-cover {
     position: relative;
     height: 180px;
-    background: #edf1e6;
+    background: var(--usk-night-raised, #edf1e6);
     overflow: hidden;
 }
 .usk-admin-apps .levels-card-cover > img {
@@ -276,23 +210,23 @@
     justify-content: center;
     gap: 15px;
     height: 100%;
-    color: #7a9670;
-    background: linear-gradient(135deg, #e8eee0, #f6f4e9);
+    color: var(--usk-night-mint, #7a9670);
+    background: linear-gradient(135deg, var(--usk-night-raised, #e8eee0), var(--usk-night-surface, #f6f4e9));
 }
 .usk-admin-apps .levels-cover-placeholder > span {
     font-size: 8px;
     letter-spacing: 0.18em;
-    color: #91a083;
+    color: var(--usk-night-mint, #91a083);
 }
 .usk-admin-apps .levels-code {
     position: absolute;
     left: 18px;
     top: 17px;
-    border: 1px solid #ffffff80;
+    border: 1px solid color-mix(in srgb, var(--usk-night-border, #ffffff) 50%, transparent);
     padding: 6px 11px;
     border-radius: 5px;
-    background: #fffffff0;
-    color: #325638;
+    background: color-mix(in srgb, var(--usk-night-surface, #ffffff) 94%, transparent);
+    color: var(--usk-night-mint, #325638);
     font-size: 11px;
     font-weight: 600;
 }
@@ -307,7 +241,7 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
-    color: #8a7950;
+    color: var(--usk-night-gold, var(--usk-day-gold, #8a7950));
     font-size: 9px;
     margin-bottom: 12px;
 }
@@ -318,21 +252,21 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    color: #658653;
+    color: var(--usk-night-mint, var(--usk-day-green, #658653));
     white-space: nowrap;
 }
 .usk-admin-apps .levels-status:before {
     content: '';
     width: 5px;
     height: 5px;
-    background: #72975d;
+    background: var(--usk-night-brand, #72975d);
     border-radius: 50%;
 }
 .usk-admin-apps .levels-status.is-inactive {
-    color: #959888;
+    color: var(--usk-night-muted, #959888);
 }
 .usk-admin-apps .levels-status.is-inactive:before {
-    background: #a7ab9c;
+    background: var(--usk-night-hover, #a7ab9c);
 }
 .usk-admin-apps main .levels-catalog .levels-card h3 {
     font-family: 'DM Sans', sans-serif;
@@ -340,13 +274,13 @@
     line-height: 1.4;
     font-weight: 500;
     margin: 0;
-    color: #193e31;
+    color: var(--usk-night-text, #193e31);
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .levels-card-description {
     margin: 12px 0 0;
     font-size: 12px;
-    color: #7d8772;
+    color: var(--usk-night-muted, #7d8772);
     line-height: 1.8;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -358,10 +292,10 @@
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    border-top: 1px solid #edf0e6;
+    border-top: 1px solid var(--usk-night-border, #edf0e6);
     padding-top: 18px;
     margin-top: auto;
-    color: #476a3d;
+    color: var(--usk-night-mint, #476a3d);
     font-size: 11px;
 }
 .usk-admin-apps .levels-card h3 + .levels-card-footer,
@@ -373,28 +307,28 @@
     align-items: center;
     gap: 17px;
     padding: 30px;
-    background: #eef2e7;
-    border: 1px dashed #cbd8bf;
+    background: var(--usk-night-raised, #eef2e7);
+    border: 1px dashed var(--usk-night-border, #cbd8bf);
     border-radius: 10px;
-    color: #749166;
+    color: var(--usk-night-mint, #749166);
 }
 .usk-admin-apps .levels-faculty-empty strong {
     font-size: 13px;
-    color: #4b6841;
+    color: var(--usk-night-mint, #4b6841);
     font-weight: 500;
 }
 .usk-admin-apps .levels-faculty-empty p {
     margin: 5px 0 0;
     font-size: 11px;
-    color: #829176;
+    color: var(--usk-night-mint, #829176);
 }
 .usk-admin-apps .levels-faculty-empty button {
     display: flex;
     align-items: center;
     gap: 7px;
-    border: 1px solid #bfceb1;
-    background: #fffefb;
-    color: #557347;
+    border: 1px solid var(--usk-night-border, #bfceb1);
+    background: var(--usk-night-surface, #fffefb);
+    color: var(--usk-night-mint, #557347);
     padding: 10px 13px;
     font-size: 11px;
     margin-left: auto;
@@ -406,16 +340,16 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    border: 1px dashed #d3ddc8;
+    border: 1px dashed var(--usk-night-border, #d3ddc8);
     border-radius: 12px;
-    background: #fafbf5;
-    color: #6f8860;
+    background: var(--usk-night-surface, #fafbf5);
+    color: var(--usk-night-mint, #6f8860);
 }
 .usk-admin-apps main .levels-catalog .levels-empty h2 {
     margin: 0;
     font-size: 24px;
     font-weight: 500;
-    color: #355b38;
+    color: var(--usk-night-mint, #355b38);
 }
 .usk-admin-apps .levels-empty p {
     margin: 0;
@@ -425,7 +359,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #3d6539;
+    color: var(--usk-night-mint, #3d6539);
     border: 0;
     background: none;
     font-size: 12px;
@@ -440,22 +374,8 @@
     .usk-admin-apps .levels-cards {
         grid-template-columns: minmax(0, 1fr);
     }
-    .usk-admin-apps .levels-overview {
-        grid-template-columns: 1fr 1fr;
-    }
-    .usk-admin-apps .levels-overview .levels-overview-note {
-        display: none;
-    }
-    .usk-admin-apps .levels-overview > div {
-        padding: 18px;
-        gap: 12px;
-    }
     .usk-admin-apps .levels-faculty-header {
         gap: 12px;
-    }
-    .usk-admin-apps .levels-faculty-number {
-        padding-right: 12px;
-        font-size: 25px;
     }
     .usk-admin-apps .levels-faculty-count {
         padding: 6px 8px;
@@ -473,20 +393,6 @@
     }
 }
 @media (max-width: 480px) {
-    .usk-admin-apps .levels-overview > div {
-        padding: 15px;
-        gap: 10px;
-    }
-    .usk-admin-apps .levels-overview-icon {
-        width: 33px;
-        height: 33px;
-    }
-    .usk-admin-apps .levels-overview p > strong {
-        font-size: 23px;
-    }
-    .usk-admin-apps .levels-overview p > span {
-        font-size: 9px;
-    }
     .usk-admin-apps .levels-toolbar {
         flex-wrap: wrap;
         gap: 10px;
@@ -502,9 +408,6 @@
         align-items: flex-start;
         font-size: 10px;
     }
-    .usk-admin-apps .levels-faculty-number {
-        display: none;
-    }
     .usk-admin-apps .levels-faculty-title > span {
         font-size: 8px;
     }
@@ -519,4 +422,106 @@
     .usk-admin-apps .levels-card {
         transition: none;
     }
+}
+
+.usk-admin-apps .levels-index .levels-filter-panel {
+    margin-bottom: 28px;
+    padding: 16px;
+    border: 1px solid var(--usk-night-border, #dfe6d6);
+    border-radius: 12px;
+    background: var(--usk-night-surface, #fff);
+}
+
+.usk-admin-apps .levels-index .levels-filter-toggle,
+.usk-admin-apps .levels-index .levels-filter-options button {
+    border-radius: 7px;
+}
+
+.usk-admin-apps .levels-index .levels-filter-options {
+    padding: 12px 0 0;
+    border: 0;
+    border-top: 1px solid var(--usk-night-border, #e7ecdf);
+    border-radius: 0;
+    background: transparent;
+}
+
+.usk-admin-apps .levels-index .levels-results {
+    margin-top: 12px;
+    color: var(--usk-night-mint, #586d60);
+}
+
+.usk-admin-apps .levels-index .levels-faculty-list {
+    gap: 28px;
+}
+
+.usk-admin-apps .levels-index .levels-faculty-header {
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+}
+
+.usk-admin-apps .levels-index .levels-faculty-icon {
+    display: grid;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border: 1px solid var(--usk-night-border, #dfe6d6);
+    border-radius: 8px;
+    background: var(--usk-night-raised, #edf2e7);
+    color: var(--usk-night-mint, #215a40);
+}
+
+.usk-admin-apps .levels-index .levels-cards {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: 14px;
+}
+
+.usk-admin-apps .levels-index .levels-card {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    background: var(--usk-night-surface, #fff);
+}
+
+.usk-admin-apps .levels-index .levels-card-cover {
+    height: auto;
+    min-height: 112px;
+}
+
+.usk-admin-apps .levels-index .levels-card-cover > img {
+    position: absolute;
+    inset: 0;
+}
+
+.usk-admin-apps .levels-index .levels-code {
+    inset: auto 5px 6px;
+    overflow: hidden;
+    padding: 3px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.usk-admin-apps .levels-index .levels-card-body {
+    padding: 12px 14px;
+}
+
+.usk-admin-apps .levels-index .levels-card-eyebrow {
+    margin-bottom: 5px;
+}
+
+.usk-admin-apps main .levels-index .levels-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.usk-admin-apps .levels-index .levels-card-description {
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+.usk-admin-apps .levels-index .levels-card .levels-card-footer {
+    margin-top: auto;
+    padding-top: 8px;
+    border: 0;
 }

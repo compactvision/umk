@@ -1,5 +1,5 @@
 import { formatDate, historyLabels, nextStep, paymentLabels, statusLabels, verdictLabels, type StudentEnrollment } from '@/lib/studentEnrollment';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
     CalendarDays,
@@ -37,6 +37,8 @@ export default function EnrollmentShowSection({ enrollment, success }: Props) {
     const corrections = documents.filter((doc) => doc.can_replace).length;
     const history = enrollment.status_history || [];
     const fullName = [enrollment.student?.first_name, enrollment.student?.post_name, enrollment.student?.last_name].filter(Boolean).join(' ');
+    const { errors } = usePage().props;
+    const [withdrawing, setWithdrawing] = useState(false);
     const isFinal = ['validated', 'rejected', 'cancelled'].includes(enrollment.status);
     const information = [
         ['Nom déclaré dans le dossier', enrollment.declared_name || fullName],
@@ -65,8 +67,22 @@ export default function EnrollmentShowSection({ enrollment, success }: Props) {
                             Reprendre le brouillon
                         </Link>
                     )}
+                    {!isFinal && enrollment.status !== 'draft' && (
+                        <button
+                            className="student-secondary"
+                            disabled={withdrawing}
+                            onClick={() => {
+                                if (!window.confirm('Retirer cette candidature ? Son traitement prendra fin.')) return;
+                                setWithdrawing(true);
+                                router.post(`/dashboard/enrollments/${enrollment.uuid}/withdraw`, {}, { onFinish: () => setWithdrawing(false) });
+                            }}
+                        >
+                            Retirer la candidature
+                        </button>
+                    )}
                     <button
                         className="student-secondary"
+
                         onClick={() => {
                             flushSync(() => setTab('details'));
                             window.print();
@@ -82,7 +98,7 @@ export default function EnrollmentShowSection({ enrollment, success }: Props) {
                     <span className="student-eyebrow">MON DOSSIER · {enrollment.reference}</span>
                     <h1>{enrollment.level?.title || 'Votre candidature'}</h1>
                     <p>
-                        {enrollment.level?.faculty?.name || 'Formation à compléter'}
+                        {enrollment.requested_program || enrollment.level?.faculty?.name || 'Formation à compléter'}
                         {enrollment.academic_year?.title && ` · ${enrollment.academic_year.title}`}
                     </p>
                     <div className="student-hero-badges">
@@ -92,6 +108,11 @@ export default function EnrollmentShowSection({ enrollment, success }: Props) {
                 </div>
                 <GraduationCap size={65} strokeWidth={1} aria-hidden="true" />
             </header>
+            {errors.withdrawal && (
+                <p className="student-notice" role="alert">
+                    {errors.withdrawal}
+                </p>
+            )}
             {success && (
                 <p className="student-notice" role="status">
                     {success}
@@ -209,6 +230,7 @@ export default function EnrollmentShowSection({ enrollment, success }: Props) {
                                         <dl className="student-information-grid">
                                             {[
                                                 ['Créé le', enrollment.created_at],
+                                                ['Soumis le', enrollment.submitted_at],
                                                 ['Dernière mise à jour', enrollment.updated_at],
                                                 ['Début de l’analyse', enrollment.analysis_started_at],
                                                 ['Fin de vérification des pièces', enrollment.analysis_completed_at],

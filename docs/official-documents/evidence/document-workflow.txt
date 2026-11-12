@@ -1,0 +1,10 @@
+
+   PASS  Tests\Feature\OfficialDocumentWorkflowTest
+  ✓ controlled issuance private archive and public status
+  ✓ scopes and success without certified result are rejected
+  ✓ card requires photo and payment and replacement preserves both archives
+  ✓ storage failure keeps approval and allows retry
+
+  Tests:    4 passed (137 assertions)
+  Duration: 12.50s
+

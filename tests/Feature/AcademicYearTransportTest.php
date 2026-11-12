@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\AcademicYear;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Vite;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -29,6 +31,27 @@ class AcademicYearTransportTest extends TestCase
         $bytes = strlen(implode(', ', $response->headers->all('Link')));
         $this->assertLessThan(4096, $bytes, 'Link preload header: '.$bytes.' bytes');
         $response->assertSee('rel="modulepreload"', false);
+    }
+
+    public function test_compiled_inertia_page_can_load_without_a_separate_manifest_entry(): void
+    {
+        $publicPath = public_path();
+        $fixture = sys_get_temp_dir().'/umk-vite-'.bin2hex(random_bytes(8));
+        File::ensureDirectoryExists($fixture.'/build');
+        File::put($fixture.'/build/manifest.json', json_encode([
+            'resources/js/app.tsx' => ['file' => 'assets/app-fixture.js', 'src' => 'resources/js/app.tsx', 'isEntry' => true],
+        ], JSON_THROW_ON_ERROR));
+
+        try {
+            $this->app->usePublicPath($fixture);
+            Vite::useHotFile($fixture.'/hot');
+            $this->actingAs($this->admin())->get('/dashboard/admin/academic-years')->assertOk()
+                ->assertSee('/build/assets/app-fixture.js')
+                ->assertInertia(fn (Assert $page) => $page->component('dashboard/academicYear/Index'));
+        } finally {
+            $this->app->usePublicPath($publicPath);
+            File::deleteDirectory($fixture);
+        }
     }
 
     public function test_open_and_close_are_repeatable_and_never_open_two_years(): void

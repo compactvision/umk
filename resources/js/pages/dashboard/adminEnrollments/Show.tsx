@@ -58,7 +58,7 @@ export default function Show({ enrollment, success }: { enrollment: Dossier; suc
     };
     const previewable = document && ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(document.mime);
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             {toast && <FeedbackToast key={toast.id} feedback={toast} onDismiss={() => setToast(null)} />}
             <Head title={`Dossier de ${applicantName(enrollment.student)}`} />
             <div className="admin-enrollments">
@@ -118,7 +118,8 @@ export default function Show({ enrollment, success }: { enrollment: Dossier; suc
                                     ['Faculté', enrollment.level?.faculty?.name || '—'],
                                     ['Niveau', enrollment.level?.title || '—'],
                                     ['Année académique', enrollment.academic_year?.title || '—'],
-                                    ['Programme', enrollment.snapshot?.program || '—'],
+                                    ['Soumission', enrollment.submitted_at ? formatDate(enrollment.submitted_at) : '—'],
+                                    ['Programme', enrollment.requested_program || enrollment.snapshot?.program || '—'],
                                     [
                                         'Certification de l’étudiant',
                                         enrollment.snapshot?.isConfirmed ? 'Informations certifiées par l’étudiant' : 'Non confirmée',

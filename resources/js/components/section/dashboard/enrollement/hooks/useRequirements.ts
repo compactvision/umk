@@ -7,6 +7,7 @@ type Params = {
     faculty_id: string;
     level_id: string;
     year_id: string;
+    academic_program_id?: string;
 };
 
 export function useRequirements(params: Params) {
@@ -40,6 +41,7 @@ export function useRequirements(params: Params) {
                         faculty_id: params.faculty_id || null,
                         level_id: Number(params.level_id),
                         year_id: Number(params.year_id),
+                        academic_program_id: params.academic_program_id || null,
                     },
                     signal: controller.signal,
                 });
@@ -87,7 +89,7 @@ export function useRequirements(params: Params) {
             controller.abort();
             clearTimeout(timer);
         };
-    }, [params.faculty_id, params.level_id, params.year_id]);
+    }, [params.faculty_id, params.level_id, params.year_id, params.academic_program_id]);
 
     return { requirements, loading, error };
 }

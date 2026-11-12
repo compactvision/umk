@@ -31,7 +31,7 @@ class SemesterService
             if ($other && (((int) $data['number'] === 1 && $end->toDateString() >= $other->start_date->toDateString()) || ((int) $data['number'] === 2 && $start->toDateString() <= $other->end_date->toDateString()))) {
                 throw ValidationException::withMessages(['start_month' => 'Le 1er semestre doit se terminer avant le début du 2e semestre. Les périodes ne peuvent pas se chevaucher.']);
             }
-            $sessions = AcademicSession::whereHas('offering', fn ($q) => $q->where('academic_year_id', $year->id)->whereHas('course', fn ($q) => $q->where('semester', $data['number'])));
+            $sessions = AcademicSession::whereNull('cancelled_at')->whereHas('offering', fn ($q) => $q->where('academic_year_id', $year->id)->where(fn ($q) => $q->whereHas('academicSemester', fn ($s) => $s->where('number', $data['number']))->orWhere(fn ($legacy) => $legacy->whereNull('curriculum_item_id')->whereHas('course', fn ($c) => $c->where('semester', $data['number'])))));
             if ($sessions->where(fn ($q) => $q->where('starts_at', '<', $start->utc())->orWhere('ends_at', '>', $end->addDay()->utc()))->exists()) {
                 throw ValidationException::withMessages(['end_month' => 'Des séances de ce semestre sont déjà planifiées hors de cette période. Ajustez les séances avant de réduire la période.']);
             }

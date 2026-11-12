@@ -1,164 +1,147 @@
-import { studentModules } from '@/components/student/navigation';
+import { adminNavigation } from '@/components/layouts/Dashboard/adminNavigation';
+import { studentHref, studentModules, studentSectionAccess } from '@/components/student/navigation';
+import type { Permission } from '@/components/student/types';
 import Alert from '@/utils/sweetAlert';
 import { router, usePage } from '@inertiajs/react';
-import {
-    BadgeCheck,
-    BarChart3,
-    Bell,
-    BookOpen,
-    Calendar,
-    ChevronRight,
-    Clock,
-    FileText,
-    GraduationCap,
-    Grid3x3,
-    Home,
-    Lock,
-    LogOut,
-    Settings,
-    Shield,
-    TrendingUp,
-    User,
-    Users,
-    X,
-} from 'lucide-react';
+import { BookOpen, ChevronRight, ClipboardCheck, GraduationCap, Home, LogOut, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { route } from 'ziggy-js';
 
 // Types pour les rôles
-type UserRole = 'user' | 'student' | 'instructor' | 'admin' | 'super_admin';
+type UserRole = 'user' | 'candidate' | 'student' | 'professor' | 'admin';
 
 // Configuration des permissions par rôle
 const rolePermissions: Record<UserRole, string[]> = {
     user: ['enrollments'],
+    candidate: ['enrollments'],
     student: ['dashboard', 'enrollments'],
-    instructor: ['analytics', 'reports', 'settings'],
-    admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
-    super_admin: ['dashboard', 'analytics', 'reports', 'users', 'settings', 'site_settings'],
+    professor: ['teaching'],
+    admin: adminNavigation.map(({ id }) => id),
 };
 
 const Sidebar = ({
     onButtonClick,
+    onCloseMenu,
+    onNavigate = onCloseMenu,
+    onLogout,
+    loggingOut = false,
+    isMobile,
     isMobileSidebarOpen,
     currentActiveMenu,
-    userRole = 'user',
+    userRole,
 }: {
     onButtonClick: (e: React.MouseEvent, menuId: string) => void;
+    onCloseMenu: () => void;
+    onNavigate?: () => void;
+    onLogout: () => void;
+    loggingOut?: boolean;
+    isMobile: boolean;
     isMobileSidebarOpen: boolean;
     currentActiveMenu: string | null;
     userRole?: UserRole | UserRole[] | null;
 }) => {
     const roles = Array.isArray(userRole) ? userRole : [userRole];
-    const isAdministration = roles.some((role) => role === 'admin' || role === 'super_admin');
-    const portalActive = Boolean(usePage<{ studentPortalActive?: boolean }>().props.studentPortalActive);
+    const isAdministration = roles.includes('admin');
+    const page = usePage<{
+        studentPortalActive?: boolean;
+        teachingProfileActive?: boolean;
+        academic?: { id: number };
+        permissions?: Record<string, Permission>;
+        auth?: { user?: { permissions?: string[]; hasAcademicFacultyScope?: boolean } | null };
+    }>();
+    const portalActive = Boolean(page.props.studentPortalActive);
+    const isStudentPortal = portalActive && !isAdministration && !page.url?.startsWith('/dashboard/teacher');
     const sidebarRef = useRef<HTMLDivElement>(null);
     const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-    const [isClosing, setIsClosing] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [menuAnimations, setMenuAnimations] = useState<{ [key: string]: boolean }>({});
 
-    useEffect(() => {
-        const handleResize = () => {
-            const newIsMobile = window.innerWidth <= 768;
-            setIsMobile(newIsMobile);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const handleCloseMenu = useCallback(
+        (restoreFocus = false) => {
+            if (restoreFocus && currentActiveMenu) {
+                sidebarRef.current?.querySelector<HTMLButtonElement>(`[data-menu="${currentActiveMenu}"]`)?.focus();
+            }
+            onCloseMenu();
+        },
+        [currentActiveMenu, onCloseMenu],
+    );
 
     // Fermeture au clic en dehors
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (currentActiveMenu && menuRefs.current[currentActiveMenu]) {
                 const menuElement = menuRefs.current[currentActiveMenu];
-                if (menuElement && !menuElement.contains(event.target as Node)) {
-                    handleCloseMenu(currentActiveMenu);
+                if (menuElement && !menuElement.contains(event.target as Node) && !sidebarRef.current?.contains(event.target as Node)) {
+                    handleCloseMenu();
                 }
             }
         };
 
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && currentActiveMenu && !event.defaultPrevented) handleCloseMenu(true);
+        };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [currentActiveMenu]);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [currentActiveMenu, handleCloseMenu]);
 
     // Animation d'entrée des menus
     useEffect(() => {
         if (currentActiveMenu) {
             setMenuAnimations((prev) => ({ ...prev, [currentActiveMenu]: true }));
+            menuRefs.current[currentActiveMenu]?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
         }
     }, [currentActiveMenu]);
 
     const handleLogout = async () => {
         const result = await Alert.confirm('Êtes-vous sûr de vouloir vous déconnecter?');
 
-        if (result.isConfirmed) {
-            Alert.loading('Déconnexion en cours...');
-
-            router.post(
-                '/logout',
-                {},
-                {
-                    onFinish: () => {
-                        Alert.close();
-                    },
-                },
-            );
-        }
+        if (result.isConfirmed) onLogout();
     };
 
-    const handleCloseMenu = useCallback(
-        (menuId: string) => {
-            setIsClosing(menuId);
-            setMenuAnimations((prev) => ({ ...prev, [menuId]: false }));
-            setTimeout(() => {
-                onButtonClick(new MouseEvent('click') as any, '');
-                setIsClosing(null);
-            }, 300);
-        },
-        [onButtonClick],
-    );
+    const visitMenuPage = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const destination = new URL(event.currentTarget.href);
+        if (destination.origin !== window.location.origin || !/^\/dashboard(?:\/|$)/.test(destination.pathname)) return;
+
+        event.preventDefault();
+        onNavigate();
+
+        const { pathname, search, hash } = window.location;
+        if (destination.hash && destination.pathname === pathname && (!destination.search || destination.search === search)) {
+            const anchor = document.getElementById(destination.hash.slice(1));
+            if (anchor) {
+                if (destination.hash === hash) anchor.scrollIntoView({ block: 'start' });
+                else window.location.hash = destination.hash;
+                return;
+            }
+        }
+        router.visit(destination.href);
+    };
 
     const hasPermission = (menuId: string): boolean => {
+        if (isStudentPortal) return studentModules.some((module) => module.id === menuId);
         // Un étudiant activé retrouve son dossier dans son espace unique,
         // même lorsqu’il conserve également le rôle candidat « user ».
         if (menuId === 'enrollments' && (portalActive || isAdministration)) return false;
-        const roles = Array.isArray(userRole) ? userRole : [userRole];
         return roles.some((role) => role && rolePermissions[role]?.includes(menuId));
     };
 
     const menuItems = [
         {
             id: 'dashboard',
-            label: isAdministration ? 'Nos étudiants' : 'Étudiant',
-            ariaLabel: isAdministration ? 'Gestion des étudiants du campus' : 'Espace étudiant',
+            label: 'Étudiant',
+            ariaLabel: 'Espace étudiant',
             icon: <GraduationCap size={isMobile ? 20 : 24} />,
         },
         {
-            id: 'analytics',
-            label: isAdministration ? 'Enseignants' : 'Instructor',
-            ariaLabel: isAdministration ? 'Gestion des enseignants' : 'Analyses et statistiques',
-            icon: <BarChart3 size={isMobile ? 20 : 24} />,
-        },
-        {
-            id: 'reports',
-            label: 'Apps',
-            ariaLabel: 'Applications de gestion',
-            icon: <Grid3x3 size={isMobile ? 20 : 24} />,
-        },
-        {
-            id: 'users',
-            label: 'Account',
-            ariaLabel: 'Gestion des utilisateurs',
-            icon: <Users size={isMobile ? 20 : 24} />,
-        },
-        {
-            id: 'settings',
-            label: 'Settings',
-            ariaLabel: "Paramètres de l'application",
-            icon: <Settings size={isMobile ? 20 : 24} />,
+            id: 'teaching',
+            label: 'Enseignant',
+            ariaLabel: 'Espace enseignant',
+            icon: <BookOpen size={isMobile ? 20 : 24} />,
         },
         {
             id: 'enrollments',
@@ -166,91 +149,119 @@ const Sidebar = ({
             ariaLabel: 'Gestion des inscriptions',
             icon: <BookOpen size={isMobile ? 20 : 24} />,
         },
-        {
-            id: 'site_settings',
-            label: 'USK',
-            ariaLabel: 'Paramètres du site',
-            icon: <Settings size={isMobile ? 20 : 24} />,
-        },
     ];
 
-    const visibleMenuItems = menuItems.filter((item) => hasPermission(item.id));
+    const visibleMenuItems = isAdministration
+        ? adminNavigation.map((item) => ({
+              id: item.id,
+              label: item.shortLabel,
+              ariaLabel: item.title,
+              icon: <item.icon size={isMobile ? 20 : 24} />,
+          }))
+        : isStudentPortal
+          ? studentModules.map((module) => ({
+                id: module.id,
+                label: module.title,
+                ariaLabel: module.title,
+                icon: <module.icon size={isMobile ? 20 : 24} />,
+            }))
+          : menuItems.filter((item) => hasPermission(item.id));
 
     // Configuration des sous-menus
-    const subMenuConfig = {
-        dashboard: {
-            title: isAdministration ? 'Nos étudiants' : 'Espace étudiant',
-            items: isAdministration ? [
-                { id: 'campus-students', label: 'Étudiants du campus', icon: <Users size={18} />, href: '/dashboard/admin/student-academic' },
-            ] : [
-                { id: 'home', label: 'Mon espace', icon: <Home size={18} />, href: portalActive ? '/dashboard/student' : '/dashboard' },
-                ...studentModules
-                    .filter((module) => module.id !== 'overview')
-                    .map((module) => ({
-                        id: module.id,
-                        label: module.title,
-                        icon: <module.icon size={18} />,
-                        href: `/dashboard/student/${module.id}`,
-                    })),
-            ],
-        },
-        analytics: {
-            title: isAdministration ? 'Les enseignants' : 'Instructor Analytics',
-            items: isAdministration ? [
-                { id: 'professors', label: 'Gestion des enseignants', icon: <Users size={18} />, href: '/dashboard/admin/professors' },
-            ] : [
-                { id: 'overview', label: 'Overview', icon: <TrendingUp size={18} />, href: '#' },
-                { id: 'student-progress', label: 'Student Progress', icon: <Users size={18} />, href: '#' },
-                { id: 'course-stats', label: 'Course Statistics', icon: <BarChart3 size={18} />, href: '#' },
-                { id: 'engagement', label: 'Engagement', icon: <Clock size={18} />, href: '#' },
-            ],
-        },
-        reports: {
-            title: 'Applications USK',
-            items: [
-                { id: 'seo', label: 'Référencement et documents', icon: <BookOpen size={18} />, href: '/dashboard/admin/seo' },
-                { id: 'schedule', label: 'Horaires des cours', icon: <Calendar size={18} />, href: '/dashboard/admin/schedule' },
-                { id: 'professors', label: 'Enseignants', icon: <Users size={18} />, href: '/dashboard/admin/professors' },
-                { id: 'student-academic', label: 'Nos étudiants', icon: <GraduationCap size={18} />, href: '/dashboard/admin/student-academic' },
-                {
-                    id: 'applications',
-                    label: 'Dossiers d’inscription',
-                    icon: <FileText size={18} />,
-                    href: route('dashboard.admin.enrollments.index'),
+    const subMenuConfig: Record<
+        string,
+        {
+            title: string;
+            description?: string;
+            items: { id: string; label: string; icon: React.ReactNode; href?: string; status?: string; native?: boolean }[];
+        }
+    > = isAdministration
+        ? Object.fromEntries(
+              adminNavigation.map((menu) => [
+                  menu.id,
+                  {
+                      title: menu.title,
+                      items: menu.items.map(([label, destination]) => {
+                          const user = page.props.auth?.user;
+                          const restricted =
+                              (destination.institutionWide && user?.hasAcademicFacultyScope) ||
+                              (destination.anyPermission?.length &&
+                                  !destination.anyPermission.some((permission) => user?.permissions?.includes(permission)));
+                          return {
+                              id: label,
+                              label,
+                              icon: <menu.icon size={18} />,
+                              href: restricted ? undefined : destination.href,
+                              native: destination.native,
+                              status: restricted ? 'Accès restreint' : undefined,
+                          };
+                      }),
+                  },
+              ]),
+          )
+        : isStudentPortal
+          ? Object.fromEntries(
+                studentModules.map((module) => [
+                    module.id,
+                    {
+                        title: module.title,
+                        description: module.description,
+                        items: module.items.flatMap((item, index) => {
+                            const access = studentSectionAccess(item.section, page.props.permissions);
+                            return access.visible
+                                ? [
+                                      {
+                                          id: `${module.id}-${index}`,
+                                          label: item.label,
+                                          icon: <module.icon size={18} />,
+                                          href: access.allowed ? studentHref(item.section, page.props.academic?.id, item.hash) : undefined,
+                                          status: access.reason ?? undefined,
+                                      },
+                                  ]
+                                : [];
+                        }),
+                    },
+                ]),
+            )
+          : {
+                dashboard: {
+                    title: 'Espace étudiant',
+                    items: [{ id: 'home', label: 'Mon espace', icon: <Home size={18} />, href: '/dashboard' }],
                 },
-                { id: 'years', label: 'Années académiques', icon: <Calendar size={18} />, href: route('dashboard.admin.academic-years.index') },
-                { id: 'faculty', label: 'Facultés', icon: <GraduationCap size={18} />, href: route('dashboard.admin.faculties.index') },
-                { id: 'levels', label: 'Niveaux', icon: <BadgeCheck size={18} />, href: route('dashboard.admin.levels.index') },
-                { id: 'posts', label: 'Actualités', icon: <BookOpen size={18} />, href: route('dashboard.admin.posts.index') },
-            ],
-        },
-        users: {
-            title: 'Account Management',
-            items: [
-                { id: 'profile', label: 'Profile', icon: <User size={18} />, href: '#' },
-                { id: 'security', label: 'Security', icon: <Lock size={18} />, href: '#' },
-                { id: 'notifications', label: 'Notifications', icon: <Bell size={18} />, href: '#' },
-                { id: 'privacy', label: 'Privacy', icon: <Shield size={18} />, href: '#' },
-            ],
-        },
-        settings: {
-            title: 'Settings',
-            items: [
-                { id: 'general', label: 'General', icon: <Settings size={18} />, href: '#' },
-                { id: 'appearance', label: 'Appearance', icon: <Grid3x3 size={18} />, href: '#' },
-                { id: 'notifications', label: 'Notifications', icon: <Bell size={18} />, href: '#' },
-                { id: 'advanced', label: 'Advanced', icon: <Shield size={18} />, href: '#' },
-            ],
-        },
-        enrollments: {
-            title: 'Inscriptions',
-            items: [{ id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') }],
-        },
-        site_settings: {
-            title: 'Site Settings',
-            items: [{ id: 'site-settings', label: 'Paramètres du site', icon: <Settings size={18} />, href: route('dashboard.admin.site.index') }],
-        },
-    };
+                teaching: {
+                    title: 'Espace enseignant',
+                    description: 'Vos enseignements, supports et évaluations',
+                    items: [
+                        { id: 'courses', label: 'Mes cours', icon: <BookOpen size={18} />, href: route('dashboard.teaching.index') },
+                        ...(page.props.teachingProfileActive
+                            ? [
+                                  {
+                                      id: 'resources',
+                                      label: 'Supports pédagogiques',
+                                      icon: <BookOpen size={18} />,
+                                      href: route('dashboard.teaching.learning.index'),
+                                  },
+                              ]
+                            : []),
+                        ...(page.props.teachingProfileActive && page.props.auth?.user?.permissions?.includes('manage courses')
+                            ? [
+                                  {
+                                      id: 'assessments',
+                                      label: 'Évaluations',
+                                      icon: <ClipboardCheck size={18} />,
+                                      href: route('dashboard.teaching.assessments.index'),
+                                  },
+                              ]
+                            : []),
+                    ],
+                },
+                enrollments: {
+                    title: 'Inscriptions',
+                    items: [
+                        { id: 'my-enrollments', label: 'Mes inscriptions', icon: <BookOpen size={18} />, href: route('dashboard.enrollments.index') },
+                    ],
+                },
+            };
 
     return (
         <>
@@ -258,7 +269,9 @@ const Sidebar = ({
             <nav
                 className={`fixed top-0 left-0 ${isMobile ? 'w-16' : 'w-20'} z-[60] flex h-screen flex-col border-r border-slate-700/50 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-300 shadow-2xl backdrop-blur-xl transition-all duration-500 ease-out ${isMobile ? 'overflow-y-auto' : 'overflow-hidden'} md:translate-x-0 ${isMobile && !isMobileSidebarOpen ? '-translate-x-full' : 'translate-x-0'} ${isMobile && currentActiveMenu ? 'opacity-30' : 'opacity-100'}`}
                 ref={sidebarRef}
+                data-dashboard-rail
                 aria-label="Navigation principale"
+                inert={isMobile && !isMobileSidebarOpen}
             >
                 {/* Gradient Overlay Effect */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-teal-500/5"></div>
@@ -275,132 +288,124 @@ const Sidebar = ({
                 </div>
 
                 {/* Navigation avec espacement optimisé */}
-                <div className={`relative flex flex-1 flex-col ${isMobile ? 'gap-2' : 'gap-3'} ${isMobile ? 'px-1.5' : 'px-2'} pb-4`}>
-                    {visibleMenuItems.map((item, index) => {
-                        const isActive = currentActiveMenu === item.id;
-                        const isHovered = hoveredItem === item.id;
-                        const hasAnimation = menuAnimations[item.id];
+                <div
+                    className={`relative flex min-h-0 flex-1 flex-col overflow-y-auto ${isMobile ? 'gap-2' : 'gap-3'} ${isMobile ? 'px-1.5' : 'px-2'} pb-4 ${isAdministration ? 'overscroll-contain' : ''}`}
+                >
+                    {visibleMenuItems
+                        .filter((item) => subMenuConfig[item.id]?.items.length)
+                        .map((item) => {
+                            const isActive = currentActiveMenu === item.id;
+                            const isHovered = hoveredItem === item.id;
 
-                        return (
-                            <div key={item.id} className="group relative">
-                                {/* Active Indicator avec animation améliorée */}
-                                <div
-                                    className={`absolute ${isMobile ? '-left-1.5' : '-left-2'} top-1/2 -translate-y-1/2 ${isMobile ? 'h-8 w-1' : 'h-10 w-1.5'} rounded-r-full bg-gradient-to-b from-emerald-400 to-emerald-600 transition-all duration-500 ${isActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'}`}
-                                ></div>
-
-                                <button
-                                    className={`relative w-full cursor-pointer border-none bg-transparent ${isMobile ? 'p-2.5' : 'p-3'} flex flex-col items-center overflow-hidden rounded-xl text-xs font-medium transition-all duration-300 ${
-                                        isActive
-                                            ? 'scale-105 border border-emerald-400/40 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-white shadow-lg'
-                                            : 'text-slate-400 hover:scale-105 hover:bg-slate-800/60 hover:text-white active:scale-95'
-                                    } ${isHovered && !isActive ? 'shadow-lg' : ''}`}
-                                    data-menu={item.id}
-                                    aria-label={item.ariaLabel}
-                                    aria-expanded={isActive}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        // Changement direct du menu actif sans fermeture intermédiaire
-                                        onButtonClick(e, item.id);
-                                    }}
-                                    onMouseEnter={() => setHoveredItem(item.id)}
-                                    onMouseLeave={() => setHoveredItem(null)}
-                                >
-                                    {/* Background Glow Effect */}
+                            return (
+                                <div key={item.id} className="group relative">
+                                    {/* Active Indicator avec animation améliorée */}
                                     <div
-                                        className={`absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500/0 via-emerald-500/10 to-teal-500/0 transition-opacity duration-500 ${isActive || isHovered ? 'opacity-100' : 'opacity-0'}`}
+                                        className={`absolute ${isMobile ? '-left-1.5' : '-left-2'} top-1/2 -translate-y-1/2 ${isMobile ? 'h-8 w-1' : 'h-10 w-1.5'} rounded-r-full bg-gradient-to-b from-emerald-400 to-emerald-600 transition-all duration-500 ${isActive ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'}`}
                                     ></div>
 
-                                    {/* Icon Container with Animation */}
-                                    <span
-                                        className={`relative z-10 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-lg' : isHovered ? 'scale-105' : 'scale-100'}`}
+                                    <button
+                                        className={`relative w-full cursor-pointer border-none bg-transparent ${isAdministration ? 'gap-1 px-0.5 py-2.5' : isMobile ? 'p-2.5' : 'p-3'} flex flex-col items-center overflow-hidden rounded-xl text-xs font-medium transition-all duration-300 ${
+                                            isActive
+                                                ? 'scale-105 border border-emerald-400/40 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-white shadow-lg'
+                                                : 'text-slate-400 hover:scale-105 hover:bg-slate-800/60 hover:text-white active:scale-95'
+                                        } ${isHovered && !isActive ? 'shadow-lg' : ''}`}
+                                        data-menu={item.id}
+                                        aria-label={item.label}
+                                        aria-expanded={isActive}
+                                        aria-controls={`sidebar-panel-${item.id}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            // Changement direct du menu actif sans fermeture intermédiaire
+                                            onButtonClick(e, item.id);
+                                        }}
+                                        onMouseEnter={() => setHoveredItem(item.id)}
+                                        onMouseLeave={() => setHoveredItem(null)}
                                     >
-                                        {item.icon}
-                                    </span>
+                                        {/* Background Glow Effect */}
+                                        <div
+                                            className={`absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500/0 via-emerald-500/10 to-teal-500/0 transition-opacity duration-500 ${isActive || isHovered ? 'opacity-100' : 'opacity-0'}`}
+                                        ></div>
 
-                                    {/* Label */}
-                                    <span
-                                        className={`relative z-10 ${isMobile ? 'text-[0.6rem]' : 'text-[0.65rem]'} text-center leading-tight font-bold whitespace-normal transition-all duration-300 ${isActive ? 'text-white' : ''}`}
-                                    >
-                                        {item.label}
-                                    </span>
+                                        {/* Icon Container with Animation */}
+                                        <span
+                                            className={`relative z-10 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-lg' : isHovered ? 'scale-105' : 'scale-100'}`}
+                                        >
+                                            {item.icon}
+                                        </span>
 
-                                    {/* Ripple Effect on Click */}
-                                    {isActive && <span className="absolute inset-0 animate-ping rounded-xl bg-emerald-400 opacity-20"></span>}
-                                </button>
-                            </div>
-                        );
-                    })}
+                                        {/* Label */}
+                                        <span
+                                            className={`relative z-10 ${isMobile ? 'text-[0.6rem]' : 'text-[0.65rem]'} max-w-full text-center leading-tight font-bold [overflow-wrap:anywhere] whitespace-normal transition-all duration-300 ${isActive ? 'text-white' : ''}`}
+                                        >
+                                            {item.label}
+                                        </span>
+
+                                        {/* Ripple Effect on Click */}
+                                        {isActive && <span className="absolute inset-0 animate-ping rounded-xl bg-emerald-400 opacity-20"></span>}
+                                    </button>
+                                </div>
+                            );
+                        })}
 
                     {/* Logout Button avec espacement optimisé */}
-                    <div className={`group relative mt-auto ${isMobile ? 'pt-3' : 'pt-4'}`}>
-                        <button
-                            className={`relative w-full cursor-pointer border-none bg-transparent ${isMobile ? 'p-2.5' : 'p-3'} flex flex-col items-center overflow-hidden rounded-xl border border-transparent text-xs font-medium text-slate-400 transition-all duration-300 hover:scale-105 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 hover:shadow-lg active:scale-95`}
-                            data-menu="logout"
-                            aria-label="Se deconnecter"
-                            onClick={handleLogout}
-                            onMouseEnter={() => setHoveredItem('logout')}
-                            onMouseLeave={() => setHoveredItem(null)}
-                            disabled={isLoading}
-                        >
-                            <span
-                                className={`relative z-10 transition-all duration-300 ${hoveredItem === 'logout' ? 'scale-105' : 'scale-100'} ${isLoading ? 'animate-spin' : ''}`}
+                    {roles.some(Boolean) && (
+                        <div className={`group relative mt-auto ${isMobile ? 'pt-3' : 'pt-4'}`}>
+                            <button
+                                className={`relative w-full cursor-pointer border-none bg-transparent ${isMobile ? 'p-2.5' : 'p-3'} flex flex-col items-center overflow-hidden rounded-xl border border-transparent text-xs font-medium text-slate-400 transition-all duration-300 hover:scale-105 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 hover:shadow-lg active:scale-95`}
+                                data-menu="logout"
+                                aria-label={loggingOut ? 'Déconnexion en cours' : 'Déconnexion'}
+                                onClick={handleLogout}
+                                onMouseEnter={() => setHoveredItem('logout')}
+                                onMouseLeave={() => setHoveredItem(null)}
+                                disabled={loggingOut}
                             >
-                                {isLoading ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width={isMobile ? 20 : 24}
-                                        height={isMobile ? 20 : 24}
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M21 12a9 9 0 11-6.219-8.56"></path>
-                                    </svg>
-                                ) : (
+                                <span className={`relative z-10 transition-all duration-300 ${hoveredItem === 'logout' ? 'scale-105' : 'scale-100'}`}>
                                     <LogOut size={isMobile ? 20 : 24} />
-                                )}
-                            </span>
-                            <span className={`relative z-10 ${isMobile ? 'text-[0.6rem]' : 'text-[0.65rem]'} text-center leading-tight font-bold`}>
-                                {isLoading ? 'Loading...' : 'Logout'}
-                            </span>
-                        </button>
-                    </div>
+                                </span>
+                                <span
+                                    className={`relative z-10 ${isMobile ? 'text-[0.6rem]' : 'text-[0.65rem]'} text-center leading-tight font-bold`}
+                                >
+                                    {loggingOut ? 'Déconnexion…' : 'Déconnexion'}
+                                </span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </nav>
 
             {/* Menus secondaires avec comportement différent selon l'écran */}
             {Object.entries(subMenuConfig).map(([menuId, config]) => {
-                if (!hasPermission(menuId)) return null;
+                if (!hasPermission(menuId) || !config.items.length) return null;
 
                 const isActive = currentActiveMenu === menuId;
-                const isClosingThis = isClosing === menuId;
-                const hasAnimation = menuAnimations[menuId];
+                const hasAnimation = isActive && menuAnimations[menuId];
 
                 return (
                     <div
                         key={menuId}
-                        ref={(el) => (menuRefs.current[menuId] = el)}
+                        id={`sidebar-panel-${menuId}`}
+                        ref={(el) => {
+                            menuRefs.current[menuId] = el;
+                        }}
                         className={`fixed top-0 z-[70] flex h-screen flex-col border-r border-slate-200/80 bg-white/98 shadow-2xl backdrop-blur-xl transition-all duration-500 ease-out ${isMobile ? 'left-0 w-full' : 'left-20 w-80'} ${
-                            isActive && !isClosingThis
+                            isActive
                                 ? 'visible translate-x-0 opacity-100'
                                 : isMobile
                                   ? 'pointer-events-none invisible -translate-x-full opacity-0'
                                   : 'pointer-events-none invisible -translate-x-8 opacity-0'
                         }`}
-                        role="menu"
+                        inert={!isActive}
                         aria-hidden={!isActive}
                     >
                         {/* Header du menu avec design amélioré */}
                         <div
-                            className={`relative ${isMobile ? 'px-5 py-5' : 'px-7 py-7'} flex-shrink-0 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-white`}
+                            className={`relative ${isMobile ? 'px-5 py-5' : 'px-7 py-7'} flex-shrink-0 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-white pr-12`}
                         >
                             {/* Bouton de fermeture avec animation */}
                             <button
-                                onClick={() => handleCloseMenu(menuId)}
+                                onClick={() => handleCloseMenu(true)}
                                 className={`absolute ${isMobile ? 'top-3 right-3 p-2' : 'top-4 right-4 p-2.5'} group z-10 transform rounded-lg transition-all duration-200 hover:rotate-90 hover:bg-slate-100`}
                                 aria-label="Fermer le menu"
                             >
@@ -416,66 +421,102 @@ const Sidebar = ({
                                     >
                                         {config.title}
                                     </h3>
-                                    <p className="mt-1 text-sm text-slate-500">
-                                        {menuId === 'dashboard'
-                                            ? (isAdministration ? 'Gestion et suivi des étudiants du campus' : 'Votre parcours et vos services étudiants')
-                                            : menuId === 'enrollments'
-                                              ? 'Vos candidatures et leur suivi'
-                                              : menuId === 'reports'
-                                                ? 'Formations, calendrier et contenus'
-                                                : `Manage your ${menuId} settings`}
-                                    </p>
+                                    {!isAdministration && (
+                                        <p className="mt-1 text-sm text-slate-500">
+                                            {config.description ??
+                                                (menuId === 'dashboard'
+                                                    ? isAdministration
+                                                        ? 'Gestion et suivi des étudiants du campus'
+                                                        : 'Votre parcours et vos services étudiants'
+                                                    : menuId === 'enrollments'
+                                                      ? 'Vos candidatures et leur suivi'
+                                                      : menuId === 'reports'
+                                                        ? 'Formations, calendrier et contenus'
+                                                        : `Manage your ${menuId} settings`)}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
                         {/* Navigation items avec animations d'entrée */}
-                        <nav className={`flex-1 overflow-y-auto ${isMobile ? 'px-5 py-5' : 'px-6 py-6'}`}>
-                            <div className={`space-y-${isMobile ? '2' : '3'}`}>
+                        <nav aria-label={config.title} className={submenuPanelClass(isMobile)}>
+                            <div className={isMobile ? 'space-y-2' : 'space-y-3'}>
                                 {config.items.map((item, index) => (
                                     <a
                                         key={item.id}
                                         href={item.href}
-                                        className={`group flex items-center ${isMobile ? 'gap-3 px-4 py-3' : 'gap-4 px-5 py-4'} relative transform overflow-hidden rounded-xl border border-transparent text-slate-600 transition-all duration-300 hover:translate-x-1 hover:border-slate-200/50 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:text-slate-900 ${hasAnimation ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}
+                                        onClick={item.href && !item.native ? visitMenuPage : undefined}
+                                        aria-disabled={!item.href || undefined}
+                                        aria-current={item.href && isCurrentDestination(item.href, page.url) ? 'page' : undefined}
+                                        tabIndex={item.href ? undefined : -1}
+                                        className={`${submenuRowClass(isMobile)} ${hasAnimation ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`}
                                         style={{ transitionDelay: `${index * 50}ms` }}
-                                        role="menuitem"
                                     >
-                                        <span
-                                            className={`flex-shrink-0 ${isMobile ? 'h-9 w-9' : 'h-10 w-10'} flex transform items-center justify-center rounded-lg bg-slate-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600`}
+                                        <SubmenuRowContent
+                                            icon={item.icon}
+                                            isMobile={isMobile}
+                                            status={item.status ?? (!item.href ? 'À venir' : undefined)}
                                         >
-                                            <span className="text-slate-500 transition-colors duration-300 group-hover:text-white">{item.icon}</span>
-                                        </span>
-                                        <span className={`font-medium ${isMobile ? 'text-sm' : 'text-base'} flex-1`}>{item.label}</span>
-                                        <ChevronRight
-                                            size={isMobile ? 16 : 18}
-                                            className="text-slate-400 transition-all duration-300 group-hover:translate-x-1 group-hover:text-emerald-500"
-                                        />
-
-                                        {/* Hover effect background */}
-                                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-teal-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                                            {item.label}
+                                        </SubmenuRowContent>
                                     </a>
                                 ))}
                             </div>
                         </nav>
-
-                        {/* Footer du menu avec design amélioré */}
-                        <div
-                            className={`${isMobile ? 'px-5 py-4' : 'px-6 py-5'} flex-shrink-0 border-t border-slate-200/60 bg-gradient-to-r from-slate-50 to-white`}
-                        >
-                            <div className="flex items-center justify-between">
-                                <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-slate-500`}>Last updated: Today</span>
-                                <button
-                                    className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline`}
-                                >
-                                    View all
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 );
             })}
         </>
     );
 };
+
+const submenuPanelClass = (isMobile: boolean) => `flex-1 overflow-y-auto ${isMobile ? 'p-5' : 'p-6'}`;
+
+function isCurrentDestination(href: string, pageUrl: string | undefined): boolean {
+    if (!pageUrl) return false;
+    const current = new URL(pageUrl, 'https://navigation.invalid');
+    const destination = new URL(href, current);
+    current.searchParams.sort();
+    destination.searchParams.sort();
+    return current.pathname === destination.pathname && current.search === destination.search && current.hash === destination.hash;
+}
+
+const submenuRowClass = (isMobile: boolean) =>
+    `group flex items-center ${isMobile ? 'gap-3 px-4 py-3' : 'gap-4 px-5 py-4'} relative rounded-xl border border-transparent text-slate-600 transition-all duration-300 hover:translate-x-1 hover:border-slate-200/50 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-emerald-600`;
+
+function SubmenuRowContent({
+    icon,
+    isMobile,
+    children,
+    status,
+}: {
+    icon: React.ReactNode;
+    isMobile: boolean;
+    children: React.ReactNode;
+    status?: string;
+}) {
+    return (
+        <>
+            <span
+                aria-hidden="true"
+                className={`${isMobile ? 'size-9' : 'size-10'} flex shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white`}
+            >
+                {icon}
+            </span>
+            <span className={`flex-1 font-medium ${isMobile ? 'text-sm' : 'text-base'}`}>
+                {children}
+                {status && <small className="ml-2 text-xs text-slate-500">{status}</small>}
+            </span>
+            {!status && (
+                <ChevronRight
+                    size={isMobile ? 16 : 18}
+                    aria-hidden="true"
+                    className="shrink-0 text-slate-400 transition-all duration-300 group-hover:translate-x-1 group-hover:text-emerald-500"
+                />
+            )}
+        </>
+    );
+}
 
 export default Sidebar;

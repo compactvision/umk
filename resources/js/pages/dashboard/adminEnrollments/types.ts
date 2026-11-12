@@ -8,11 +8,16 @@ export type Dossier = {
     status: string;
     status_label: string;
     created_at: string;
+    submitted_at?: string | null;
+    requested_program?: string | null;
     enrolled_at?: string;
     student: Applicant | null;
     level?: { title: string; faculty?: { name: string } };
     academic_year?: { title: string };
     documents_count?: number;
+    pending_documents?: number;
+    accepted_documents?: number;
+    correction_documents?: number;
     reexamination_count?: number;
     snapshot?: { name?: string; email?: string; program?: string; isConfirmed?: boolean };
     decision_reason?: string;
@@ -47,7 +52,7 @@ export type Dossier = {
         occurred_at: string;
     }[];
 };
-export const applicantName = (student: Applicant | null) =>
+export const applicantName = (student: Omit<Applicant, 'email'> | null) =>
     student ? [student.last_name, student.post_name, student.first_name].filter(Boolean).join(' ') : 'Compte indisponible';
 export const formatDate = (value?: string) =>
     value ? new Date(value).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';

@@ -1,11 +1,36 @@
 name: Deploy to Nitrohost
 
 on:
-  push:
-    branches: [ main ] # ta branche de prod
+  workflow_dispatch:
+    inputs:
+      change_reference:
+        description: Référence de la décision de mise en production
+        required: true
+        type: string
+      restore_verified:
+        description: Sauvegarde et restauration vérifiées pour cette mise en production
+        required: true
+        type: boolean
+      rollback_compatible:
+        description: La release précédente fonctionne avec le schéma après migration
+        required: true
+        type: boolean
+
+concurrency:
+  group: umk-production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
+  validation:
+    if: github.ref == 'refs/heads/main' && inputs.change_reference != '' && inputs.restore_verified && inputs.rollback_compatible
+    uses: ./.github/workflows/tests.yml
+
   build-and-deploy:
+    needs: validation
+    environment: production
     runs-on: ubuntu-latest
     env:
       RELEASE_DIR: release-${{ github.sha }}
@@ -20,7 +45,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: mbstring, intl, bcmath, gd, pdo_mysql
+          extensions: mbstring, intl, bcmath, gd, pdo_mysql, pdo_pgsql, zip
           coverage: none
 
       - name: Validate composer.json
@@ -45,7 +70,7 @@ jobs:
           mkdir -p $RELEASE_DIR
           rsync -a --delete \
             --exclude=".git" --exclude=".github" \
-            --exclude="node_modules" --exclude="storage" --exclude=".env" --exclude="release-*" --exclude="bootstrap/cache/*.php" \
+            --exclude="node_modules" --exclude="storage" --exclude=".env*" --exclude="release-*" --exclude="bootstrap/cache/*.php" --exclude="tests" --exclude="docs" --exclude="/public/hot" --exclude=".phpunit.result.cache" --exclude="*.sqlite*" \
             ./ $RELEASE_DIR/
 
       # ----- Upload vers le serveur (SCP) -----
@@ -77,14 +102,15 @@ jobs:
             REL="${{ secrets.NITRO_PATH }}/releases/${{ github.sha }}"
 
             # Lier éléments "shared"
-            ln -sfn $BASE/shared/.env $REL/.env
-            rm -rf $REL/storage
-            ln -sfn $BASE/shared/storage $REL/storage
+            test -f "$BASE/shared/.env"
+            test -d "$BASE/shared/storage"
+            ln -sfnT "$BASE/shared/.env" "$REL/.env"
+            ln -sfnT "$BASE/shared/storage" "$REL/storage"
             # Le cache de configuration appartient à la release, pas au répertoire partagé.
-            mkdir -p $REL/bootstrap/cache
+            mkdir -p "$REL/bootstrap/cache"
 
             # Optimisations / migrations
-            cd $REL
+            cd "$REL"
             # APP_KEY doit être provisionnée une seule fois dans shared/.env.
             ${{ secrets.PHP_CLI }} artisan config:clear
             ${{ secrets.PHP_CLI }} artisan app:preflight --production --assets
@@ -92,11 +118,26 @@ jobs:
             ${{ secrets.PHP_CLI }} artisan route:cache
             ${{ secrets.PHP_CLI }} artisan view:cache
             ${{ secrets.PHP_CLI }} artisan migrate --force
-            ${{ secrets.PHP_CLI }} artisan app:preflight --production --database --assets
+            ${{ secrets.PHP_CLI }} artisan app:preflight --production --database --assets --runtime
 
-            # Bascule atomique
-            ln -sfn $REL $BASE/current
+            # Lien temporaire dans le même répertoire pour un remplacement atomique.
+            PREVIOUS=$(readlink "$BASE/current" || true)
+            NEXT="$BASE/.current-next-$$"
+            trap 'test ! -L "$NEXT" || unlink "$NEXT"' EXIT
+            switch_release() {
+              ln -s "$1" "$NEXT"
+              mv -Tf "$NEXT" "$BASE/current"
+            }
+            switch_release "$REL"
 
-            # Nettoyage (garde 5 releases)
-            cd $BASE/releases
-            ls -1t | tail -n +6 | xargs -r rm -rf
+            if ! { ${{ secrets.PHP_CLI }} artisan queue:restart &&
+              ${{ secrets.PHP_CLI }} artisan app:preflight --production --database --assets --http; }; then
+              if [ -n "$PREVIOUS" ]; then
+                switch_release "$PREVIOUS"
+                cd "$BASE/current"
+                ${{ secrets.PHP_CLI }} artisan queue:restart
+              elif [ "$(readlink "$BASE/current")" = "$REL" ]; then
+                unlink "$BASE/current"
+              fi
+              exit 1
+            fi

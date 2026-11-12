@@ -1,6 +1,8 @@
 import AdminModal from '@/components/admin/AdminModal';
 import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import { usePanelFade } from '@/hooks/use-panel-fade';
+import type { LevelPageProps } from '@/types/academic';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { AlertTriangle, Pencil, Trash2 } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -12,11 +14,12 @@ import { useLevelData } from './hooks/useLevelData';
 import { useLevelModals } from './hooks/useLevelModals';
 
 export default function LevelShow() {
-    const [activeTab, setActiveTab] = useState('infos');
+    const { levelDetail, admissionConditions, level, faculties, initialTab, canManageAdmissionCampaigns } = usePage<LevelPageProps>().props;
+    const [activeTab, setActiveTab] = useState<string>(initialTab ?? 'infos');
+    const tabPanel = usePanelFade<HTMLDivElement>(activeTab);
     const [editingLevel, setEditingLevel] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const deleteForm = useForm({});
-    const { levelDetail, admissionConditions, level, faculties } = usePage().props;
     const levelDataHook = useLevelData(levelDetail);
     const modalsHook = useLevelModals(levelDetail);
     const deleteLevel = (event: FormEvent<HTMLFormElement>) => {
@@ -25,7 +28,7 @@ export default function LevelShow() {
         deleteForm.delete(route('dashboard.admin.levels.destroy', level.id), { preserveScroll: true });
     };
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title={`${levelDetail?.level_title || 'Détail du niveau'} · Formation`} />
             <div className="level-detail-page">
                 <div className="ld-level-actions">
@@ -54,8 +57,16 @@ export default function LevelShow() {
                     setActiveTab={setActiveTab}
                     conditionCount={Array.isArray(admissionConditions) ? admissionConditions.length : 0}
                 />
-                <div id={`level-panel-${activeTab}`} role="tabpanel" aria-labelledby={`level-tab-${activeTab}`} tabIndex={0}>
-                    <LevelContent activeTab={activeTab} levelDataHook={levelDataHook} modalsHook={modalsHook} levelConditions={admissionConditions} />
+                <div ref={tabPanel} id={`level-panel-${activeTab}`} role="tabpanel" aria-labelledby={`level-tab-${activeTab}`} tabIndex={0}>
+                    <LevelContent
+                        activeTab={activeTab}
+                        levelDataHook={levelDataHook}
+                        modalsHook={modalsHook}
+                        levelConditions={admissionConditions}
+                        campaignsHref={
+                            canManageAdmissionCampaigns ? route('dashboard.admin.enrollments.campaigns.index', { level_id: level.id }) : undefined
+                        }
+                    />
                 </div>
                 {confirmDelete && (
                     <AdminModal

@@ -1,6 +1,9 @@
-import { Link } from '@inertiajs/react';
-import { ArrowUpRight, BookOpen, CalendarDays, ClipboardCheck, MapPin, Wallet } from 'lucide-react';
+import { addDays, dateLabel, localDate, localInput } from '@/lib/scheduleDates';
+import { Link, router } from '@inertiajs/react';
+import { ArrowUpRight, BookOpen, CalendarDays, ChevronLeft, ChevronRight, ClipboardCheck, MapPin, Wallet } from 'lucide-react';
+import { useState } from 'react';
 import { EmptyState } from './PortalCards';
+import ScheduleExamPeriods from './ScheduleExamPeriods';
 import { money, type Academic, type Balance, type Permission, type PortalProps, type StudentOverviewData } from './types';
 
 const date = (value: string, options: Intl.DateTimeFormatOptions = {}) =>
@@ -12,118 +15,115 @@ export default function StudentOverview({
     balance,
     permissions,
     courses = [],
+    calendarEvents,
 }: {
     data: StudentOverviewData;
     academic: Academic;
     balance: Balance;
     permissions: Record<string, Permission>;
     courses?: PortalProps['courses'];
+    calendarEvents?: PortalProps['calendar_events'];
 }) {
     const href = (section: string) => `/dashboard/student/${section}?academic=${academic.id}`;
     const fees = data.fee_summary || [];
     const evaluations = data.ongoing_evaluations || [];
     const evaluationAccess = permissions.evaluations_participate;
+    const week = data.schedule_week;
+    const today = localDate(data.generated_at);
+    const [filters, setFilters] = useState({ week, day: today >= week && today < addDays(week, 7) ? today : '', course: '', semester: '' });
+    const selected = filters.week === week ? filters : { week, day: '', course: '', semester: '' };
+    const sessions = data.week_sessions;
+    const semesters = [...new Set(sessions.map((session) => session.semester))].sort((a, b) => a.localeCompare(b, 'fr'));
+    const semesterSessions = sessions.filter((session) => !selected.semester || session.semester === selected.semester);
+    const courseOptions = [...new Map(semesterSessions.map((session) => [session.course_id, session.course])).entries()].sort((left, right) =>
+        left[1].localeCompare(right[1], 'fr'),
+    );
+    const visibleSessions = semesterSessions.filter(
+        (session) =>
+            (!selected.course || String(session.course_id) === selected.course) &&
+            (!selected.day || (localDate(session.starts_at) <= selected.day && localInput(session.ends_at) > `${selected.day}T00:00`)),
+    );
+    const openWeek = (day: string) =>
+        router.get(
+            '/dashboard/student/overview',
+            { academic: academic.id, week: day },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     return (
         <div className="student-overview overview-ordered">
-            <section className="overview-home-section" aria-labelledby="home-fees-title">
-                <header>
-                    <div className="overview-panel-title">
-                        <Wallet size={20} />
-                        <h2 id="home-fees-title">Frais obligatoires</h2>
-                    </div>
-                    <Link href={href('fees')}>
-                        Voir plus
-                        <ArrowUpRight size={15} />
-                    </Link>
-                </header>
-                <p className="overview-section-description">Vos frais académiques et connexes, les montants confirmés et ce qu’il reste à régler.</p>
-                {fees.length ? (
-                    <div className="overview-fee-table">
-                        <div className="overview-fee-labels" aria-hidden="true">
-                            <span>Type de frais</span>
-                            <span>Total net dû</span>
-                            <span>Déjà payé</span>
-                            <span>Solde restant</span>
-                        </div>
-                        {fees.map((fee) => (
-                            <article key={fee.kind}>
-                                <div>
-                                    <h3>{fee.title}</h3>
-                                    <span className={fee.balance.overdue_cents > 0 ? 'is-overdue' : ''}>
-                                        {fee.balance.overdue_cents > 0
-                                            ? `${money(fee.balance.overdue_cents, balance.currency)} en retard`
-                                            : fee.balance.balance_cents === 0
-                                              ? 'À jour'
-                                              : 'À régulariser selon vos échéances'}
-                                    </span>
-                                </div>
-                                <p>
-                                    <small>Total net dû</small>
-                                    {money(fee.balance.due_cents, balance.currency)}
-                                </p>
-                                <p>
-                                    <small>Déjà payé</small>
-                                    {money(fee.balance.paid_cents, balance.currency)}
-                                </p>
-                                <p>
-                                    <small>Solde restant</small>
-                                    <strong>{money(fee.balance.balance_cents, balance.currency)}</strong>
-                                </p>
-                            </article>
-                        ))}
-                    </div>
-                ) : (
-                    <EmptyState title="Frais à confirmer par l’administration." icon={Wallet}>
-                        Les frais académiques et connexes seront affichés dès leur affectation à votre inscription. Aucun montant n’est présumé réglé.
-                    </EmptyState>
-                )}
-                {fees.length > 0 && (
-                    <div className="overview-fee-total">
-                        <span>Solde total restant</span>
-                        <strong>{money(balance.balance_cents, balance.currency)}</strong>
-                        <Link href={href('fees')}>
-                            Consulter les échéances
-                            <ArrowUpRight size={14} />
-                        </Link>
-                    </div>
-                )}
-                <p className="overview-caption">
-                    Seuls les paiements confirmés sont comptabilisés. Les frais connexes apparaissent uniquement lorsqu’ils sont enregistrés pour
-                    votre dossier.
-                </p>
-                {data.alerts
-                    .filter((alert) => alert.id === 'documents')
-                    .map((alert) => (
-                        <p className="overview-inline-warning" key={alert.id}>
-                            {alert.message}
-                            <Link href={`/dashboard/enrollments/${academic.application_uuid}`}>
-                                Consulter mon dossier
-                                <ArrowUpRight size={14} />
-                            </Link>
-                        </p>
-                    ))}
-            </section>
-            <section className="overview-home-section" aria-labelledby="home-schedule-title">
+            <section id="home-schedule" className="overview-home-section" aria-labelledby="home-schedule-title">
                 <header>
                     <div className="overview-panel-title">
                         <CalendarDays size={20} />
-                        <h2 id="home-schedule-title">Horaire du jour</h2>
+                        <h2 id="home-schedule-title">Horaire des cours</h2>
                     </div>
-                    <Link href={href(permissions.schedule_view.allowed ? 'schedule' : 'requests')}>
-                        Voir plus
+                    <Link href={permissions.schedule_view.allowed ? `${href('schedule')}&week=${week}` : href('requests')}>
+                        Horaire complet
                         <ArrowUpRight size={15} />
                     </Link>
                 </header>
-                <p className="overview-section-description">
-                    {date(data.generated_at, { weekday: 'long', day: 'numeric', month: 'long' })} · Heure de Kinshasa
-                </p>
+                {permissions.schedule_view.allowed && (
+                    <div className="overview-schedule-controls">
+                        <div className="overview-schedule-week">
+                            <button type="button" aria-label="Semaine précédente" onClick={() => openWeek(addDays(week, -7))}>
+                                <ChevronLeft size={18} />
+                            </button>
+                            <span>
+                                Du {dateLabel(week)} au {dateLabel(addDays(week, 6))}
+                            </span>
+                            <button type="button" aria-label="Semaine suivante" onClick={() => openWeek(addDays(week, 7))}>
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                        <div className="overview-schedule-filters">
+                            <label>
+                                Semestre
+                                <select
+                                    value={selected.semester}
+                                    onChange={(event) => setFilters({ ...selected, semester: event.target.value, course: '' })}
+                                >
+                                    <option value="">Tous</option>
+                                    {semesters.map((semester) => (
+                                        <option key={semester}>{semester}</option>
+                                    ))}
+                                </select>
+                            </label>
+                            <label>
+                                Jour
+                                <select value={selected.day} onChange={(event) => setFilters({ ...selected, day: event.target.value })}>
+                                    <option value="">Tous les jours</option>
+                                    {Array.from({ length: 7 }, (_, index) => addDays(week, index)).map((day) => (
+                                        <option key={day} value={day}>
+                                            {dateLabel(day)}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                            <label>
+                                Cours
+                                <select value={selected.course} onChange={(event) => setFilters({ ...selected, course: event.target.value })}>
+                                    <option value="">Tous les cours</option>
+                                    {courseOptions.map(([id, title]) => (
+                                        <option key={id} value={id}>
+                                            {title}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                )}
+                {permissions.schedule_view.allowed && <ScheduleExamPeriods events={calendarEvents} day={selected.day} />}
                 {!permissions.schedule_view.allowed ? (
                     <EmptyState title="Agenda indisponible pour ce contexte." icon={CalendarDays}>
                         {permissions.schedule_view.reason}
                     </EmptyState>
-                ) : data.today_sessions.length ? (
+                ) : visibleSessions.length ? (
                     <div className="overview-lessons">
-                        {data.today_sessions.map((session) => (
+                        {visibleSessions.map((session) => (
                             <article key={session.id}>
                                 <div className="overview-lesson-time">
                                     <strong>{time(session.starts_at)}</strong>
@@ -131,11 +131,7 @@ export default function StudentOverview({
                                 </div>
                                 <div className="overview-lesson-content">
                                     <small>
-                                        {session.ongoing
-                                            ? 'En cours'
-                                            : new Date(session.ends_at) <= new Date(data.generated_at)
-                                              ? 'Terminé'
-                                              : 'À venir aujourd’hui'}
+                                        {dateLabel(localDate(session.starts_at))} · {session.semester}
                                     </small>
                                     <h3>{session.course}</h3>
                                     <p>
@@ -147,51 +143,9 @@ export default function StudentOverview({
                         ))}
                     </div>
                 ) : (
-                    <EmptyState title="Aucun autre cours publié pour aujourd’hui." icon={CalendarDays}>
-                        L’horaire complet de la semaine reste accessible avec « Voir plus ».
-                    </EmptyState>
+                    <p className="overview-section-description">Aucune séance pour cette sélection.</p>
                 )}
             </section>
-            {evaluationAccess?.visible !== false && (
-                <section className="overview-home-section" aria-labelledby="home-evaluations-title">
-                    <header>
-                        <div className="overview-panel-title">
-                            <ClipboardCheck size={20} />
-                            <h2 id="home-evaluations-title">Évaluations en cours</h2>
-                        </div>
-                        <Link href={href('evaluations')}>
-                            Voir plus
-                            <ArrowUpRight size={15} />
-                        </Link>
-                    </header>
-                    <p className="overview-section-description">Les évaluations publiées dont la période est actuellement ouverte.</p>
-                    {evaluations.length ? (
-                        <div className="overview-active-evaluations">
-                            {evaluations.map((item) => (
-                                <article key={item.id}>
-                                    <div>
-                                        <span>{item.course}</span>
-                                        <h3>{item.title}</h3>
-                                        <p>
-                                            {item.closes_at
-                                                ? `Clôture le ${date(item.closes_at, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`
-                                                : 'Date de clôture non renseignée'}
-                                        </p>
-                                    </div>
-                                    <Link href={evaluationAccess?.allowed ? `${href('evaluations')}#resource-${item.id}` : href('fees')}>
-                                        {evaluationAccess?.allowed ? 'Consulter' : 'Conditions d’accès'}
-                                        <ArrowUpRight size={14} />
-                                    </Link>
-                                </article>
-                            ))}
-                        </div>
-                    ) : (
-                        <EmptyState title="Aucune évaluation en cours." icon={ClipboardCheck}>
-                            Les évaluations à venir sont consultables dans votre rubrique Évaluations.
-                        </EmptyState>
-                    )}
-                </section>
-            )}
             <section className="overview-home-section" aria-labelledby="home-courses-title">
                 <header>
                     <div className="overview-panel-title">
@@ -199,16 +153,16 @@ export default function StudentOverview({
                         <h2 id="home-courses-title">Cours du niveau</h2>
                     </div>
                     <Link href={href(permissions.courses_view.allowed ? 'courses' : 'requests')}>
-                        Voir plus
+                        Tous les cours
                         <ArrowUpRight size={15} />
                     </Link>
                 </header>
                 <p className="overview-section-description">
-                    {academic.level} · {academic.faculty} · {academic.year}
+                    {academic.level} · {courses.length} cours
                 </p>
                 {permissions.courses_view.allowed && courses.length ? (
                     <div className="overview-level-courses">
-                        {courses.map((course, index) => (
+                        {courses.slice(0, 3).map((course, index) => (
                             <article key={course.id}>
                                 <span>{String(index + 1).padStart(2, '0')}</span>
                                 <div>
@@ -238,6 +192,111 @@ export default function StudentOverview({
                     </EmptyState>
                 )}
             </section>
+            <section className="overview-home-section" aria-labelledby="home-fees-title">
+                <header>
+                    <div className="overview-panel-title">
+                        <Wallet size={20} />
+                        <h2 id="home-fees-title">Frais obligatoires</h2>
+                    </div>
+                    <Link href={href('fees')}>
+                        Voir les frais
+                        <ArrowUpRight size={15} />
+                    </Link>
+                </header>
+                <p className="overview-section-description">Frais et paiements confirmés</p>
+                {fees.length ? (
+                    <div className="overview-fee-table">
+                        {fees.map((fee) => (
+                            <article key={fee.kind}>
+                                <div>
+                                    <h3>{fee.title}</h3>
+                                    <span className={fee.balance.overdue_cents > 0 ? 'is-overdue' : ''}>
+                                        {fee.balance.overdue_cents > 0
+                                            ? `${money(fee.balance.overdue_cents, balance.currency)} en retard`
+                                            : fee.balance.balance_cents === 0
+                                              ? 'À jour'
+                                              : 'À régulariser selon vos échéances'}
+                                    </span>
+                                </div>
+                                <p>
+                                    <small>Total net dû</small>
+                                    {money(fee.balance.due_cents, balance.currency)}
+                                </p>
+                                <p>
+                                    <small>Déjà payé</small>
+                                    {money(fee.balance.paid_cents, balance.currency)}
+                                </p>
+                                <p>
+                                    <small>Solde restant</small>
+                                    <strong>{money(fee.balance.balance_cents, balance.currency)}</strong>
+                                </p>
+                            </article>
+                        ))}
+                    </div>
+                ) : (
+                    <EmptyState title="Frais à confirmer par l’administration." icon={Wallet}>
+                        Les montants apparaîtront une fois les frais affectés à votre inscription.
+                    </EmptyState>
+                )}
+                {fees.length > 0 && (
+                    <div className="overview-fee-total">
+                        <span>Solde total restant</span>
+                        <strong>{money(balance.balance_cents, balance.currency)}</strong>
+                        <Link href={href('fees')}>
+                            Consulter les échéances
+                            <ArrowUpRight size={14} />
+                        </Link>
+                    </div>
+                )}
+                {data.alerts
+                    .filter((alert) => alert.id === 'documents')
+                    .map((alert) => (
+                        <p className="overview-inline-warning" key={alert.id}>
+                            {alert.message}
+                            <Link href={`/dashboard/enrollments/${academic.application_uuid}`}>
+                                Consulter mon dossier
+                                <ArrowUpRight size={14} />
+                            </Link>
+                        </p>
+                    ))}
+            </section>
+            {evaluationAccess?.visible !== false && (
+                <section className="overview-home-section" aria-labelledby="home-evaluations-title">
+                    <header>
+                        <div className="overview-panel-title">
+                            <ClipboardCheck size={20} />
+                            <h2 id="home-evaluations-title">Évaluations en cours</h2>
+                        </div>
+                        <Link href={href('evaluations')}>
+                            Voir les évaluations
+                            <ArrowUpRight size={15} />
+                        </Link>
+                    </header>
+                    {evaluations.length ? (
+                        <div className="overview-active-evaluations">
+                            {evaluations.map((item) => (
+                                <article key={item.id}>
+                                    <div>
+                                        <span>{item.course}</span>
+                                        <h3>{item.title}</h3>
+                                        <p>
+                                            {item.closes_at
+                                                ? `Clôture le ${date(item.closes_at, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`
+                                                : 'Date de clôture non renseignée'}
+                                        </p>
+                                    </div>
+                                    <Link href={evaluationAccess?.allowed ? `${href('evaluations')}#resource-${item.id}` : href('fees')}>
+                                        {evaluationAccess?.allowed ? 'Consulter' : 'Conditions d’accès'}
+                                        <ArrowUpRight size={14} />
+                                    </Link>
+                                </article>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="overview-section-description">Aucune évaluation en cours.</p>
+                    )}
+                </section>
+            )}
         </div>
     );
 }

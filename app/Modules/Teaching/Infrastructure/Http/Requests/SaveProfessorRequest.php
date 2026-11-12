@@ -22,6 +22,7 @@ class SaveProfessorRequest extends FormRequest
             'speciality' => 'nullable|string|max:255',
             'biography' => 'nullable|string|max:5000',
             'is_active' => 'required|boolean',
+            'send_invitation' => 'sometimes|boolean',
         ];
     }
 }

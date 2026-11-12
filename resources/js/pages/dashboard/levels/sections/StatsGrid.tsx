@@ -1,19 +1,12 @@
-import { formatPrice, paymentCategories, paymentTotal, type LevelPricing } from '@/lib/levelPricing';
+import { formatPrice, paymentCategories, paymentTotal } from '@/lib/levelPricing';
 import { Banknote, BookOpen, Clock3, Coins, Layers3, Pencil, Users } from 'lucide-react';
+import type { useLevelData } from '../hooks/useLevelData';
 export default function StatsGrid({
     levelData,
     onEdit,
 }: {
-    levelData: LevelPricing & {
-        duration_years: number;
-        credit_required: number;
-        courses_number: number;
-        student_number: number;
-        price: number | string;
-        price_foreign?: number | string | null;
-        fees: number;
-    };
-    onEdit: (field: string, value: string | number | boolean | null | undefined) => void;
+    levelData: ReturnType<typeof useLevelData>['detailsData'];
+    onEdit: (field: string) => void;
 }) {
     const number = (value: unknown) => Number(value || 0).toLocaleString('fr-FR');
     const stats: { field: keyof typeof levelData; label: string; value: string; icon: typeof Clock3 }[] = [
@@ -26,7 +19,7 @@ export default function StatsGrid({
         {
             field: 'credit_required',
             label: 'Crédits requis',
-            value: levelData.credit_required > 0 ? number(levelData.credit_required) : 'À préciser',
+            value: levelData.credit_required === '' ? 'À préciser' : number(levelData.credit_required),
             icon: Layers3,
         },
         { field: 'courses_number', label: 'Cours au programme', value: number(levelData.courses_number), icon: BookOpen },
@@ -43,7 +36,7 @@ export default function StatsGrid({
             value: formatPrice(paymentTotal(levelData.price_foreign_first, levelData.price_foreign_second, levelData.price_foreign)),
             icon: Banknote,
         },
-        { field: 'fees', label: 'Frais complémentaires', value: levelData.fees > 0 ? `${number(levelData.fees)} $` : 'Aucun frais', icon: Coins },
+        { field: 'fees', label: 'Frais complémentaires', value: Number(levelData.fees) > 0 ? `${number(levelData.fees)} $` : 'Aucun frais', icon: Coins },
     ];
     return (
         <section className="ld-metrics-section" aria-labelledby="ld-metrics-title">
@@ -64,7 +57,7 @@ export default function StatsGrid({
                             <button
                                 className="ld-icon-button"
                                 aria-label={`Modifier : ${stat.label}`}
-                                onClick={() => onEdit(stat.field, levelData[stat.field])}
+                                onClick={() => onEdit(stat.field)}
                             >
                                 <Pencil size={15} strokeWidth={1.7} />
                             </button>

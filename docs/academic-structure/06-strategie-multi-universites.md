@@ -1,0 +1,5 @@
+# Passage à plusieurs universités
+
+L'application conserve un seul contexte institutionnel actif. Les nouvelles lectures et mutations suivent la chaîne faculté/cycle → université et vérifient l'année, le programme et les relations. Les pages institutionnelles montrent les anciens référentiels non rattachés pour permettre leur classement. Aucun identifiant de contexte fourni par le navigateur ne sélectionne une université.
+
+Avant une deuxième université, prévoir une appartenance utilisateur–université, sélectionner le contexte côté serveur à partir d'un domaine ou d'une session vérifiée, puis définir l'appartenance des facultés, années, groupes, inscriptions, offres, tarifs, paiements, documents et sites. Réviser les uniques globaux historiques et les jointures au niveau approprié ; garder des clés techniques stables. Isoler ensuite les fichiers, tâches de fond, exports, journaux et clés de cache par établissement. Les tests doivent couvrir les accès croisés, les jobs et la restauration. Le code actuel fournit un ancrage de données et une portée pour le nouveau module ; les autres modules demeurent mono-université.

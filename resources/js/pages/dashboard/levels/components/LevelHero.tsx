@@ -23,10 +23,10 @@ export default function LevelHero({
                             {levelDetail.level_code}
                         </span>
                     )}
-                    {levelData.duration_years > 0 && (
+                    {(levelData.duration_years ?? 0) > 0 && (
                         <span>
                             <Clock3 size={15} />
-                            {levelData.duration_years} an{levelData.duration_years > 1 ? 's' : ''}
+                            {levelData.duration_years} an{(levelData.duration_years ?? 0) > 1 ? 's' : ''}
                         </span>
                     )}
                     {levelData.has_certificate && (

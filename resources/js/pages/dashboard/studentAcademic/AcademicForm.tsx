@@ -9,20 +9,31 @@ export type Field = {
     type?: string;
     required?: boolean;
     options?: { value: string | number; label: string }[];
+    optionsFor?: (values: Record<string, FormValue>) => NonNullable<Field['options']>;
+    clears?: string;
     help?: string;
     value?: FormValue;
 };
-export type FormSpec = { title: string; description: string; action: string; fields: Field[]; submitLabel?: string };
+export type FormSpec = {
+    title: string;
+    description: string;
+    action: string;
+    method?: 'post' | 'put';
+    fields: Field[];
+    values?: Record<string, FormValue>;
+    submitLabel?: string;
+};
 export default function AcademicForm({ spec, onClose, onSuccess }: { spec: FormSpec; onClose: () => void; onSuccess: (message: string) => void }) {
     const id = useId();
-    const form = useForm<Record<string, FormValue>>(
-        Object.fromEntries(
+    const form = useForm<Record<string, FormValue>>({
+        ...spec.values,
+        ...Object.fromEntries(
             spec.fields.map((field) => [
                 field.name,
                 field.value ?? (field.type === 'checkbox' ? false : field.type === 'schedule' ? [] : field.type === 'file' ? null : ''),
             ]),
         ),
-    );
+    });
     return (
         <AdminModal
             title={spec.title}
@@ -40,7 +51,7 @@ export default function AcademicForm({ spec, onClose, onSuccess }: { spec: FormS
                 className="academic-admin-form"
                 onSubmit={(event) => {
                     event.preventDefault();
-                    form.post(spec.action, {
+                    form.submit(spec.method ?? 'post', spec.action, {
                         preserveScroll: true,
                         forceFormData: spec.fields.some((field) => field.type === 'file'),
                         errorBag: `academic-${id.replace(/\W/g, '')}`,
@@ -134,10 +145,16 @@ export default function AcademicForm({ spec, onClose, onSuccess }: { spec: FormS
                                         id={inputId}
                                         value={String(form.data[field.name] ?? '')}
                                         required={field.required}
-                                        onChange={(event) => form.setData(field.name, event.target.value)}
+                                        onChange={(event) =>
+                                            form.setData((data) => ({
+                                                ...data,
+                                                [field.name]: event.target.value,
+                                                ...(field.clears ? { [field.clears]: '' } : {}),
+                                            }))
+                                        }
                                     >
-                                        <option value="">Sélectionner…</option>
-                                        {field.options?.map((option) => (
+                                        <option value="">{field.name === 'academic_department_id' ? 'Tronc commun' : 'Sélectionner…'}</option>
+                                        {(field.optionsFor?.(form.data) ?? field.options)?.map((option) => (
                                             <option value={option.value} key={option.value}>
                                                 {option.label}
                                             </option>

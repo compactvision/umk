@@ -1,0 +1,92 @@
+
+   PASS  Tests\Feature\AdminEnrollmentManagementTest
+  ✓ list and detail show real data without private storage paths         2.92s  
+  ✓ filters apply to all results on the server                           0.26s  
+  ✓ validation records actor and history without changing payment        0.30s  
+  ✓ rejection requires a reason and is visible to the student            0.23s  
+  ✓ drafts and terminal states cannot be decided or overwritten          0.26s  
+  ✓ admin can preview and download private documents                     0.16s  
+  ✓ active content cannot be previewed as a pdf                          0.12s  
+  ✓ students cannot use admin actions or other students documents        0.14s  
+
+   PASS  Tests\Feature\EnrollmentJourneyTest
+  ✓ save returns the uuid and updates the same draft                     0.15s  
+  ✓ another student cannot change the draft                              0.07s  
+  ✓ documents survive saving and can be replaced                         0.20s  
+
+   PASS  Tests\Feature\PhaseOneSecurityTest
+  ✓ site writes require an administrator                                 0.10s  
+  ✓ login errors do not disclose account existence                       0.33s  
+  ✓ logout invalidates session data and rotates csrf token               0.06s  
+  ✓ login lock survives a minute and normalizes email                    0.04s  
+  ✓ temporary documents cannot be claimed by another user                0.10s  
+  ✓ invalid upload and failed storage are reported                       0.07s  
+
+   PASS  Tests\Feature\ScheduleModuleTest
+  ✓ weekly creation stores utc and can be filtered edited and deleted    0.38s  
+  ✓ conflicts for rooms teachers and levels are rejected even in draft   0.30s  
+  ✓ repetition rolls back entirely when a later week conflicts           0.15s  
+  ✓ year boundaries and invalid intervals are rejected                   0.11s  
+  ✓ distinct groups can meet concurrently but common courses cannot ove… 0.20s  
+  ✓ reassigning an already scheduled course checks teacher availability  0.20s  
+  ✓ semester plan generates only selected weekdays inclusively           0.29s  
+  ✓ semester plan is atomic if the last occurrence conflicts             0.22s  
+  ✓ semester plan rejects wrong semester empty days and invalid periods  0.19s  
+  ✓ a course can meet on monday morning and wednesday afternoon in diff… 0.27s  
+  ✓ two distinct slots on the same day are allowed but overlaps roll ba… 0.42s  
+  ✓ each dynamic slot requires its own valid times and room              0.13s  
+  ✓ student cannot manage the schedule                                   0.13s  
+
+   PASS  Tests\Feature\StudentAcademicJourneyTest
+  ✓ validation creates profile role and unique academic enrollment with… 1.90s  
+  ✓ incomplete or unaccepted documents cannot activate student access    1.42s  
+  ✓ admission notifications wait for commit                              1.50s  
+  ✓ unpaid student can open dashboard and published courses              2.26s  
+  ✓ role alone does not grant an academic context                        1.36s  
+  ✓ unpaid student cannot submit or download restricted resource by dir… 2.00s  
+  ✓ confirmed threshold unlocks only the required services without clai… 1.98s  
+  ✓ insufficient partial payment does not unlock service                 1.71s  
+  ✓ pending payment does not unlock or produce a receipt                 1.70s  
+  ✓ valid exemption and scholarship are taken into account               2.59s  
+  ✓ refund or cancellation recalculates access                           1.87s  
+  ✓ plan respects due dates and overrides do not bypass suspension       1.92s  
+  ✓ student cannot see another context or other personal results         3.46s  
+  ✓ student sees level catalog before yearly teaching is configured      2.11s  
+  ✓ publication and optional course affectations are enforced            2.71s  
+  ✓ results remain open without payment and restrictions require regula… 1.94s  
+  ✓ unauthorized staff and students cannot change financial rules or co… 2.04s  
+  ✓ unpaid student can contact administration and appeal                 1.66s  
+  ✓ historical activation command is idempotent and dry run does not wr… 2.09s  
+  ✓ scholarship and independent fee types do not mix payment permission… 2.48s  
+  ✓ administrative forms can establish fees rules and payment confirmat… 2.46s  
+  ✓ private work is stored and staff can access only after authorizatio… 2.29s  
+  ✓ no payment provider is assumed or simulated                          1.77s  
+  ✓ source dossier uses the financial ledger without mutating its legac… 2.38s  
+  ✓ hidden service is removed from payload and direct routes are denied  2.56s  
+  ✓ welcome is personal persisted and acknowledged only once             2.88s  
+  ✓ validation email links to authenticated student welcome              3.20s  
+  ✓ student module landing pages preserve owned academic context         4.76s  
+  ✓ student calendar is scoped to the selected week year and group and…  3.63s  
+  ✓ admin managed schedule reaches students only after publication       3.94s  
+  ✓ course workspace has metadata and only its published resources       5.80s  
+  ✓ course catalog details are accessible without teaching but do not l… 4.08s  
+  ✓ staff records attendance and students see only their own status      4.81s  
+  ✓ course links require safe urls and can be published by staff         1.85s  
+  ✓ overview uses kinshasa day week and only published assigned session… 2.05s  
+  ✓ overview results are personal published and financially protected    2.63s  
+  ✓ overview alerts and announcements reflect real finances documents a… 3.13s  
+  ✓ faculty matricule sequence is shared between levels and years and r… 2.30s  
+  ✓ faculty matricule bootstraps existing numbers and retains legacy pa… 1.85s  
+  ✓ invalid faculty code does not silently generate an unrelated matric… 2.05s  
+  ✓ existing matricules are migrated atomically everywhere and retries…  2.72s  
+  ✓ matricule migration rolls back all changes when a faculty code is i… 1.78s  
+  ✓ home reminder uses fees by category and current evaluation windows   1.78s  
+  ✓ profile can be completed without changing academic identity or sour… 2.10s  
+  ✓ profile photo is private validated and can be replaced without alte… 1.58s  
+  ✓ profile password requires current password and does not log secrets  1.83s  
+  ✓ profile email change is protected and requires new verification      1.54s  
+  ✓ profile validates birth date other province and emergency contact    1.41s  
+
+  Tests:    78 passed (1205 assertions)
+  Duration: 124.54s
+

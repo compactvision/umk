@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 type Program = {
   id: number;
@@ -93,7 +93,7 @@ const CAT_COLORS: Record<string, { bg: string; text: string; ring: string }> = {
   "Immobilier": { bg: "bg-fuchsia-100", text: "text-fuchsia-700", ring: "ring-fuchsia-200" },
 };
 
-export default function Courses(): JSX.Element {
+export default function Courses(): React.JSX.Element {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (

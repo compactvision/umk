@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\CategoryModel;
 use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -90,5 +91,90 @@ class NewsVideoTest extends TestCase
         $user = $this->admin();
         $user->syncRoles([]);
         $this->actingAs($user)->post('/dashboard/admin/posts', ['title' => 'Test', 'status' => 'published', 'video_url' => 'https://example.com/video.mp4'])->assertForbidden();
+    }
+
+    public function test_blog_filters_apply_before_pagination_and_direct_form_routes_open_existing_modals(): void
+    {
+        $admin = $this->admin();
+        $category = CategoryModel::create(['name' => 'Recherche', 'slug' => 'recherche']);
+        $post = $this->article($admin, ['category_id' => $category->id, 'status' => 'draft']);
+        $this->article($admin, ['category_id' => $category->id]);
+        $this->article($admin, ['status' => 'draft']);
+        $this->article($admin, ['category_id' => $category->id, 'status' => 'draft', 'title' => 'Sport']);
+
+        $this->actingAs($admin)->get(route('dashboard.admin.posts.index', [
+            'q' => 'scientifique', 'category_id' => $category->id, 'status' => 'draft',
+        ]))->assertInertia(fn (Assert $page) => $page->component('dashboard/blog/Index')
+            ->where('filters.category_id', (string) $category->id)->where('posts.total', 1)->where('posts.data.0.id', $post->id));
+
+        $create = route('dashboard.admin.posts.index', ['create' => 1]);
+        $this->get(route('dashboard.admin.posts.create'))->assertRedirect($create);
+        $this->get($create)->assertInertia(fn (Assert $page) => $page->component('dashboard/blog/Index')->where('openCreate', true));
+
+        $edit = route('dashboard.admin.posts.show', ['slug' => $post->slug, 'edit' => 1]);
+        $this->get(route('dashboard.admin.posts.edit', $post))->assertRedirect($edit);
+        $this->get($edit)->assertInertia(fn (Assert $page) => $page->component('dashboard/blog/Show')
+            ->where('openEdit', true)->where('categories.0.id', $category->id)->where('can.update', true));
+        $post->update(['read_time' => '7 min', 'published_at' => now()->addDay()]);
+        $this->put(route('dashboard.admin.posts.update', $post), [
+            'category_id' => '', 'excerpt' => '', 'published_at' => '',
+        ])->assertSessionHasNoErrors();
+        $updated = $post->fresh();
+        $this->assertNull($updated->category_id);
+        $this->assertNull($updated->excerpt);
+        $this->assertNull($updated->published_at);
+        $this->assertSame('7 min', $updated->read_time);
+    }
+
+    public function test_admin_can_delete_an_article_and_student_cannot_open_its_form_or_delete_it(): void
+    {
+        $admin = $this->admin();
+        $post = $this->article($admin);
+        $student = User::factory()->create();
+        $student->assignRole(Role::findOrCreate('student', 'web'));
+
+        $this->actingAs($student)->get(route('dashboard.admin.posts.create'))->assertForbidden();
+        $this->get(route('dashboard.admin.posts.edit', $post))->assertForbidden();
+        $this->delete(route('dashboard.admin.posts.destroy', $post))->assertForbidden();
+        $this->assertModelExists($post);
+
+        $this->actingAs($admin)->delete(route('dashboard.admin.posts.destroy', $post))
+            ->assertRedirect(route('dashboard.admin.posts.index'))->assertSessionHas('success');
+        $this->assertModelMissing($post);
+        $this->delete(route('dashboard.admin.posts.destroy', $post))->assertNotFound();
+    }
+
+    public function test_gallery_removal_and_metadata_updates_are_applied_only_to_the_selected_revision(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $gallery = [
+            ['path' => 'posts/gallery/first.jpg', 'alt' => 'Premier'],
+            ['path' => 'posts/gallery/second.jpg', 'alt' => 'Second', 'caption' => 'Conserver'],
+        ];
+        $post = $this->article($admin, ['gallery' => $gallery]);
+        $show = route('dashboard.admin.posts.show', $post->slug);
+        $update = route('dashboard.admin.posts.update', $post);
+        $this->actingAs($admin)->get($show)->assertInertia(fn (Assert $page) => $page
+            ->where('post.gallery.0.id', 1)->where('post.gallery.1.id', 2)->has('galleryRevision'));
+        $revision = hash('sha256', json_encode($gallery, JSON_THROW_ON_ERROR));
+        $this->put($update, [
+            'gallery_revision' => $revision,
+            'removed_gallery_ids' => [1],
+            'gallery_existing_meta' => [['id' => 2, 'alt' => 'Modifié']],
+            'gallery' => [UploadedFile::fake()->image('third.jpg')],
+        ])->assertSessionHasNoErrors();
+        $updated = $post->fresh()->gallery;
+        $this->assertCount(2, $updated);
+        $this->assertSame(['path' => $gallery[1]['path'], 'alt' => 'Modifié', 'caption' => 'Conserver'], $updated[0]);
+        Storage::disk('public')->assertExists($updated[1]['path']);
+
+        $this->put($update, [
+            'gallery_revision' => $revision,
+            'removed_gallery_ids' => [1],
+            'gallery' => [UploadedFile::fake()->image('stale.jpg')],
+        ])->assertSessionHasErrors('gallery_revision');
+        $this->assertSame($updated, $post->fresh()->gallery);
+        $this->assertCount(1, Storage::disk('public')->allFiles('blog/gallery'));
     }
 }

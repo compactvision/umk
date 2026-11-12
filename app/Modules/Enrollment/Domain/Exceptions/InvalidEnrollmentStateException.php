@@ -3,9 +3,8 @@
 namespace App\Modules\Enrollment\Domain\Exceptions;
 
 use App\Modules\Enrollment\Domain\Enums\EnrollmentStatus;
-use Exception;
 
-class InvalidEnrollmentStateException extends Exception
+class InvalidEnrollmentStateException extends EnrollmentException
 {
     public static function cannotTransition(EnrollmentStatus $from, EnrollmentStatus $to): self
     {
@@ -13,7 +12,7 @@ class InvalidEnrollmentStateException extends Exception
             "Impossible de passer du statut '{$from->label()}' au statut '{$to->label()}'"
         );
     }
-    
+
     public function __construct(string $message = "État d'inscription invalide")
     {
         parent::__construct($message);

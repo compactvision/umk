@@ -41,7 +41,7 @@ class UpdateLevelDetailsRequest extends FormRequest
                 }
             }],
             'courses_number' => ['nullable', 'integer'],
-            'illustration_image' => ['nullable'],
+            'illustration_image' => ['nullable', 'image', 'extensions:jpg,jpeg,png,webp', 'max:4096'],
             'course_objective'=> ['nullable', 'string'],
             'fees'           => ['nullable', 'integer'],
             'options'        => ['nullable', 'array'],

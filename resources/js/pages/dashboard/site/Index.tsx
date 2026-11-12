@@ -300,7 +300,7 @@ export default function SiteSettingsPage() {
                                                 {site?.logoUrl ? (
                                                     <img src={`/storage/${site.logoUrl}`} alt="Logo du site" className="max-h-full max-w-full object-contain" />
                                                 ) : (
-                                                    <p className="text-gray-400 text-sm">Aucun logo</p>
+                                                    <p className="text-gray-700 text-sm">Aucun logo</p>
                                                 )}
                                             </div>
                                         )}
@@ -336,7 +336,7 @@ export default function SiteSettingsPage() {
                                                 {site?.faviconUrl ? (
                                                     <img src={`/storage/${site.faviconUrl}`} alt="Favicon du site" className="max-h-full max-w-full object-contain" />
                                                 ) : (
-                                                    <p className="text-gray-400 text-sm">Aucun favicon</p>
+                                                    <p className="text-gray-700 text-sm">Aucun favicon</p>
                                                 )}
                                             </div>
                                         )}
@@ -401,7 +401,7 @@ export default function SiteSettingsPage() {
                                                 </a>
                                             )}
                                             {!formData.socialLinks.facebook && !formData.socialLinks.twitter && !formData.socialLinks.linkedin && (
-                                                <p className="text-gray-400 text-sm">Aucun réseau social configuré</p>
+                                                <p className="text-gray-700 text-sm">Aucun réseau social configuré</p>
                                             )}
                                         </>
                                     )}

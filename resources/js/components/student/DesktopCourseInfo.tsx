@@ -5,7 +5,9 @@ type Course = {
     title: string;
     description: string | null;
     pedagogical_content: string | null;
-    credits: number;
+    credits: number | null;
+    coefficient?: number | null;
+    unit?: string;
     semester: number | null;
     cmi_hours: number | null;
     td_hours: number | null;
@@ -15,6 +17,7 @@ type Organization = {
     id: number;
     teacher: string | null;
     assistant: string | null;
+    instructors?: string[];
     leader: string | null;
     group: string | null;
     delivery_mode: string;
@@ -65,6 +68,7 @@ function Teacher({ name, label }: { name: string | null; label: string }) {
 }
 export default function DesktopCourseInfo({
     course,
+    registered,
     academic,
     organization,
     period,
@@ -72,6 +76,7 @@ export default function DesktopCourseInfo({
     attendanceHref,
 }: {
     course: Course;
+    registered?: boolean;
     academic: { level: string; faculty: string; year: string; group: string | null };
     organization: Organization[];
     period: { start_date: string; end_date: string } | null;
@@ -101,7 +106,10 @@ export default function DesktopCourseInfo({
                                 <div className="desktop-course-teaching-group" key={person.id}>
                                     {person.group && <p className="desktop-course-group-label">{person.group}</p>}
                                     <Teacher label="Professeur titulaire" name={person.teacher} />
-                                    <Teacher label="Assistant" name={person.assistant} />
+                                    <Teacher label="Assistants" name={person.assistant} />
+                                    {person.instructors?.map((name) => (
+                                        <Teacher key={name} label="Intervenant" name={name} />
+                                    ))}
                                 </div>
                             ))
                         ) : (
@@ -162,10 +170,11 @@ export default function DesktopCourseInfo({
                             </div>
                         </dl>
                         <div className="desktop-course-workload">
-                            <p>Crédits et volume horaire</p>
+                            <p>Crédits et volume horaire{course.unit ? ` · UE ${course.unit}` : ''}</p>
                             <div>
                                 {[
-                                    { label: 'Crédits', value: course.credits, unit: '' },
+                                    { label: registered ? 'Crédits inscrits' : 'Crédits prévus', value: course.credits, unit: '' },
+                                    ...(course.coefficient == null ? [] : [{ label: 'Coefficient', value: course.coefficient, unit: '' }]),
                                     { label: 'CMI', value: course.cmi_hours, unit: 'h' },
                                     { label: 'TD', value: course.td_hours, unit: 'h' },
                                     { label: 'TP', value: course.tp_hours, unit: 'h' },

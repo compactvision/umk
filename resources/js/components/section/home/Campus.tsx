@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "@inertiajs/react";
+import { useEffect, useRef, useState } from "react";
 
 type CampusItem = {
   img: string;
@@ -80,7 +79,7 @@ const ITEMS: CampusItem[] = [
 ];
 
 
-const ICONS: Record<string, JSX.Element> = {
+const ICONS: Record<string, React.JSX.Element> = {
   theater: (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"></path>
@@ -113,7 +112,7 @@ const ICONS: Record<string, JSX.Element> = {
   ),
 };
 
-export default function Campus(): JSX.Element {
+export default function Campus(): React.JSX.Element {
   const trackRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const hoverRef = useRef(false);

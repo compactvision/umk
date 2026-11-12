@@ -5,32 +5,39 @@ namespace App\Modules\Student\Application\Services;
 use App\Models\AdmissionCondition;
 use App\Models\Student\AcademicEnrollment;
 use App\Models\Student\AcademicResource;
-use App\Models\Student\AcademicSession;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 final class StudentOverviewService
 {
     public function __construct(private AcademicAccessService $access, private StudentFinanceService $finance) {}
 
-    public function summary(AcademicEnrollment $entry, array $permissions, array $balance): array
+    public function summary(AcademicEnrollment $entry, array $permissions, array $balance, ?CarbonImmutable $selectedWeek = null): array
     {
         $now = now('Africa/Kinshasa');
         $offerings = $this->access->offerings($entry)->select('academic_offerings.id');
-        $sessions = AcademicSession::query()->whereIn('academic_offering_id', $offerings)->where('is_published', true)
-            ->where('ends_at', '>', $now->copy()->utc());
-        // The daily timetable includes all published lessons of the day.
-        $today = AcademicSession::query()->whereIn('academic_offering_id', $offerings)->where('is_published', true)->where('ends_at', '>', $now->copy()->startOfDay()->utc())->where('starts_at', '<=', $now->copy()->endOfDay()->utc());
-        $week = (clone $sessions)->where('starts_at', '<=', $now->copy()->endOfWeek()->utc());
-        $formatSessions = fn ($query) => $query->with('offering.course')->orderBy('starts_at')->limit(6)->get()->map(fn ($session) => [
-            'id' => $session->id, 'course' => $session->offering->course->title, 'starts_at' => $session->starts_at,
-            'ends_at' => $session->ends_at, 'room' => $session->room, 'ongoing' => $session->starts_at->lte($now) && $session->ends_at->gt($now),
-        ])->values();
-        $resources = AcademicResource::query()->whereIn('academic_offering_id', $offerings)->where('is_published', true)
+        $sessions = $this->access->sessions($entry)->whereNull('academic_sessions.cancelled_at');
+        $today = (clone $sessions)->where('ends_at', '>', $now->copy()->startOfDay()->utc())
+            ->where('starts_at', '<', $now->copy()->startOfDay()->addDay()->utc());
+        $weekStart = $selectedWeek ?? $now->toImmutable()->startOfWeek();
+        $week = (clone $sessions)->where('starts_at', '<', $weekStart->addWeek()->utc())->where('ends_at', '>', $weekStart->utc());
+        $formatSessions = fn ($query) => $query->with('offering.course')->orderBy('starts_at')->orderBy('id')->get()->map(function ($session) use ($entry, $now) {
+            $reference = $this->access->reference($entry, $session->offering->course);
+            $semester = $entry->curriculum_version_id ? $reference['semester'] : ($session->offering->semester ?: $reference['semester']);
+
+            return [
+                'id' => $session->id, 'course_id' => $session->offering->course_id, 'course' => $reference['title'],
+                'semester' => match ((string) $semester) { '1' => '1er semestre', '2' => '2e semestre', '' => 'Semestre à préciser', default => (string) $semester },
+                'starts_at' => $session->starts_at, 'ends_at' => $session->ends_at, 'room' => $session->room,
+                'ongoing' => $session->starts_at->lte($now) && $session->ends_at->gt($now),
+            ];
+        })->values();
+        $resources = AcademicResource::visible()->forLearningPermissions($permissions)->whereIn('academic_offering_id', $offerings)
             ->where(fn ($query) => $query->whereNull('student_profile_id')->orWhere('student_profile_id', $entry->student_profile_id));
         $canReadCourses = $permissions['courses_view']['allowed'];
         $canReadResults = $canReadCourses && $permissions['results_view']['allowed'];
         $formatResource = fn ($resource) => [
-            'id' => $resource->id, 'title' => $resource->title, 'course' => $resource->offering->course->title,
+            'id' => $resource->id, 'title' => $resource->title, 'course' => $this->access->reference($entry, $resource->offering->course)['title'],
             'excerpt' => $resource->kind === 'evaluation' && ! $permissions['evaluations_participate']['allowed'] ? '' : Str::limit(trim(strip_tags($resource->body ?? '')), 260),
             'updated_at' => $resource->updated_at, 'opens_at' => $resource->opens_at, 'closes_at' => $resource->closes_at,
         ];
@@ -57,7 +64,7 @@ final class StudentOverviewService
 
         return [
             'fee_summary' => $fees, 'ongoing_evaluations' => $ongoing,
-            'generated_at' => $now->toIso8601String(), 'timezone' => 'Africa/Kinshasa',
+            'generated_at' => $now->toIso8601String(), 'schedule_week' => $weekStart->toDateString(), 'timezone' => 'Africa/Kinshasa',
             'today_count' => $permissions['schedule_view']['allowed'] ? (clone $today)->count() : 0,
             'week_count' => $permissions['schedule_view']['allowed'] ? (clone $week)->count() : 0,
             'today_sessions' => $permissions['schedule_view']['allowed'] ? $formatSessions(clone $today) : [],

@@ -10,8 +10,8 @@
 .usk-admin-apps .ay-overview {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    background: #fffefa;
-    border: 1px solid #dce5d1;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dce5d1);
     border-radius: 11px;
     margin: 27px 0;
 }
@@ -20,10 +20,10 @@
     align-items: center;
     gap: 18px;
     padding: 24px;
-    color: #829b6f;
+    color: var(--usk-night-mint, #829b6f);
 }
 .usk-admin-apps .ay-overview > div + div {
-    border-left: 1px solid #e4eada;
+    border-left: 1px solid var(--usk-night-border, #e4eada);
 }
 .usk-admin-apps .ay-overview p {
     margin: 0;
@@ -32,13 +32,13 @@
     display: block;
     font-size: 28px;
     font-weight: 500;
-    color: #496d3b;
+    color: var(--usk-night-mint, #496d3b);
     line-height: 1.2;
 }
 .usk-admin-apps .ay-overview span {
     display: block;
     font-size: 10px;
-    color: #7f926f;
+    color: var(--usk-night-mint, var(--usk-day-green, #7f926f));
     margin-top: 5px;
 }
 .usk-admin-apps .ay-toolbar {
@@ -51,11 +51,11 @@
     align-items: center;
     gap: 12px;
     padding: 0 16px;
-    border: 1px solid #dce4d1;
-    background: #fffefa;
+    border: 1px solid var(--usk-night-border, #dce4d1);
+    background: var(--usk-night-surface, #fffefa);
     border-radius: 8px;
     flex: 1;
-    color: #8da17a;
+    color: var(--usk-night-mint, #8da17a);
     min-width: 0;
 }
 .usk-admin-apps main .academic-years-page .ay-search input {
@@ -70,7 +70,7 @@
     font-size: 12px;
 }
 .usk-admin-apps .ay-search:focus-within {
-    outline: 2px solid #ab9459;
+    outline: 2px solid var(--usk-night-gold, #ab9459);
     outline-offset: 3px;
 }
 .usk-admin-apps main .academic-years-page .ay-search input:focus-visible {
@@ -83,23 +83,23 @@
     gap: 10px;
     flex-shrink: 0;
     font-size: 10px;
-    color: #81956e;
+    color: var(--usk-night-mint, var(--usk-day-green, #81956e));
 }
 .usk-admin-apps main .academic-years-page .ay-status-filter select {
-    background: #fffefa;
-    border: 1px solid #dce4d1;
+    background: var(--usk-night-background, #fffefa);
+    border: 1px solid var(--usk-night-border, #dce4d1);
     border-radius: 7px;
     padding: 10px 30px 10px 13px;
     height: 49px;
     font-size: 11px;
-    color: #6f885b;
+    color: var(--usk-night-mint, var(--usk-day-green, #6f885b));
 }
 .usk-admin-apps .ay-results {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 14px;
-    color: #8e9e7d;
+    color: var(--usk-night-mint, var(--usk-day-muted, #8e9e7d));
     font-size: 10px;
     margin: 17px 0 24px;
 }
@@ -110,7 +110,7 @@
     padding: 0;
     border: 0;
     background: none;
-    color: #708b5c;
+    color: var(--usk-night-mint, #708b5c);
     font-size: 10px;
 }
 .usk-admin-apps .ay-grid {
@@ -121,9 +121,9 @@
 .usk-admin-apps .ay-card {
     display: flex;
     flex-direction: column;
-    border: 1px solid #dce4d1;
+    border: 1px solid var(--usk-night-border, #dce4d1);
     border-radius: 12px;
-    background: #fffefa;
+    background: var(--usk-night-surface, #fffefa);
     overflow: hidden;
     min-width: 0;
     transition:
@@ -131,7 +131,7 @@
         box-shadow 0.2s;
 }
 .usk-admin-apps .ay-card:hover {
-    border-color: #acbf97;
+    border-color: var(--usk-night-border, #acbf97);
     box-shadow: 0 6px 22px #26472308;
 }
 .usk-admin-apps .ay-card-top {
@@ -146,37 +146,37 @@
     place-items: center;
     width: 48px;
     height: 48px;
-    border: 1px solid #dfe7d3;
-    background: #eff4e6;
+    border: 1px solid var(--usk-night-border, #dfe7d3);
+    background: var(--usk-night-raised, #eff4e6);
     border-radius: 11px;
-    color: #8aa773;
+    color: var(--usk-night-mint, #8aa773);
 }
 .usk-admin-apps .ay-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border: 1px solid #dfdfc7;
+    border: 1px solid var(--usk-night-border, #dfdfc7);
     border-radius: 5px;
-    background: #f6f1df;
-    color: #9c884f;
+    background: var(--usk-night-raised, #f6f1df);
+    color: var(--usk-night-gold, #9c884f);
     padding: 5px 8px;
     font-size: 9px;
 }
 .usk-admin-apps .ay-badge.is-open {
-    border-color: #d4e2c4;
-    background: #edf4e2;
-    color: #76935e;
+    border-color: var(--usk-night-border, #d4e2c4);
+    background: var(--usk-night-raised, #edf4e2);
+    color: var(--usk-night-mint, var(--usk-day-green, #76935e));
 }
 .usk-admin-apps .ay-badge.is-closed {
-    border-color: #e1e5d8;
-    background: #f2f4ec;
-    color: #8e9980;
+    border-color: var(--usk-night-border, #e1e5d8);
+    background: var(--usk-night-raised, #f2f4ec);
+    color: var(--usk-night-muted, var(--usk-day-muted, #8e9980));
 }
 .usk-admin-apps .ay-eyebrow {
     display: block;
     margin: 0 26px;
     font-size: 8px;
-    color: #a08b54;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a08b54));
     letter-spacing: 0.15em;
 }
 .usk-admin-apps main .academic-years-page .ay-card h2 {
@@ -188,7 +188,7 @@
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .ay-card h2 a {
-    color: #44673b;
+    color: var(--usk-night-mint, #44673b);
     text-decoration: none;
 }
 .usk-admin-apps .ay-dates {
@@ -198,20 +198,20 @@
     gap: 14px;
     margin: 0 26px;
     padding: 20px 0;
-    border-top: 1px solid #e9eddf;
-    border-bottom: 1px solid #e9eddf;
-    color: #b4bea7;
+    border-top: 1px solid var(--usk-night-border, #e9eddf);
+    border-bottom: 1px solid var(--usk-night-border, #e9eddf);
+    color: var(--usk-night-muted, #b4bea7);
 }
 .usk-admin-apps .ay-dates span {
     display: block;
     font-size: 9px;
-    color: #95a485;
+    color: var(--usk-night-muted, var(--usk-day-muted, #95a485));
     margin-bottom: 8px;
 }
 .usk-admin-apps .ay-dates strong {
     display: block;
     font-size: 13px;
-    color: #718c5c;
+    color: var(--usk-night-mint, var(--usk-day-green, #718c5c));
     font-weight: 500;
 }
 .usk-admin-apps .ay-card-note {
@@ -221,7 +221,7 @@
     padding: 19px 26px;
     font-size: 10px;
     line-height: 1.8;
-    color: #99a68a;
+    color: var(--usk-night-muted, var(--usk-day-muted, #99a68a));
 }
 .usk-admin-apps .ay-card-note > svg {
     flex-shrink: 0;
@@ -242,19 +242,19 @@
     gap: 7px;
     padding: 10px 12px;
     font-size: 10px;
-    border: 1px solid #d9e4cb;
-    background: #f1f6e7;
-    color: #7a965f;
+    border: 1px solid var(--usk-night-border, #d9e4cb);
+    background: var(--usk-night-surface, #f1f6e7);
+    color: var(--usk-night-mint, #7a965f);
 }
 .usk-admin-apps .ay-card-actions > .ay-edit {
-    background: #fffefa;
-    color: #8a9c77;
-    border-color: #e1e7d7;
+    background: var(--usk-night-surface, #fffefa);
+    color: var(--usk-night-mint, var(--usk-day-green, #8a9c77));
+    border-color: var(--usk-night-border, #e1e7d7);
 }
 .usk-admin-apps .ay-card-actions > .ay-close-year {
-    background: #f7f1e4;
-    border-color: #e6d9ba;
-    color: #a38a51;
+    background: var(--usk-night-raised, #f7f1e4);
+    border-color: var(--usk-night-border, #e6d9ba);
+    color: var(--usk-night-gold, var(--usk-day-gold, #a38a51));
 }
 .usk-admin-apps .ay-card-actions > button:disabled {
     cursor: wait;
@@ -266,23 +266,23 @@
     justify-content: space-between;
     gap: 15px;
     padding: 18px 26px;
-    background: #f8faf2;
-    border-top: 1px solid #e4ebd9;
+    background: var(--usk-night-surface, #f8faf2);
+    border-top: 1px solid var(--usk-night-border, #e4ebd9);
     font-size: 11px;
-    color: #7e9969;
+    color: var(--usk-night-mint, var(--usk-day-green, #7e9969));
     text-decoration: none;
 }
 .usk-admin-apps .ay-card-footer:hover {
-    background: #f0f5e6;
+    background: var(--usk-night-raised, #f0f5e6);
 }
 .usk-admin-apps .ay-error {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     padding: 17px;
-    background: #fcf3e9;
-    border: 1px solid #e8d3bb;
-    color: #a37957;
+    background: var(--usk-night-surface, #fcf3e9);
+    border: 1px solid var(--usk-night-border, #e8d3bb);
+    color: var(--usk-night-danger, #a37957);
     border-radius: 9px;
     margin-bottom: 24px;
     font-size: 12px;
@@ -297,25 +297,25 @@
     align-items: center;
     gap: 16px;
     padding: 60px 24px;
-    border: 1px dashed #d8e2cc;
-    background: #fafbf5;
+    border: 1px dashed var(--usk-night-border, #d8e2cc);
+    background: var(--usk-night-surface, #fafbf5);
     border-radius: 11px;
     text-align: center;
-    color: #9cb188;
+    color: var(--usk-night-muted, #9cb188);
 }
 .usk-admin-apps .ay-empty h2 {
     margin: 0;
     font-size: 27px;
     font-weight: 400;
-    color: #75965c;
+    color: var(--usk-night-mint, #75965c);
 }
 .usk-admin-apps .ay-empty p {
     margin: 0;
     font-size: 12px;
-    color: #8fa57a;
+    color: var(--usk-night-mint, #8fa57a);
 }
 .usk-admin-apps .academic-years-page :is(button, a):focus-visible {
-    outline: 2px solid #ab9459;
+    outline: 2px solid var(--usk-night-gold, #ab9459);
     outline-offset: 3px;
 }
 .usk-admin-apps .ay-form-modal {
@@ -333,8 +333,8 @@
 }
 .usk-admin-apps .ay-calendar-preview {
     padding: 25px;
-    border: 1px solid #dce6cf;
-    background: #f1f5e8;
+    border: 1px solid var(--usk-night-border, #dce6cf);
+    background: var(--usk-night-raised, #f1f5e8);
     border-radius: 10px;
     min-width: 0;
 }
@@ -343,9 +343,9 @@
     place-items: center;
     width: 65px;
     height: 65px;
-    border: 1px solid #d9e5c8;
-    background: #e9f0dc;
-    color: #96b07a;
+    border: 1px solid var(--usk-night-border, #d9e5c8);
+    background: var(--usk-night-raised, #e9f0dc);
+    color: var(--usk-night-muted, #96b07a);
     border-radius: 14px;
     margin: 28px 0 23px;
 }
@@ -354,18 +354,18 @@
     font-size: 33px;
     font-weight: 400;
     line-height: 1.2;
-    color: #698a51;
+    color: var(--usk-night-mint, #698a51);
     margin: 0 0 18px;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .ay-preview-period {
     margin-top: 26px;
     padding-top: 22px;
-    border-top: 1px solid #dce6cf;
+    border-top: 1px solid var(--usk-night-border, #dce6cf);
     display: flex;
     flex-direction: column;
     gap: 14px;
-    color: #a7b696;
+    color: var(--usk-night-muted, #a7b696);
 }
 .usk-admin-apps .ay-preview-period > div {
     display: flex;
@@ -381,21 +381,21 @@
 .usk-admin-apps .ay-preview-period span {
     display: block;
     font-size: 9px;
-    color: #a0b08c;
+    color: var(--usk-night-muted, #a0b08c);
     margin-bottom: 6px;
 }
 .usk-admin-apps .ay-preview-period strong {
     display: block;
     font-size: 12px;
-    color: #85a16d;
+    color: var(--usk-night-mint, #85a16d);
     font-weight: 400;
 }
 .usk-admin-apps .ay-preview-note {
     padding-top: 24px;
-    border-top: 1px solid #dce6cf;
+    border-top: 1px solid var(--usk-night-border, #dce6cf);
     margin: 25px 0 0;
     font-size: 10px;
-    color: #9fb18a;
+    color: var(--usk-night-muted, #9fb18a);
     line-height: 1.9;
 }
 .usk-admin-apps .ay-close-target {
@@ -403,10 +403,10 @@
     align-items: center;
     gap: 18px;
     padding: 20px;
-    background: #f5f3e5;
-    border: 1px solid #e5dfc4;
+    background: var(--usk-night-raised, #f5f3e5);
+    border: 1px solid var(--usk-night-border, #e5dfc4);
     border-radius: 9px;
-    color: #ad995f;
+    color: var(--usk-night-gold, #ad995f);
 }
 .usk-admin-apps .ay-close-target span {
     display: block;
@@ -418,10 +418,10 @@
     display: block;
     font-size: 24px;
     font-weight: 400;
-    color: #8c7a4a;
+    color: var(--usk-night-gold, #8c7a4a);
 }
 .usk-admin-apps .ay-close-message {
-    color: #a09675;
+    color: var(--usk-night-gold, #a09675);
     font-size: 12px;
     line-height: 1.9;
     margin: 22px 0 0;

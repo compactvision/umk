@@ -1,9 +1,10 @@
 import AdminModal from '@/components/admin/AdminModal';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import VideoFields from '@/components/news/VideoFields';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { categoryBadgeStyle } from './category-badge';
 
 type Category = { id: number; name: string; color?: string; description?: string };
 type Post = {
@@ -38,7 +39,8 @@ type Pagination<T> = {
 type PageProps = {
     categories: Category[];
     posts: Pagination<Post>;
-    filters?: { q?: string; category_id?: string; status?: string };
+    filters?: { q?: string; category_id?: number | string; status?: string };
+    openCreate?: boolean;
     flash?: {
         success?: string;
         error?: string;
@@ -49,13 +51,14 @@ export default function Index(props: PageProps) {
     const { categories, posts, filters, flash } = props;
 
     // ------- UI State -------
-    const [showCreate, setShowCreate] = useState(false);
+    const [showCreate, setShowCreate] = useState(props.openCreate ?? false);
     const [showCreateCategory, setShowCreateCategory] = useState(false);
     const [q, setQ] = useState(filters?.q ?? '');
-    const [categoryId, setCategoryId] = useState(filters?.category_id ?? '');
+    const [categoryId, setCategoryId] = useState(String(filters?.category_id ?? ''));
     const [status, setStatus] = useState(filters?.status ?? '');
     const [isLoading, setIsLoading] = useState(false);
     const [showNotifications, setShowNotifications] = useState(true);
+    const hasFilters = Boolean(filters?.q || filters?.category_id || filters?.status);
 
     // ------- Create Form (Inertia) -------
     const { data, setData, post, processing, errors, reset, transform, progress } = useForm<{
@@ -73,7 +76,6 @@ export default function Index(props: PageProps) {
         main_image_1: File | null;
         main_image_2: File | null;
         gallery: File[];
-        tags: string;
     }>({
         video_url: '',
         video_file: null,
@@ -89,7 +91,6 @@ export default function Index(props: PageProps) {
         main_image_1: null,
         main_image_2: null,
         gallery: [],
-        tags: '',
     });
 
     // ------- Create Category Form -------
@@ -143,9 +144,16 @@ export default function Index(props: PageProps) {
         [debouncedSearch],
     );
 
+    useEffect(() => () => debouncedSearch.cancel(), [debouncedSearch]);
+
     const closeModal = () => {
         setShowCreate(false);
         reset();
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('create')) {
+            url.searchParams.delete('create');
+            router.replace({ url: url.href, props: (current) => ({ ...current, openCreate: false }), preserveState: true, preserveScroll: true });
+        }
     };
 
     const closeCategoryModal = () => {
@@ -174,6 +182,7 @@ export default function Index(props: PageProps) {
 
     const submitFilters = (e: React.FormEvent) => {
         e.preventDefault();
+        debouncedSearch.cancel();
         setIsLoading(true);
         const params = new URLSearchParams();
         if (q) params.set('q', q);
@@ -342,6 +351,7 @@ export default function Index(props: PageProps) {
                             </div>
                             <div>
                                 <select
+                                    aria-label="Filtrer les actualités par catégorie"
                                     value={categoryId}
                                     onChange={(e) => setCategoryId(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white/70 px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -356,6 +366,7 @@ export default function Index(props: PageProps) {
                             </div>
                             <div className="flex gap-2">
                                 <select
+                                    aria-label="Filtrer les actualités par statut"
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white/70 px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -487,9 +498,11 @@ export default function Index(props: PageProps) {
                                 </div>
                             </div>
                             <h3 className="mb-2 text-xl font-semibold text-slate-800">Aucun article trouvé</h3>
-                            <p className="mb-6 text-center text-slate-500">Commencez par créer un nouvel article.</p>
+                            <p className="mb-6 text-center text-slate-500">
+                                {hasFilters ? 'Aucun article ne correspond aux filtres sélectionnés.' : 'Commencez par créer un nouvel article.'}
+                            </p>
                             <button
-                                onClick={() => setShowCreate(true)}
+                                onClick={() => (hasFilters ? router.get(route('dashboard.admin.posts.index')) : setShowCreate(true))}
                                 className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
@@ -500,7 +513,7 @@ export default function Index(props: PageProps) {
                                             clipRule="evenodd"
                                         />
                                     </svg>
-                                    Créer un article
+                                    {hasFilters ? 'Effacer les filtres' : 'Créer un article'}
                                 </span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-0 transition-opacity group-hover:opacity-100"></div>
                             </button>
@@ -508,22 +521,29 @@ export default function Index(props: PageProps) {
                     )}
 
                     {/* Pagination */}
-                    {posts.data.length > 0 && (
+                    {(posts.last_page > 1 || posts.current_page > 1) && (
                         <div className="flex flex-wrap justify-center gap-2">
-                            {posts.links.map((l, idx) => (
-                                <Link
-                                    key={idx}
-                                    href={l.url ?? '#'}
-                                    className={[
-                                        'group relative overflow-hidden rounded-xl px-4 py-2 font-medium transition-all',
-                                        l.active
-                                            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                                            : 'bg-white/80 text-slate-700 shadow-md hover:shadow-lg',
-                                        !l.url && 'pointer-events-none opacity-50',
-                                    ].join(' ')}
-                                    dangerouslySetInnerHTML={{ __html: l.label }}
-                                />
-                            ))}
+                            {posts.links.map((link, index) =>
+                                link.url ? (
+                                    <Link
+                                        key={index}
+                                        href={link.url}
+                                        aria-current={link.active ? 'page' : undefined}
+                                        className={`rounded-xl px-4 py-2 font-medium transition-colors ${
+                                            link.active
+                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                                                : 'bg-white/80 text-slate-700 hover:shadow-lg'
+                                        }`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ) : (
+                                    <span
+                                        key={index}
+                                        className="rounded-xl px-4 py-2 font-medium text-slate-700"
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ),
+                            )}
                         </div>
                     )}
                 </div>
@@ -616,19 +636,6 @@ export default function Index(props: PageProps) {
                                         name="read_time"
                                         value={data.read_time}
                                         onChange={(e) => setData('read_time', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="post-tags" className="block text-sm font-medium text-slate-700">
-                                        Tags
-                                    </label>
-                                    <input
-                                        placeholder="tag1, tag2, tag3"
-                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                        id="post-tags"
-                                        name="tags"
-                                        value={data.tags}
-                                        onChange={(e) => setData('tags', e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -980,7 +987,6 @@ export default function Index(props: PageProps) {
 
 function ArticleCard({ post }: { post: Post }) {
     const cover = post.main_image_1 || post.main_image_2;
-    const categoryColor = post.category?.color || '#6366f1';
 
     return (
         <div className="group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -1021,7 +1027,7 @@ function ArticleCard({ post }: { post: Post }) {
             <div className="p-5">
                 <div className="mb-3 flex items-center gap-2">
                     {post.category?.name && (
-                        <span className="rounded-full px-3 py-1 text-xs font-medium text-white" style={{ backgroundColor: categoryColor }}>
+                        <span className="rounded-full px-3 py-1 text-xs font-medium" style={categoryBadgeStyle(post.category.color)}>
                             {post.category.name}
                         </span>
                     )}

@@ -1,0 +1,7 @@
+# Performance, migration et recette
+
+Le back-office pagine les dossiers et charge les relations nécessaires aux décisions affichées. L’espace étudiant lit les résultats publiés sans recalcul des notes. La vérification de fin de cursus parcourt les résultats du seul dossier et du programme concerné lors d’une demande ou d’une validation. Les index couvrent les dossiers, statuts et liens de reprise.
+
+La migration est additive. Sur une copie de recette, contrôler les contraintes, sauvegarder puis restaurer conjointement la base et les archives. Créer les permissions avant leur attribution et tester chaque rôle par faculté. Une désactivation fonctionnelle s’effectue par retrait des permissions. Le retrait automatique du schéma est bloqué pour protéger les décisions.
+
+Le scénario [k6](../../scripts/load/academic-progression.js) prépare les lectures simultanées du portail, de l’historique et des dossiers d’une promotion. Les modes d’écriture utilisent un dossier jetable par VU et une activation explicite. Alimenter le mode préparation avec des propositions de fin de cursus valides pour mesurer ce chemin. Le mode `race` emploie deux approbateurs distincts sur la même révision d’un dossier jetable. Comparer ensuite la décision et l’audit pour confirmer qu’une seule transition a été appliquée. Exercer ce scénario sur MySQL. Le scénario a passé le contrôle syntaxique. Les mesures de capacité restent à effectuer.

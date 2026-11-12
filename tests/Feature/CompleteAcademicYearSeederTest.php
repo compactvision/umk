@@ -84,7 +84,8 @@ class CompleteAcademicYearSeederTest extends TestCase
             $counts[$table] = DB::table($table)->count();
         }
         $payment = StudentPayment::first();
-        $payment->update(['note' => 'Note conservée par la comptabilité']);
+        app(\App\Modules\Student\Application\Services\StudentFinanceService::class)->annotate($payment, \App\Models\User::where('email', 'demo.admin@usk.example.test')->firstOrFail(), 'Note conservée par la comptabilité', 'Correction de note comptable contrôlée.');
+        $counts['academic_audits'] = DB::table('academic_audits')->count();
         $student = StudentProfile::first()->user;
         $student->update(['first_name' => 'Nom modifié']);
         $this->seed(CompleteAcademicYearSeeder::class);

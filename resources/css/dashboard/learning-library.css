@@ -1,0 +1,344 @@
+.learning-library {
+    --lib-ink: var(--usk-night-text, #173a2d);
+    --lib-muted: var(--usk-night-muted, #52665c);
+    --lib-line: var(--usk-night-border, #dce5dd);
+    --lib-card: var(--usk-night-surface, #fffefa);
+    --lib-soft: var(--usk-night-raised, #eef5ee);
+    --lib-green: var(--usk-night-mint, #255a45);
+    display: grid;
+    gap: 18px;
+    color: var(--lib-ink);
+}
+
+.learning-library .learning-header,
+.learning-library .learning-section-heading,
+.learning-library .learning-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.learning-library .learning-header,
+.learning-library .learning-section-heading {
+    justify-content: space-between;
+}
+
+.learning-library .learning-header {
+    align-items: end;
+    padding-bottom: 17px;
+    border-bottom: 1px solid var(--lib-line);
+}
+
+.usk-dashboard .student-portal.learning-library .learning-header h1 {
+    color: var(--lib-ink);
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    line-height: 1.12;
+}
+
+.learning-library .learning-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+    color: var(--lib-green);
+    font-size: 0.84rem;
+}
+
+.learning-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+    gap: 12px;
+}
+
+.learning-metrics > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--lib-line);
+    border-radius: 13px;
+    background: var(--lib-card);
+}
+
+.learning-metric-icon,
+.learning-item-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: var(--lib-soft);
+    color: var(--lib-green);
+}
+
+.learning-metrics strong,
+.learning-metrics > div > div > span {
+    display: block;
+}
+
+.learning-metrics strong {
+    font-size: 1.55rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+.learning-metrics > div > div > span,
+.learning-muted,
+.learning-library small {
+    color: var(--lib-muted);
+    font-size: 0.81rem;
+}
+
+.learning-library .learning-panel {
+    min-width: 0;
+    margin: 0;
+    padding: clamp(13px, 2.3vw, 22px);
+    border: 1px solid var(--lib-line);
+    border-radius: 15px;
+    background: var(--lib-card);
+    box-shadow: 0 5px 16px rgb(21 49 37 / 4%);
+}
+
+.usk-dashboard .student-portal.learning-library .learning-panel h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 650;
+    color: var(--lib-ink);
+    overflow-wrap: anywhere;
+}
+
+.learning-panel h2 svg {
+    flex: none;
+    color: var(--lib-green);
+}
+
+.learning-library .learning-search {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.learning-search .academic-field {
+    min-width: 0;
+}
+
+.learning-search :is(input, select) {
+    min-height: 43px;
+}
+
+.learning-advanced,
+.learning-search-actions {
+    grid-column: 1 / -1;
+}
+
+.learning-advanced summary,
+.learning-sections summary,
+.learning-selected summary {
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--lib-green);
+}
+
+.learning-advanced-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.learning-search-actions {
+    justify-content: flex-end;
+}
+
+.learning-library .learning-button,
+.learning-library .learning-actions > a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid var(--lib-line);
+    border-radius: 8px;
+    background: var(--lib-card);
+    color: var(--lib-green);
+    font-size: 0.83rem;
+    font-weight: 650;
+    text-align: center;
+    text-decoration: none;
+}
+
+.learning-library :is(.learning-button, .learning-actions > a):hover {
+    background: var(--lib-soft);
+}
+
+.learning-library .learning-button.is-primary {
+    border-color: #245e48;
+    background: #245e48;
+    color: white;
+}
+
+.learning-library .learning-button.is-primary:hover {
+    background: #174834;
+}
+
+.learning-library :is(a, button, input, select, summary):focus-visible {
+    outline: 2px solid var(--usk-night-mint, #287456);
+    outline-offset: 2px;
+}
+
+.learning-workspace {
+    display: grid;
+    grid-template-columns: minmax(215px, 1fr) minmax(0, 2.5fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.learning-main {
+    display: grid;
+    min-width: 0;
+    gap: 16px;
+}
+
+.learning-offers .learning-all {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--lib-green);
+    text-decoration: underline;
+    font-size: 0.8rem;
+}
+
+.learning-offer-list,
+.learning-resource-list,
+.learning-section-list {
+    display: grid;
+    gap: 7px;
+    margin: 13px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.learning-offer-list > li > a,
+.learning-resource-list > li > a,
+.learning-section-list > li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    min-width: 0;
+    padding: 9px;
+    border: 1px solid var(--lib-line);
+    border-radius: 10px;
+    color: var(--lib-ink);
+    text-decoration: none;
+}
+
+.learning-offer-list strong,
+.learning-resource-copy strong {
+    display: block;
+    font-size: 0.89rem;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.learning-offer-list svg,
+.learning-resource-arrow {
+    flex: none;
+    color: var(--lib-green);
+}
+
+.learning-library :is(.learning-offer-list, .learning-resource-list) a:is(:hover, [aria-current='true']) {
+    background: var(--lib-soft);
+}
+
+.learning-resource-copy {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.learning-state,
+.learning-count {
+    flex: none;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: var(--lib-soft);
+    color: var(--lib-muted);
+    font-size: 0.72rem;
+    font-weight: 650;
+}
+
+.learning-state[data-state='published'] {
+    color: var(--lib-green);
+}
+
+.learning-state[data-state='draft'] {
+    color: var(--usk-night-gold, #74541f);
+    background: var(--usk-night-raised, #f7efd9);
+}
+
+.learning-empty {
+    margin-top: 12px;
+    color: var(--lib-muted);
+    font-size: 0.88rem;
+}
+
+.learning-library-empty {
+    display: grid;
+    gap: 9px;
+    place-items: center;
+    padding: 30px 12px;
+    border: 1px dashed var(--lib-line);
+    border-radius: 11px;
+    text-align: center;
+}
+
+.learning-selected {
+    scroll-margin-top: 90px;
+}
+
+.learning-library :is(.learning-selected, .learning-sections) > :is(p, details, .learning-actions) {
+    margin-top: 12px;
+}
+
+.learning-versions-heading {
+    margin-top: 18px !important;
+    padding-top: 12px;
+    border-top: 1px solid var(--lib-line);
+}
+
+@media (max-width: 900px) {
+    .learning-workspace {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .learning-offer-list {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    }
+}
+
+@media (max-width: 540px) {
+    .learning-library .learning-search {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learning-search .academic-field:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .learning-resource-arrow {
+        display: none;
+    }
+
+    .learning-search-actions > * {
+        flex: 1 1 auto;
+    }
+}

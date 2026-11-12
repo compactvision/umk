@@ -1,0 +1,8 @@
+
+   PASS  Tests\Feature\AcademicStructureTest
+  ✓ custom reference structure and read page use existing levels         0.85s  
+  ✓ new admission resolves only an unambiguous annual program            0.16s  
+
+  Tests:    2 passed (32 assertions)
+  Duration: 1.19s
+

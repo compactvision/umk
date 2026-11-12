@@ -1,0 +1,441 @@
+
+   PASS  Tests\Unit\CourseWorkloadTest
+  ✓ integer rounding never loses or creates hours across profiles and c… 0.02s  
+  ✓ practical profiles have more practical hours than theoretical profiles
+  ✓ zero hours are preserved and remaining fields share the available budget
+  ✓ inconsistent existing hours are rejected
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                    1.24s  
+
+   PASS  Tests\Feature\AcademicCalendarTest
+  ✓ calendar saves and exports only events from the selected year        0.34s  
+
+   PASS  Tests\Feature\AcademicEnrollmentManagementTest
+  ✓ leave resume and terminal states are audited and idempotent          0.22s  
+  ✓ scope applies to directory dossier writes and closure                0.12s  
+  ✓ group capacity and context are enforced without erasing history      0.08s  
+  ✓ closure requires resolved cases and explicit reopening               0.09s  
+  ✓ student sees only own annual contexts and cannot choose another pro… 0.10s  
+  ✓ transfer is atomic idempotent and keeps the financial and academic…  0.09s  
+  ✓ closed year refuses first activation without creating a student pro… 0.04s  
+  ✓ stale decision is rejected and malformed context is validated        0.06s  
+
+   PASS  Tests\Feature\AcademicSchedulingTest
+  ✓ rooms are registered with capacity and blocks and free text cannot…  0.13s  
+  ✓ capacity and teacher unavailability are enforced for the same audie… 0.10s  
+  ✓ same named rooms at distinct locations can be reserved concurrently  0.09s  
+  ✓ weekly generation excludes holidays and is idempotent and preserves… 0.11s  
+  ✓ publication report and cancellation preserve the chain and deduplic… 0.20s  
+  ✓ failed report rolls back the original reservation                    0.08s  
+  ✓ authorized teacher records attendance and closed correction require… 0.11s  
+  ✓ justification correction and acceptance preserve absence and privat… 0.16s  
+
+   PASS  Tests\Feature\AcademicSemesterTest
+  ✓ month periods are clipped to year dates and can be saved without du… 0.07s  
+  ✓ overlapping reversed and out of year periods are refused             0.05s  
+  ✓ first and last day bounds use kinshasa midnight                      0.05s  
+  ✓ schedules use the saved period and ignore client date overrides      0.10s  
+
+   PASS  Tests\Feature\AcademicStructureMigrationTest
+  ✓ additive migration preserves existing identifiers finance and unres… 0.55s  
+
+   PASS  Tests\Feature\AcademicStructureTest
+  ✓ dossier calculates average and credits from the enrollments unit re… 0.51s  
+  ✓ calendar exam is visible in the students schedule and overview for…  0.16s  
+  ✓ annual draft correction and publication reach the student timetable  0.29s  
+  ✓ level review is required and timetable changes require a new review  0.20s  
+  ✓ annual generation proposes only missing hours in free rooms as draf… 0.12s  
+  ✓ annual batch generates each configured faculty once and reports mis… 0.15s  
+  ✓ pack builds missing programs and tracks faculty validation           0.18s  
+  ✓ new annual draft copies catalog courses for its levels and periods   0.11s  
+  ✓ custom reference structure and read page use existing levels         0.12s  
+  ✓ establishment saves identity and contact information together        0.08s  
+  ✓ reference edits reject stale revision and duplicate code             0.06s  
+  ✓ draft validation publication and snapshots preserve student course   0.19s  
+  ✓ published content cannot be modified reopened or deleted             0.11s  
+  ✓ replacement requires confirmation and never rebinds existing studen… 0.18s  
+  ✓ cohort scope and wrong year assignment are controlled                0.16s  
+  ✓ credit validation and lost updates do not destroy the draft          0.07s  
+  ✓ student professor and admin without permission cannot mutate struct… 0.07s  
+  ✓ foreign institution ids are not exposed or accepted                  0.05s  
+  ✓ new year does not change curriculum or financial references          0.10s  
+  ✓ program selection is explicit when several programs share a level    0.09s  
+  ✓ new admission resolves only an unambiguous annual program            0.20s  
+  ✓ promotion group association is contextual and preserves teaching re… 0.05s  
+  ✓ resources timetable and payment references survive curriculum chang… 0.15s  
+
+   PASS  Tests\Feature\AcademicTeachingTest
+  ✓ catalog codes are unique and archive preserves published references  0.20s  
+  ✓ optional item and independent ue credits are frozen and duplicate c… 0.11s  
+  ✓ offering creation is idempotent and refuses the wrong period and gr… 0.19s  
+  ✓ managed resources require explicit registration and stay private af… 0.29s  
+  ✓ optional course prerequisite uses official unit results or explicit… 0.18s  
+  ✓ other version of same course does not grant access or inherit regis… 0.21s  
+  ✓ group change closes old registration and keeps past session history  0.15s  
+  ✓ team history keeps original teacher and assistants block overlappin… 0.17s  
+  ✓ teacher workspace is scoped and assistant cannot publish or see ros… 0.40s  
+  ✓ archive preserves activities and scoped staff cannot mutate other f… 0.14s  
+  ✓ legacy audit reports ambiguity without rewriting any offering        0.16s  
+
+   PASS  Tests\Feature\AcademicYearTransportTest
+  ✓ compiled dashboard headers stay small                                0.06s  
+  ✓ open and close are repeatable and never open two years               0.06s  
+  ✓ missing or invalid key returns a clean 503 without sessions          0.05s  
+  ✓ preflight rejects empty key and never regenerates it                 0.02s  
+  ✓ valid configuration passes preflight                                 0.02s  
+  ✓ missing or malformed year is reported without server error           0.04s  
+
+   PASS  Tests\Feature\AdminAppsTest
+  ✓ course creation is scoped to the open level                          0.13s  
+  ✓ all four apps open for an admin                                      0.09s  
+  ✓ levels app lists all faculties without a fixed faculty id            0.05s  
+  ✓ student cannot access apps                                           0.03s  
+  ✓ level details open without admission conditions                      0.06s  
+  ✓ level details serialize matching admission conditions                0.05s  
+  ✓ level can be renamed and its cover updated from details              0.06s  
+  ✓ admin can delete a level from details and returns to levels          0.05s  
+  ✓ level with enrollments cannot be deleted                             0.03s  
+  ✓ student cannot delete a level                                        0.04s  
+  ✓ empty faculty can be deleted                                         0.03s  
+  ✓ faculty with levels cannot be deleted                                0.03s  
+  ✓ faculty with enrollments reports the enrollment blocker              0.03s  
+  ✓ faculty details include only its levels                              0.04s  
+  ✓ missing faculty returns not found                                    0.03s  
+  ✓ year details scope enrollment counts and list to selected year       0.05s  
+  ✓ year edit and closure return to details without deleting enrollment… 0.04s  
+  ✓ public faculty page only exposes active levels of that faculty       0.04s  
+  ✓ public faculty page handles no active levels and rejects inactive f… 0.04s  
+  ✓ public course shows programme and only applicable admission conditi… 0.04s  
+  ✓ public course rejects inactive faculties and levels and filters rec… 0.04s  
+
+   PASS  Tests\Feature\AdminEnrollmentManagementTest
+  ✓ list and detail show real data without private storage paths         0.09s  
+  ✓ overview shows priorities and recent decisions from the workflow     0.13s  
+  ✓ filters apply to all results on the server                           0.08s  
+  ✓ validation records actor and history without changing payment        0.09s  
+  ✓ rejection requires a reason and is visible to the student            0.07s  
+  ✓ drafts and terminal states cannot be decided or overwritten          0.08s  
+  ✓ admin can preview and download private documents                     0.06s  
+  ✓ active content cannot be previewed as a pdf                          0.04s  
+  ✓ students cannot use admin actions or other students documents        0.07s  
+
+   PASS  Tests\Feature\AdmissionConsolidationTest
+  ✓ campaign controls requirements and receipt is sent once before annu… 0.25s  
+  ✓ closed year expiry withdrawal and duplicate draft behaviour          0.08s  
+  ✓ requirements are read from the actual level and faculty and admin p… 0.05s  
+
+   PASS  Tests\Feature\AdmissionPricingSeederTest
+  ✓ admissions prices apply to every level and preserve programme data   0.07s  
+
+   PASS  Tests\Feature\Auth\AuthenticationTest
+  ✓ login screen can be rendered                                         0.03s  
+  ✓ users can authenticate using the login screen                        0.03s  
+  ✓ users can not authenticate with invalid password                     0.02s  
+  ✓ users can logout                                                     0.03s  
+
+   PASS  Tests\Feature\Auth\EmailVerificationTest
+  ✓ email verification screen can be rendered                            0.03s  
+  ✓ email can be verified                                                0.03s  
+  ✓ email is not verified with invalid hash                              0.03s  
+
+   PASS  Tests\Feature\Auth\PasswordConfirmationTest
+  ✓ password change requires matching confirmation                       0.05s  
+  ✓ password change requires current password                            0.03s  
+  ✓ account without academic profile cannot use student password form    0.03s  
+
+   PASS  Tests\Feature\Auth\PasswordResetTest
+  ✓ reset password link screen can be rendered                           0.03s  
+  ✓ reset password link can be requested                                 0.24s  
+  ✓ reset password screen can be rendered                                0.24s  
+  ✓ password can be reset with valid token                               0.24s  
+
+   PASS  Tests\Feature\Auth\RegistrationTest
+  ✓ registration screen can be rendered                                  0.03s  
+  ✓ new users can register                                               0.07s  
+
+   PASS  Tests\Feature\CacheLoginRateLimiterTest
+  ✓ it allows attempts before threshold                                  0.02s  
+  ✓ it blocks after five attempts for 15 minutes                         0.02s  
+  ✓ it unblocks after 15 minutes                                         0.02s  
+  ✓ it blocks again for 30 minutes after 3 fails post unlock             0.02s  
+  ✓ it resets after successful login                                     0.02s  
+
+   PASS  Tests\Feature\CardRequestTest
+  ✓ card requires a review of the current profile photo and confirmed t… 0.22s  
+  ✓ only an eligible print can enter delivery and collection is final    0.25s  
+
+   PASS  Tests\Feature\CardTemplateTest
+  ✓ an authorized administrator can create and edit a card template      0.06s  
+  ✓ a student cannot access the card template library                    0.03s  
+
+   PASS  Tests\Feature\CompleteAcademicYearSeederTest
+  ✓ complete year is consistent preserves existing data and is repeata… 18.67s  
+
+   PASS  Tests\Feature\CourseCatalogTest
+  ✓ search combines faculty level and semester and includes legacy cour… 0.13s  
+  ✓ catalog creation validates the level and saves an optional annual a… 0.08s  
+
+   PASS  Tests\Feature\CoursePedagogySeederTest
+  ✓ all 180 courses have balanced hours and subject specific outlines    0.24s  
+  ✓ rerun preserves manually edited hours and content and does not chan… 0.28s  
+
+   PASS  Tests\Feature\CredentialRevocationTest
+  ✓ revocation preserves only current database session and other users…  0.02s  
+  ✓ stale session fingerprint is rejected after password change          0.03s  
+  ✓ password reset revokes sessions and token cannot be replayed         0.03s  
+  ✓ social login rejects unverified provider email                       0.02s  
+  ✓ social login cannot take over unverified existing account            0.02s  
+  ✓ verified social registration persists verification and no extra pri… 0.03s  
+
+   PASS  Tests\Feature\CurrentYearTeachingAssignmentsTest
+  ✓ all courses are matched by speciality without duplicates or changin… 0.98s  
+  ✓ inactive specialist blocks the entire import without partial assign… 0.24s  
+  ✓ ambiguous current year is rejected                                   0.19s  
+  ✓ rescheduling is never used to hide a teacher conflict                0.22s  
+
+   PASS  Tests\Feature\DashboardTest
+  ✓ guests are redirected to the login page                              0.03s  
+  ✓ authenticated users can visit the dashboard                          0.05s  
+
+   PASS  Tests\Feature\DemoProfessorsSeederTest
+  ✓ demo profiles are repeatable and preserve administrative edits       0.04s  
+
+   PASS  Tests\Feature\DemoYearScheduleTest
+  ✓ existing slot is kept and only missing hours are added               0.04s  
+
+   PASS  Tests\Feature\DepartmentOrientationTest
+  ✓ configured choices separate courses rooms and attendance while pres… 0.56s  
+
+   PASS  Tests\Feature\DraftStorageTransactionTest
+  ✓ replacement deletes previous file only after successful commit       0.61s  
+  ✓ database failure preserves original and removes uncommitted copy     0.34s  
+
+   PASS  Tests\Feature\EnrollmentJourneyTest
+  ✓ save returns the uuid and updates the same draft                     0.32s  
+  ✓ another student cannot change the draft                              0.03s  
+  ✓ documents survive saving and can be replaced                         0.06s  
+
+   PASS  Tests\Feature\EnrollmentManagementFollowupTest
+  ✓ same status group conflict is rejected and no op replays are record… 0.07s  
+  ✓ decision resolves only its own request and preserves private reason  0.08s  
+  ✓ old and new schedule memberships are date bounded without restoring… 0.16s  
+  ✓ student page exposes the official renewal without creating a new id… 0.08s  
+  ✓ annual filters include promotions and private decisions are not sha… 0.10s  
+  ✓ same level reorientation versions context and preserves source ledg… 0.07s  
+  ✓ context migration preserves existing rows and failed binding keeps…  0.05s  
+  ✓ capacity changes preserve existing memberships and require the facu… 0.07s  
+  ✓ migration recognizes preexisting audited transfers without rewritin… 0.04s  
+
+   PASS  Tests\Feature\EnrollmentReviewWorkflowTest
+  ✓ start is idempotent and validation requires accepted evidence        0.33s  
+  ✓ corrections require reason and student can replace adverse evidence  0.35s  
+  ✓ new actions are admin only and document binding is enforced          0.31s  
+  ✓ mail failure keeps analysis committed and records delivery failure   0.26s  
+  ✓ report waits for every piece and contains verdicts and remarks with… 0.36s  
+  ✓ new document version requires review then generates an updated repo… 0.33s  
+  ✓ rolled back review does not send a report                            0.28s  
+  ✓ student can replace a correctable piece immediately without notific… 0.43s  
+  ✓ multipart replacement notifies administration and highlights reexam… 0.45s  
+  ✓ notification failure keeps the replacement file and version          0.32s  
+  ✓ invalid replacement can be retried and does not notify before succe… 0.30s  
+  ✓ dashboard notifications are per admin and open the exact document    0.38s  
+  ✓ invalid upload and rolled back replacement do not create dashboard…  0.44s  
+  ✓ student receives each verdict without duplicates and opens only own… 0.45s  
+  ✓ student notification is rolled back with the review                  0.40s  
+
+   PASS  Tests\Feature\LandingContentSeederTest
+  ✓ import preserves existing faculty and is idempotent                  0.43s  
+
+   PASS  Tests\Feature\LandingLevelsSeederTest
+  ✓ public level shows only its own courses with semesters and credits   0.06s  
+  ✓ levels are prepared inactively without overwriting existing data     0.17s  
+
+   PASS  Tests\Feature\LevelPricingTest
+  ✓ national and foreign prices are independent and publicly available   0.09s  
+  ✓ two installments compute authoritative totals and validate complete… 0.08s  
+
+   PASS  Tests\Feature\NewsVideoTest
+  ✓ admin can create video article and it appears publicly               0.06s  
+  ✓ upload is stored and unrelated edit preserves it then it can be rem… 0.04s  
+  ✓ invalid links and non video uploads are rejected                     0.04s  
+  ✓ drafts archives and future publications are not public               0.04s  
+  ✓ detail includes safe text and only published related articles        0.03s  
+  ✓ student cannot publish video                                         0.02s  
+
+   PASS  Tests\Feature\NewsletterModuleTest
+  ✓ can subscribe to newsletter                                          0.03s  
+  ✓ cannot subscribe with invalid email                                  0.02s  
+  ✓ can resubscribe after unsubscribing                                  0.02s  
+  ✓ can unsubscribe from newsletter                                      0.02s  
+  ✓ unsubscribe nonexistent email returns 404                            0.02s  
+
+   PASS  Tests\Feature\PhaseOneSecurityTest
+  ✓ site writes require an administrator                                 0.03s  
+  ✓ login errors do not disclose account existence                       0.24s  
+  ✓ logout invalidates session data and rotates csrf token               0.02s  
+  ✓ login lock survives a minute and normalizes email                    0.01s  
+  ✓ temporary documents cannot be claimed by another user                0.03s  
+  ✓ invalid upload and failed storage are reported                       0.03s  
+  ✓ http preflight reports failures without printing response content    0.08s  
+
+   PASS  Tests\Feature\ProfessionalEmailsTest
+  ✓ verification and password reset emails have french html plain text…  0.03s  
+  ✓ enrollment confirmation uses real name programme and dossier link    0.02s  
+  ✓ html escapes recipient names and does not load external images       0.02s  
+
+   PASS  Tests\Feature\ProposedCurriculaTest
+  ✓ every program has two balanced semesters and can be seeded twice     0.14s  
+  ✓ seed does not exceed an existing lower limit                         0.02s  
+  ✓ full program rejects extra credits and allows editing without doubl… 0.09s  
+
+   PASS  Tests\Feature\ScheduleModuleTest
+  ✓ weekly creation stores utc and can be filtered edited and cancelled  0.10s  
+  ✓ conflicts for rooms teachers and levels are rejected even in draft   0.06s  
+  ✓ repetition rolls back entirely when a later week conflicts           0.05s  
+  ✓ year boundaries and invalid intervals are rejected                   0.04s  
+  ✓ distinct groups can meet concurrently but common courses cannot ove… 0.06s  
+  ✓ reassigning an already scheduled course checks teacher availability  0.05s  
+  ✓ semester plan generates only selected weekdays inclusively           0.09s  
+  ✓ semester plan is atomic if the last occurrence conflicts             0.07s  
+  ✓ semester plan rejects wrong semester empty days and invalid periods  0.05s  
+  ✓ a course can meet on monday morning and wednesday afternoon in diff… 0.06s  
+  ✓ two distinct slots on the same day are allowed but overlaps roll ba… 0.08s  
+  ✓ each dynamic slot requires its own valid times                       0.03s  
+  ✓ curriculum saves three weekly slots in the course semester with opt… 0.22s  
+  ✓ semester edit updates only the matching weekly slot and rolls back…  1.05s  
+  ✓ calendar can delete one draft occurrence or the matching draft slot  0.11s  
+  ✓ student cannot manage the schedule                                   0.04s  
+
+   PASS  Tests\Feature\SeoAudienceTest
+  ✓ audience is disabled by default even with consent                    0.02s  
+  ✓ audience requires consent and only stores aggregates                 0.03s  
+  ✓ query strings private paths and arbitrary events are rejected        0.02s  
+
+   PASS  Tests\Feature\SeoPublicTest
+  ✓ initial html contains real content and metadata without ssr          0.03s  
+  ✓ static pages have unique titles and descriptions                     0.08s  
+  ✓ only published current news are public and sitemapped                0.05s  
+  ✓ local robots deny all and production requires opt in                 0.07s  
+  ✓ drafts and legal identity are never exposed                          0.08s  
+  ✓ blog pagination is self canonical and rejects empty pages            0.06s  
+  ✓ admin can edit metadata but cannot index private routes or publish…  0.09s  
+  ✓ guests cannot manage seo and unknown urls have real 404              0.03s  
+  ✓ metadata cannot inject script or external tracking image             0.05s  
+  ✓ verified student cannot read or change admin seo                     0.04s  
+  ✓ ssr outage keeps public content available                            0.06s  
+  ✓ audience and indexation cannot be activated without prerequisites    0.04s  
+
+   PASS  Tests\Feature\Settings\PasswordUpdateTest
+  ✓ student password can be updated                                      0.06s  
+  ✓ incorrect current password does not mutate credentials               0.06s  
+
+   PASS  Tests\Feature\Settings\ProfileUpdateTest
+  ✓ student profile page is displayed                                    0.09s  
+  ✓ verified email change requires password and new verification         0.05s  
+  ✓ identity change preserves verification when email is unchanged       0.04s  
+  ✓ academic identity cannot be changed by profile payload               0.04s  
+  ✓ profile email change with wrong password preserves identity          0.05s  
+
+   PASS  Tests\Feature\SiteModuleTest
+  ✓ can save and retrieve site info                                      0.06s  
+  ✓ can update site info                                                 0.04s  
+  ✓ can upload logo and favicon                                          0.07s  
+
+   PASS  Tests\Feature\StudentAcademicJourneyTest
+  ✓ validation creates profile role and unique academic enrollment with… 0.49s  
+  ✓ incomplete or unaccepted documents cannot activate student access    0.49s  
+  ✓ admission notifications wait for commit                              0.44s  
+  ✓ unpaid student can open dashboard and published courses              0.74s  
+  ✓ role alone does not grant an academic context                        0.43s  
+  ✓ unpaid student cannot submit or download restricted resource by dir… 0.53s  
+  ✓ confirmed threshold unlocks only the required services without clai… 0.53s  
+  ✓ insufficient partial payment does not unlock service                 0.43s  
+  ✓ pending payment does not unlock or produce a receipt                 0.49s  
+  ✓ valid exemption and scholarship are taken into account               0.47s  
+  ✓ refund or cancellation recalculates access                           0.46s  
+  ✓ plan respects due dates and overrides do not bypass suspension       0.45s  
+  ✓ student cannot see another context or other personal results         0.52s  
+  ✓ student sees level catalog before yearly teaching is configured      0.62s  
+  ✓ publication and optional course affectations are enforced            0.72s  
+  ✓ results remain open without payment and restrictions require regula… 0.53s  
+  ✓ unauthorized staff and students cannot change financial rules or co… 0.45s  
+  ✓ unpaid student can contact administration and appeal                 0.44s  
+  ✓ historical activation command is idempotent and dry run does not wr… 0.41s  
+  ✓ scholarship and independent fee types do not mix payment permission… 0.46s  
+  ✓ administrative forms can establish fees rules and payment confirmat… 0.65s  
+  ✓ jury passage creates a renewal only when the student starts it       0.79s  
+  ✓ payment and valid aid combine to confirm the first installment once  0.49s  
+  ✓ verified provider payment can complete coverage with a valid schola… 0.44s  
+  ✓ valid exemption alone confirms a pending enrollment                  0.43s  
+  ✓ private work is stored and staff can access only after authorizatio… 0.46s  
+  ✓ no payment provider is assumed or simulated                          0.43s  
+  ✓ source dossier uses the financial ledger without mutating its legac… 0.46s  
+  ✓ hidden service is removed from payload and direct routes are denied  0.53s  
+  ✓ welcome is personal persisted and acknowledged only once             0.54s  
+  ✓ validation email links to authenticated student welcome              0.40s  
+  ✓ student module landing pages preserve owned academic context         0.55s  
+  ✓ student calendar is scoped to the selected week year and group and…  0.59s  
+  ✓ admin managed schedule reaches students only after publication       0.58s  
+  ✓ course workspace has metadata and only its published resources       0.54s  
+  ✓ course catalog details are accessible without teaching but do not l… 0.49s  
+  ✓ staff records attendance and students see only their own status      1.07s  
+  ✓ course links require safe urls and can be published by staff         0.49s  
+  ✓ overview uses kinshasa day week and only published assigned session… 0.55s  
+  ✓ overview results are personal published and financially protected    0.55s  
+  ✓ overview alerts and announcements reflect real finances documents a… 0.63s  
+  ✓ faculty matricule sequence is shared between levels and years and r… 0.37s  
+  ✓ faculty matricule bootstraps existing numbers and retains legacy pa… 0.40s  
+  ✓ invalid faculty code does not silently generate an unrelated matric… 0.38s  
+  ✓ existing matricules are migrated atomically everywhere and retries…  0.49s  
+  ✓ matricule migration rolls back all changes when a faculty code is i… 0.40s  
+  ✓ home reminder uses fees by category and current evaluation windows   0.50s  
+  ✓ profile can be completed without changing academic identity or sour… 0.49s  
+  ✓ profile photo is private validated and can be replaced without alte… 0.58s  
+  ✓ profile password requires current password and does not log secrets  0.49s  
+  ✓ profile email change is protected and requires new verification      0.49s  
+  ✓ profile validates birth date other province and emergency contact    0.86s  
+
+   PASS  Tests\Feature\StudentEnrollmentPortalTest
+  ✓ cards have real counts and only owned safe data                      0.53s  
+  ✓ filters search all owned pages and stats stay global                 0.13s  
+  ✓ detail uses declared information review feedback and working downlo… 0.09s  
+  ✓ only owned drafts can be resumed                                     0.05s  
+
+   PASS  Tests\Feature\StudentManagementTest
+  ✓ directory searches postname and paginates without financial data     0.08s  
+  ✓ summary does not query heavy sections and finance is server protect… 0.10s  
+  ✓ requests and history are paginated and scoped to the student         0.15s  
+  ✓ account actions require both permissions and a reason and never ret… 0.12s  
+
+   PASS  Tests\Feature\TeachingModuleTest
+  ✓ admin can create edit search and deactivate a professor              0.11s  
+  ✓ affectation uses level year semester and does not duplicate          0.11s  
+  ✓ reassignment and removal preserve teaching content and scope         0.07s  
+  ✓ course assistant and organization can be configured                  0.06s  
+  ✓ inactive professors and invalid inputs cannot be assigned            0.06s  
+  ✓ student cannot manage professors or assignments                      0.06s  
+  ✓ admin without publication permission cannot assign                   0.04s  
+
+   PASS  Tests\Feature\UniversityFinanceTest
+  ✓ money is exact and binary floats and excess precision are refused    0.03s  
+  ✓ legacy billing is idempotent nonretroactive and obligations are imm… 0.05s  
+  ✓ payment reference replay and validated payment immutability          0.10s  
+  ✓ a payment can cover multiple obligations without duplicate allocati… 0.08s  
+  ✓ allocations cannot cross student context currency or available amou… 0.06s  
+  ✓ refunds require authorization and executed reference and are bounde… 0.16s  
+  ✓ partial refund reverses explicit allocations without deleting them   0.08s  
+  ✓ approved plan changes overdue amount without erasing payments and r… 0.09s  
+  ✓ percentage aids use integer rounding and third party pledges are no… 0.06s  
+  ✓ versioned tariffs are scoped and replace explicitly without rebilli… 0.08s  
+  ✓ csv reconciliation requires exact match and explicit commit          0.06s  
+  ✓ receipt snapshot verification and ownership are safe                 0.09s  
+  ✓ finance dashboard export and mutations enforce roles and faculty sc… 0.15s  
+  ✓ two currencies are never aggregated and checker can be required      0.06s  
+  ✓ payment notifications are private and idempotent                     0.05s  
+  ✓ http csv preview is actor bound and commit is explicit               0.36s  
+  ✓ refund records cannot be edited outside audited workflow             0.04s  
+
+  Tests:    329 passed (152845 assertions)
+  Duration: 79.88s
+

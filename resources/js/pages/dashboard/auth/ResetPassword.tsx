@@ -275,7 +275,7 @@ export default function ResetPassword({ token, email }: { token?: string; email?
                 </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes slide-up {
                     from {
                         opacity: 0;

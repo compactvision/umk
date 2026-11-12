@@ -1,5 +1,5 @@
 import { Link, usePage, usePoll } from '@inertiajs/react';
-import { Bell, CheckCheck, CheckCircle2, FilePenLine, FileUp, GraduationCap, X, XCircle } from 'lucide-react';
+import { Bell, CheckCheck, CheckCircle2, FilePenLine, FileUp, GraduationCap, Wallet, X, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import '../../../css/dashboard/admin-notifications.css';
 type Notices = {
@@ -10,7 +10,8 @@ type Notices = {
         student_name?: string;
         filename: string;
         version: number | null;
-        kind?: 'admission' | 'document';
+        status?: string;
+        kind?: 'admission' | 'document' | 'enrollment' | 'finance' | 'schedule' | 'learning' | 'assessment' | 'results' | 'official_document';
         verdict?: string;
         comment?: string | null;
         created_at: string;
@@ -70,7 +71,11 @@ export default function AdminNotifications({ audience = 'admin' }: { audience?: 
                     <header>
                         <div>
                             <h2>Notifications</h2>
-                            <p>{audience === 'admin' ? 'Les nouvelles pièces de vos candidats.' : 'Le suivi de vos justificatifs.'}</p>
+                            <p>
+                                {audience === 'admin'
+                                    ? 'Les nouvelles pièces de vos candidats.'
+                                    : 'Vos inscriptions, justificatifs et opérations financières.'}
+                            </p>
                         </div>
                         <button
                             type="button"
@@ -99,7 +104,14 @@ export default function AdminNotifications({ audience = 'admin' }: { audience?: 
                         <ul>
                             {notices.items.map((notice) => {
                                 const verdict = verdicts[notice.verdict || ''];
-                                const Icon = notice.kind === 'admission' ? GraduationCap : audience === 'student' && verdict ? verdict.icon : FileUp;
+                                const Icon =
+                                    notice.kind === 'finance'
+                                        ? Wallet
+                                        : notice.kind === 'admission'
+                                          ? GraduationCap
+                                          : audience === 'student' && verdict
+                                            ? verdict.icon
+                                            : FileUp;
                                 return (
                                     <li key={notice.id} className={notice.read_at ? '' : 'is-unread'}>
                                         <span className="admin-notification-icon">
@@ -107,21 +119,71 @@ export default function AdminNotifications({ audience = 'admin' }: { audience?: 
                                         </span>
                                         <div>
                                             <strong>
-                                                {audience === 'student'
-                                                    ? notice.kind === 'admission'
-                                                        ? 'Bienvenue dans votre espace étudiant'
-                                                        : verdict?.title || 'Votre justificatif a été examiné'
-                                                    : 'Une pièce à réexaminer'}
+                                                {notice.kind === 'official_document'
+                                                    ? ({
+                                                          received: 'Demande documentaire reçue',
+                                                          correction: 'Demande documentaire à compléter',
+                                                          refused: 'Demande documentaire refusée',
+                                                          approved: 'Demande documentaire approuvée',
+                                                          issued: 'Document émis',
+                                                          deliver: 'Remise confirmée',
+                                                          revoke: 'Document révoqué',
+                                                      }[notice.status ?? ''] ?? 'Suivi documentaire')
+                                                    : notice.kind === 'results'
+                                                      ? notice.status === 'appeal_decided'
+                                                          ? 'Votre recours a reçu une décision'
+                                                          : 'Résultats officiels publiés'
+                                                      : notice.kind === 'assessment'
+                                                        ? ({
+                                                              published: 'Évaluation publiée',
+                                                              received: 'Travail reçu',
+                                                              cancelled: 'Évaluation annulée',
+                                                              feedback: 'Correction disponible',
+                                                          }[notice.status ?? ''] ?? 'Suivi d’évaluation')
+                                                        : notice.kind === 'learning'
+                                                          ? 'Nouvelle ressource pédagogique'
+                                                          : notice.kind === 'schedule'
+                                                            ? ({
+                                                                  published: 'Nouvelle séance publiée',
+                                                                  changed: 'Séance modifiée',
+                                                                  cancelled: 'Séance annulée',
+                                                                  rescheduled: 'Séance reportée',
+                                                                  absence_submitted: 'Justification reçue',
+                                                                  absence_accepted: 'Justification acceptée',
+                                                                  absence_refused: 'Justification refusée',
+                                                                  absence_correction: 'Justification à compléter',
+                                                                  absence_in_review: 'Justification en examen',
+                                                              }[notice.status ?? ''] ?? 'Planification mise à jour')
+                                                            : audience === 'student'
+                                                              ? notice.kind === 'finance'
+                                                                  ? ({
+                                                                        confirmed: 'Votre versement a été confirmé',
+                                                                        cancelled: 'Une écriture de paiement a été annulée',
+                                                                        refund_executed: 'Un remboursement a été enregistré comme exécuté',
+                                                                    }[notice.status ?? ''] ?? 'Votre situation financière a été mise à jour')
+                                                                  : notice.kind === 'enrollment'
+                                                                    ? 'Votre situation administrative a été mise à jour'
+                                                                    : notice.kind === 'admission'
+                                                                      ? 'Bienvenue dans votre espace étudiant'
+                                                                      : verdict?.title || 'Votre justificatif a été examiné'
+                                                              : 'Une pièce à réexaminer'}
                                             </strong>
                                             <p>
                                                 {audience === 'admin' && notice.student_name ? `${notice.student_name} · ` : ''}
                                                 {notice.reference}
                                             </p>
-                                            {notice.kind !== 'admission' && (
-                                                <p className="admin-notification-file">
-                                                    {notice.filename} · Version {notice.version}
-                                                </p>
-                                            )}
+                                            {notice.kind !== 'admission' &&
+                                                notice.kind !== 'enrollment' &&
+                                                notice.kind !== 'finance' &&
+                                                notice.kind !== 'schedule' &&
+                                                notice.kind !== 'learning' &&
+                                                notice.kind !== 'assessment' &&
+                                                notice.kind !== 'results' &&
+                                                notice.kind !== 'official_document' && (
+                                                    <p className="admin-notification-file">
+                                                        {notice.filename} · Version {notice.version}
+                                                    </p>
+                                                )}
                                             {notice.comment && <p className="notification-review-comment">{notice.comment}</p>}
                                             <small>
                                                 {new Date(notice.created_at).toLocaleString('fr-FR', {
@@ -140,7 +202,23 @@ export default function AdminNotifications({ audience = 'admin' }: { audience?: 
                                                 onSuccess={() => setOpen(false)}
                                                 className="admin-notification-open"
                                             >
-                                                {notice.kind === 'admission' ? 'Accéder à mon espace étudiant' : 'Ouvrir le justificatif'}
+                                                {notice.kind === 'official_document'
+                                                    ? 'Ouvrir mes documents'
+                                                    : notice.kind === 'results'
+                                                      ? 'Consulter mes résultats'
+                                                      : notice.kind === 'assessment'
+                                                        ? 'Consulter mes activités'
+                                                        : notice.kind === 'learning'
+                                                          ? 'Consulter les ressources'
+                                                          : notice.kind === 'schedule'
+                                                            ? 'Ouvrir le suivi'
+                                                            : notice.kind === 'finance'
+                                                              ? 'Consulter mes transactions'
+                                                              : notice.kind === 'enrollment'
+                                                                ? 'Consulter mes inscriptions'
+                                                                : notice.kind === 'admission'
+                                                                  ? 'Accéder à mon espace étudiant'
+                                                                  : 'Ouvrir le justificatif'}
                                             </Link>
                                         </div>
                                         {!notice.read_at && <span className="admin-notification-dot" aria-label="Non lue" />}

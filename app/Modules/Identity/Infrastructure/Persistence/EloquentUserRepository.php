@@ -5,6 +5,9 @@ namespace App\Modules\Identity\Infrastructure\Persistence;
 use App\Models\User as EloquentUser;
 use App\Modules\Identity\Domain\Entities\User;
 use App\Modules\Identity\Domain\Repositories\UserRepository;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 final class EloquentUserRepository implements UserRepository
 {
@@ -12,7 +15,7 @@ final class EloquentUserRepository implements UserRepository
     {
         $model = $user->id()
             ? EloquentUser::findOrFail($user->id())
-            : new EloquentUser();
+            : new EloquentUser;
 
         $model->fill([
             'last_name' => $user->lastName(),
@@ -20,14 +23,14 @@ final class EloquentUserRepository implements UserRepository
             'post_name' => $user->postName(),
             'gender' => $user->gender(),
             'email' => $user->email(),
-            'password' => $user->passwordHash(),
-            'email_verified_at' => $user->isVerified() ? now() : null,
-            'role' => $user->role(),
+            'password' => $user->passwordHash() ?: Hash::make(Str::random(64)),
+
         ]);
+        $model->email_verified_at = $user->verifiedAt();
         $model->save();
 
-        if (!$user->id()) {
-            $model->assignRole('user');
+        if (! $user->id()) {
+            $model->assignRole(Role::findOrCreate('user', 'web'));
         }
 
         return $this->mapToEntity($model);
@@ -36,12 +39,14 @@ final class EloquentUserRepository implements UserRepository
     public function findByEmail(string $email): ?User
     {
         $model = EloquentUser::where('email', $email)->first();
+
         return $model ? $this->mapToEntity($model) : null;
     }
 
     public function findById(int $id): ?User
     {
         $model = EloquentUser::find($id);
+
         return $model ? $this->mapToEntity($model) : null;
     }
 

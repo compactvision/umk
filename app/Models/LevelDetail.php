@@ -28,6 +28,9 @@ class LevelDetail extends Model
     ];
 
     protected $casts = [
+        'price' => 'decimal:2', 'price_foreign' => 'decimal:2',
+        'price_national_first' => 'decimal:2', 'price_national_second' => 'decimal:2',
+        'price_foreign_first' => 'decimal:2', 'price_foreign_second' => 'decimal:2',
         'has_certificate' => 'boolean',
         'options' => 'array', // JSON transformé en tableau
     ];

@@ -205,7 +205,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes slide-up {
                     from {
                         opacity: 0;

@@ -1,12 +1,13 @@
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import VideoPlayer from '@/components/news/VideoPlayer';
 import { gradientOptions } from '@/components/section/dashboard/blog/utils/gradientOptions';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
+import { categoryBadgeStyle } from './category-badge';
 import EditPostModal from './EditPostModal';
 
 // ---- Types ----
-type GalleryItem = { path: string; alt?: string | null; caption?: string | null };
+type GalleryItem = { id: number; path: string; alt?: string | null; caption?: string | null };
 
 type Post = {
     id: number;
@@ -37,26 +38,36 @@ type Post = {
 
 type PageProps = {
     post: Post;
+    categories: { id: number; name: string }[];
+    galleryRevision: string;
+    openEdit?: boolean;
     can?: {
         update?: boolean;
         delete?: boolean;
     };
 };
 
-export default function Show({ post, can }: PageProps) {
+export default function Show({ post, categories, galleryRevision, openEdit: initialEdit, can }: PageProps) {
     const cover1 = post.main_image_1 || null;
     const cover2 = post.main_image_2 || null;
     const gallery = post.gallery ?? [];
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
-    const [openEdit, setOpenEdit] = useState(false);
+    const [openEdit, setOpenEdit] = useState(initialEdit ?? false);
 
     const { delete: destroy, processing } = useForm({});
 
     const onDelete = () => {
         if (!confirm('Supprimer définitivement cet article ?')) return;
-        destroy(route('dashboard.admin.posts.destroy', post.id), {
-            onSuccess: () => (window.location.href = route('dashboard.admin.posts.index')),
-        });
+        destroy(route('dashboard.admin.posts.destroy', post.id));
+    };
+
+    const closeEditor = () => {
+        setOpenEdit(false);
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('edit')) {
+            url.searchParams.delete('edit');
+            router.replace({ url: url.href, props: (current) => ({ ...current, openEdit: false }), preserveState: true, preserveScroll: true });
+        }
     };
 
     const isHtml = useMemo(() => {
@@ -75,8 +86,6 @@ export default function Show({ post, can }: PageProps) {
         }).format(date);
     };
 
-    const categories = [];
-
     return (
         <Dashboard>
             <Head title={`Blog — ${post.title}`} />
@@ -88,13 +97,15 @@ export default function Show({ post, can }: PageProps) {
                         <span className="admin-detail-context">GESTION DES ACTUALITÉS</span>
 
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => setOpenEdit(true)}
-                                className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-medium text-slate-700 shadow-sm transition-all hover:shadow-md"
-                            >
-                                <span className="relative z-10 flex items-center gap-2">Éditer</span>
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
-                            </button>
+                            {can?.update && (
+                                <button
+                                    onClick={() => setOpenEdit(true)}
+                                    className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-medium text-slate-700 shadow-sm transition-all hover:shadow-md"
+                                >
+                                    <span className="relative z-10 flex items-center gap-2">Éditer</span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
+                                </button>
+                            )}
                             {can?.delete && (
                                 <button
                                     onClick={onDelete}
@@ -129,8 +140,8 @@ export default function Show({ post, can }: PageProps) {
                         <div className="mb-4 flex flex-wrap items-center gap-3">
                             {post.category?.name && (
                                 <span
-                                    className="rounded-full px-3 py-1.5 text-xs font-medium text-white shadow-md"
-                                    style={{ backgroundColor: post.category.color || '#6366f1' }}
+                                    className="rounded-full px-3 py-1.5 text-xs font-medium shadow-md"
+                                    style={categoryBadgeStyle(post.category.color)}
                                 >
                                     {post.category.name}
                                 </span>
@@ -390,12 +401,13 @@ export default function Show({ post, can }: PageProps) {
                 </div>
             )}
 
-            {openEdit && (
+            {openEdit && can?.update && (
                 <EditPostModal
                     post={post}
-                    categories={categories} // passe-la depuis ton controller
+                    categories={categories}
+                    galleryRevision={galleryRevision}
                     gradientOptions={gradientOptions}
-                    onClose={() => setOpenEdit(false)}
+                    onClose={closeEditor}
                 />
             )}
         </Dashboard>

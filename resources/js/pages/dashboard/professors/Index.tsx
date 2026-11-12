@@ -1,12 +1,13 @@
-import PageHeading from '@/components/admin/PageHeading';
 import Pagination from '@/components/admin/Pagination';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import AssignmentForm from '@/components/teaching/AssignmentForm';
+import ProfessorAvatar from '@/components/teaching/ProfessorAvatar';
 import ProfessorForm from '@/components/teaching/ProfessorForm';
 import { professorName, type Professor, type TeachingCourse, type Year } from '@/components/teaching/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowUpRight, BookOpen, Pencil, Plus, Search, Users } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Mail, Pencil, Phone, Plus, Search, Users } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import '../../../../css/dashboard/professor-portraits.css';
 import '../../../../css/dashboard/teaching.css';
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
     catalog: TeachingCourse[];
     years: Year[];
     canAssign: boolean;
+    canInvite: boolean;
     flash?: { success?: string };
 };
 export default function ProfessorsIndex() {
@@ -30,24 +32,21 @@ export default function ProfessorsIndex() {
         router.get(route('dashboard.admin.professors.index'), { q, status: status || undefined }, { preserveState: true, replace: true });
     };
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title="Enseignants" />
-            <div className="teaching-page">
-                <PageHeading
-                    title="Les enseignants."
-                    description="Une équipe pédagogique, des compétences et des cours bien attribués."
-                    action={
-                        <button
-                            className="admin-primary"
-                            onClick={() => {
-                                setEditing(null);
-                                setFormOpen(true);
-                            }}
-                        >
-                            <Plus size={17} /> Ajouter un enseignant
-                        </button>
-                    }
-                />
+            <div className="teaching-page professor-directory">
+                <header className="professor-heading">
+                    <h1>Enseignants</h1>
+                    <button
+                        className="admin-primary"
+                        onClick={() => {
+                            setEditing(null);
+                            setFormOpen(true);
+                        }}
+                    >
+                        <Plus size={17} /> Ajouter un enseignant
+                    </button>
+                </header>
                 <div className="teaching-stats">
                     <div>
                         <Users size={21} />
@@ -88,27 +87,41 @@ export default function ProfessorsIndex() {
                     </button>
                 </form>
                 {props.professors.data.length ? (
-                    <div className="teaching-professor-grid">
+                    <div className="teaching-professor-grid" data-dashboard-panel="q status page">
                         {props.professors.data.map((professor) => (
                             <article className="teaching-professor-card" key={professor.id}>
-                                <header>
-                                    <span className="teaching-avatar">
-                                        {professor.first_name[0]}
-                                        {professor.last_name[0]}
-                                    </span>
+                                <header className="professor-card-identity">
+                                    <ProfessorAvatar name={professorName(professor)} photoUrl={professor.photo_url} />
+                                    <h2>{professorName(professor)}</h2>
+                                    {professor.speciality && <p>{professor.speciality}</p>}
                                     <span className={`teaching-status ${professor.is_active ? '' : 'is-inactive'}`}>
                                         {professor.is_active ? 'Actif' : 'Inactif'}
                                     </span>
                                 </header>
-                                <h2>{professorName(professor)}</h2>
-                                <p>{professor.speciality || 'Spécialité non renseignée'}</p>
-                                <a href={`mailto:${professor.email}`}>{professor.email}</a>
-                                {professor.phone && <p>{professor.phone}</p>}
-                                <p className="teaching-assignment-count">{professor.offerings_count ?? 0} affectation(s)</p>
+                                <div className="professor-card-contact">
+                                    {professor.email && (
+                                        <a href={`mailto:${professor.email}`}>
+                                            <Mail size={15} aria-hidden="true" /> <span>{professor.email}</span>
+                                        </a>
+                                    )}
+                                    {professor.phone && (
+                                        <a href={`tel:${professor.phone}`}>
+                                            <Phone size={15} aria-hidden="true" /> <span>{professor.phone}</span>
+                                        </a>
+                                    )}
+                                    <p>
+                                        <BookOpen size={15} aria-hidden="true" /> {professor.offerings_count ?? 0}{' '}
+                                        {(professor.offerings_count ?? 0) > 1 ? 'affectations' : 'affectation'}
+                                    </p>
+                                </div>
+                                <Link
+                                    className="professor-card-link"
+                                    href={route('dashboard.admin.professors.show', professor.id)}
+                                    aria-label={`Voir le profil de ${professorName(professor)}`}
+                                >
+                                    Voir le profil <ArrowUpRight size={16} aria-hidden="true" />
+                                </Link>
                                 <footer>
-                                    <Link className="admin-secondary" href={route('dashboard.admin.professors.show', professor.id)}>
-                                        Voir la fiche <ArrowUpRight size={15} />
-                                    </Link>
                                     <button
                                         className="admin-secondary"
                                         onClick={() => {
@@ -119,7 +132,7 @@ export default function ProfessorsIndex() {
                                         <Pencil size={15} /> Modifier
                                     </button>
                                     {props.canAssign && professor.is_active && (
-                                        <button className="admin-primary" onClick={() => setAssigning(professor)}>
+                                        <button className="admin-secondary" onClick={() => setAssigning(professor)}>
                                             <Plus size={15} /> Affecter un cours
                                         </button>
                                     )}
@@ -128,7 +141,7 @@ export default function ProfessorsIndex() {
                         ))}
                     </div>
                 ) : (
-                    <div className="teaching-empty">
+                    <div className="teaching-empty" data-dashboard-panel="q status page">
                         <Users size={36} />
                         <h2>Aucun enseignant trouvé.</h2>
                         <p>Ajoutez un enseignant ou ajustez votre recherche.</p>
@@ -136,7 +149,7 @@ export default function ProfessorsIndex() {
                 )}
                 <Pagination value={props.professors} />
             </div>
-            {formOpen && <ProfessorForm professor={editing ?? undefined} onClose={() => setFormOpen(false)} />}
+            {formOpen && <ProfessorForm canInvite={props.canInvite} professor={editing ?? undefined} onClose={() => setFormOpen(false)} />}
             {assigning && (
                 <AssignmentForm
                     courses={props.catalog}

@@ -8,7 +8,7 @@
     }
     .usk-student-overview-shell {
         overflow: clip;
-        background: #f0f3ee;
+        background: var(--usk-night-raised, #f0f3ee);
     }
     .usk-student-overview-shell .student-desktop-container {
         max-width: none;
@@ -20,8 +20,8 @@
     }
     .is-overview .portal-toolbar select {
         max-width: 460px;
-        background: white;
-        border-color: #dce3d9;
+        background: var(--usk-night-background, white);
+        border-color: var(--usk-night-border, #dce3d9);
         min-height: 42px;
     }
     .student-desktop-intro {
@@ -31,7 +31,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: #647568;
+        color: var(--usk-night-mint, var(--usk-day-green, #647568));
         font-size: 12px;
         margin: 0 0 25px;
     }
@@ -39,7 +39,7 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: #315c47;
+        color: var(--usk-night-mint, #315c47);
         text-decoration: none;
     }
     .student-desktop-breadcrumb > span:not(.student-desktop-year) {
@@ -55,7 +55,7 @@
         margin-left: auto;
         white-space: nowrap;
         font-size: 11px;
-        color: #6c7d68;
+        color: var(--usk-night-mint, var(--usk-day-green, #6c7d68));
     }
     .student-desktop-welcome {
         position: relative;
@@ -65,10 +65,10 @@
         gap: 22px;
         padding: 32px 36px;
         margin-bottom: 28px;
-        border: 1px solid #254e3c;
+        border: 1px solid var(--usk-night-field-border, #254e3c);
         border-radius: 12px;
-        color: white;
-        background: radial-gradient(ellipse at 96% 0%, #b79b4c26, transparent 50%), linear-gradient(110deg, #164f3b, #073e32 65%, #052a24);
+        color: var(--usk-night-white, white);
+        background: radial-gradient(ellipse at 96% 0%, #b79b4c26, transparent 50%), linear-gradient(110deg, var(--usk-night-brand, #164f3b), var(--usk-night-brand-deep, #073e32) 65%, var(--usk-night-brand-deep, #052a24));
         box-shadow: 0 8px 28px #183b2910;
     }
     .student-desktop-welcome::after {
@@ -91,14 +91,14 @@
         border: 1px solid #ffffff24;
         border-radius: 12px;
         background: #ffffff08;
-        color: #e8d397;
+        color: var(--usk-night-gold, #e8d397);
     }
     .student-desktop-welcome > div:nth-child(2) {
         min-width: 0;
         flex: 1;
     }
     .student-desktop-welcome > div > span {
-        color: #d5c69d;
+        color: var(--usk-night-gold, #d5c69d);
         font-size: 8px;
         font-weight: 600;
         letter-spacing: 0.2em;
@@ -112,7 +112,7 @@
     }
     .student-desktop-welcome small {
         font-size: 12px;
-        color: #d3e0d7;
+        color: var(--usk-night-muted, #d3e0d7);
         line-height: 1.7;
     }
     .student-desktop-welcome button {
@@ -124,16 +124,16 @@
         gap: 10px;
         flex-shrink: 0;
         padding: 12px 16px;
-        border: 1px solid #ffffff45;
+        border: 1px solid color-mix(in srgb, var(--usk-night-border, #ffffff) 27%, transparent);
         border-radius: 7px;
         font-size: 11px;
-        color: #fff;
+        color: var(--usk-night-white, #fff);
         background: #ffffff07;
         cursor: pointer;
     }
     .student-desktop-welcome button:hover {
         background: #ffffff14;
-        border-color: #e6c470;
+        border-color: var(--usk-night-border, #e6c470);
     }
     .student-desktop-alerts {
         display: grid;
@@ -145,10 +145,10 @@
         align-items: center;
         gap: 14px;
         padding: 17px 20px;
-        background: #fbf3df;
-        border: 1px solid #e8d8af;
+        background: var(--usk-night-raised, #fbf3df);
+        border: 1px solid var(--usk-night-border, #e8d8af);
         border-radius: 8px;
-        color: #765b24;
+        color: var(--usk-night-danger, #765b24);
     }
     .student-desktop-alert > svg {
         flex-shrink: 0;
@@ -188,7 +188,7 @@
         grid-column: 1;
         grid-row: 1;
         margin: 0;
-        border: 1px solid #dfe6dc;
+        border: 1px solid var(--usk-night-border, #dfe6dc);
         border-radius: 12px;
         box-shadow: 0 5px 22px #163d2810;
         min-width: 0;
@@ -214,32 +214,32 @@
     }
     .is-overview .portal-profile-eyebrow {
         font-size: 8px;
-        color: #6d7f68;
+        color: var(--usk-night-mint, var(--usk-day-green, #6d7f68));
         letter-spacing: 0.13em;
     }
     .is-overview .portal-profile-faculty {
         font-size: 12px;
         line-height: 1.8;
-        color: #6f7f68;
+        color: var(--usk-night-mint, var(--usk-day-green, #6f7f68));
         margin-bottom: 20px;
     }
     .is-overview .portal-profile-contact {
         font-size: 12px;
-        color: #4d6650;
+        color: var(--usk-night-mint, #4d6650);
         line-height: 1.8;
         max-width: 100%;
     }
     .is-overview .portal-profile-identifier {
         margin: 22px 0;
         padding: 9px 15px;
-        background: #edf3e8;
-        color: #31563d;
-        border: 1px solid #d8e3d0;
+        background: var(--usk-night-raised, #edf3e8);
+        color: var(--usk-night-mint, #31563d);
+        border: 1px solid var(--usk-night-border, #d8e3d0);
     }
     .is-overview .portal-profile-identifier span {
         font-size: 9px;
         opacity: 1;
-        color: #657a5b;
+        color: var(--usk-night-mint, var(--usk-day-green, #657a5b));
     }
     .is-overview .portal-profile-identifier strong {
         font-size: 12px;
@@ -247,19 +247,19 @@
     .is-overview .portal-profile-course-total {
         align-self: stretch;
         padding-top: 22px;
-        border-top: 1px solid #e2e8dd;
+        border-top: 1px solid var(--usk-night-border, #e2e8dd);
     }
     .is-overview .portal-profile-course-total > strong {
-        color: #214e35;
+        color: var(--usk-night-text, #214e35);
         font-size: 35px;
     }
     .is-overview .portal-profile-course-total > span {
         font-size: 12px;
-        color: #64785b;
+        color: var(--usk-night-mint, #64785b);
     }
     .is-overview .portal-profile-course-total small {
         font-size: 10px;
-        color: #59734f;
+        color: var(--usk-night-mint, #59734f);
     }
     .is-overview .portal-content-layout > .portal-body {
         grid-column: 2;
@@ -276,9 +276,9 @@
     .is-overview .overview-home-section {
         min-width: 0;
         padding: 25px;
-        border: 1px solid #dfe6dc;
+        border: 1px solid var(--usk-night-border, #dfe6dc);
         border-radius: 12px;
-        background: #fff;
+        background: var(--usk-night-surface, #fff);
         box-shadow: 0 5px 22px #163d2808;
     }
     .is-overview .overview-home-section[aria-labelledby='home-courses-title'] {
@@ -291,7 +291,7 @@
     .is-overview .overview-home-section > header {
         margin-bottom: 14px;
         padding-bottom: 18px;
-        border-bottom: 1px solid #e8ede4;
+        border-bottom: 1px solid var(--usk-night-border, #e8ede4);
         gap: 14px;
     }
     .is-overview .overview-panel-title {
@@ -299,21 +299,21 @@
     }
     .usk-dashboard .is-overview .overview-panel-title h2 {
         font-size: 19px;
-        color: #244d38;
+        color: var(--usk-night-text, #244d38);
         font-weight: 500;
     }
     .is-overview .overview-panel-title > svg {
-        color: #7c906d;
+        color: var(--usk-night-mint, #7c906d);
         flex-shrink: 0;
     }
     .is-overview .overview-home-section > header > a {
         font-size: 11px;
-        color: #426c4d;
+        color: var(--usk-night-mint, #426c4d);
     }
     .is-overview .overview-section-description {
         font-size: 12px;
         line-height: 1.7;
-        color: #6d7c66;
+        color: var(--usk-night-mint, #6d7c66);
         margin-bottom: 20px;
     }
     .is-overview .overview-level-courses {
@@ -328,15 +328,15 @@
         align-items: start;
         min-width: 0;
         padding: 18px 16px;
-        border: 1px solid #e3e9de;
+        border: 1px solid var(--usk-night-border, #e3e9de);
         border-radius: 9px;
-        background: #fdfefb;
+        background: var(--usk-night-surface, #fdfefb);
         transition:
             border-color 0.18s,
             box-shadow 0.18s;
     }
     .is-overview .overview-level-courses article:hover {
-        border-color: #b8caae;
+        border-color: var(--usk-night-border, #b8caae);
         box-shadow: 0 3px 15px #173b2508;
     }
     .is-overview .overview-level-courses article > span {
@@ -345,8 +345,8 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: #edf4e8;
-        color: #42643a;
+        background: var(--usk-night-raised, #edf4e8);
+        color: var(--usk-night-mint, #42643a);
         font-size: 10px;
         font-weight: 600;
         letter-spacing: 0.04em;
@@ -363,12 +363,12 @@
     }
     .is-overview .overview-level-courses small {
         font-size: 9px;
-        color: #708264;
+        color: var(--usk-night-mint, var(--usk-day-green, #708264));
         line-height: 1.6;
     }
     .is-overview .overview-level-courses p {
         font-size: 10px;
-        color: #6f8066;
+        color: var(--usk-night-mint, var(--usk-day-green, #6f8066));
         line-height: 1.7;
         overflow-wrap: anywhere;
     }
@@ -379,21 +379,21 @@
         gap: 2px;
         padding-top: 2px;
         white-space: nowrap;
-        color: #3e6237;
+        color: var(--usk-night-mint, #3e6237);
         font-size: 17px;
     }
     .is-overview .overview-level-courses article > strong > small {
         font-size: 8px;
         font-weight: 400;
-        color: #708264;
+        color: var(--usk-night-mint, var(--usk-day-green, #708264));
     }
     .is-overview .overview-fee-table article p {
-        color: #4d6846;
+        color: var(--usk-night-mint, #4d6846);
     }
     .is-overview .overview-fee-labels,
     .is-overview .overview-fee-table article > div > span,
     .is-overview .overview-caption {
-        color: #6f7e67;
+        color: var(--usk-night-mint, #6f7e67);
     }
     .is-overview .overview-fee-total {
         gap: 14px;
@@ -415,7 +415,7 @@
     }
     .is-overview .overview-active-evaluations article span,
     .is-overview .overview-active-evaluations article p {
-        color: #6f7e67;
+        color: var(--usk-night-mint, #6f7e67);
         font-size: 10px;
         line-height: 1.7;
     }
@@ -467,4 +467,166 @@
     .is-overview .overview-level-courses article {
         transition: none;
     }
+}
+
+/* The overview cards share the same layout on desktop and mobile. */
+.is-overview .student-overview.overview-ordered {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.is-overview .overview-ordered .overview-home-section {
+    min-width: 0;
+    padding: clamp(16px, 2vw, 24px);
+    border: 1px solid var(--usk-night-border, #dfe6dc);
+    border-radius: 12px;
+    background: var(--usk-night-surface, #fff);
+    box-shadow: none;
+    scroll-margin-top: 88px;
+}
+
+.is-overview .overview-ordered .overview-home-section[aria-labelledby] {
+    order: 0;
+    grid-column: auto;
+}
+
+.is-overview .overview-ordered .overview-home-section > header {
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--usk-night-border, #e8ede4);
+}
+
+.is-overview .overview-ordered .overview-panel-title > svg {
+    flex: none;
+    color: var(--usk-night-mint, #41694e);
+}
+
+.is-overview .overview-ordered .overview-home-section > header > a {
+    color: var(--usk-night-mint, #315e49);
+    white-space: normal;
+}
+
+.is-overview .overview-ordered .overview-section-description {
+    margin: 0 0 14px;
+    color: var(--usk-night-mint, #586d60);
+}
+
+.is-overview .overview-ordered .overview-fee-table article {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    padding: 12px 0;
+}
+
+.is-overview .overview-ordered .overview-fee-table article > div {
+    grid-column: 1 / -1;
+}
+
+.is-overview .overview-ordered .overview-fee-table article p > small {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--usk-night-mint, #586d60);
+}
+
+.is-overview .overview-ordered .overview-fee-total {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-top: 14px;
+}
+
+.is-overview .overview-ordered .overview-level-courses {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+}
+
+.is-overview .overview-ordered .overview-level-courses article {
+    margin: 0;
+    padding: 12px;
+    background: var(--usk-night-surface, #f7f9f5);
+    border: 1px solid var(--usk-night-border, #e5eae0);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+@media (min-width: 1100px) {
+    .is-overview .student-overview.overview-ordered {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.is-overview .overview-ordered .overview-panel-title h2 {
+    scroll-margin-top: 88px;
+}
+
+.is-overview .overview-ordered .portal-empty {
+    display: block;
+    min-height: 0;
+    padding: 12px 0 4px;
+    text-align: left;
+}
+
+.is-overview .overview-ordered .portal-empty > svg {
+    display: none;
+}
+
+.is-overview .overview-ordered .portal-empty > p {
+    margin: 5px 0 0;
+}
+
+.overview-schedule-controls {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.overview-schedule-week {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--usk-night-mint, #315e49);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.overview-schedule-week button {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--usk-night-border, #dfe6dc);
+    border-radius: 7px;
+}
+
+.overview-schedule-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.overview-schedule-filters label {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    color: var(--usk-night-mint, #586d60);
+    font-size: 0.75rem;
+}
+
+.overview-schedule-filters label:last-child {
+    grid-column: 1 / -1;
+}
+
+.overview-schedule-filters select {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 5px 8px;
+    border: 1px solid var(--usk-night-border, #dfe6dc);
+    border-radius: 7px;
+    background: var(--usk-night-background, #fafbf8);
+    color: var(--usk-night-text, #193e31);
 }

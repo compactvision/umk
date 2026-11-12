@@ -88,6 +88,34 @@ class AdminAppsTest extends TestCase
                 ->has('admissionConditions', 0));
     }
 
+    public function test_direct_level_url_opens_the_complete_existing_screen_with_the_requested_tab(): void
+    {
+        $faculty = DB::table('faculties')->insertGetId(['name' => 'Droit', 'code' => 'DR']);
+        $other = DB::table('faculties')->insertGetId(['name' => 'Médecine', 'code' => 'MED']);
+        $level = DB::table('levels')->insertGetId(['faculty_id' => $faculty, 'title' => 'Licence 1', 'code' => 'L1']);
+        $admin = $this->user(true);
+        $admin->givePermissionTo(\Spatie\Permission\Models\Permission::findOrCreate('publish academic content', 'web'));
+        DB::table('courses')->insert(['level_id' => $level, 'title' => 'Ancien cours', 'catalog_status' => 'archived', 'credits' => 3]);
+        $legacy = route('dashboard.admin.levels.show', ['id' => $level, 'tab' => 'cours']);
+        $details = route('dashboard.admin.levels.details.show', ['id' => $level, 'tab' => 'cours']);
+
+        $this->actingAs($admin)->get($legacy)->assertRedirect($details);
+        $this->get($details)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('dashboard/levels/Show')->where('levelDetail.level_id', $level)
+            ->where('initialTab', 'cours')->where('canManageCourses', true)->where('courses.0.catalog_status', 'archived'));
+        $professors = route('dashboard.admin.levels.details.show', ['id' => $level, 'tab' => 'prof']);
+        $this->get(route('dashboard.admin.levels.show', ['id' => $level, 'tab' => 'prof']))->assertRedirect($professors);
+        $this->get($professors)->assertOk()->assertInertia(fn (Assert $page) => $page->where('initialTab', 'prof'));
+        $this->get(route('dashboard.admin.levels.show', ['id' => $level + 1]))->assertNotFound();
+        $this->delete('/dashboard/admin/levels/details/'.$level)->assertMethodNotAllowed();
+        $this->assertDatabaseHas('level_details', ['level_id' => $level]);
+
+        $admin->academicFaculties()->attach($other);
+        $this->get($details)->assertOk()->assertInertia(fn (Assert $page) => $page->where('canManageCourses', false));
+        $this->post(route('dashboard.admin.levels.details.courses.store', $level), [])->assertForbidden();
+        $this->actingAs($this->user(false))->get($legacy)->assertForbidden();
+    }
+
     public function test_level_details_serialize_matching_admission_conditions(): void
     {
         $faculty = DB::table('faculties')->insertGetId(['name' => 'Droit', 'code' => 'DR']);
@@ -106,6 +134,22 @@ class AdminAppsTest extends TestCase
                 ->where('admissionConditions.0.title', 'Identité')
                 ->where('admissionConditions.1.title', 'Diplôme')
                 ->where('admissionConditions.1.is_required', true));
+    }
+
+    public function test_failed_program_illustration_replacement_keeps_the_existing_image(): void
+    {
+        $faculty = DB::table('faculties')->insertGetId(['name' => 'Droit', 'code' => 'DR']);
+        $level = DB::table('levels')->insertGetId(['faculty_id' => $faculty, 'title' => 'Licence 1', 'code' => 'L1']);
+        $detail = \App\Models\LevelDetail::create(['level_id' => $level, 'illustration_image' => 'level_illustrations/original.webp']);
+        $this->mock(\App\Services\ImageService::class, function ($mock) {
+            $mock->shouldNotReceive('delete');
+            $mock->shouldReceive('resizeAndStore')->once()->andThrow(new \RuntimeException('Stockage indisponible'));
+        });
+        $this->actingAs($this->user(true))->put(route('dashboard.admin.levels.details.update', $detail->id), [
+            'level_id' => $level, 'duration_years' => 3,
+            'illustration_image' => \Illuminate\Http\UploadedFile::fake()->image('illustration.png'),
+        ])->assertSessionHasErrors('illustration_image');
+        $this->assertDatabaseHas('level_details', ['id' => $detail->id, 'illustration_image' => 'level_illustrations/original.webp']);
     }
 
     public function test_level_can_be_renamed_and_its_cover_updated_from_details(): void
@@ -161,6 +205,18 @@ class AdminAppsTest extends TestCase
             ->assertRedirect('/dashboard/admin/levels/details/'.$level)->assertSessionHasErrors('general');
         $this->assertDatabaseHas('levels', ['id' => $level]);
         $this->assertDatabaseHas('enrollments', ['level_id' => $level]);
+    }
+
+    public function test_level_in_use_by_an_access_rule_returns_the_modal_error(): void
+    {
+        $faculty = DB::table('faculties')->insertGetId(['name' => 'Droit', 'code' => 'DR']);
+        $level = DB::table('levels')->insertGetId(['faculty_id' => $faculty, 'title' => 'Licence 1', 'code' => 'L1']);
+        DB::table('academic_access_rules')->insert(['level_id' => $level, 'feature' => 'courses_view', 'mode' => 'full']);
+        $details = route('dashboard.admin.levels.details.show', $level);
+
+        $this->actingAs($this->user(true))->from($details)->delete(route('dashboard.admin.levels.destroy', $level))
+            ->assertRedirect($details)->assertSessionHasErrors('general');
+        $this->assertDatabaseHas('levels', ['id' => $level]);
     }
 
     public function test_student_cannot_delete_a_level(): void

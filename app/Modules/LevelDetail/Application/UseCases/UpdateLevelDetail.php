@@ -6,7 +6,9 @@ use App\Modules\LevelDetail\Domain\Entities\LevelDetail;
 use App\Modules\LevelDetail\Domain\Repositories\LevelDetailRepository;
 use App\Services\ImageService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 final class UpdateLevelDetail
 {
@@ -39,15 +41,12 @@ final class UpdateLevelDetail
             throw new \DomainException("Le détail du niveau #$id est introuvable.");
         }
 
-        $imagePath = $existing->illustrationImage();
+        $previousImage = $existing->illustrationImage();
+        $imagePath = $previousImage;
 
         // ✅ Gestion de l'image
         if ($illustrationImage instanceof UploadedFile) {
             try {
-                if ($existing->illustrationImage()) {
-                    $this->imageService->delete($existing->illustrationImage());
-                }
-                
                 $imagePath = $this->imageService->resizeAndStore(
                     $illustrationImage,
                     'level_illustrations',
@@ -58,8 +57,7 @@ final class UpdateLevelDetail
                 Log::error('Erreur upload image niveau:', [
                     'message' => $e->getMessage()
                 ]);
-                // Continuer sans image plutôt que de planter
-                $imagePath = $existing->illustrationImage();
+                throw ValidationException::withMessages(['illustration_image' => 'L’illustration n’a pas pu être enregistrée.']);
             }
         }
 
@@ -76,10 +74,10 @@ final class UpdateLevelDetail
         $installments = array_replace($existing->installments(), $installments);
         $priceForeign = $replacePriceForeign ? $priceForeign : $existing->priceForeign();
         if (isset($installments['price_national_first'], $installments['price_national_second'])) {
-            $price = (round((float) $installments['price_national_first'] * 100) + round((float) $installments['price_national_second'] * 100)) / 100;
+            $price = (float) \App\Modules\Student\Application\Services\Money::decimal(\App\Modules\Student\Application\Services\Money::cents((string)$installments['price_national_first']) + \App\Modules\Student\Application\Services\Money::cents((string)$installments['price_national_second']));
         }
         if (isset($installments['price_foreign_first'], $installments['price_foreign_second'])) {
-            $priceForeign = (round((float) $installments['price_foreign_first'] * 100) + round((float) $installments['price_foreign_second'] * 100)) / 100;
+            $priceForeign = (float) \App\Modules\Student\Application\Services\Money::decimal(\App\Modules\Student\Application\Services\Money::cents((string)$installments['price_foreign_first']) + \App\Modules\Student\Application\Services\Money::cents((string)$installments['price_foreign_second']));
         }
 
         $updated = new LevelDetail(
@@ -100,6 +98,20 @@ final class UpdateLevelDetail
             installments: $installments
         );
 
-        return $this->repo->save($updated);
+        try {
+            $saved = $this->repo->save($updated);
+        } catch (\Throwable $exception) {
+            if ($imagePath && $imagePath !== $previousImage) {
+                $this->imageService->delete($imagePath);
+            }
+
+            throw $exception;
+        }
+
+        if ($imagePath !== $previousImage && $previousImage && str_starts_with($previousImage, 'level_illustrations/')) {
+            DB::afterCommit(fn () => $this->imageService->delete($previousImage));
+        }
+
+        return $saved;
     }
 }

@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 type Category = { id: number; name: string; color?: string | null };
-type GalleryItem = { id?: number; path: string; alt?: string | null; caption?: string | null };
+type GalleryItem = { id: number; path: string; alt?: string | null; caption?: string | null };
 
 type Post = {
     id: number;
@@ -23,12 +23,12 @@ type Post = {
     main_image_2?: string | null; // URL
     gallery?: GalleryItem[];
     category?: { id: number; name: string; color?: string | null } | null;
-    tags?: string | null; // si tu stockes en string "tag1, tag2"
 };
 
 type Props = {
     post: Post;
     categories: Category[];
+    galleryRevision: string;
     gradientOptions: string[];
     onClose: () => void;
     routeName?: string; // ex: "dashboard.admin.posts.update"
@@ -45,9 +45,15 @@ function PreviewFile({ file, className }: { file: File; className?: string }) {
     return src ? <img src={src} className={className} /> : null;
 }
 
-export default function EditPostModal({ post, categories, gradientOptions, onClose, routeName = 'dashboard.admin.posts.update' }: Props) {
+export default function EditPostModal({
+    post,
+    categories,
+    galleryRevision,
+    gradientOptions,
+    onClose,
+    routeName = 'dashboard.admin.posts.update',
+}: Props) {
     // --- état pour UI galerie existante ---
-    const [removedGalleryIds, setRemovedGalleryIds] = useState<number[]>([]);
     const [existingGallery, setExistingGallery] = useState<GalleryItem[]>(post.gallery ?? []);
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
@@ -68,7 +74,6 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
         category_id: post.category?.id ?? '',
         excerpt: post.excerpt ?? '',
         read_time: post.read_time ?? '',
-        tags: post.tags ?? '',
         gradient: post.gradient ?? '',
         content: post.content ?? '',
         featured: !!post.featured,
@@ -82,7 +87,7 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
 
         // meta éditables pour l’existant
         gallery_existing_meta: (post.gallery ?? []).map((g) => ({
-            id: g.id!,
+            id: g.id,
             alt: g.alt ?? '',
             caption: g.caption ?? '',
         })),
@@ -96,11 +101,9 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
     });
 
     // binder quand on supprime un existant
-    const removeExistingFromGallery = (id?: number) => {
-        if (!id) return;
-        setRemovedGalleryIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    const removeExistingFromGallery = (id: number) => {
         setExistingGallery((prev) => prev.filter((g) => g.id !== id));
-        setData('removed_gallery_ids', [...removedGalleryIds, id]);
+        setData('removed_gallery_ids', [...data.removed_gallery_ids, id]);
     };
 
     const onSubmit = (e: React.FormEvent) => {
@@ -115,17 +118,14 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
             fd.append('remove_video', payload.remove_video ? '1' : '0');
             if (payload.video_file) fd.append('video_file', payload.video_file);
             fd.append('title', payload.title ?? '');
-            fd.append('category_id', payload.category_id ?? '');
+            fd.append('category_id', String(payload.category_id ?? ''));
             fd.append('excerpt', payload.excerpt ?? '');
             fd.append('read_time', payload.read_time ?? '');
-            fd.append('tags', payload.tags ?? '');
             fd.append('gradient', payload.gradient ?? '');
             fd.append('content', payload.content ?? '');
             fd.append('featured', payload.featured ? '1' : '0');
             fd.append('status', payload.status ?? 'draft');
-            if (payload.published_at) {
-                fd.append('published_at', payload.published_at);
-            }
+            fd.append('published_at', payload.published_at);
 
             // flags remplacement / clear des main images
             fd.append('remove_main_image_1', payload.clear_main_image_1 ? '1' : '0');
@@ -143,8 +143,15 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
                 fd.append(`removed_gallery_ids[${i}]`, String(id));
             });
 
-            // meta existantes éditées
-            payload.gallery_existing_meta?.forEach((m: { id: number; alt: string; caption: string }, i: number) => {
+            const changedMetadata = payload.gallery_existing_meta.filter((metadata) => {
+                const original = post.gallery?.find((image) => image.id === metadata.id);
+                return (
+                    !payload.removed_gallery_ids.includes(metadata.id) &&
+                    (metadata.alt !== (original?.alt ?? '') || metadata.caption !== (original?.caption ?? ''))
+                );
+            });
+            if (payload.removed_gallery_ids.length || changedMetadata.length) fd.append('gallery_revision', galleryRevision);
+            changedMetadata.forEach((m, i) => {
                 fd.append(`gallery_existing_meta[${i}][id]`, String(m.id));
                 fd.append(`gallery_existing_meta[${i}][alt]`, m.alt ?? '');
                 fd.append(`gallery_existing_meta[${i}][caption]`, m.caption ?? '');
@@ -252,19 +259,6 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
                                 name="read_time"
                                 value={data.read_time}
                                 onChange={(e) => setData('read_time', e.target.value)}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label htmlFor="post-edit-tags" className="block text-sm font-medium text-slate-700">
-                                Tags
-                            </label>
-                            <input
-                                placeholder="tag1, tag2, tag3"
-                                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-700 shadow-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                                id="post-edit-tags"
-                                name="tags"
-                                value={data.tags}
-                                onChange={(e) => setData('tags', e.target.value)}
                             />
                         </div>
                     </div>
@@ -515,13 +509,13 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
                                             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
                                             placeholder="Alt"
                                             value={data.gallery_existing_meta.find((m) => m.id === g.id)?.alt ?? ''}
-                                            onChange={(e) => updateExistingMeta(g.id!, 'alt', e.target.value)}
+                                            onChange={(e) => updateExistingMeta(g.id, 'alt', e.target.value)}
                                         />
                                         <input
                                             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
                                             placeholder="Légende"
                                             value={data.gallery_existing_meta.find((m) => m.id === g.id)?.caption ?? ''}
-                                            onChange={(e) => updateExistingMeta(g.id!, 'caption', e.target.value)}
+                                            onChange={(e) => updateExistingMeta(g.id, 'caption', e.target.value)}
                                         />
                                     </div>
                                     <button
@@ -591,7 +585,7 @@ export default function EditPostModal({ post, categories, gradientOptions, onClo
                         </div>
                     )}
 
-                    {errors.gallery && <p className="text-sm text-red-500">{errors.gallery}</p>}
+                    {'gallery' in errors && typeof errors.gallery === 'string' && <p className="text-sm text-red-500">{errors.gallery}</p>}
 
                     {progress && (
                         <div className="w-full rounded-full bg-slate-200">

@@ -1,7 +1,9 @@
 import { X } from 'lucide-react';
+import { illustrationUrl } from '../utils/levelUtils';
 
-export default function ImagePreviewModal({ isOpen, imageSrc, onClose }) {
-    if (!isOpen || !imageSrc) return null;
+export default function ImagePreviewModal({ isOpen, imageSrc, onClose }: { isOpen: boolean; imageSrc: string; onClose: () => void }) {
+    const src = illustrationUrl(imageSrc);
+    if (!isOpen || !src) return null;
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -15,7 +17,7 @@ export default function ImagePreviewModal({ isOpen, imageSrc, onClose }) {
                 <div className="p-6 bg-slate-50">
                     <div className="relative overflow-hidden rounded-2xl shadow-lg">
                         <img
-                            src={`/storage/${imageSrc}`}
+                            src={src}
                             alt="Illustration du programme"
                             className="w-full h-auto max-h-[60vh] object-contain bg-white"
                         />

@@ -29,6 +29,23 @@
 }
 .usk-dashboard .font-sans { font-family: 'DM Sans', sans-serif; }
 .usk-dashboard h1 { font-family: 'Libre Caslon Display', Georgia, serif; }
+
+/* Match page titles across the dashboard, including pages with their own banner. */
+.usk-dashboard main[data-dashboard-navigation-surface][data-page-tone] .usk-page-current h1 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: clamp(34px, 4vw, 49px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-block: 9px 12px;
+    overflow-wrap: anywhere;
+}
+
+.usk-dashboard main[data-dashboard-navigation-surface][data-page-tone] .usk-page-current h1 + p {
+    font-size: 0.875rem;
+    line-height: 1.65;
+}
+
 .usk-dashboard :is(button, a, input, select):focus-visible { outline-color: #b59444; }
 .usk-dashboard input[type='checkbox'] { accent-color: #073e32; }
 

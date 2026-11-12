@@ -3,11 +3,20 @@
 namespace App\Modules\Enrollment\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicStructure\AcademicProgram;
 use App\Models\AcademicYear;
 use App\Models\Faculty;
 use App\Models\Level;
 use App\Modules\Enrollment\Application\UseCases\GetDraftUseCase;
+use App\Modules\Enrollment\Domain\Enums\EnrollmentStatus;
+use App\Modules\Student\Application\Services\StudentFinanceService;
+use App\Support\DocumentUploadLimit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class EnrollmentController extends Controller
@@ -20,11 +29,11 @@ class EnrollmentController extends Controller
     {
         $filters = $request->validate([
             'q' => 'nullable|string|max:150',
-            'status' => ['nullable', \Illuminate\Validation\Rule::in(array_column(\App\Modules\Enrollment\Domain\Enums\EnrollmentStatus::cases(), 'value'))],
+            'status' => ['nullable', Rule::in(array_column(EnrollmentStatus::cases(), 'value'))],
         ]);
         $base = $request->user()->enrollments();
         $counts = (clone $base)->selectRaw('status, COUNT(*) as total')->groupBy('status')->pluck('total', 'status');
-        $query = (clone $base)->with(['level.faculty', 'academicYear', 'academicEnrollment:id,application_id'])->withCount([
+        $query = (clone $base)->with(['level.faculty', 'academicYear', 'academicEnrollment:academic_enrollments.id,academic_enrollments.application_id'])->withCount([
             'documents',
             'documents as accepted_documents_count' => fn ($q) => $q->where('review_status', 'accepted'),
             'documents as correction_documents_count' => fn ($q) => $q->whereIn('review_status', ['rejected', 'correction_requested']),
@@ -40,7 +49,7 @@ class EnrollmentController extends Controller
         }
         $enrollments = $query->latest()->orderByDesc('id')->paginate(9)->withQueryString();
         $enrollments->through(function ($entry) {
-            $data = \Illuminate\Support\Arr::only($entry->toArray(), ['id', 'uuid', 'reference', 'matricule', 'status', 'payment_status', 'created_at', 'enrolled_at', 'level', 'academic_year', 'documents_count', 'accepted_documents_count', 'correction_documents_count']);
+            $data = Arr::only($entry->toArray(), ['id', 'uuid', 'reference', 'matricule', 'status', 'payment_status', 'created_at', 'enrolled_at', 'level', 'academic_year', 'documents_count', 'accepted_documents_count', 'correction_documents_count']);
             $data['academic_portal_url'] = $entry->academicEnrollment ? '/dashboard/student?application='.$entry->uuid : null;
             $data['analysis_started_at'] = $entry->meta['analysis_started_at'] ?? null;
             $data['analysis_completed_at'] = $entry->meta['analysis_completed_at'] ?? null;
@@ -58,11 +67,12 @@ class EnrollmentController extends Controller
 
     public function create(Request $request)
     {
-        $faculties = Faculty::with('levels')->get();
+        $faculties = Faculty::with(['levels' => fn ($q) => $q->admissible()])->get();
         $years = AcademicYear::where('status', 'open')->get();
 
         // Charger les niveaux groupés par faculté
-        $levelsByFaculty = Level::with('faculty')
+        $levelsByFaculty = Level::with(['faculty', 'programs' => fn ($q) => $q->openForAdmission()->select('academic_programs.id', 'academic_programs.name', 'academic_programs.code')])
+            ->admissible()
             ->get()
             ->groupBy('faculty_id')
             ->map(fn ($levels) => $levels->values());
@@ -84,12 +94,14 @@ class EnrollmentController extends Controller
             ->enrollments()
             ->where('uuid', $uuid)
             ->where('status', 'draft')
+            ->where(fn ($query) => $query->whereNull('draft_expires_at')->orWhere('draft_expires_at', '>', now()))
             ->firstOrFail();
 
-        $faculties = Faculty::with('levels')->get();
+        $faculties = Faculty::with(['levels' => fn ($q) => $q->admissible()])->get();
         $years = AcademicYear::where('status', 'open')->get();
 
-        $levelsByFaculty = Level::with('faculty')
+        $levelsByFaculty = Level::with(['faculty', 'programs' => fn ($q) => $q->openForAdmission()->select('academic_programs.id', 'academic_programs.name', 'academic_programs.code')])
+            ->where(fn ($q) => $q->admissible()->orWhere('id', $enrollment->level_id))
             ->get()
             ->groupBy('faculty_id')
             ->map(fn ($levels) => $levels->values());
@@ -106,15 +118,34 @@ class EnrollmentController extends Controller
         ]);
     }
 
+    public function withdraw(Request $request, string $uuid)
+    {
+        DB::transaction(function () use ($request, $uuid) {
+            $entry = $request->user()->enrollments()->where('uuid', $uuid)->lockForUpdate()->firstOrFail();
+            $status = $entry->status->value;
+            if ($status === 'cancelled') {
+                return;
+            }
+            if (! in_array($status, ['draft', 'submitted', 'pending'], true)) {
+                throw ValidationException::withMessages(['withdrawal' => 'Ce dossier a déjà fait l’objet d’une décision.']);
+            }
+            $entry->update(['status' => 'cancelled']);
+            $entry->events()->create(['event' => 'cancelled', 'actor_id' => $request->user()->id,
+                'payload' => ['from' => $status, 'reason' => 'Retrait demandé par le candidat.'], 'occurred_at' => now()]);
+        });
+
+        return back()->with('success', 'Votre candidature a été retirée. Son historique reste accessible.');
+    }
+
     public function show(Request $request, string $uuid)
     {
         $enrollment = $request->user()
             ->enrollments()
-            ->with(['level.faculty', 'academicYear', 'documents', 'student', 'events.actor'])
+            ->with(['level.faculty', 'academicYear', 'documents', 'student', 'events'])
             ->where('uuid', $uuid)
             ->firstOrFail();
 
-        $data = \Illuminate\Support\Arr::only($enrollment->toArray(), [
+        $data = Arr::only($enrollment->toArray(), [
             'id', 'uuid', 'reference', 'matricule', 'status', 'payment_status', 'created_at', 'updated_at', 'enrolled_at', 'notes', 'level', 'academic_year',
         ]);
         $selected = $request->query('document');
@@ -124,16 +155,18 @@ class EnrollmentController extends Controller
         $data['selected_document_uuid'] = $selected;
         $data['academic_portal_url'] = $enrollment->academicEnrollment ? '/dashboard/student?application='.$enrollment->uuid : null;
         if ($enrollment->academicEnrollment) {
-            $financial = app(\App\Modules\Student\Application\Services\StudentFinanceService::class)->balance($enrollment->academicEnrollment);
+            $financial = app(StudentFinanceService::class)->balance($enrollment->academicEnrollment);
             $data['payment_status'] = match ($financial['financial_clearance_status']) {
                 'cleared' => 'paid',default => $financial['financial_clearance_status']
             };
             $data['financial_portal_url'] = '/dashboard/student/fees?application='.$enrollment->uuid;
         }
+        $data['submitted_at'] = $enrollment->meta['submitted_at'] ?? null;
+        $data['requested_program'] = AcademicProgram::whereKey($enrollment->form_snapshot['academic_program_id'] ?? null)->value('name') ?? ($enrollment->form_snapshot['program'] ?? null);
         $data['declared_name'] = $enrollment->form_snapshot['name'] ?? null;
         $data['declared_email'] = $enrollment->form_snapshot['email'] ?? null;
         $data['student'] = $enrollment->student->only(['first_name', 'last_name', 'post_name', 'email']);
-        $data['document_upload_max_kb'] = \App\Support\DocumentUploadLimit::kilobytes();
+        $data['document_upload_max_kb'] = DocumentUploadLimit::kilobytes();
         $data['analysis_started_at'] = $enrollment->meta['analysis_started_at'] ?? null;
         $data['analysis_completed_at'] = $enrollment->meta['analysis_completed_at'] ?? null;
         $data['corrections_requested_at'] = $enrollment->meta['corrections_requested_at'] ?? null;
@@ -144,15 +177,15 @@ class EnrollmentController extends Controller
             'uuid' => $doc->uuid, 'review_status' => $doc->review_status, 'review_comment' => $doc->comment, 'version' => $doc->version,
             'can_replace' => $enrollment->status->value === 'pending' && in_array($doc->review_status, ['rejected', 'correction_requested'], true),
             'preview_url' => route('dashboard.enrollments.documents.preview', $doc->uuid),
-            'label' => \Illuminate\Support\Str::headline($doc->key ?: $doc->type),
+            'label' => Str::headline($doc->key ?: $doc->type),
             'url' => route('dashboard.enrollments.documents.download', $doc->uuid),
             'uploaded_at' => $doc->created_at, 'verified_at' => $doc->verified_at,
         ]);
-        $data['status_history'] = $enrollment->events->whereNotIn('event', ['email_sent', 'email_failed'])->sortByDesc('occurred_at')->values()->map(fn ($event) => [
+        $data['status_history'] = $enrollment->events->whereIn('event', ['submitted', 'analysis_started', 'analysis_completed', 'corrections_requested', 'document_reviewed', 'document_replaced', 'validated', 'rejected', 'cancelled'])->sortByDesc('occurred_at')->values()->map(fn ($event) => [
             'id' => $event->id, 'status' => $event->event, 'created_at' => $event->occurred_at,
             'notes' => $event->payload['reason'] ?? null,
             'document_name' => $event->payload['document_name'] ?? null, 'verdict' => $event->payload['verdict'] ?? null,
-            'user' => ['name' => $event->actor ? trim($event->actor->first_name.' '.$event->actor->last_name) : 'Administration USK'],
+            'user' => ['name' => $event->actor_id === $enrollment->student_id ? 'Vous' : 'Administration USK'],
         ]);
 
         return Inertia::render('dashboard/enrollments/Show', ['enrollment' => $data, 'success' => session('success')]);

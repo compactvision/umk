@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Linkedin, Twitter, Facebook, Plus, BookOpen, Users, GraduationCap } from 'lucide-react';
 
 const Team = () => {
@@ -53,13 +53,13 @@ const Team = () => {
         }
     ];
 
-    const nextSlide = () => {
+    const nextSlide = useCallback(() => {
         if (!isAnimating) {
             setIsAnimating(true);
             setCurrentSlide((prev) => (prev + 1) % teamMembers.length);
             setTimeout(() => setIsAnimating(false), 500);
         }
-    };
+    }, [isAnimating, teamMembers.length]);
 
     const prevSlide = () => {
         if (!isAnimating) {
@@ -80,7 +80,7 @@ const Team = () => {
     useEffect(() => {
         const interval = setInterval(nextSlide, 5000);
         return () => clearInterval(interval);
-    }, [currentSlide, isAnimating]);
+    }, [nextSlide]);
 
     return (
         <section className="relative py-20 lg:py-32 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">

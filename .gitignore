@@ -24,3 +24,6 @@ yarn-error.log
 /.zed
 
 /storage/logs
+# Load-test credentials and generated measurements
+/scripts/load/accounts.local.json
+/scripts/load/results/

@@ -33,7 +33,7 @@ class UpdateStudentProfileRequest extends FormRequest
             'diploma_year' => 'nullable|integer|min:1900|max:'.now('Africa/Kinshasa')->year,
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'remove_photo' => 'sometimes|boolean',
-            'matricule' => 'prohibited', 'student_status' => 'prohibited', 'user_id' => 'prohibited', 'student_profile_id' => 'prohibited',
+            'curriculum_version_id' => 'prohibited', 'admission_cohort_id' => 'prohibited', 'academic_program_id' => 'prohibited', 'matricule' => 'prohibited', 'student_status' => 'prohibited', 'user_id' => 'prohibited', 'student_profile_id' => 'prohibited',
         ];
     }
 

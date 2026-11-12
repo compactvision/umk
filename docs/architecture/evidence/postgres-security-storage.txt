@@ -1,0 +1,16 @@
+
+   PASS  Tests\Feature\CredentialRevocationTest
+  ✓ revocation preserves only current database session and other users…  1.92s  
+  ✓ stale session fingerprint is rejected after password change          0.09s  
+  ✓ password reset revokes sessions and token cannot be replayed         0.08s  
+  ✓ social login rejects unverified provider email                       0.04s  
+  ✓ social login cannot take over unverified existing account            0.04s  
+  ✓ verified social registration persists verification and no extra pri… 0.06s  
+
+   PASS  Tests\Feature\DraftStorageTransactionTest
+  ✓ replacement deletes previous file only after successful commit       1.48s  
+  ✓ database failure preserves original and removes uncommitted copy     1.44s  
+
+  Tests:    8 passed (26 assertions)
+  Duration: 5.31s
+

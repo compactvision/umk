@@ -3,28 +3,45 @@
 namespace App\Modules\Faculty\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\AcademicStructure\AcademicProgram;
+use App\Models\AcademicStructure\University;
+use App\Models\Faculty;
 use App\Modules\Faculty\Application\UseCases\CreateFaculty;
 use App\Modules\Faculty\Application\UseCases\DeleteFaculty;
-use App\Modules\Faculty\Application\UseCases\ListFaculties;
 use App\Modules\Faculty\Application\UseCases\UpdateFaculty;
 use App\Modules\Faculty\Domain\Exceptions\DuplicateFacultyException;
 use App\Modules\Faculty\Domain\Repositories\FacultyRepository;
 use App\Modules\Faculty\Infrastructure\Http\Requests\StoreFacultyRequest;
 use App\Modules\Faculty\Infrastructure\Http\Requests\UpdateFacultyRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 final class FacultyController extends Controller
 {
-    public function index(ListFaculties $listFaculties)
+    public function index(Request $request)
     {
-        $faculties = $listFaculties->execute(6); // 6 par page
+        $selection = $request->validate(['faculty' => 'nullable|integer']);
+        $institution = University::where('context_key', 'current')->first(['id', 'name']);
+        $viewDepartments = Gate::allows('viewAny', AcademicProgram::class);
+        $departmentUniversityId = $viewDepartments ? $institution?->id : null;
+        $faculties = Faculty::query()->orderBy('name')
+            ->with(['departments' => fn ($query) => $query
+                ->whereHas('faculty', fn ($faculty) => $faculty->where('university_id', $departmentUniversityId ?? -1))
+                ->orderBy('name')])
+            ->with(['levels' => fn ($query) => $query
+                ->whereHas('faculty', fn ($faculty) => $faculty->where('university_id', $departmentUniversityId ?? -1))
+                ->select('id', 'faculty_id', 'title', 'code')->with('departmentOptions:id,name')->orderBy('code')->orderBy('title')])
+            ->get(['id', 'name', 'code', 'description', 'duration_years', 'is_active', 'university_id']);
 
         return Inertia::render('dashboard/faculties/Index', [
             'faculties' => $faculties,
+            'institution' => $institution,
+            'selectedFacultyId' => isset($selection['faculty']) ? (int) $selection['faculty'] : null,
+            'viewDepartments' => $viewDepartments,
+            'manageStructure' => Gate::allows('manage', AcademicProgram::class),
         ]);
     }
-
 
     public function store(StoreFacultyRequest $request, CreateFaculty $createFaculty)
     {
@@ -78,6 +95,9 @@ final class FacultyController extends Controller
             return back()->withErrors(['general' => 'Suppression impossible : cette faculté contient '. $levelCount .' niveau(x) de formation. Supprimez ou réaffectez ces niveaux avant de supprimer la faculté.']);
         }
 
+        if (\App\Models\AcademicStructure\AcademicDepartment::where('faculty_id', $id)->exists() || \App\Models\AcademicStructure\AcademicProgram::where('faculty_id', $id)->exists()) {
+            return back()->withErrors(['general' => 'Cette faculté possède des départements ou programmes. Désactivez-la pour conserver son historique.']);
+        }
         $deleteFaculty->execute($faculty);
 
         return redirect()

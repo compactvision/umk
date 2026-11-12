@@ -60,7 +60,7 @@ export default function AcademicYearShow({
         { label: 'Brouillons', value: enrollmentStats.draft, icon: Pencil },
     ];
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title={`${year.title} · Année académique`} />
             <div className="academic-years-page academic-year-detail">
                 <div className="ayd-topline">
@@ -116,9 +116,9 @@ export default function AcademicYearShow({
                 </header>
                 {!closing &&
                     Object.values(action.errors).map((message) => (
-                        <div className="ay-error" role="alert" key={message}>
+                        <div className="ay-error" role="alert" key={String(message)}>
                             <Info size={17} />
-                            {message}
+                            {String(message)}
                         </div>
                     ))}
                 <section className="ayd-calendar" aria-label="Dates et état des inscriptions">

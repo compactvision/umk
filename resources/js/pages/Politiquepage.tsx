@@ -1,21 +1,10 @@
 import Breadcrumb from "@/components/UI/home/Breadcumb";
 import App from "@/components/layouts/Home/App";
-import { Shield, Database, Cog, Share2, UserCheck, RefreshCw, Mail, FileText, Info } from 'lucide-react';
+import { Shield, Database, Cog, Share2, UserCheck, RefreshCw, Mail, Info } from 'lucide-react';
 
 // Mapping des icônes pour chaque section
-const sectionIcons = {
-    intro: Info,
-    collection: Database,
-    usage: Cog,
-    sharing: Share2,
-    security: Shield,
-    rights: UserCheck,
-    changes: RefreshCw,
-    contact: Mail,
-};
 
 export default function PrivacyPolicy() {
-    const lastUpdatedDate = "24 mai 2024";
 
     return (
         <App>

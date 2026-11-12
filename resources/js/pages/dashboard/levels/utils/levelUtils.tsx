@@ -1,27 +1,22 @@
 import Alert from '@/utils/sweetAlert';
 import { router } from '@inertiajs/react';
+import { RouteParams } from 'vendor/tightenco/ziggy/src/js';
 
-export const safeJsonParse = (data, fallback = []) => {
-    if (!data) return fallback;
-    if (Array.isArray(data)) return data;
+export function illustrationUrl(path: string | File | null | undefined): string {
+    if (typeof path !== 'string' || !path) return '';
+    return /^(https?:\/\/|\/)/.test(path) ? path : `/storage/${path}`;
+}
 
-    if (typeof data === 'string') {
-        if (!data.trim()) return fallback;
-        try {
-            if (data.startsWith('[') || data.startsWith('{')) {
-                return JSON.parse(data);
-            }
-            return data;
-        } catch (error) {
-            console.warn('Erreur JSON parse:', error);
-            return data;
-        }
-    }
-
-    return data || fallback;
+export const safeJsonParse = (data: unknown, fallback: string[] = []): string | string[] => {
+    if (Array.isArray(data)) return data.filter((value): value is string => typeof value === 'string');
+    if (typeof data !== 'string' || !data.trim()) return fallback;
+    try {
+        const parsed: unknown = JSON.parse(data);
+        return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string') : data;
+    } catch { return data; }
 };
 
-export const formatValue = (val) => {
+export const formatValue = (val: unknown) => {
     if (val === null || val === undefined || val === '') return 'N/A';
     if (typeof val === 'boolean') return val ? 'Oui' : 'Non';
     if (typeof val === 'number') return val.toString();
@@ -29,8 +24,8 @@ export const formatValue = (val) => {
     return val.toString();
 };
 
-export const getFieldLabel = (field) => {
-    const labels = {
+export const getFieldLabel = (field: string) => {
+    const labels: Record<string, string> = {
         level_code: 'Code du niveau',
         level_name: 'Nom du niveau',
         description: 'Description',
@@ -51,7 +46,7 @@ export const getFieldLabel = (field) => {
     return labels[field] || field;
 };
 
-export const processOptionsValue = (value) => {
+export const processOptionsValue = (value: unknown) => {
     if (!value) return [];
     if (Array.isArray(value)) {
         return value.map((item) => item.toString().trim()).filter((item) => item !== '');
@@ -65,7 +60,7 @@ export const processOptionsValue = (value) => {
     return [];
 };
 
-export const formatOptionsForDisplay = (options) => {
+export const formatOptionsForDisplay = (options: unknown) => {
     if (!options) return '';
     if (typeof options === 'string') return options;
     if (Array.isArray(options)) return options.join(', ');
@@ -116,7 +111,7 @@ export const CONDITION_TYPES = [
     { value: 'other', label: 'Autre' },
 ];
 
-export function saveLevel(levelId, levelDataHook) {
+export function saveLevel(levelId: RouteParams<"dashboard.admin.levels.details.update">|undefined, levelDataHook: { data: { [s: string]: unknown; }|ArrayLike<unknown>; }) {
     const formData = new FormData();
 
     Object.entries(levelDataHook.data).forEach(([key, value]) => {
@@ -126,11 +121,11 @@ export function saveLevel(levelId, levelDataHook) {
                 if (v instanceof File) {
                     formData.append(`${key}[${k}]`, v);
                 } else {
-                    formData.append(`${key}[${k}]`, v ?? '');
+                    formData.append(`${key}[${k}]`, String(v ?? ''));
                 }
             });
         } else {
-            formData.append(key, value ?? '');
+            formData.append(key, value instanceof Blob ? value : String(value ?? ''));
         }
     });
 

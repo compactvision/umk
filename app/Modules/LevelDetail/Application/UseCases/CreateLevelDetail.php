@@ -26,10 +26,10 @@ final class CreateLevelDetail
         array $installments = []
     ): LevelDetail {
         if (isset($installments['price_national_first'], $installments['price_national_second'])) {
-            $price = (round((float) $installments['price_national_first'] * 100) + round((float) $installments['price_national_second'] * 100)) / 100;
+            $price = (float) \App\Modules\Student\Application\Services\Money::decimal(\App\Modules\Student\Application\Services\Money::cents((string)$installments['price_national_first']) + \App\Modules\Student\Application\Services\Money::cents((string)$installments['price_national_second']));
         }
         if (isset($installments['price_foreign_first'], $installments['price_foreign_second'])) {
-            $priceForeign = (round((float) $installments['price_foreign_first'] * 100) + round((float) $installments['price_foreign_second'] * 100)) / 100;
+            $priceForeign = (float) \App\Modules\Student\Application\Services\Money::decimal(\App\Modules\Student\Application\Services\Money::cents((string)$installments['price_foreign_first']) + \App\Modules\Student\Application\Services\Money::cents((string)$installments['price_foreign_second']));
         }
 
         $detail = new LevelDetail(

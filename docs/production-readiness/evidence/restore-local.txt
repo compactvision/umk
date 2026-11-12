@@ -1,0 +1,6 @@
+Configuration valide pour les contrôles demandés.
+Matricule de recette: RESTORE-SYNTHETIC
+Empreinte fichier restauré identique: 657ad0b161b20cbd4b9347751bb2a325e19ebe14d6a1a28fc207efbb73171d95
+  440903 database.dump
+    9216 files.tar
+  450119 total

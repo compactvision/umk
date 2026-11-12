@@ -18,13 +18,9 @@ import {
 } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 import '../../../../../css/dashboard/level-forms.css';
-import { getFieldLabel } from '../utils/levelUtils';
+import { getFieldLabel, illustrationUrl } from '../utils/levelUtils';
 type FieldValue = string | number | boolean | string[] | File | null | undefined;
-type LevelDataHook = {
-    detailsData: { illustration_image?: string | File };
-    getFieldValue: (field: string) => FieldValue;
-    updateField: (field: string, value: FieldValue) => void;
-};
+type LevelDataHook = ReturnType<typeof import('../hooks/useLevelData').useLevelData>;
 const fieldDetails = {
     credit_required: { icon: Layers3, hint: 'Le nombre de crédits à valider pour ce niveau.', placeholder: 'Ex. : 60', unit: 'crédits' },
     duration_years: { icon: Clock3, hint: 'La durée totale du parcours, exprimée en années.', placeholder: 'Ex. : 3', unit: 'années' },
@@ -74,19 +70,15 @@ export default function EditModal({
     const [preview, setPreview] = useState('');
     const [fileError, setFileError] = useState('');
     const value = levelDataHook.getFieldValue(editField);
-    const image = editField === 'illustration_image' ? levelDataHook.detailsData.illustration_image : undefined;
+    const image = editField === 'illustration_image' ? levelDataHook.draft.illustration_image : undefined;
     useEffect(() => {
         setFileError('');
-        if (typeof image === 'string' && image) {
-            setPreview(/^(https?:\/\/|\/)/.test(image) ? image : `/storage/${image}`);
-            return;
-        }
         if (image instanceof File) {
             const url = URL.createObjectURL(image);
             setPreview(url);
             return () => URL.revokeObjectURL(url);
         }
-        setPreview('');
+        setPreview(illustrationUrl(image));
     }, [image, isOpen]);
     if (!isOpen) return null;
     const detail = fieldDetails[editField as keyof typeof fieldDetails] || {
@@ -267,6 +259,7 @@ export default function EditModal({
                                         type={numeric ? 'number' : 'text'}
                                         value={typeof value === 'number' || typeof value === 'string' ? value : ''}
                                         min={numeric ? 0 : undefined}
+                                        required={editField === 'duration_years'}
                                         step={['price', 'price_foreign'].includes(editField) ? '0.01' : numeric ? '1' : undefined}
                                         maxLength={editField === 'language' ? 50 : undefined}
                                         onChange={(e) =>

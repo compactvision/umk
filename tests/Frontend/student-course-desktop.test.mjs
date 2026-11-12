@@ -32,3 +32,15 @@ test('Une fiche incomplète conserve les inconnues et ne fabrique ni enseignant,
     assert.doesNotMatch(html,/Suivi par séance/);
     assert.equal((html.match(/—/g)||[]).length,3);
 });
+
+test('La fiche distingue les crédits inscrits et présente le coefficient et les intervenants connus', () => {
+    const props = base();
+    props.registered = true;
+    props.course.coefficient = 2.25;
+    props.course.unit = 'UE de spécialité';
+    props.organization = [{ id: 1, teacher: 'Titulaire', assistant: 'Assistante', instructors: ['Intervenante autorisée'], leader: null, group: null, delivery_mode: 'in_person' }];
+    const html = renderToStaticMarkup(React.createElement(Info, props));
+    for (const value of ['Crédits inscrits', 'UE de spécialité', 'Coefficient', '2.25', 'Intervenante autorisée']) assert.ok(html.includes(value), value);
+    assert.doesNotMatch(html, /Crédits acquis/);
+    assert.match(renderToStaticMarkup(React.createElement(Info, base())), /Crédits prévus/);
+});

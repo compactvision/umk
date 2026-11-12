@@ -9,6 +9,7 @@ type Props = {
     formId: string;
     submitLabel: string;
     busy?: boolean;
+    hideSubmit?: boolean;
     wide?: boolean;
     className?: string;
     errors?: Record<string, string | undefined>;
@@ -21,6 +22,7 @@ export default function AdminModal({
     formId,
     submitLabel,
     busy = false,
+    hideSubmit = false,
     wide = false,
     className = '',
     errors = {},
@@ -89,10 +91,12 @@ export default function AdminModal({
                                 <button type="button" className="admin-modal-cancel" onClick={onClose} disabled={busy}>
                                     Annuler
                                 </button>
-                                <button type="submit" form={formId} className="admin-modal-submit" disabled={busy}>
-                                    {busy && <LoaderCircle size={16} className="animate-spin" />}
-                                    {busy ? 'Enregistrement…' : submitLabel}
-                                </button>
+                                {!hideSubmit && (
+                                    <button type="submit" form={formId} className="admin-modal-submit" disabled={busy}>
+                                        {busy && <LoaderCircle size={16} className="animate-spin" />}
+                                        {busy ? 'Enregistrement…' : submitLabel}
+                                    </button>
+                                )}
                             </div>
                         </footer>
                     </Dialog.Content>

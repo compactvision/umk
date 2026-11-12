@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-07",
+  "phase": "05-reprise",
+  "baseline_php_passed": 284,
+  "php": {
+    "passed": 293,
+    "failed": 0,
+    "assertions": 152393,
+    "duration_seconds": 74.76
+  },
+  "frontend": {
+    "passed": 54,
+    "failed": 0
+  },
+  "typescript": "passed",
+  "eslint": "passed",
+  "build": {
+    "status": "passed",
+    "duration_seconds": 8.23
+  },
+  "schema_test_database": "SQLite :memory:",
+  "real_database_migrations_executed": false,
+  "production_deployment": false,
+  "commit_or_push": false,
+  "postgres_concurrency_test_executed": false,
+  "load_5000_test_executed": false
+}

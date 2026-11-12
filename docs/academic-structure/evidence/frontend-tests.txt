@@ -1,0 +1,63 @@
+
+> test:frontend
+> node --test tests/Frontend/*.test.mjs
+
+✔ Barème officiel : medicine, national (4.631755ms)
+✔ Barème officiel : medicine, international (0.359465ms)
+✔ Barème officiel : public-health, national (0.288834ms)
+✔ Barème officiel : public-health, international (0.28285ms)
+✔ Barème officiel : law, national (0.391577ms)
+✔ Barème officiel : law, international (0.312262ms)
+✔ Barème officiel : social-sciences, national (0.282068ms)
+✔ Barème officiel : social-sciences, international (1.280837ms)
+✔ Barème officiel : theology, national (0.493043ms)
+✔ Barème officiel : theology, international (1.210427ms)
+✔ Le régime spécial remplace le barème ordinaire sans cumul (0.660094ms)
+✔ Les frais académiques ne cumulent pas les frais annexes (0.476837ms)
+✔ L’écart publié en santé publique reste visible sans correction inventée (0.755189ms)
+✔ Une faculté inconnue ne produit pas une estimation trompeuse (1.051978ms)
+✔ Un fichier valide est envoyé en multipart avec un espace d’erreurs propre à la pièce (91.000512ms)
+✔ Une ancienne erreur ne bloque pas la nouvelle tentative d’envoi (2.865684ms)
+✔ Sans fichier, le bouton affiche une explication sans envoyer de requête (3.073734ms)
+✔ Les fichiers trop volumineux ou de format incorrect ne sont pas envoyés (4.707054ms)
+✔ Le toast de succès attend la confirmation serveur du verdict (22.86862ms)
+✔ Un échec affiche le motif et conserve la pièce dans son état enregistré (3.297939ms)
+✔ Chaque enregistrement réussi peut déclencher une nouvelle confirmation (4.726283ms)
+✔ Un enregistrement en cours bloque les soumissions supplémentaires (2.72993ms)
+✔ La formation incomplète bloque la première étape (3.670723ms)
+✔ Un niveau indisponible reste bloquant (0.835028ms)
+✔ L’identité vérifie nom, email et pièces obligatoires (1.251732ms)
+✔ Un document transféré temporaire est accepté sans exiger les pièces facultatives (0.374283ms)
+✔ Un document sauvegardé est reconnu à la reprise du brouillon (0.331284ms)
+✔ Un transfert incomplet ne valide pas la pièce (0.25601ms)
+✔ Le programme ne peut pas être vide (0.304725ms)
+✔ La soumission exige une certification explicite (0.269658ms)
+✔ Les deux tranches utilisent les centimes et remplacent le total précédent (5.762897ms)
+✔ Une répartition incomplète ne présente pas un total trompeur (0.402759ms)
+✔ Le total existant reste visible sans répartition inventée (0.32535ms)
+✔ Des tranches explicitement nulles en montant donnent un total nul (0.310008ms)
+✔ Un tarif absent reste à confirmer (0.317812ms)
+✔ UTC sessions occupy the correct Kinshasa hours (2.3977ms)
+✔ overnight sessions are clipped at midnight without an extra day at an exact boundary (0.381705ms)
+✔ simultaneous sessions get distinct lanes and isolated sessions fill the width (2.413865ms)
+✔ adjacent sessions reuse lanes and another day is excluded (0.487972ms)
+✔ clicking late slots pre-fills a one-hour session across midnight (2.727981ms)
+✔ semester recurrence counts selected weekdays inclusively (0.66634ms)
+✔ La présentation conserve tous les paragraphes, y compris le préambule et les titres non reconnus (24.622356ms)
+✔ Une fiche incomplète conserve les inconnues et ne fabrique ni enseignant, ni heures, ni taux de présence (7.910937ms)
+✔ L’accueil respecte l’ordre frais, horaire, évaluations puis cours sans inventer de montants (69.00655ms)
+✔ Le rappel affiche les seuls frais affectés et protège les évaluations sous condition (4.402965ms)
+✔ Un service verrouillé présente la raison et le lien de régularisation sans lien vers une route interdite (17.901933ms)
+✔ Un service autorisé ouvre la ressource du contexte académique courant (1.662589ms)
+✔ Sans barème affecté, les indicateurs ne prétendent pas que les frais sont réglés (1.959449ms)
+✔ La fiche d’accueil affiche les coordonnées, le matricule et le nombre réel de cours du contexte (2.849012ms)
+✔ Le profil affiche les six sections et protège le matricule attribué (62.063202ms)
+✔ Les choix Autre affichent les précisions nécessaires pour la province et le diplôme (10.498292ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2140.9918

@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-07",
+  "php": {
+    "passed": 284,
+    "failed": 0,
+    "assertions": 152188,
+    "duration_seconds": 69.95
+  },
+  "frontend": {
+    "passed": 51,
+    "failed": 0
+  },
+  "typescript": "passed",
+  "eslint": "passed",
+  "vite_build": "passed",
+  "production_migrations_executed": false,
+  "commits_created": false,
+  "pushes": false,
+  "deployed": false,
+  "postgres_validated_this_intervention": false,
+  "concurrent_5000_users_validated": false,
+  "run": "initial-consolidation",
+  "superseded_by": "reprise/validation.json"
+}

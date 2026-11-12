@@ -1,0 +1,85 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: /work/student-journey.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 37s max duration (incl. graceful stop):
+              * default: Up to 1 looping VUs for 7s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+running (01.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+default   [  14% ] 1/1 VUs  1.0s/7.0s
+
+running (02.0s), 1/1 VUs, 6 complete and 0 interrupted iterations
+default   [  29% ] 1/1 VUs  2.0s/7.0s
+
+running (03.0s), 1/1 VUs, 13 complete and 0 interrupted iterations
+default   [  43% ] 1/1 VUs  3.0s/7.0s
+
+running (04.0s), 1/1 VUs, 19 complete and 0 interrupted iterations
+default   [  57% ] 1/1 VUs  4.0s/7.0s
+
+running (05.0s), 1/1 VUs, 25 complete and 0 interrupted iterations
+default   [  71% ] 1/1 VUs  5.0s/7.0s
+
+running (06.0s), 1/1 VUs, 32 complete and 0 interrupted iterations
+default   [  86% ] 1/1 VUs  6.0s/7.0s
+
+running (07.0s), 1/1 VUs, 38 complete and 0 interrupted iterations
+default   [ 100% ] 1/1 VUs  7s
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✓ 'p(95)<1500' p(95)=94.52ms
+    ✓ 'p(99)<3000' p(99)=488.71ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+    journey_errors
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 41      5.787645/s
+    checks_succeeded...: 100.00% 41 out of 41
+    checks_failed......: 0.00%   0 out of 41
+
+    ✓ authenticated
+    ✓ écriture sans CSRF refusée
+    ✓ page étudiante
+
+    CUSTOM
+    journey_errors.................: 0.00%  0 out of 41
+
+    HTTP
+    http_req_duration..............: avg=70.81ms  med=50.69ms  p(95)=94.52ms  p(99)=488.71ms max=768.93ms
+      { expected_response:true }...: avg=70.81ms  med=50.69ms  p(95)=94.52ms  p(99)=488.71ms max=768.93ms
+    http_req_failed................: 0.00%  0 out of 43
+    http_reqs......................: 43     6.069969/s
+
+    EXECUTION
+    iteration_duration.............: avg=181.58ms med=153.03ms p(95)=174.91ms p(99)=790.44ms max=1.15s   
+    iterations.....................: 39     5.505321/s
+    vus............................: 1      min=1       max=1
+    vus_max........................: 1      min=1       max=1
+
+    NETWORK
+    data_received..................: 2.4 MB 334 kB/s
+    data_sent......................: 42 kB  5.9 kB/s
+
+
+
+
+running (07.1s), 0/1 VUs, 39 complete and 0 interrupted iterations
+default ✓ [ 100% ] 0/1 VUs  7s

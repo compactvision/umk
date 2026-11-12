@@ -11,7 +11,8 @@ export type CalendarSession = {
     starts_at: string;
     ends_at: string;
     room: string;
-    is_published: boolean;
+    is_published?: boolean;
+    status?: string;
 };
 
 export default function SessionCalendar({
@@ -31,9 +32,9 @@ export default function SessionCalendar({
     view: 'week' | 'day';
     today: string;
     hourHeight: number;
-    canCreate?: boolean;
+    canCreate?: boolean | ((day: string) => boolean);
     onSlot?: (day: string, minute: number) => void;
-    onSession: (id: number) => void;
+    onSession?: (id: number) => void;
 }) {
     const days = view === 'day' ? [selectedDay] : Array.from({ length: 7 }, (_, index) => addDays(week, index));
     const columns = days.map((day) => ({ day, events: layoutDay(sessions, day) }));
@@ -50,6 +51,7 @@ export default function SessionCalendar({
     }, []);
     const now = localParts(clock.toISOString());
     const nowMinute = Number(now.hour) * 60 + Number(now.minute);
+    const Event = onSession ? 'button' : 'div';
     return (
         <div className="calendar-scroll" role="region" aria-label="Calendrier des cours, heure de Kinshasa" tabIndex={0}>
             <div className="calendar-grid" style={{ gridTemplateColumns: gridColumns }}>
@@ -81,7 +83,7 @@ export default function SessionCalendar({
                                         key={`${hour}-${minute}`}
                                         type="button"
                                         className="calendar-slot"
-                                        disabled={!canCreate}
+                                        disabled={typeof canCreate === 'function' ? !canCreate(day) : !canCreate}
                                         style={{ top: (hour - startHour + minute / 60) * hourHeight, height: hourHeight / 2 }}
                                         aria-label={`Planifier le ${dateLabel(day)} à ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}
                                         onClick={() => onSlot(day, hour * 60 + minute)}
@@ -91,32 +93,51 @@ export default function SessionCalendar({
                                 )),
                             )}
                         {events.map((event) => (
-                            <button
-                                type="button"
+                            <Event
+                                type={onSession ? 'button' : undefined}
                                 key={event.session.id}
-                                className={`calendar-event calendar-color-${(event.session.level_id ?? 0) % 5} ${event.session.is_published ? '' : 'is-draft'} ${event.end - event.start < 45 ? 'is-short' : ''}`}
+                                className={`calendar-event calendar-color-${(event.session.level_id ?? 0) % 5} ${event.session.is_published === false ? 'is-draft' : ''} ${event.end - event.start < 45 ? 'is-short' : ''}`}
                                 style={{
                                     top: (event.start / 60 - startHour) * hourHeight + 2,
                                     height: Math.max(20, ((event.end - event.start) / 60) * hourHeight - 4),
                                     left: `calc(${(event.lane / event.lanes) * 100}% + 3px)`,
                                     width: `calc(${100 / event.lanes}% - 6px)`,
                                 }}
-                                title={`${event.session.course} · ${time(event.session.starts_at)}–${time(event.session.ends_at)} · ${event.session.room}`}
-                                aria-label={`${event.session.course}, ${dateLabel(day)}, ${time(event.session.starts_at)} à ${time(event.session.ends_at)}, ${event.session.room}, ${event.session.is_published ? 'publiée' : 'brouillon'}. Consulter la séance.`}
-                                onClick={() => onSession(event.session.id)}
+                                title={`${event.session.status === 'rescheduled' ? 'Reportée · ' : event.session.status === 'cancelled' ? 'Annulée · ' : ''}${event.session.course} · ${time(event.session.starts_at)}–${time(event.session.ends_at)} · ${event.session.room || 'Salle à préciser'}`}
+                                aria-label={
+                                    onSession
+                                        ? [
+                                              event.session.course,
+                                              dateLabel(day),
+                                              `${time(event.session.starts_at)} à ${time(event.session.ends_at)}`,
+                                              event.session.room || 'Salle à préciser',
+                                              event.session.is_published === undefined ? null : event.session.is_published ? 'publiée' : 'brouillon',
+                                          ]
+                                              .filter(Boolean)
+                                              .join(', ')
+                                        : undefined
+                                }
+                                onClick={onSession ? () => onSession(event.session.id) : undefined}
                             >
                                 <span className="calendar-event-time">
                                     {time(event.session.starts_at)} – {time(event.session.ends_at)}
-                                    {!event.session.is_published && <i aria-label="Brouillon" />}
+                                    {event.session.is_published === false && <i aria-label="Brouillon" />}
                                 </span>
-                                <strong>{event.session.course}</strong>
+                                <strong>
+                                    {event.session.status === 'rescheduled'
+                                        ? 'Reportée · '
+                                        : event.session.status === 'cancelled'
+                                          ? 'Annulée · '
+                                          : ''}
+                                    {event.session.course}
+                                </strong>
                                 <span className="calendar-event-room">
-                                    <MapPin size={11} /> {event.session.room}
+                                    <MapPin size={11} /> {event.session.room || 'Salle à préciser'}
                                 </span>
                                 {event.end - event.start >= 60 && (
                                     <span className="calendar-event-teacher">{event.session.teacher || 'Enseignant à confirmer'}</span>
                                 )}
-                            </button>
+                            </Event>
                         ))}
                         {day === today && nowMinute >= startHour * 60 && nowMinute < endHour * 60 && (
                             <div className="calendar-now" style={{ top: (nowMinute / 60 - startHour) * hourHeight }} aria-label="Heure actuelle" />

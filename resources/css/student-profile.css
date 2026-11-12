@@ -5,15 +5,15 @@
     gap: 8px;
     margin-top: 15px;
     padding: 9px 14px;
-    border: 1px solid #dfe6d6;
+    border: 1px solid var(--usk-night-border, #dfe6d6);
     border-radius: 8px;
     background: transparent;
-    color: #5e7b50;
+    color: var(--usk-night-mint, #5e7b50);
     font-size: 11px;
     cursor: pointer;
 }
 .student-profile-editor {
-    color: #3c5939;
+    color: var(--usk-night-mint, #3c5939);
     padding-top: 26px;
 }
 .profile-editor-intro {
@@ -22,30 +22,30 @@
     gap: 24px;
     align-items: center;
     padding-bottom: 30px;
-    border-bottom: 1px solid #dce4d3;
+    border-bottom: 1px solid var(--usk-night-border, #dce4d3);
 }
 .profile-editor-intro > div > span,
 .profile-modal-eyebrow {
     font-size: 9px;
     letter-spacing: 0.15em;
     font-weight: 600;
-    color: #959e7d;
+    color: var(--usk-night-muted, #959e7d);
 }
 .usk-dashboard .student-portal .profile-editor-intro h2 {
     margin: 9px 0 10px;
     font-size: 25px;
     letter-spacing: -0.035em;
-    color: #395b36;
+    color: var(--usk-night-mint, #395b36);
 }
 .profile-editor-intro p {
     font-size: 12px;
     line-height: 1.8;
-    color: #89967a;
+    color: var(--usk-night-mint, #89967a);
     margin: 0;
 }
 .profile-editor-intro > svg {
     flex-shrink: 0;
-    color: #94a580;
+    color: var(--usk-night-muted, #94a580);
 }
 .profile-editor-layout {
     display: grid;
@@ -65,13 +65,13 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #879778;
+    color: var(--usk-night-mint, #879778);
     padding: 11px 0;
     font-size: 12px;
     text-decoration: none;
 }
 .profile-section-nav a:hover {
-    color: #315e36;
+    color: var(--usk-night-mint, #315e36);
 }
 .profile-section-nav svg {
     flex-shrink: 0;
@@ -82,7 +82,7 @@
 .profile-form-section {
     padding: 14px 0 34px;
     margin-bottom: 24px;
-    border-bottom: 1px solid #dce4d3;
+    border-bottom: 1px solid var(--usk-night-border, #dce4d3);
     scroll-margin-top: 92px;
 }
 .profile-form-section > header {
@@ -93,7 +93,7 @@
 }
 .profile-form-section > header > span {
     font-size: 10px;
-    color: #a8b296;
+    color: var(--usk-night-muted, #a8b296);
     padding-top: 5px;
 }
 .usk-dashboard .student-portal .profile-form-section h2 {
@@ -103,7 +103,7 @@
 }
 .profile-form-section > header p {
     font-size: 12px;
-    color: #92a080;
+    color: var(--usk-night-mint, var(--usk-day-muted, #92a080));
     line-height: 1.8;
     margin: 0;
 }
@@ -121,10 +121,10 @@
 .profile-field label {
     font-size: 12px;
     font-weight: 500;
-    color: #60794f;
+    color: var(--usk-night-mint, #60794f);
 }
 .profile-field label > span {
-    color: #aa9362;
+    color: var(--usk-night-gold, #aa9362);
 }
 .profile-field :is(input, select, textarea) {
     box-sizing: border-box;
@@ -132,10 +132,10 @@
     min-width: 0;
     min-height: 46px;
     padding: 12px 14px;
-    border: 1px solid #dce4d2;
+    border: 1px solid var(--usk-night-border, #dce4d2);
     border-radius: 9px;
-    background: #fff;
-    color: #45633b;
+    background: var(--usk-night-background, #fff);
+    color: var(--usk-night-mint, #45633b);
     font-family: inherit;
     font-size: 13px;
     line-height: 1.6;
@@ -148,40 +148,40 @@
     min-height: 102px;
 }
 .profile-field input[readonly] {
-    background: #edf2e6;
-    color: #7e936a;
+    background: var(--usk-night-background, #edf2e6);
+    color: var(--usk-night-mint, #7e936a);
     cursor: default;
 }
 .profile-field :is(input, select, textarea):focus {
     outline: 0;
-    border-color: #8fa57d;
+    border-color: var(--usk-night-field-border, #8fa57d);
     box-shadow: 0 0 0 3px #8fa57d15;
 }
 .profile-field [aria-invalid='true'] {
-    border-color: #c78a73;
+    border-color: var(--usk-night-danger, #c78a73);
 }
 .profile-field > small,
 .profile-field-help {
     font-size: 10px;
     line-height: 1.8;
-    color: #99a48a;
+    color: var(--usk-night-muted, #99a48a);
 }
 .profile-field-error {
     margin: 0 !important;
     font-size: 11px !important;
     line-height: 1.7;
-    color: #b16e52 !important;
+    color: var(--usk-night-danger, #b16e52) !important;
 }
 .profile-fields > .is-wide {
     grid-column: 1/-1;
 }
 .profile-error-summary {
-    border-left: 2px solid #b88957;
+    border-left: 2px solid var(--usk-night-danger, #b88957);
     padding: 12px 15px;
-    color: #9e7950;
+    color: var(--usk-night-danger, #9e7950);
     font-size: 12px;
     line-height: 1.8;
-    background: #f8f5ed;
+    background: var(--usk-night-surface, #f8f5ed);
     margin: 0 0 20px;
 }
 .profile-photo-editor {
@@ -196,10 +196,10 @@
     height: 110px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid #fff;
-    background: #eaf0e0;
+    border: 3px solid var(--usk-night-border, #fff);
+    background: var(--usk-night-raised, #eaf0e0);
     box-shadow: 0 0 0 1px #dbe5cd;
-    color: #90a679;
+    color: var(--usk-night-mint, #90a679);
     flex-shrink: 0;
 }
 .profile-photo-preview img {
@@ -211,17 +211,17 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    border: 1px solid #d4dfc8;
+    border: 1px solid var(--usk-night-border, #d4dfc8);
     border-radius: 8px;
-    background: #fff;
+    background: var(--usk-night-surface, #fff);
     padding: 11px 15px;
-    color: #66844f;
+    color: var(--usk-night-mint, #66844f);
     font-size: 12px;
     cursor: pointer;
 }
 .profile-photo-editor p {
     font-size: 11px;
-    color: #99a48c;
+    color: var(--usk-night-muted, var(--usk-day-muted, #99a48c));
     line-height: 1.8;
     margin: 10px 0;
 }
@@ -229,7 +229,7 @@
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    color: #96a285;
+    color: var(--usk-night-muted, #96a285);
     font-size: 10px;
     margin-top: 13px;
     line-height: 1.8;
@@ -245,7 +245,7 @@
     border: 0;
     padding: 6px 0;
     background: transparent;
-    color: #8c9f79;
+    color: var(--usk-night-mint, #8c9f79);
     font-size: 11px;
     cursor: pointer;
 }
@@ -261,7 +261,7 @@
     align-items: flex-start;
     gap: 7px;
     font-size: 11px;
-    color: #91a17f;
+    color: var(--usk-night-mint, #91a17f);
     line-height: 1.8;
 }
 .profile-save-bar svg {
@@ -272,11 +272,11 @@
     align-items: center;
     justify-content: center;
     gap: 9px;
-    border: 1px solid #315f39;
+    border: 1px solid var(--usk-night-field-border, #315f39);
     border-radius: 9px;
     padding: 14px 19px;
-    color: #fff;
-    background: #315f39;
+    color: var(--usk-night-white, #fff);
+    background: var(--usk-night-brand, #315f39);
     font-size: 12px;
     white-space: nowrap;
     cursor: pointer;
@@ -290,7 +290,7 @@
     position: fixed;
     inset: 0;
     z-index: 210;
-    background: #10271ab8;
+    background: color-mix(in srgb, var(--usk-night-brand-deep, #10271a) 72%, transparent);
     backdrop-filter: blur(5px);
 }
 .profile-password-modal {
@@ -302,12 +302,12 @@
     width: min(480px, calc(100vw - 32px));
     max-height: calc(100dvh - 32px);
     overflow-y: auto;
-    background: #fffefa;
-    border: 1px solid #e5eadc;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #e5eadc);
     border-radius: 21px;
     padding: 32px;
     box-shadow: 0 25px 80px #0d291a40;
-    color: #49683d;
+    color: var(--usk-night-mint, #49683d);
     font-family: inherit;
 }
 .profile-password-close {
@@ -317,7 +317,7 @@
     padding: 7px;
     border: 0;
     background: transparent;
-    color: #95a587;
+    color: var(--usk-night-muted, #95a587);
     cursor: pointer;
 }
 .profile-password-icon {
@@ -327,8 +327,8 @@
     height: 52px;
     margin-bottom: 20px;
     border-radius: 13px;
-    color: #6e8e55;
-    background: #eef3e5;
+    color: var(--usk-night-mint, #6e8e55);
+    background: var(--usk-night-raised, #eef3e5);
 }
 .profile-password-modal h2 {
     font-size: 25px;
@@ -339,7 +339,7 @@
 }
 .profile-password-modal > p {
     font-size: 12px;
-    color: #8b9b7b;
+    color: var(--usk-night-mint, #8b9b7b);
     line-height: 1.8;
     margin: 0 0 24px;
 }
@@ -350,7 +350,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    border-top: 1px solid #e3e9d9;
+    border-top: 1px solid var(--usk-night-border, #e3e9d9);
     margin-top: 20px;
     padding-top: 20px;
 }
@@ -361,24 +361,24 @@
     padding: 12px 15px;
     font-size: 12px;
     border-radius: 8px;
-    border: 1px solid #dce5ce;
+    border: 1px solid var(--usk-night-border, #dce5ce);
     background: transparent;
-    color: #83986c;
+    color: var(--usk-night-mint, #83986c);
     cursor: pointer;
 }
 .profile-password-actions button[type='submit'] {
-    background: #315f39;
-    color: #fff;
-    border-color: #315f39;
+    background: var(--usk-night-brand, #315f39);
+    color: var(--usk-night-white, #fff);
+    border-color: var(--usk-night-field-border, #315f39);
 }
 .student-profile-editor :is(button, a):focus-visible,
 .profile-password-modal button:focus-visible,
 .profile-password-trigger:focus-visible {
-    outline: 3px solid #b39755;
+    outline: 3px solid var(--usk-night-gold, #b39755);
     outline-offset: 4px;
 }
 .profile-photo-editor:focus-within .profile-upload-button {
-    border-color: #8fa57d;
+    border-color: var(--usk-night-field-border, #8fa57d);
 }
 @media (max-width: 1000px) {
     .profile-editor-layout {
@@ -401,7 +401,7 @@
         white-space: nowrap;
         gap: 20px;
         padding: 0 0 9px;
-        border-bottom: 1px solid #e1e7d7;
+        border-bottom: 1px solid var(--usk-night-border, #e1e7d7);
     }
     .profile-section-nav a {
         flex-shrink: 0;
@@ -486,20 +486,20 @@
     scroll-padding-top: 16px;
 }
 .student-portal.is-profile .student-profile-form:focus-visible {
-    outline: 2px solid #809b71;
+    outline: 2px solid var(--usk-night-gold, #809b71);
     outline-offset: 4px;
 }
 .student-portal.is-profile .profile-section-nav a[aria-current='location'] {
-    color: #234f38;
-    background: #eaf2e2;
+    color: var(--usk-night-text, #234f38);
+    background: var(--usk-night-raised, #eaf2e2);
     font-weight: 600;
 }
 .student-portal.is-profile .profile-save-bar {
     position: sticky;
     bottom: 0;
     z-index: 15;
-    background: #fffefb;
-    border: 1px solid #dfe6d9;
+    background: var(--usk-night-surface, #fffefb);
+    border: 1px solid var(--usk-night-border, #dfe6d9);
     border-radius: 10px;
     padding: 14px;
     box-shadow: 0 -6px 24px #173b280a;
@@ -511,15 +511,15 @@
         z-index: 20;
         gap: 8px;
         padding: 10px 4px;
-        background: #f8f7f2;
-        border-bottom: 1px solid #dfe6d9;
+        background: var(--usk-night-surface, #f8f7f2);
+        border-bottom: 1px solid var(--usk-night-border, #dfe6d9);
         scrollbar-width: thin;
     }
     .student-portal.is-profile .profile-section-nav a {
         padding: 10px 12px;
         border-radius: 8px;
-        background: #fff;
-        border: 1px solid #e2e8da;
+        background: var(--usk-night-surface, #fff);
+        border: 1px solid var(--usk-night-border, #e2e8da);
         font-size: 11px;
     }
     .student-portal.is-profile .student-profile-form {

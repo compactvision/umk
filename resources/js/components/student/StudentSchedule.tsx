@@ -1,9 +1,10 @@
 import SessionCalendar, { type CalendarSession } from '@/components/teaching/SessionCalendar';
 import { addDays, dateLabel, localDate, time, zone } from '@/lib/scheduleDates';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { CalendarDays, ChevronLeft, ChevronRight, Clock3, MapPin, UserRound, X } from 'lucide-react';
 import { useState } from 'react';
+import ScheduleExamPeriods from './ScheduleExamPeriods';
 import type { Academic, PortalProps } from './types';
 
 export default function StudentSchedule({
@@ -12,9 +13,11 @@ export default function StudentSchedule({
     academic,
     promotion,
     courseId,
+    calendarEvents,
 }: {
     promotion: Pick<Academic, 'level' | 'faculty' | 'year' | 'group'>;
     courseId?: number;
+    calendarEvents?: PortalProps['calendar_events'];
     sessions: PortalProps['sessions'];
     week: string;
     academic: number;
@@ -57,7 +60,7 @@ export default function StudentSchedule({
                 </button>
             </div>
             <div className="calendar-toolbar">
-                <div className="calendar-view-switch" aria-label="Vue du calendrier">
+                <div className="calendar-view-switch" role="group" aria-label="Vue du calendrier">
                     <button className={view === 'week' ? 'is-active' : ''} aria-pressed={view === 'week'} onClick={() => setView('week')}>
                         Semaine
                     </button>
@@ -106,6 +109,7 @@ export default function StudentSchedule({
                     ))}
                 </div>
             )}
+            <ScheduleExamPeriods events={calendarEvents} day={view === 'day' ? selectedDay : undefined} />
             {!sessions.length && (
                 <p role="status" className="student-schedule-empty">
                     Aucun cours publié pour cette semaine. Vous pouvez consulter les autres semaines.
@@ -134,7 +138,10 @@ export default function StudentSchedule({
                         </Dialog.Close>
                         <span className="student-schedule-eyebrow">MON EMPLOI DU TEMPS</span>
                         <Dialog.Title>{selected?.course}</Dialog.Title>
+                        {selected?.status === 'cancelled' && <p>Séance annulée</p>}
+                        {selected?.status === 'rescheduled' && <p>Séance reportée. Consultez les créneaux publiés de votre planning.</p>}
                         <Dialog.Description>{selected && dateLabel(localDate(selected.starts_at))}</Dialog.Description>
+                        {selected?.resource_url && <Link href={selected.resource_url}>Consulter les ressources de la séance</Link>}
                         {selected && (
                             <div className="student-schedule-details">
                                 <p>
@@ -143,7 +150,7 @@ export default function StudentSchedule({
                                 </p>
                                 <p>
                                     <MapPin size={20} />
-                                    {selected.room}
+                                    {selected.room || 'Salle à préciser'}
                                 </p>
                                 <p>
                                     <UserRound size={20} />

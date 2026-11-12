@@ -1,0 +1,355 @@
+.admin-overview {
+    --admin-overview-ink: var(--usk-night-text, #18372c);
+    --admin-overview-muted: var(--usk-night-muted, #4d6257);
+    --admin-overview-border: var(--usk-night-border, #dbe4d8);
+    --admin-overview-surface: var(--usk-night-surface, #fffefa);
+    display: grid;
+    gap: clamp(1rem, 1.8vw, 1.65rem);
+    color: var(--admin-overview-ink);
+}
+
+.admin-overview :is(a, [tabindex]):focus-visible {
+    outline: 2px solid var(--usk-night-gold, #166451);
+    outline-offset: 3px;
+}
+
+.admin-overview-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 1.3rem;
+    background: var(--usk-night-brand-deep, #073e32);
+    color: var(--usk-night-white, #fffefa);
+    padding: clamp(1.55rem, 3.2vw, 2.75rem);
+}
+
+.admin-overview-hero::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: '';
+    background:
+        linear-gradient(90deg, #073e32 37%, #073e32f2 50%, #073e3260),
+        url('/assets/usk/campus-720.webp') center right / max(60%, 29rem) auto no-repeat;
+}
+
+.admin-overview-hero-copy {
+    max-width: 47rem;
+}
+.admin-overview-hero-context {
+    color: var(--usk-night-gold, #f0d697);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.admin-overview-hero h1 {
+    margin: 0.2rem 0 0.45rem;
+    font-size: clamp(2.6rem, 4.8vw, 4.6rem);
+    line-height: 1.02;
+}
+.admin-overview-hero-copy > p:not(.admin-overview-hero-context) {
+    max-width: 34rem;
+    color: var(--usk-night-white, #f0f5ee);
+    font-size: clamp(0.92rem, 1.4vw, 1.08rem);
+}
+.admin-overview-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.35rem;
+}
+.admin-overview-context span {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.43rem 0.65rem;
+    border: 1px solid color-mix(in srgb, var(--usk-night-border, #ffffff) 27%, transparent);
+    border-radius: 0.55rem;
+    background: color-mix(in srgb, var(--usk-night-brand-deep, #062d27) 67%, transparent);
+    font-size: 0.82rem;
+}
+.admin-overview-context svg {
+    flex-shrink: 0;
+    color: var(--usk-night-gold, #f0d697);
+}
+
+.admin-overview-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+    gap: 0.85rem;
+}
+.admin-overview-metric,
+.admin-overview-panel {
+    min-width: 0;
+    border: 1px solid var(--admin-overview-border, var(--usk-night-border, #dbe4d8));
+    border-radius: 1rem;
+    background: var(--admin-overview-surface, var(--usk-night-surface, #fffefa));
+}
+.admin-overview-metric {
+    display: block;
+    padding: 1rem 1.15rem;
+    color: inherit;
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+.admin-overview-metric:hover,
+.admin-overview-shortcuts a:hover {
+    border-color: var(--usk-night-field-border, #76a488);
+    background: var(--usk-night-surface, #f6faf4);
+}
+.admin-overview-metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--usk-night-mint, #35644d);
+}
+.admin-overview-icon {
+    display: inline-grid;
+    width: 2.45rem;
+    height: 2.45rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 0.65rem;
+    background: var(--usk-night-raised, #eaf3e9);
+    color: var(--usk-night-text, #165441);
+}
+.admin-overview-metric > strong {
+    display: block;
+    margin-top: 0.65rem;
+    font-size: clamp(1.9rem, 3vw, 2.75rem);
+    letter-spacing: -0.045em;
+    line-height: 1.08;
+    font-variant-numeric: tabular-nums;
+}
+.admin-overview-metric h2 {
+    margin: 0.33rem 0 0.15rem;
+    font-size: 0.94rem;
+    font-weight: 750;
+}
+.admin-overview-metric p,
+.admin-overview-panel-header p,
+.admin-overview-row-copy small,
+.admin-overview-activity p {
+    color: var(--admin-overview-muted, var(--usk-night-mint, #4d6257));
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.admin-overview-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+    gap: inherit;
+}
+.admin-overview-columns > :only-child {
+    grid-column: 1 / -1;
+}
+.admin-overview-columns-secondary {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+}
+.admin-overview-panel {
+    padding: clamp(1rem, 2vw, 1.5rem);
+}
+.admin-overview-panel-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+}
+.admin-overview-panel-header h2 {
+    margin: 0 0 0.22rem;
+    font-size: 1.2rem;
+    font-weight: 750;
+    letter-spacing: -0.025em;
+}
+.admin-overview-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--usk-night-mint, #0f5b43);
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+.admin-overview-text-link:hover,
+.admin-overview-activity a:hover {
+    text-decoration: underline;
+}
+.admin-overview-empty {
+    padding: 0.85rem;
+    border-radius: 0.65rem;
+    background: var(--usk-night-surface, #f4f6f0);
+    color: var(--admin-overview-muted);
+    font-size: 0.88rem;
+}
+.admin-overview-breakdown {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.admin-overview-breakdown li > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+}
+.admin-overview-breakdown strong,
+.admin-overview-count,
+.admin-overview-table td {
+    font-variant-numeric: tabular-nums;
+}
+.admin-overview-track {
+    height: 0.42rem;
+    border-radius: 0.4rem;
+    background: var(--usk-night-raised, #edf1e9);
+}
+.admin-overview-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--usk-night-chart-soft, #4d8d6b);
+}
+.admin-overview-queue,
+.admin-overview-activity {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.admin-overview-queue li + li,
+.admin-overview-activity li + li {
+    border-top: 1px solid var(--usk-night-border, #e8ede5);
+}
+.admin-overview-queue a,
+.admin-overview-shortcuts a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: inherit;
+}
+.admin-overview-queue a {
+    padding: 0.68rem 0.2rem;
+}
+.admin-overview-queue a:hover {
+    background: var(--usk-night-surface, #f3f7f0);
+}
+.admin-overview-count {
+    display: grid;
+    min-width: 2.25rem;
+    padding: 0.32rem 0.4rem;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 0.55rem;
+    background: var(--usk-night-raised, #eff3eb);
+    font-size: 0.9rem;
+    font-weight: 750;
+}
+.admin-overview-count[data-active='true'] {
+    background: var(--usk-night-raised, #f8edcf);
+    color: var(--usk-night-danger, #624811);
+}
+.admin-overview-row-copy {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 0.13rem;
+}
+.admin-overview-row-copy strong,
+.admin-overview-activity a,
+.admin-overview-activity strong {
+    font-size: 0.86rem;
+    font-weight: 750;
+}
+.admin-overview-row-copy + svg {
+    flex-shrink: 0;
+    color: var(--usk-night-mint, #396f55);
+}
+.admin-overview-table-wrap {
+    overflow-x: auto;
+}
+.admin-overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.admin-overview-table :is(th, td) {
+    padding: 0.65rem 0.42rem;
+    border-bottom: 1px solid var(--usk-night-border, #e8ede5);
+    white-space: nowrap;
+    text-align: right;
+}
+.admin-overview-table th:first-child {
+    text-align: left;
+}
+.admin-overview-table thead th {
+    color: var(--admin-overview-muted);
+    font-size: 0.76rem;
+}
+.admin-overview-table td:last-child {
+    color: var(--usk-night-mint, #0c5a42);
+    font-weight: 750;
+}
+.admin-overview-activity li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.55rem;
+    padding: 0.6rem 0;
+}
+.admin-overview-activity-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-top: 0.43rem;
+    border-radius: 50%;
+    background: var(--usk-night-brand, #5e997a);
+}
+.admin-overview-activity time {
+    color: var(--admin-overview-muted);
+    font-size: 0.73rem;
+    text-align: right;
+}
+.admin-overview-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+    gap: 0.65rem;
+}
+.admin-overview-shortcuts a {
+    padding: 0.75rem;
+    border: 1px solid var(--admin-overview-border);
+    border-radius: 0.7rem;
+}
+
+@media (max-width: 900px) {
+    .admin-overview-columns,
+    .admin-overview-columns-secondary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media (max-width: 520px) {
+    .admin-overview-hero::before {
+        background:
+            linear-gradient(110deg, #073e32 25%, #073e32e6 76%, #073e329c),
+            url('/assets/usk/campus-480.webp') center right / cover no-repeat;
+    }
+    .admin-overview-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+    .admin-overview-metric {
+        padding: 0.8rem;
+    }
+    .admin-overview-metric h2 {
+        overflow-wrap: anywhere;
+    }
+    .admin-overview-activity time {
+        max-width: 5rem;
+    }
+}
+
+.admin-overview-columns-secondary > :nth-child(3):last-child {
+    grid-column: 1 / -1;
+}

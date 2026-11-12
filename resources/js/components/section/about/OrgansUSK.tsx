@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Linkedin, Twitter, Facebook, Plus, Users, GraduationCap, Briefcase, Shield, Building } from 'lucide-react';
 
 const OrgansUSK = () => {
@@ -53,13 +53,13 @@ const OrgansUSK = () => {
         }
     ];
 
-    const nextSlide = () => {
+    const nextSlide = useCallback(() => {
         if (!isAnimating) {
             setIsAnimating(true);
             setCurrentSlide((prev) => (prev + 1) % organsUSK.length);
             setTimeout(() => setIsAnimating(false), 500);
         }
-    };
+    }, [isAnimating, organsUSK.length]);
 
     const prevSlide = () => {
         if (!isAnimating) {
@@ -80,7 +80,7 @@ const OrgansUSK = () => {
     useEffect(() => {
         const interval = setInterval(nextSlide, 5000);
         return () => clearInterval(interval);
-    }, [currentSlide, isAnimating]);
+    }, [nextSlide]);
 
     return (
         <section className="relative py-20 lg:py-32 bg-gradient-to-br from-gray-50 via-white to-amber-50 overflow-hidden">

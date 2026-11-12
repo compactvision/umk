@@ -1,5 +1,5 @@
 .usk-admin-apps .level-detail-page {
-    color: #193e31;
+    color: var(--usk-night-text, #193e31);
     min-width: 0;
     padding-bottom: 40px;
     container-type: inline-size;
@@ -12,7 +12,7 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: #76866c;
+    color: var(--usk-night-mint, #76866c);
     font-size: 11px;
     text-decoration: none;
     margin-bottom: 23px;
@@ -23,8 +23,8 @@
     gap: 35px;
     align-items: center;
     padding: 40px;
-    background: #edf1e5;
-    border: 1px solid #dbe3d1;
+    background: var(--usk-night-raised, #edf1e5);
+    border: 1px solid var(--usk-night-border, #dbe3d1);
     border-radius: 13px;
 }
 .usk-admin-apps .ld-hero-content {
@@ -36,13 +36,13 @@
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.16em;
-    color: #a0874c;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a0874c));
 }
 .usk-admin-apps .ld-faculty {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #6e8262;
+    color: var(--usk-night-mint, var(--usk-day-green, #6e8262));
     font-size: 12px;
     margin-top: 22px;
 }
@@ -52,7 +52,7 @@
     font-size: clamp(36px, 4vw, 57px);
     line-height: 1.09;
     letter-spacing: -0.03em;
-    color: #173e2c;
+    color: var(--usk-night-text, #173e2c);
     margin: 13px 0 17px;
     background: none;
     overflow-wrap: anywhere;
@@ -60,7 +60,7 @@
 .usk-admin-apps .ld-hero-content > p {
     font-size: 13px;
     line-height: 1.9;
-    color: #74836b;
+    color: var(--usk-night-mint, var(--usk-day-muted, #74836b));
     max-width: 650px;
     margin: 0;
     white-space: pre-line;
@@ -76,11 +76,11 @@
     align-items: center;
     gap: 7px;
     padding: 7px 11px;
-    background: #ffffffe0;
-    border: 1px solid #d9e2cf;
+    background: color-mix(in srgb, var(--usk-night-surface, #ffffff) 88%, transparent);
+    border: 1px solid var(--usk-night-border, #d9e2cf);
     border-radius: 5px;
     font-size: 10px;
-    color: #537048;
+    color: var(--usk-night-mint, #537048);
 }
 .usk-admin-apps .ld-hero-seal {
     display: flex;
@@ -91,14 +91,14 @@
     gap: 15px;
     width: 185px;
     height: 185px;
-    border: 1px solid #cdd9bf;
+    border: 1px solid var(--usk-night-border, #cdd9bf);
     border-radius: 50%;
-    color: #8fa17e;
+    color: var(--usk-night-mint, var(--usk-day-muted, #8fa17e));
 }
 .usk-admin-apps .ld-hero-seal > span {
     font-size: 6px;
     letter-spacing: 0.12em;
-    color: #9b8b5e;
+    color: var(--usk-night-gold, var(--usk-day-gold, #9b8b5e));
 }
 .usk-admin-apps .ld-hero-seal > strong {
     font-family: Georgia, serif;
@@ -108,7 +108,7 @@
 }
 .usk-admin-apps .ld-nav {
     margin: 26px 0 35px;
-    border-bottom: 1px solid #dce3d3;
+    border-bottom: 1px solid var(--usk-night-border, #dce3d3);
     overflow-x: auto;
 }
 .usk-admin-apps .ld-nav > div {
@@ -125,18 +125,18 @@
     border-radius: 0 !important;
     background: none;
     padding: 15px 3px 18px;
-    color: #839076;
+    color: var(--usk-night-mint, var(--usk-day-muted, #839076));
     font-size: 12px;
     white-space: nowrap;
 }
 .usk-admin-apps .ld-nav button[aria-selected='true'] {
-    color: #194a31;
-    border-bottom-color: #997f40;
+    color: var(--usk-night-text, #194a31);
+    border-bottom-color: var(--usk-night-gold, #997f40);
 }
 .usk-admin-apps .ld-nav button > span {
     padding: 1px 6px;
-    background: #e7eddf;
-    color: #748b65;
+    background: var(--usk-night-raised, #e7eddf);
+    color: var(--usk-night-mint, #748b65);
     border-radius: 4px;
     font-size: 9px;
 }
@@ -158,12 +158,12 @@
     font-weight: 400;
     letter-spacing: -0.02em;
     line-height: 1.18;
-    color: #254b32;
+    color: var(--usk-night-text, #254b32);
     margin: 9px 0 0;
 }
 .usk-admin-apps .ld-section-heading p {
     font-size: 11px;
-    color: #89947d;
+    color: var(--usk-night-mint, var(--usk-day-muted, #89947d));
     margin: 8px 0 0;
     line-height: 1.8;
 }
@@ -173,10 +173,10 @@
     gap: 18px;
 }
 .usk-admin-apps .ld-metric {
-    border: 1px solid #dfe6d7;
+    border: 1px solid var(--usk-night-border, #dfe6d7);
     border-radius: 10px;
     padding: 24px;
-    background: #fffefa;
+    background: var(--usk-night-surface, #fffefa);
     min-width: 0;
 }
 .usk-admin-apps .ld-metric-top {
@@ -193,8 +193,8 @@
     flex-shrink: 0;
     width: 39px;
     height: 39px;
-    background: #eff3e9;
-    color: #7a9469;
+    background: var(--usk-night-raised, #eff3e9);
+    color: var(--usk-night-mint, #7a9469);
     border-radius: 9px;
 }
 .usk-admin-apps .ld-icon-button {
@@ -203,26 +203,26 @@
     justify-content: center;
     width: 34px;
     height: 34px;
-    border: 1px solid #e0e7d8;
-    background: #fafbf6;
-    color: #829773;
+    border: 1px solid var(--usk-night-border, #e0e7d8);
+    background: var(--usk-night-surface, #fafbf6);
+    color: var(--usk-night-mint, #829773);
     flex-shrink: 0;
 }
 .usk-admin-apps .ld-icon-button:hover {
-    background: #eaf0e3;
-    color: #355c31;
+    background: var(--usk-night-raised, #eaf0e3);
+    color: var(--usk-night-mint, #355c31);
 }
 .usk-admin-apps .ld-metric-label {
     display: block;
     font-size: 11px;
-    color: #8b947e;
+    color: var(--usk-night-muted, var(--usk-day-muted, #8b947e));
     margin-bottom: 9px;
 }
 .usk-admin-apps .ld-metric > strong {
     font-size: clamp(23px, 2.4vw, 32px);
     font-weight: 500;
     line-height: 1.2;
-    color: #30563a;
+    color: var(--usk-night-mint, #30563a);
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .ld-program-grid {
@@ -232,8 +232,8 @@
     align-items: stretch;
 }
 .usk-admin-apps .ld-panel {
-    background: #fffefa;
-    border: 1px solid #dfe6d7;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dfe6d7);
     border-radius: 10px;
     padding: 27px;
     min-width: 0;
@@ -248,7 +248,7 @@
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
-    color: #3b5d3d;
+    color: var(--usk-night-mint, #3b5d3d);
     margin: 0;
     min-width: 0;
 }
@@ -257,9 +257,9 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    border: 1px solid #d8e2ce;
-    background: #f5f7ee;
-    color: #6e865d;
+    border: 1px solid var(--usk-night-border, #d8e2ce);
+    background: var(--usk-night-surface, #f5f7ee);
+    color: var(--usk-night-mint, var(--usk-day-green, #6e865d));
     padding: 8px 10px;
     font-size: 10px;
     white-space: nowrap;
@@ -270,14 +270,14 @@
 }
 .usk-admin-apps .ld-panel > p {
     font-size: 13px;
-    color: #65765b;
+    color: var(--usk-night-mint, #65765b);
     line-height: 1.9;
     margin: 0;
     white-space: pre-line;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .level-detail-page .ld-muted {
-    color: #99a28c;
+    color: var(--usk-night-muted, var(--usk-day-muted, #99a28c));
     font-size: 12px;
 }
 .usk-admin-apps .ld-opportunities {
@@ -292,7 +292,7 @@
     display: flex;
     align-items: baseline;
     gap: 10px;
-    color: #65765b;
+    color: var(--usk-night-mint, #65765b);
     font-size: 12px;
     line-height: 1.8;
     overflow-wrap: anywhere;
@@ -302,14 +302,14 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #b49b60;
+    background: var(--usk-night-warm, #b49b60);
     flex-shrink: 0;
 }
 .usk-admin-apps .ld-small-panel > strong {
     display: block;
     font-size: 20px;
     font-weight: 400;
-    color: #4b6a43;
+    color: var(--usk-night-mint, #4b6a43);
     margin-bottom: 8px;
 }
 .usk-admin-apps .ld-illustration {
@@ -320,7 +320,7 @@
     display: block;
     padding: 0;
     border: 0;
-    background: #edf2e4;
+    background: var(--usk-night-raised, #edf2e4);
     border-radius: 7px;
     overflow: hidden;
     width: 100%;
@@ -338,8 +338,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #fffffff0;
-    color: #456c39;
+    background: color-mix(in srgb, var(--usk-night-surface, #ffffff) 94%, transparent);
+    color: var(--usk-night-mint, #456c39);
     padding: 10px 14px;
     font-size: 11px;
     border-radius: 6px;
@@ -348,20 +348,20 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    border: 1px dashed #dbe4d0;
+    border: 1px dashed var(--usk-night-border, #dbe4d0);
     padding: 30px;
     border-radius: 7px;
-    background: #f6f8f0;
-    color: #92a182;
+    background: var(--usk-night-surface, #f6f8f0);
+    color: var(--usk-night-mint, #92a182);
 }
 .usk-admin-apps .ld-illustration-empty > p {
     font-size: 13px;
-    color: #809171;
+    color: var(--usk-night-mint, var(--usk-day-green, #809171));
     margin: 0;
 }
 .usk-admin-apps .ld-illustration-empty p > span {
     display: block;
-    color: #a0a891;
+    color: var(--usk-night-muted, var(--usk-day-muted, #a0a891));
     font-size: 11px;
     margin-top: 6px;
 }
@@ -370,26 +370,26 @@
     align-items: center;
     gap: 17px;
     padding: 22px 25px;
-    background: #edf2e5;
-    border: 1px solid #dce5d1;
+    background: var(--usk-night-raised, #edf2e5);
+    border: 1px solid var(--usk-night-border, #dce5d1);
     border-radius: 10px;
     margin-bottom: 35px;
 }
 .usk-admin-apps .ld-admission-summary strong {
     font-size: 14px;
     font-weight: 500;
-    color: #4c6f40;
+    color: var(--usk-night-mint, #4c6f40);
 }
 .usk-admin-apps .ld-admission-summary p {
     font-size: 11px;
-    color: #829775;
+    color: var(--usk-night-mint, #829775);
     margin: 5px 0 0;
 }
 .usk-admin-apps .ld-summary-note {
     margin-left: auto;
     font-size: 8px;
     letter-spacing: 0.13em;
-    color: #a39a77;
+    color: var(--usk-night-gold, #a39a77);
 }
 .usk-admin-apps .ld-condition-groups {
     display: flex;
@@ -397,8 +397,8 @@
     gap: 35px;
 }
 .usk-admin-apps .ld-condition-group {
-    background: #fffefa;
-    border: 1px solid #dfe6d7;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dfe6d7);
     border-radius: 11px;
     overflow: hidden;
 }
@@ -407,26 +407,26 @@
     align-items: center;
     gap: 13px;
     padding: 25px 28px;
-    background: #f6f7f0;
-    border-bottom: 1px solid #e1e7d8;
-    color: #849c73;
+    background: var(--usk-night-surface, #f6f7f0);
+    border-bottom: 1px solid var(--usk-night-border, #e1e7d8);
+    color: var(--usk-night-mint, #849c73);
 }
 .usk-admin-apps main .level-detail-page .ld-condition-group h3 {
     font-size: 17px;
     font-weight: 500;
-    color: #4e6b43;
+    color: var(--usk-night-mint, #4e6b43);
     margin: 0;
 }
 .usk-admin-apps .ld-condition-group header p {
     font-size: 11px;
-    color: #94a085;
+    color: var(--usk-night-mint, #94a085);
     line-height: 1.7;
     margin: 5px 0 0;
 }
 .usk-admin-apps .ld-condition-group header > span {
     margin-left: auto;
-    background: #eaf0df;
-    color: #829a6b;
+    background: var(--usk-night-raised, #eaf0df);
+    color: var(--usk-night-mint, #829a6b);
     padding: 4px 9px;
     font-size: 11px;
     border-radius: 5px;
@@ -443,10 +443,10 @@
     padding: 27px 0;
 }
 .usk-admin-apps .ld-condition + .ld-condition {
-    border-top: 1px solid #e9eddf;
+    border-top: 1px solid var(--usk-night-border, #e9eddf);
 }
 .usk-admin-apps .ld-condition-number {
-    color: #b3a274;
+    color: var(--usk-night-gold, #b3a274);
     font-family: Georgia, serif;
     font-size: 20px;
     line-height: 1.4;
@@ -463,7 +463,7 @@
 }
 .usk-admin-apps .ld-condition h4 {
     font-size: 14px;
-    color: #3e6035;
+    color: var(--usk-night-mint, #3e6035);
     font-weight: 500;
     margin: 0;
     line-height: 1.6;
@@ -471,21 +471,21 @@
 }
 .usk-admin-apps .ld-required {
     display: inline-block;
-    border: 1px solid #e3d9b7;
-    background: #f8f3df;
-    color: #9a8347;
+    border: 1px solid var(--usk-night-border, #e3d9b7);
+    background: var(--usk-night-raised, #f8f3df);
+    color: var(--usk-night-gold, #9a8347);
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 9px;
     white-space: nowrap;
 }
 .usk-admin-apps .ld-required.is-optional {
-    border-color: #dfe5d7;
-    background: #f2f5eb;
-    color: #8a9b76;
+    border-color: var(--usk-night-border, #dfe5d7);
+    background: var(--usk-night-surface, #f2f5eb);
+    color: var(--usk-night-mint, #8a9b76);
 }
 .usk-admin-apps .ld-condition-copy > p {
-    color: #869479;
+    color: var(--usk-night-mint, #869479);
     font-size: 12px;
     line-height: 1.9;
     margin: 11px 0 0;
@@ -499,13 +499,13 @@
     padding-top: 1px;
 }
 .usk-admin-apps .ld-danger {
-    color: #b18a7e;
-    background: #fcf7f1;
-    border-color: #eee1d7;
+    color: var(--usk-night-danger, #b18a7e);
+    background: var(--usk-night-surface, #fcf7f1);
+    border-color: var(--usk-night-border, #eee1d7);
 }
 .usk-admin-apps .ld-danger:hover {
-    background: #f7e8de;
-    color: #a05242;
+    background: var(--usk-night-raised, #f7e8de);
+    color: var(--usk-night-danger, #a05242);
 }
 .usk-admin-apps .ld-empty {
     padding: 65px 25px;
@@ -514,28 +514,28 @@
     flex-direction: column;
     align-items: center;
     gap: 17px;
-    background: #fcfcf6;
-    border: 1px dashed #dce5cd;
+    background: var(--usk-night-surface, #fcfcf6);
+    border: 1px dashed var(--usk-night-border, #dce5cd);
     border-radius: 10px;
-    color: #a4b394;
+    color: var(--usk-night-muted, #a4b394);
 }
 .usk-admin-apps main .level-detail-page .ld-empty :is(h2, h3) {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-size: 32px;
     line-height: 1.2;
     font-weight: 400;
-    color: #5e7a4c;
+    color: var(--usk-night-mint, #5e7a4c);
     margin: 0;
 }
 .usk-admin-apps .ld-empty p {
     font-size: 12px;
-    color: #8e9e7e;
+    color: var(--usk-night-mint, #8e9e7e);
     line-height: 1.9;
     max-width: 430px;
     margin: 0;
 }
 .usk-admin-apps .level-detail-page :is(button, a):focus-visible {
-    outline: 2px solid #a58b4c;
+    outline: 2px solid var(--usk-night-gold, #a58b4c);
     outline-offset: 4px;
 }
 @container (max-width: 850px) {
@@ -656,7 +656,7 @@
 .usk-admin-apps .ld-level-actions > span {
     font-size: 8px;
     letter-spacing: 0.16em;
-    color: #a18a55;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a18a55));
 }
 @media (max-width: 480px) {
     .usk-admin-apps .ld-level-actions > span {
@@ -678,15 +678,15 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: 1px solid #e4d7ca;
-    background: #fcf8f2;
+    border: 1px solid var(--usk-night-border, #e4d7ca);
+    background: var(--usk-night-surface, #fcf8f2);
     padding: 12px 16px;
-    color: #a0715e;
+    color: var(--usk-night-danger, var(--usk-day-danger, #a0715e));
     font-size: 11px !important;
 }
 .usk-admin-apps .ld-delete-level:hover {
-    background: #f5e9df;
-    border-color: #cba895;
+    background: var(--usk-night-raised, #f5e9df);
+    border-color: var(--usk-night-gold, #cba895);
 }
 .usk-admin-apps .ld-delete-level:disabled {
     opacity: 0.6;
@@ -696,30 +696,30 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    border: 1px solid #eadcce;
-    background: #fbf6ef;
+    border: 1px solid var(--usk-night-border, #eadcce);
+    background: var(--usk-night-surface, #fbf6ef);
     padding: 20px;
     border-radius: 9px;
 }
 .usk-admin-apps .ld-delete-target > span {
     display: grid;
     place-items: center;
-    color: #b88b6f;
+    color: var(--usk-night-danger, #b88b6f);
     width: 45px;
     height: 45px;
-    background: #f5eadd;
+    background: var(--usk-night-raised, #f5eadd);
     border-radius: 10px;
     flex-shrink: 0;
 }
 .usk-admin-apps .ld-delete-target small {
     display: block;
-    color: #ac987b;
+    color: var(--usk-night-gold, #ac987b);
     font-size: 10px;
     margin-bottom: 7px;
 }
 .usk-admin-apps .ld-delete-target strong {
     display: block;
-    color: #876a50;
+    color: var(--usk-night-danger, #876a50);
     font-size: 17px;
     font-weight: 500;
     overflow-wrap: anywhere;
@@ -727,25 +727,25 @@
 .usk-admin-apps .ld-delete-explanation {
     font-size: 12px;
     line-height: 1.9;
-    color: #9b8d77;
+    color: var(--usk-night-gold, #9b8d77);
     margin: 22px 0 0;
 }
 .usk-admin-apps .ld-delete-explanation strong {
-    color: #ab775c;
+    color: var(--usk-night-danger, #ab775c);
     font-weight: 500;
 }
 .usk-admin-apps .ld-delete-help {
     font-size: 10px;
-    color: #a7a58e;
+    color: var(--usk-night-muted, #a7a58e);
     line-height: 1.8;
     margin: 13px 0 0;
 }
 .usk-admin-apps .ld-delete-modal .admin-modal-submit {
-    background: #a6654e;
-    border-color: #a6654e;
+    background: var(--usk-night-danger-surface, #a6654e);
+    border-color: var(--usk-night-danger, #a6654e);
 }
 .usk-admin-apps .ld-delete-modal .admin-modal-submit:hover {
-    background: #8c513d;
+    background: var(--usk-night-danger-surface, #8c513d);
 }
 .usk-admin-apps .ld-delete-modal .admin-modal-footer > span {
     display: none;
@@ -775,23 +775,23 @@
     font-size: 10px;
 }
 .usk-admin-apps .ld-payment-parts dt {
-    color: #96a582;
+    color: var(--usk-night-muted, var(--usk-day-muted, #96a582));
 }
 .usk-admin-apps .ld-payment-parts dd {
-    color: #7f9869;
+    color: var(--usk-night-mint, var(--usk-day-green, #7f9869));
     margin: 0;
 }
 .usk-admin-apps .ld-payment-parts .ld-payment-total-label {
-    border-top: 1px solid #e3ead8;
+    border-top: 1px solid var(--usk-night-border, #e3ead8);
     padding-top: 12px;
     margin-top: 7px;
 }
 
 .ld-semester-groups { display: grid; gap: 28px; margin-top: 24px; }
 .ld-semester-group { min-width: 0; }
-.ld-semester-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px; border: 1px solid #dcebe0; border-radius: 10px; background: #eef5f0; }
-.usk-admin-apps .ld-semester-heading h3 { margin: 0; color: #073e32; font-size: 21px; }
-.ld-semester-heading p { margin: 4px 0 0; color: #65725e; font-size: 13px; }
-.ld-semester-heading > span { color: #24694e; font-size: 14px; font-weight: 600; }
+.ld-semester-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px; border: 1px solid var(--usk-night-border, #dcebe0); border-radius: 10px; background: var(--usk-night-raised, #eef5f0); }
+.usk-admin-apps .ld-semester-heading h3 { margin: 0; color: var(--usk-night-text, #073e32); font-size: 21px; }
+.ld-semester-heading p { margin: 4px 0 0; color: var(--usk-night-mint, var(--usk-day-muted, #65725e)); font-size: 13px; }
+.ld-semester-heading > span { color: var(--usk-night-mint, #24694e); font-size: 14px; font-weight: 600; }
 .ld-semester-group > ul { list-style: none; margin: 0; padding: 0; }
 @media (max-width: 479px) { .ld-semester-group li { flex-wrap: wrap; } }

@@ -1,0 +1,9 @@
+Vérification locale sur des données synthétiques.
+Pages:           1
+Page size:       595.28 x 841.89 pts (A4)
+Pages:           2
+Page size:       242.646 x 153.014 pts
+enrollment-qr.png · QR décodé vers le registre attendu
+card-qr.png · QR décodé vers le registre attendu
+enrollment-1.png · QR décodé vers le registre attendu
+card-2.png · QR décodé vers le registre attendu

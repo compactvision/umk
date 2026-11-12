@@ -1,3 +1,4 @@
+import NavigationFeedback from '@/components/system/NavigationFeedback';
 import NetworkFailureNotice from '@/components/system/NetworkFailureNotice';
 import '../css/app.css';
 
@@ -12,15 +13,15 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
     setup({ el, App, props }) {
         const content = (
-            <>
+            <NavigationFeedback>
                 <App {...props} />
                 <NetworkFailureNotice />
-            </>
+            </NavigationFeedback>
         );
         if (el.dataset.ssr === 'true') hydrateRoot(el, content);
         else createRoot(el).render(content);
     },
     progress: {
-        color: '#4B5563',
+        color: '#24694e',
     },
 });

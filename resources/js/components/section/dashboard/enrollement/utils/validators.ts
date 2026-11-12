@@ -5,6 +5,7 @@ export function validateStep(
     requirements: Requirements,
     noLevelsForSelectedFaculty: boolean,
     isConfirmed: boolean,
+    availableProgramCount = 0,
 ) {
     const errors: Record<string, string> = {};
     const validateDocuments = (documents: Requirements['personal_info']) => {
@@ -16,6 +17,7 @@ export function validateStep(
             });
     };
     if (step === 1) {
+        if (availableProgramCount > 1 && !formData.academic_program_id) errors.academic_program_id = 'Choisissez votre programme officiel.';
         if (!formData.faculty_id) errors.faculty_id = 'Choisissez une faculté.';
         if (!formData.level_id || noLevelsForSelectedFaculty) errors.level_id = 'Choisissez un niveau disponible.';
         if (!formData.year_id) errors.year_id = 'Choisissez une année académique.';

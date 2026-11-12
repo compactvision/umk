@@ -2,6 +2,8 @@
 
 namespace App\Modules\AdmissionCondition\Application\UseCases;
 
+use App\Models\AcademicStructure\AdmissionCampaign;
+use App\Models\Level;
 use App\Modules\AdmissionCondition\Domain\Repositories\AdmissionConditionRepository;
 use Illuminate\Support\Str;
 
@@ -18,23 +20,24 @@ final class GetRequirementsFor
      *   payment: array{required:bool,amount:int,currency:string}|null
      * }
      */
-    public function __invoke(int $levelId, ?int $facultyId = null): array
+    public function __invoke(int $levelId, ?int $facultyId = null, ?int $yearId = null, ?int $programId = null): array
     {
-        // ⚠️ Assure-toi que l’ordre des params est (levelId, facultyId) partout (interface + impl)
-        $rows = $this->conditions->findByLevelAndFaculty($levelId, $facultyId);
+        $owner = (int) Level::findOrFail($levelId)->faculty_id;
+        abort_if($facultyId !== null && $facultyId !== $owner, 422, 'Le niveau n’appartient pas à cette faculté.');
+        $rows = $this->conditions->findByLevelAndFaculty($owner, $levelId);
 
         $personal = [];
         $academic = [];
-        $payment  = null;
+        $payment = null;
 
         foreach ($rows as $cond) {
-            $key = Str::slug($cond->getTitle() ?? ('condition_' . ($cond->getId() ?? 'x')), '_');
+            $key = Str::slug($cond->getTitle() ?? ('condition_'.($cond->getId() ?? 'x')), '_');
 
             $dto = [
-                'key'      => $key,
-                'label'    => $cond->getTitle() ?? $key,
+                'key' => $key,
+                'label' => $cond->getTitle() ?? $key,
                 'required' => $cond->isRequired(),
-                'accept'   => 'image/*,.pdf', // TODO: si tu stockes un "accept" en DB, mappe-le ici
+                'accept' => 'image/*,.pdf', // TODO: si tu stockes un "accept" en DB, mappe-le ici
             ];
 
             switch ($cond->getSection()) {
@@ -45,20 +48,25 @@ final class GetRequirementsFor
                     $academic[] = $dto;
                     break;
                 case 'payment':
-                    // Si tu as des montants en DB, mappe-les ici
-                    $payment ??= ['required' => true, 'amount' => 50000, 'currency' => 'CDF'];
+                    // Aucun montant de candidature n’est défini par ce référentiel.
                     break;
                 default:
-                    // section inconnue → on range côté académique par défaut
-                    $academic[] = $dto;
+                    // Les formalités non documentaires restent affichées dans le catalogue public.
                     break;
+            }
+        }
+
+        if ($yearId && $programId) {
+            $campaign = AdmissionCampaign::forContext($programId, $yearId, $levelId);
+            foreach ($campaign?->additional_documents ?? [] as $label) {
+                $academic[] = ['key' => 'campaign_'.substr(hash('sha256', $label), 0, 24), 'label' => $label, 'required' => true, 'accept' => 'image/*,.pdf'];
             }
         }
 
         return [
             'personal_info' => $personal,
             'academic_info' => $academic,
-            'payment'       => $payment,
+            'payment' => $payment,
         ];
     }
 }

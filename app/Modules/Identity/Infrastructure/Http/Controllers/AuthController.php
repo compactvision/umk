@@ -3,27 +3,28 @@
 namespace App\Modules\Identity\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Identity\Application\UseCases\RegisterUser;
 use App\Modules\Identity\Application\UseCases\LoginUser;
+use App\Modules\Identity\Application\UseCases\RegisterUser;
 use App\Modules\Identity\Domain\Exceptions\InvalidCredentialsException;
 use App\Modules\Identity\Domain\Exceptions\TooManyLoginAttemptsException;
 use App\Modules\Identity\Domain\Exceptions\UserNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
     public function register(Request $request, RegisterUser $useCase)
     {
         $validated = $request->validate([
-            'last_name'     => 'required|string|max:255',
-            'first_name'    => 'required|string|max:255',
-            'post_name'     => 'nullable|string|max:255',
-            'gender'        => 'required|in:male,female,other',
-            'email'         => 'required|email|unique:users',
-            'password'      => 'required|min:6|confirmed',
+            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'post_name' => 'nullable|string|max:255',
+            'gender' => 'required|in:male,female,other',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
         ]);
-        
+
         $user = $useCase->execute(
             $validated['last_name'],
             $validated['first_name'],
@@ -32,36 +33,42 @@ class AuthController extends Controller
             $validated['email'],
             $validated['password']
         );
-        
+
         Auth::loginUsingId($user->id());
-        
+        $request->session()->regenerate();
+
         return redirect()->route('dashboard.index');
     }
 
     public function login(Request $request, LoginUser $useCase)
     {
         $validated = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
         try {
             $userId = $useCase->execute($validated['email'], $validated['password']);
             Auth::loginUsingId($userId);
+            $request->session()->regenerate();
+            Inertia::flash('dashboardArrival', true);
 
             return redirect()->route('dashboard.index');
         } catch (TooManyLoginAttemptsException $e) {
             return back()->withErrors([
-                'email' => $e->getMessage()
+                'email' => $e->getMessage(),
             ]);
         } catch (UserNotFoundException|InvalidCredentialsException $e) {
-            return back()->withErrors(['email' => $e->getMessage()]);
+            return back()->withErrors(['email' => 'Identifiants invalides']);
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 
@@ -69,15 +76,14 @@ class AuthController extends Controller
     {
 
         return inertia('dashboard/auth/Signup', [
-            'status' => session('status')
+            'status' => session('status'),
         ]);
     }
 
     public function showLogin()
     {
         return inertia('dashboard/auth/Login', [
-            'status' => session('status')
+            'status' => session('status'),
         ]);
     }
-
 }

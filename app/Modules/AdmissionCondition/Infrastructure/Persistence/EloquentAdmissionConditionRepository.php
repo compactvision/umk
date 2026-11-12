@@ -2,9 +2,9 @@
 
 namespace App\Modules\AdmissionCondition\Infrastructure\Persistence;
 
+use App\Models\AdmissionCondition as AdmissionConditionModel;
 use App\Modules\AdmissionCondition\Domain\Entities\AdmissionCondition;
 use App\Modules\AdmissionCondition\Domain\Repositories\AdmissionConditionRepository;
-use App\Models\AdmissionCondition as AdmissionConditionModel;
 use Illuminate\Support\Collection;
 
 class EloquentAdmissionConditionRepository implements AdmissionConditionRepository
@@ -14,11 +14,11 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
         $model = AdmissionConditionModel::updateOrCreate(
             ['id' => $condition->getId()],
             [
-                'faculty_id'  => $condition->getFacultyId(),
-                'level_id'    => $condition->getLevelId(),
-                'title'       => $condition->getTitle(),
+                'faculty_id' => $condition->getFacultyId(),
+                'level_id' => $condition->getLevelId(),
+                'title' => $condition->getTitle(),
                 'description' => $condition->getDescription(),
-                'section'     => $condition->getSection(),
+                'section' => $condition->getSection(),
                 'is_required' => $condition->isRequired(),
             ]
         );
@@ -29,6 +29,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     public function findById(int $id): ?AdmissionCondition
     {
         $model = AdmissionConditionModel::find($id);
+
         return $model ? $this->mapToEntity($model) : null;
     }
 
@@ -36,7 +37,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     {
         return AdmissionConditionModel::where('level_id', $levelId)
             ->get()
-            ->map(fn($m) => $this->mapToEntity($m))
+            ->map(fn ($m) => $this->mapToEntity($m))
             ->all();
     }
 
@@ -44,7 +45,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     {
         return AdmissionConditionModel::where('faculty_id', $facultyId)
             ->get()
-            ->map(fn($m) => $this->mapToEntity($m))
+            ->map(fn ($m) => $this->mapToEntity($m))
             ->all();
     }
 
@@ -56,15 +57,9 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
     public function findByLevelAndFaculty(int $facultyId, int $levelId): Collection
     {
         $q = AdmissionConditionModel::query()
-            ->where('level_id', $levelId)
-            ->when(
-                is_null($facultyId),
-                fn($q) => $q->whereNull('faculty_id'),
-                fn($q) => $q->where(function ($q2) use ($facultyId) {
-                    $q2->where('faculty_id', $facultyId)
-                        ->orWhereNull('faculty_id');
-                })
-            )
+            ->where(fn ($query) => $query
+                ->where(fn ($level) => $level->where('level_id', $levelId)->where(fn ($owner) => $owner->where('faculty_id', $facultyId)->orWhereNull('faculty_id')))
+                ->orWhere(fn ($faculty) => $faculty->whereNull('level_id')->where('faculty_id', $facultyId)))
             ->orderByRaw("CASE section
                 WHEN 'personal_info' THEN 1
                 WHEN 'academic_info' THEN 2
@@ -72,7 +67,7 @@ class EloquentAdmissionConditionRepository implements AdmissionConditionReposito
             END")
             ->orderBy('id');
 
-        return $q->get()->map(fn($m) => $this->mapToEntity($m));
+        return $q->get()->map(fn ($m) => $this->mapToEntity($m));
     }
 
     private function mapToEntity(AdmissionConditionModel $m): AdmissionCondition

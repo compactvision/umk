@@ -1,0 +1,56 @@
+{
+    "php": "8.4.17",
+    "iterations_per_route": 30,
+    "engine": "SQLite in-memory",
+    "mode": "Laravel HTTP kernel, sequential, no network",
+    "routes": {
+        "overview": {
+            "queries_min": 144,
+            "queries_max": 144,
+            "p50_ms": 59.34,
+            "p95_ms": 83.39,
+            "p99_ms": 85.74,
+            "html_bytes": 149621
+        },
+        "courses": {
+            "queries_min": 111,
+            "queries_max": 111,
+            "p50_ms": 37.29,
+            "p95_ms": 56.28,
+            "p99_ms": 58.37,
+            "html_bytes": 133775
+        },
+        "schedule": {
+            "queries_min": 112,
+            "queries_max": 112,
+            "p50_ms": 36.56,
+            "p95_ms": 38.89,
+            "p99_ms": 39.97,
+            "html_bytes": 133790
+        },
+        "profile": {
+            "queries_min": 104,
+            "queries_max": 104,
+            "p50_ms": 34.7,
+            "p95_ms": 39.04,
+            "p99_ms": 41.54,
+            "html_bytes": 135251
+        },
+        "documents": {
+            "queries_min": 124,
+            "queries_max": 124,
+            "p50_ms": 39.63,
+            "p95_ms": 51.49,
+            "p99_ms": 53.29,
+            "html_bytes": 135917
+        },
+        "results": {
+            "queries_min": 121,
+            "queries_max": 121,
+            "p50_ms": 38.98,
+            "p95_ms": 42.92,
+            "p99_ms": 43.09,
+            "html_bytes": 134820
+        }
+    }
+}

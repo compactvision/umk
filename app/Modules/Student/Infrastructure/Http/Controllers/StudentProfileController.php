@@ -3,14 +3,18 @@
 namespace App\Modules\Student\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student\AcademicEnrollment;
+use App\Models\Student\StudentProfile;
+use App\Modules\Identity\Application\Services\RevokeCredentials;
 use App\Modules\Student\Application\Services\Audit;
 use App\Modules\Student\Infrastructure\Http\Requests\UpdateStudentProfileRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class StudentProfileController extends Controller
 {
@@ -31,15 +35,16 @@ class StudentProfileController extends Controller
                 $user = $request->user()->newQuery()->lockForUpdate()->findOrFail($request->user()->id);
                 $emailChanged = $user->email !== $data['email'];
                 $oldPhoto = $profile->photo_path;
-                $user->fill(\Illuminate\Support\Arr::only($data, ['first_name', 'last_name', 'post_name', 'gender', 'email']));
+                $user->fill(Arr::only($data, ['first_name', 'last_name', 'post_name', 'gender', 'email']));
                 if ($emailChanged) {
                     if (! Hash::check($data['email_current_password'] ?? '', $user->password)) {
-                        throw \Illuminate\Validation\ValidationException::withMessages(['email_current_password' => 'Le mot de passe actuel est incorrect.']);
+                        throw ValidationException::withMessages(['email_current_password' => 'Le mot de passe actuel est incorrect.']);
                     }
                     $user->email_verified_at = null;
+                    app(RevokeCredentials::class)->execute($user, $request->session()->getId());
                 }
                 $user->save();
-                $profile->personal_details = array_merge($profile->personal_details ?? [], \Illuminate\Support\Arr::only($data, config('student_profile.detail_fields')));
+                $profile->personal_details = array_merge($profile->personal_details ?? [], Arr::only($data, config('student_profile.detail_fields')));
                 if (($profile->personal_details['province'] ?? null) !== 'other') {
                     $profile->personal_details = array_merge($profile->personal_details, ['other_province' => null]);
                 }
@@ -51,7 +56,7 @@ class StudentProfileController extends Controller
                     $profile->photo_mime = $newPhoto ? $request->file('photo')->getMimeType() : null;
                 }
                 $profile->save();
-                Audit::record($user->id, 'student_profile_updated', $profile, 'Mise à jour personnelle.', ['fields' => array_keys(\Illuminate\Support\Arr::except($data, ['email_current_password', 'photo']))]);
+                Audit::record($user->id, 'student_profile_updated', $profile, 'Mise à jour personnelle.', ['fields' => array_keys(Arr::except($data, ['email_current_password', 'photo']))]);
                 DB::afterCommit(function () use ($oldPhoto, $profile, $emailChanged, $user) {
                     if ($oldPhoto && $oldPhoto !== $profile->photo_path) {
                         Storage::disk('local')->delete($oldPhoto);
@@ -73,8 +78,18 @@ class StudentProfileController extends Controller
 
     public function photo(Request $request)
     {
-        $entry = $this->portal->context($request);
-        $profile = $entry->profile;
+        return $this->profilePhoto($this->portal->context($request)->profile);
+    }
+
+    public function directoryPhoto(Request $request, AcademicEnrollment $academic)
+    {
+        abort_unless($request->user()->canAny(['manage academic access', 'manage academic finance', 'publish academic content']), 403);
+
+        return $this->profilePhoto($academic->profile);
+    }
+
+    private function profilePhoto(StudentProfile $profile)
+    {
         abort_unless($profile->photo_path && Storage::disk('local')->exists($profile->photo_path), 404);
 
         return Storage::disk('local')->response($profile->photo_path, null, ['Content-Type' => $profile->photo_mime, 'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff']);
@@ -87,11 +102,13 @@ class StudentProfileController extends Controller
         DB::transaction(function () use ($request, $data) {
             $user = $request->user()->newQuery()->lockForUpdate()->findOrFail($request->user()->id);
             if (! Hash::check($data['current_password'], $user->password)) {
-                throw \Illuminate\Validation\ValidationException::withMessages(['current_password' => 'Le mot de passe actuel est incorrect.'])->errorBag('studentPassword');
+                throw ValidationException::withMessages(['current_password' => 'Le mot de passe actuel est incorrect.'])->errorBag('studentPassword');
             }
-            $user->forceFill(['password' => Hash::make($data['password']), 'remember_token' => Str::random(60)])->save();
+            $user->forceFill(['password' => Hash::make($data['password'])]);
+            app(RevokeCredentials::class)->execute($user, $request->session()->getId());
             Audit::record($user->id, 'student_password_updated', $user, 'Changement depuis le profil étudiant.');
         });
+        $request->user()->refresh();
         $request->session()->regenerate();
 
         return back(303)->with('success', 'Votre mot de passe a été modifié.');

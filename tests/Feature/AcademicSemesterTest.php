@@ -11,6 +11,7 @@ use App\Models\Student\AcademicSemester;
 use App\Models\Student\AcademicSession;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -41,6 +42,10 @@ class AcademicSemesterTest extends TestCase
         $this->assertDatabaseHas('academic_semesters', ['number' => 1, 'start_date' => '2026-10-15 00:00:00', 'end_date' => '2027-03-31 00:00:00']);
         $second = AcademicSemester::where('number', 2)->firstOrFail();
         $this->assertSame('2027-09-20', $second->end_date->toDateString());
+
+        $this->get(route('dashboard.admin.academic-years.semesters.index', ['academic_year_id' => $year->id]))
+            ->assertInertia(fn (Assert $page) => $page->component('dashboard/academicYear/Semesters')
+                ->where('yearId', $year->id)->has('semesters', 2)->where('semesters.1.end_date', '2027-09-20'));
     }
 
     public function test_overlapping_reversed_and_out_of_year_periods_are_refused(): void

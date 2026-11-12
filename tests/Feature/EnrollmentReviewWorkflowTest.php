@@ -66,6 +66,21 @@ class EnrollmentReviewWorkflowTest extends TestCase
         Mail::assertSentCount(3);
     }
 
+    public function test_review_actions_return_to_the_dossier_after_an_inline_preview(): void
+    {
+        [$admin, , , , $doc, $url] = $this->fixture();
+        $preview = route('dashboard.admin.enrollments.documents.preview', $doc->uuid);
+        $review = $url.'/documents/'.$doc->uuid.'/review';
+
+        $this->actingAs($admin)->get($preview)->assertOk();
+        $this->post($url.'/start-analysis')->assertRedirect($url)->assertSessionHasNoErrors();
+        $this->get($preview)->assertOk();
+        $this->post($review, ['verdict' => 'invalid'])->assertRedirect($url)->assertSessionHasErrors('verdict');
+        $this->post($review, ['verdict' => 'accepted'])->assertRedirect($url)->assertSessionHasNoErrors();
+        $this->get($preview)->assertOk();
+        $this->post($url.'/validate')->assertRedirect($url)->assertSessionHasNoErrors();
+    }
+
     public function test_corrections_require_reason_and_student_can_replace_adverse_evidence(): void
     {
         [$admin, $student, $other, $entry, $doc, $url] = $this->fixture();
@@ -315,13 +330,14 @@ class EnrollmentReviewWorkflowTest extends TestCase
         $review = $url.'/documents/'.$doc->uuid.'/review';
         foreach (['accepted', 'rejected', 'correction_requested'] as $verdict) {
             $this->post($review, ['verdict' => $verdict, 'reason' => 'Remarque pour '.$verdict])->assertSessionHasNoErrors();
-            $this->assertTrue($student->notifications()->where('data->verdict', $verdict)->exists());
+            $this->assertTrue($student->notifications()->get()->contains(fn ($notice) => ($notice->data['verdict'] ?? null) === $verdict));
         }
         $this->post($review, ['verdict' => 'correction_requested', 'reason' => 'Remarque pour correction_requested']);
         $this->assertSame(3, $student->notifications()->count());
         $this->post($review, ['verdict' => 'pending']);
         $this->assertSame(3, $student->notifications()->count());
-        $notice = $student->notifications()->where('data->verdict', 'correction_requested')->firstOrFail();
+        $notice = $student->notifications()->get()->first(fn ($notice) => ($notice->data['verdict'] ?? null) === 'correction_requested')
+            ?? throw new \RuntimeException('Notification de correction absente.');;
         $this->actingAs($student)->get('/dashboard/enrollments')->assertInertia(fn ($page) => $page
             ->where('studentNotifications.unread_count', 3)->has('studentNotifications.items', 3)
             ->where('studentNotifications.items', fn ($items) => collect($items)->contains(fn ($item) => $item['comment'] === 'Remarque pour correction_requested'))

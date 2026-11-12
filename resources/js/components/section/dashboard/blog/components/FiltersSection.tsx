@@ -24,7 +24,6 @@ export default function FiltersSection({
     const debounced = useMemo(
         () =>
             debounce((params: URLSearchParams) => {
-                // @ts-ignore
                 window.location.href = route(indexRouteName) + (params.toString() ? `?${params.toString()}` : '');
             }, 500),
         [indexRouteName],
@@ -45,7 +44,6 @@ export default function FiltersSection({
         if (q) p.set('q', q);
         if (categoryId) p.set('category_id', String(categoryId));
         if (status) p.set('status', status);
-        // @ts-ignore
         window.location.href = route(indexRouteName) + (p.toString() ? `?${p.toString()}` : '');
     };
 

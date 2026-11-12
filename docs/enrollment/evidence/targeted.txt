@@ -1,0 +1,19 @@
+
+   PASS  Tests\Feature\AcademicEnrollmentManagementTest
+  ✓ leave resume and terminal states are audited and idempotent          1.22s  
+  ✓ scope applies to directory dossier writes and closure                0.22s  
+  ✓ group capacity and context are enforced without erasing history      0.09s  
+  ✓ closure requires resolved cases and explicit reopening               0.15s  
+  ✓ student sees only own annual contexts and cannot choose another pro… 0.11s  
+  ✓ transfer is atomic idempotent and keeps the financial and academic…  0.13s  
+  ✓ closed year refuses first activation without creating a student pro… 0.04s  
+
+   PASS  Tests\Feature\StudentManagementTest
+  ✓ directory searches postname and paginates without financial data     0.11s  
+  ✓ summary does not query heavy sections and finance is server protect… 0.12s  
+  ✓ requests and history are paginated and scoped to the student         0.16s  
+  ✓ account actions require both permissions and a reason and never ret… 0.09s  
+
+  Tests:    11 passed (237 assertions)
+  Duration: 2.68s
+

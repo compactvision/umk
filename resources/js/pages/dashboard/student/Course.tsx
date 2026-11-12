@@ -4,7 +4,7 @@ import DesktopCourseInfo from '@/components/student/DesktopCourseInfo';
 import StudentSchedule from '@/components/student/StudentSchedule';
 import type { Permission, PortalProps } from '@/components/student/types';
 import { dateLabel, localDate, time } from '@/lib/scheduleDates';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     ArrowLeft,
     ArrowUpRight,
@@ -29,6 +29,11 @@ type Resource = {
     id: number;
     title: string;
     body: string | null;
+    kind?: string;
+    section?: string | null;
+    session_date?: string | null;
+    work_title?: string | null;
+    preview_url?: string | null;
     url: string | null;
     download_url: string | null;
     work_url: string | null;
@@ -38,13 +43,17 @@ type Resource = {
 };
 type Props = {
     section: string;
+    registered?: boolean;
     academic: { id: number; level: string; faculty: string; year: string; group: string | null };
     course: {
         id: number;
         title: string;
         code: string | null;
         description: string | null;
-        credits: number;
+        credits: number | null;
+        coefficient?: number | null;
+        unit?: string;
+        is_optional?: boolean;
         semester: number | null;
         cmi_hours: number | null;
         td_hours: number | null;
@@ -55,6 +64,7 @@ type Props = {
         id: number;
         teacher: string | null;
         assistant: string | null;
+        instructors?: string[];
         leader: string | null;
         group: string | null;
         delivery_mode: string;
@@ -62,6 +72,8 @@ type Props = {
     counts: Record<string, number>;
     permissions: Record<string, Permission>;
     resources: Resource[];
+    resource_filters?: { q: string; session: number | null; session_date: string | null };
+    resource_pagination?: { links: { url: string | null; label: string; active: boolean }[] } | null;
     week: string;
     sessions: PortalProps['sessions'];
     attendance: { data: Attendance[]; links: { url: string | null; label: string; active: boolean }[] } | null;
@@ -178,12 +190,18 @@ export default function StudentCourse(props: Props) {
                                 <>
                                     <DesktopCourseInfo
                                         course={course}
+                                        registered={props.registered}
                                         academic={academic}
                                         organization={organization}
                                         period={props.period}
                                         stats={stats}
                                         attendanceHref={props.permissions.schedule_view?.allowed ? href('attendance') : null}
                                     />
+                                    {course.unit && (
+                                        <p>
+                                            UE {course.unit} · {course.is_optional ? 'EC optionnel' : 'EC obligatoire'}
+                                        </p>
+                                    )}
                                     <div className="course-mobile-info">
                                         <section className="course-team" aria-label="Équipe enseignante">
                                             {organization.length ? (
@@ -193,7 +211,8 @@ export default function StudentCourse(props: Props) {
                                                         <div>
                                                             <small>PROFESSEUR TITULAIRE{item.group ? ` · ${item.group}` : ''}</small>
                                                             <h2>{item.teacher || 'Titulaire à préciser'}</h2>
-                                                            <p>Assistant : {item.assistant || 'Non renseigné'}</p>
+                                                            <p>Assistants : {item.assistant || 'Non renseignés'}</p>
+                                                            {!!item.instructors?.length && <p>Intervenants : {item.instructors.join(', ')}</p>}
                                                         </div>
                                                     </article>
                                                 ))
@@ -261,7 +280,14 @@ export default function StudentCourse(props: Props) {
                                         </section>
                                         <section className="course-kpis" aria-label="Volume du cours">
                                             {[
-                                                { label: 'Crédits', value: course.credits, unit: 'crédits' },
+                                                {
+                                                    label: props.registered ? 'Crédits inscrits (non acquis)' : 'Crédits prévus',
+                                                    value: course.credits,
+                                                    unit: 'crédits',
+                                                },
+                                                ...(course.coefficient == null
+                                                    ? []
+                                                    : [{ label: 'Coefficient', value: course.coefficient, unit: '' }]),
                                                 { label: 'CMI', value: course.cmi_hours, unit: 'heures' },
                                                 { label: 'TD', value: course.td_hours, unit: 'heures' },
                                                 { label: 'TP', value: course.tp_hours, unit: 'heures' },
@@ -300,6 +326,7 @@ export default function StudentCourse(props: Props) {
                                     {section === 'attendance' && (
                                         <section className="course-content">
                                             <h2>Mes présences par séance</h2>
+                                            <Link href={route('dashboard.student.absences')}>Consulter et justifier mes absences</Link>
                                             <div className="course-attendance-stats">
                                                 {Object.entries(statuses).map(([key, label]) => (
                                                     <span key={key}>
@@ -333,43 +360,95 @@ export default function StudentCourse(props: Props) {
                                     )}
                                     {['files', 'online', 'videos', 'evaluations'].includes(section) && (
                                         <section className="course-content">
-                                            <h2>{sections.find((item) => item.id === section)?.label}</h2>
+                                            <h2>
+                                                {props.resource_filters?.session_date
+                                                    ? `Ressources de la séance du ${dateLabel(localDate(props.resource_filters.session_date))}`
+                                                    : sections.find((item) => item.id === section)?.label}
+                                            </h2>
+                                            {section !== 'evaluations' && (
+                                                <form
+                                                    className="schedule-filters"
+                                                    onSubmit={(event) => {
+                                                        event.preventDefault();
+                                                        const q = String(new FormData(event.currentTarget).get('q') ?? '').trim();
+                                                        router.get(`${base}/${section}`, {
+                                                            academic: academic.id,
+                                                            ...(q ? { q } : {}),
+                                                            ...(props.resource_filters?.session ? { session: props.resource_filters.session } : {}),
+                                                        });
+                                                    }}
+                                                >
+                                                    <label>
+                                                        Rechercher par titre{' '}
+                                                        <input type="search" name="q" maxLength={180} defaultValue={props.resource_filters?.q} />
+                                                    </label>
+                                                    <button type="submit">Rechercher</button>
+                                                </form>
+                                            )}
                                             {props.resources.length ? (
                                                 <div className="course-resource-list">
-                                                    {props.resources.map((item) => (
-                                                        <article key={item.id}>
-                                                            <h3>{item.title}</h3>
-                                                            {item.body && <p>{item.body}</p>}
-                                                            {item.closes_at && (
-                                                                <small>
-                                                                    Clôture : {dateLabel(localDate(item.closes_at))} à {time(item.closes_at)}
-                                                                </small>
-                                                            )}
-                                                            <div>
-                                                                {item.download_url && (
-                                                                    <a href={item.download_url}>
-                                                                        <Download size={16} /> Télécharger {item.filename || 'le fichier'}
-                                                                    </a>
+                                                    {props.resources.map((item, index, items) => (
+                                                        <div key={item.id}>
+                                                            {section !== 'evaluations' &&
+                                                                (index === 0 || item.section !== items[index - 1].section) && (
+                                                                    <h3>{item.section ?? 'Ressources générales'}</h3>
                                                                 )}
-                                                                {item.url && (
-                                                                    <a href={item.url} target="_blank" rel="noopener noreferrer">
-                                                                        {section === 'videos' ? 'Voir la vidéo' : 'Ouvrir le cours en ligne'}
-                                                                        <ArrowUpRight size={16} />
-                                                                    </a>
+                                                            <article>
+                                                                <h4>{item.title}</h4>
+                                                                {item.body && <p style={{ whiteSpace: 'pre-wrap' }}>{item.body}</p>}
+                                                                {item.session_date && <p>Séance du {dateLabel(localDate(item.session_date))}</p>}
+                                                                {item.work_title && <p>Support associé à {item.work_title}</p>}
+                                                                {item.preview_url && item.kind === 'video' && (
+                                                                    <video
+                                                                        aria-label={item.title}
+                                                                        controls
+                                                                        preload="none"
+                                                                        src={item.preview_url}
+                                                                        style={{ maxWidth: '100%' }}
+                                                                    />
                                                                 )}
-                                                                {item.work_url && (
-                                                                    <Link href={item.work_url}>
-                                                                        Consulter les consignes et déposer mon travail
-                                                                        <ArrowUpRight size={16} />
-                                                                    </Link>
+                                                                {item.preview_url && item.kind === 'audio' && (
+                                                                    <audio aria-label={item.title} controls preload="none" src={item.preview_url} />
                                                                 )}
-                                                            </div>
-                                                        </article>
+                                                                {item.closes_at && (
+                                                                    <small>
+                                                                        Clôture : {dateLabel(localDate(item.closes_at))} à {time(item.closes_at)}
+                                                                    </small>
+                                                                )}
+                                                                <div>
+                                                                    {item.preview_url && !['video', 'audio'].includes(item.kind ?? '') && (
+                                                                        <a href={item.preview_url} target="_blank" rel="noopener noreferrer">
+                                                                            Consulter le fichier
+                                                                        </a>
+                                                                    )}
+                                                                    {item.download_url && (
+                                                                        <a href={item.download_url}>
+                                                                            <Download size={16} /> Télécharger {item.filename || 'le fichier'}
+                                                                        </a>
+                                                                    )}
+                                                                    {item.url && (
+                                                                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                                                                            {item.kind === 'video'
+                                                                                ? 'Voir la vidéo externe'
+                                                                                : 'Ouvrir le lien externe'}
+                                                                            <ArrowUpRight size={16} />
+                                                                        </a>
+                                                                    )}
+                                                                    {item.work_url && (
+                                                                        <Link href={item.work_url}>
+                                                                            Consulter les consignes et déposer mon travail
+                                                                            <ArrowUpRight size={16} />
+                                                                        </Link>
+                                                                    )}
+                                                                </div>
+                                                            </article>
+                                                        </div>
                                                     ))}
                                                 </div>
                                             ) : (
                                                 <p>Aucun élément publié pour ce cours dans cette rubrique.</p>
                                             )}
+                                            <Pagination value={props.resource_pagination} />
                                         </section>
                                     )}
                                 </>

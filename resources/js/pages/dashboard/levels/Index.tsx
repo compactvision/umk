@@ -2,6 +2,8 @@ import PageHeading from '@/components/admin/PageHeading';
 import Pagination from '@/components/admin/Pagination';
 import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import { useCatalogView } from '@/hooks/use-catalog-view';
+import { usePanelFade } from '@/hooks/use-panel-fade';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowRight, BookOpen, Building2, Check, Layers3, Plus, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -26,17 +28,17 @@ const normalize = (value: string) =>
         .toLocaleLowerCase('fr')
         .trim();
 export default function LevelsIndex() {
+    const [view, setView] = useCatalogView({ search: '', selectedFaculties: [] as number[], filtersOpen: false });
+    const { search, selectedFaculties, filtersOpen } = view;
     const { faculties, levelCodes } = usePage().props as unknown as {
         faculties?: FacultyPage;
         levelCodes?: { data?: { id?: number | string; code: string }[] };
     };
     const allFaculties = useMemo(() => faculties?.data || [], [faculties]);
-    const [selectedFaculties, setSelectedFaculties] = useState<number[]>([]);
+
     const [isOpen, setIsOpen] = useState(false);
-    const [search, setSearch] = useState('');
-    const [filtersOpen, setFiltersOpen] = useState(false);
+
     const query = normalize(search);
-    const totalLevels = allFaculties.reduce((sum, faculty) => sum + (faculty.levels?.length || 0), 0);
     const visible = allFaculties
         .filter((faculty) => !selectedFaculties.length || selectedFaculties.includes(faculty.id))
         .map((faculty) => {
@@ -47,22 +49,25 @@ export default function LevelsIndex() {
             return { ...faculty, levels };
         })
         .filter((faculty) => !query || faculty.levels.length || normalize(`${faculty.name} ${faculty.code || ''}`).includes(query));
+    const resultsPanel = usePanelFade(visible.map((faculty) => `${faculty.id}:${faculty.levels.map((level) => level.id).join(',')}`).join('|'));
     const visibleCount = visible.reduce((sum, faculty) => sum + faculty.levels.length, 0);
     const filtered = Boolean(query || selectedFaculties.length);
     const reset = () => {
-        setSearch('');
-        setSelectedFaculties([]);
+        setView((current) => ({ ...current, search: '', selectedFaculties: [] }));
     };
     const toggle = (id: number) =>
-        setSelectedFaculties((current) => (current.includes(id) ? current.filter((value) => value !== id) : [...current, id]));
+        setView((current) => ({
+            ...current,
+            selectedFaculties: selectedFaculties.includes(id) ? selectedFaculties.filter((value) => value !== id) : [...selectedFaculties, id],
+        }));
 
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title="Niveaux et formations" />
-            <div className="levels-catalog">
+            <div className="levels-catalog levels-index">
                 <PageHeading
                     title="Niveaux et formations"
-                    description="Une vue claire de vos parcours, organisés par faculté."
+                    description="Retrouvez les niveaux de formation et ouvrez leur fiche pour les gérer."
                     action={
                         <button className="admin-primary" onClick={() => setIsOpen(true)}>
                             <Plus size={18} strokeWidth={1.8} />
@@ -70,34 +75,6 @@ export default function LevelsIndex() {
                         </button>
                     }
                 />
-                <div className="levels-overview" aria-label="Aperçu des formations de cette page">
-                    <div>
-                        <span className="levels-overview-icon">
-                            <Building2 size={21} strokeWidth={1.6} />
-                        </span>
-                        <p>
-                            <strong>{allFaculties.length}</strong>
-                            <span>Faculté{allFaculties.length > 1 ? 's' : ''} sur cette page</span>
-                        </p>
-                    </div>
-                    <div>
-                        <span className="levels-overview-icon">
-                            <Layers3 size={21} strokeWidth={1.6} />
-                        </span>
-                        <p>
-                            <strong>{totalLevels}</strong>
-                            <span>Niveau{totalLevels > 1 ? 'x' : ''} de formation</span>
-                        </p>
-                    </div>
-                    <div className="levels-overview-note">
-                        <BookOpen size={21} strokeWidth={1.6} />
-                        <p>
-                            Des parcours structurés.
-                            <br />
-                            <strong>Chaque niveau à sa place.</strong>
-                        </p>
-                    </div>
-                </div>
                 <section className="levels-filter-panel" aria-label="Rechercher et filtrer les niveaux">
                     <div className="levels-toolbar">
                         <label className="levels-search">
@@ -105,8 +82,8 @@ export default function LevelsIndex() {
                             <input
                                 type="search"
                                 value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Rechercher un niveau, un code ou une faculté…"
+                                onChange={(e) => setView((current) => ({ ...current, search: e.target.value }))}
+                                placeholder="Niveau, code ou faculté…"
                                 aria-label="Rechercher parmi les niveaux de cette page"
                             />
                         </label>
@@ -114,7 +91,7 @@ export default function LevelsIndex() {
                             className={`levels-filter-toggle ${filtersOpen || selectedFaculties.length ? 'is-active' : ''}`}
                             aria-expanded={filtersOpen}
                             aria-controls="levels-faculty-filters"
-                            onClick={() => setFiltersOpen(!filtersOpen)}
+                            onClick={() => setView((current) => ({ ...current, filtersOpen: !current.filtersOpen }))}
                         >
                             <SlidersHorizontal size={17} />
                             Facultés{selectedFaculties.length > 0 && <span>{selectedFaculties.length}</span>}
@@ -125,7 +102,7 @@ export default function LevelsIndex() {
                             <button
                                 className={!selectedFaculties.length ? 'is-selected' : ''}
                                 aria-pressed={!selectedFaculties.length}
-                                onClick={() => setSelectedFaculties([])}
+                                onClick={() => setView((current) => ({ ...current, selectedFaculties: [] }))}
                             >
                                 Toutes les facultés
                             </button>
@@ -156,13 +133,15 @@ export default function LevelsIndex() {
                         )}
                     </div>
                 </section>
-                <div className="levels-faculty-list">
-                    {visible.map((faculty, index) => (
+                <div className="levels-faculty-list" ref={resultsPanel}>
+                    {visible.map((faculty) => (
                         <section className="levels-faculty-section" key={faculty.id} aria-labelledby={`faculty-${faculty.id}`}>
                             <header className="levels-faculty-header">
-                                <div className="levels-faculty-number">{String(index + 1).padStart(2, '0')}</div>
+                                <span className="levels-faculty-icon">
+                                    <Building2 size={20} aria-hidden="true" />
+                                </span>
                                 <div className="levels-faculty-title">
-                                    <span>{faculty.code || 'OFFRE DE FORMATION'}</span>
+                                    {faculty.code && <span>{faculty.code}</span>}
                                     <h2 id={`faculty-${faculty.id}`}>{faculty.name}</h2>
                                 </div>
                                 <span className="levels-faculty-count">
@@ -173,15 +152,14 @@ export default function LevelsIndex() {
                             {faculty.levels.length ? (
                                 <div className="levels-cards">
                                     {faculty.levels.map((level) => (
-                                        <LevelCard key={level.id} level={level} />
+                                        <LevelCard key={level.id} level={level} compact />
                                     ))}
                                 </div>
                             ) : (
                                 <div className="levels-faculty-empty">
                                     <BookOpen size={24} strokeWidth={1.5} />
                                     <div>
-                                        <strong>Les parcours prennent forme.</strong>
-                                        <p>Aucun niveau n’est encore configuré pour cette faculté.</p>
+                                        <strong>Aucun niveau dans cette faculté</strong>
                                     </div>
                                     <button onClick={() => setIsOpen(true)}>
                                         <Plus size={16} />
@@ -194,7 +172,7 @@ export default function LevelsIndex() {
                     {!visible.length && (
                         <div className="levels-empty">
                             <Search size={32} strokeWidth={1.4} />
-                            <h2>{filtered ? 'Aucun parcours ne correspond.' : 'Votre offre de formation commence ici.'}</h2>
+                            <h2>{filtered ? 'Aucun niveau ne correspond' : 'Aucune faculté disponible'}</h2>
                             <p>
                                 {filtered
                                     ? 'Essayez un autre mot-clé ou élargissez votre sélection de facultés.'

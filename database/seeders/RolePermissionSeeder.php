@@ -37,6 +37,9 @@ class RolePermissionSeeder extends Seeder
 
             // Admin
             'manage academic access', 'manage academic finance', 'publish academic content',
+            'manage academic progression', 'approve academic progression', 'approve academic graduation',
+            'manage official documents', 'approve official documents', 'issue official documents', 'approve academic diplomas',
+            'manage academic results', 'deliberate academic results', 'publish official results',
             'manage users',
             'manage content',
             'configure settings',

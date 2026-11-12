@@ -1,6 +1,6 @@
 import AdminModal from '@/components/admin/AdminModal';
 import AssignmentForm from '@/components/teaching/AssignmentForm';
-import { professorName, type Assignment, type Professor, type Year } from '@/components/teaching/types';
+import { professorName, type Assignment, type Department, type Professor, type Year } from '@/components/teaching/types';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { BookOpen, Pencil, Plus } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -13,6 +13,7 @@ type Course = {
     credits: number;
     description: string | null;
     semester: number | null;
+    catalog_status: 'active' | 'inactive' | 'archived';
     cmi_hours?: number | null;
     td_hours?: number | null;
     tp_hours?: number | null;
@@ -20,12 +21,13 @@ type Course = {
 };
 
 export default function CoursesTab() {
-    const { courses, level, canManageCourses, flash, levelDetail, teachingAssignments, professors, academicYears } = usePage<{
+    const { courses, level, canManageCourses, flash, levelDetail, teachingAssignments, professors, academicYears, departmentOptions } = usePage<{
         levelDetail: { credit_required: number | null };
         courses: Course[];
         teachingAssignments: Assignment[];
         professors: Professor[];
         academicYears: Year[];
+        departmentOptions: Department[];
         level: { id: number; title: string };
         canManageCourses: boolean;
         flash?: { success?: string };
@@ -137,28 +139,37 @@ export default function CoursesTab() {
                                                                     <span>
                                                                         {item.academic_year.title} ·{' '}
                                                                         {item.professor ? professorName(item.professor) : 'Sans enseignant'} ·{' '}
-                                                                        {item.is_published ? 'Publié' : 'Non publié'}
+                                                                        {item.is_published ? 'Publié' : 'Non publié'} ·{' '}
+                                                                        {item.department?.name ?? 'Tronc commun'}
                                                                         {item.group?.intake?.name ? ` · ${item.group.intake.name}` : ''}
                                                                         {item.is_optional ? ' · Optionnel' : ''}
                                                                     </span>
-                                                                    {canManageCourses && (
-                                                                        <button
-                                                                            className="admin-secondary"
-                                                                            onClick={() => setAssigning({ course, assignment: item })}
-                                                                        >
-                                                                            Modifier l’affectation
-                                                                        </button>
-                                                                    )}
+                                                                    {canManageCourses &&
+                                                                        (item.curriculum_item_id || item.archived_at ? (
+                                                                            <Link
+                                                                                className="admin-secondary"
+                                                                                href={route('dashboard.admin.teaching.index', { offering: item.id })}
+                                                                            >
+                                                                                Voir l’offre
+                                                                            </Link>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="admin-secondary"
+                                                                                onClick={() => setAssigning({ course, assignment: item })}
+                                                                            >
+                                                                                Modifier l’affectation
+                                                                            </button>
+                                                                        ))}
                                                                 </div>
                                                             ))}
-                                                        {canManageCourses && (
+                                                        {canManageCourses && course.catalog_status === 'active' && (
                                                             <button className="admin-secondary self-start" onClick={() => setAssigning({ course })}>
                                                                 <Plus size={14} /> Affecter un enseignant
                                                             </button>
                                                         )}
                                                     </div>
                                                 </div>
-                                                {canManageCourses && (
+                                                {canManageCourses && course.catalog_status !== 'archived' && (
                                                     <button
                                                         className="admin-secondary ml-auto shrink-0"
                                                         aria-label={`Modifier ${course.title}`}
@@ -203,6 +214,7 @@ export default function CoursesTab() {
                 <AssignmentForm
                     courses={courses}
                     fixedCourse={assigning.course}
+                    departmentOptions={departmentOptions}
                     professors={
                         assigning.assignment?.professor && !assigning.assignment.professor.is_active
                             ? [...professors, assigning.assignment.professor]

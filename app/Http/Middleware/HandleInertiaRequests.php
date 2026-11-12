@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Modules\Site\Application\UseCases\GetSiteInfo;
+use App\Modules\Teaching\Application\Services\LearningAccess;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -47,6 +48,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'flash' => fn () => ['success' => $request->session()->get('success')],
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user() ? [
@@ -57,25 +59,29 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                     'roles' => $request->user()->getRoleNames(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+                    'hasAcademicFacultyScope' => $request->user()->hasRole('admin') && $request->user()->academicFaculties()->exists(),
                 ] : null,
             ],
             'site' => $this->getSiteInfo->execute(),
             'studentPortalActive' => fn () => $request->user()?->hasRole('student') && $request->user()->studentProfile()->exists(),
+            'teachingProfileActive' => fn () => $request->user()?->hasRole('professor')
+                && app(LearningAccess::class)->teacher($request->user()) !== null,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'adminNotifications' => function () use ($request) {
-                if (! $request->user()?->hasRole('admin')) {
+                if (! $request->user()?->hasRole('admin') || ! $request->user()->can('manage academic access')) {
                     return null;
                 }
-                $query = $request->user()->notifications()->where('type', \App\Notifications\EnrollmentDocumentReplacement::class);
+                $query = $request->user()->notifications()->whereIn('type', [\App\Notifications\EnrollmentDocumentReplacement::class, \App\Notifications\AcademicScheduleNotice::class]);
 
                 return [
                     'unread_count' => (clone $query)->whereNull('read_at')->count(),
                     'items' => $query->orderByRaw('read_at IS NOT NULL')->latest()->limit(15)->get()->map(fn ($notice) => [
-                        'id' => $notice->id, 'reference' => $notice->data['reference'], 'student_name' => $notice->data['student_name'],
-                        'filename' => $notice->data['filename'], 'version' => $notice->data['version'],
+                        'id' => $notice->id, 'reference' => $notice->data['reference'], 'student_name' => $notice->data['student_name'] ?? null,
+                        'filename' => $notice->data['filename'] ?? '', 'version' => $notice->data['version'] ?? null,
+                        'kind' => $notice->type === \App\Notifications\AcademicScheduleNotice::class ? 'schedule' : 'document', 'status' => $notice->data['status'] ?? null,
                         'created_at' => $notice->created_at->toISOString(), 'read_at' => $notice->read_at?->toISOString(),
                         'open_url' => route('dashboard.admin.notifications.open', $notice->id),
                     ]),
@@ -85,14 +91,24 @@ class HandleInertiaRequests extends Middleware
                 if (! $request->user()) {
                     return null;
                 }
-                $query = $request->user()->notifications()->whereIn('type', [\App\Notifications\EnrollmentDocumentReviewed::class, \App\Notifications\StudentAdmissionActivated::class]);
+                $query = $request->user()->notifications()->whereIn('type', [\App\Notifications\EnrollmentDocumentReviewed::class, \App\Notifications\StudentAdmissionActivated::class, \App\Notifications\AcademicEnrollmentChanged::class, \App\Notifications\FinancialOperationNotice::class, \App\Notifications\AcademicScheduleNotice::class, \App\Notifications\LearningContentNotice::class, \App\Notifications\AcademicAssessmentNotice::class, \App\Notifications\OfficialResultNotice::class, \App\Notifications\OfficialDocumentNotice::class]);
 
                 return [
                     'unread_count' => (clone $query)->whereNull('read_at')->count(),
                     'items' => $query->orderByRaw('read_at IS NOT NULL')->latest()->limit(15)->get()->map(fn ($notice) => [
-                        'id' => $notice->id, 'reference' => $notice->data['reference'], 'filename' => $notice->data['filename'] ?? '',
-                        'kind' => $notice->type === \App\Notifications\StudentAdmissionActivated::class ? 'admission' : 'document',
-                        'version' => $notice->data['version'] ?? null, 'verdict' => $notice->data['verdict'] ?? null, 'comment' => $notice->data['comment'] ?? null,
+                        'id' => $notice->id, 'reference' => $notice->data['reference'] ?? 'Inscription académique', 'filename' => $notice->data['filename'] ?? '',
+                        'kind' => match ($notice->type) {
+                            \App\Notifications\LearningContentNotice::class => 'learning',
+                            \App\Notifications\AcademicAssessmentNotice::class => 'assessment',
+                            \App\Notifications\OfficialResultNotice::class => 'results',
+                            \App\Notifications\OfficialDocumentNotice::class => 'official_document',
+                            \App\Notifications\AcademicScheduleNotice::class => 'schedule',
+                            \App\Notifications\FinancialOperationNotice::class => 'finance',
+                            \App\Notifications\AcademicEnrollmentChanged::class => 'enrollment',
+                            \App\Notifications\StudentAdmissionActivated::class => 'admission',
+                            default => 'document',
+                        },
+                        'status' => $notice->data['status'] ?? null, 'version' => $notice->data['version'] ?? null, 'verdict' => $notice->data['verdict'] ?? null, 'comment' => $notice->data['comment'] ?? null,
                         'created_at' => $notice->created_at->toISOString(), 'read_at' => $notice->read_at?->toISOString(),
                         'open_url' => route('dashboard.notifications.open', $notice->id),
                     ]),

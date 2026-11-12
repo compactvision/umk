@@ -37,7 +37,7 @@ interface AlertMethods {
     info: (message: string, title?: string) => Promise<SweetAlertResult>;
   };
   confirm: (message: string, title?: string) => Promise<SweetAlertResult>;
-  deleteConfirm: (message?: string, title?: string) => Promise<Boolean>;
+  deleteConfirm: (message?: string, title?: string) => Promise<boolean>;
   loading: (message?: string) => void;
   close: () => void;
 }

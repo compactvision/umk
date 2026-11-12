@@ -14,7 +14,23 @@ class Professor extends Model
         'photo', 'faculty_id', 'level_id', 'speciality', 'biography', 'hire_date', 'is_active'
     ];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $hidden = ['invitation_hash', 'photo'];
+
+    protected $casts = ['is_active' => 'boolean', 'invitation_expires_at' => 'datetime'];
+
+    public function portraitDisk(): ?string
+    {
+        if (preg_match('~^professor-portraits/'.preg_quote((string) $this->id, '~').'/[a-z0-9]+\.(jpe?g|png|webp)$~i', $this->photo ?? '')) {
+            return 'local';
+        }
+
+        return preg_match('~^professors/[a-z0-9_-]+\.(jpe?g|png|webp)$~i', $this->photo ?? '') ? 'public' : null;
+    }
+
+    public function portraitUrl(): ?string
+    {
+        return $this->portraitDisk() ? route('dashboard.professor-photo', ['professor' => $this->id, 'v' => substr(sha1($this->photo), 0, 12)]) : null;
+    }
 
     public function offerings()
     {

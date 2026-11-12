@@ -3,7 +3,6 @@ import App from "@/components/layouts/Home/App";
 import { FileCheck, Monitor, UserCheck, Shield, Eye, AlertTriangle, UserX, RefreshCw, Scale, Mail } from 'lucide-react';
 
 export default function TermsOfUse() {
-    const lastUpdatedDate = "24 mai 2024";
 
     return (
         <App>

@@ -10,7 +10,8 @@ type Faculty = {
         id: number | string;
         title?: string;
         image?: string;
-        detail?: { student_number?: number; duration_years?: number };
+        student_number?: number; duration_years?: number;
+        detail?: { student_number?: number; duration_years?: number; illustration_image_url?: string };
     }>;
 };
 

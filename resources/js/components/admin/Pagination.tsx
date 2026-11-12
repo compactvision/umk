@@ -1,6 +1,14 @@
 import { Link } from '@inertiajs/react';
 type PageLink = { url: string | null; label: string; active: boolean };
-export default function Pagination({ value }: { value: unknown }) {
+export default function Pagination({
+    value,
+    preserveScroll = true,
+    preserveState = false,
+}: {
+    value: unknown;
+    preserveScroll?: boolean;
+    preserveState?: boolean;
+}) {
     const links = value && typeof value === 'object' && 'links' in value && Array.isArray(value.links) ? (value.links as PageLink[]) : [];
     if (links.length <= 3) return null;
     return (
@@ -12,7 +20,13 @@ export default function Pagination({ value }: { value: unknown }) {
                     .replace('Next', 'Suivant')
                     .trim();
                 return link.url ? (
-                    <Link href={link.url} key={index} aria-current={link.active ? 'page' : undefined}>
+                    <Link
+                        href={link.url}
+                        key={index}
+                        aria-current={link.active ? 'page' : undefined}
+                        preserveScroll={preserveScroll}
+                        preserveState={preserveState}
+                    >
                         {label}
                     </Link>
                 ) : (

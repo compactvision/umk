@@ -109,6 +109,7 @@ export function useEnrollmentForm(initial: Partial<EnrollmentFormData> & { uuid?
                 form_snapshot: {
                     faculty_id: formData.faculty_id,
                     level_id: formData.level_id,
+                    academic_program_id: formData.academic_program_id,
                     year_id: formData.year_id,
                     name: formData.name.trim(),
                     email: formData.email.trim(),

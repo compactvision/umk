@@ -1,0 +1,17 @@
+
+   PASS  Tests\Feature\AssessmentWorkflowTest
+  ✓ draft validates time rubric and authorization then freezes publishe… 1.19s  
+  ✓ private attempts are idempotent versioned late and bounded           0.19s  
+  ✓ pedagogical validation releases a private revision and reopening ap… 0.39s  
+  ✓ group membership is fixed and only the leader submits for individua… 0.14s  
+  ✓ in person exam uses the scheduled session and hands off absence wit… 0.13s  
+  ✓ legacy audit versions remain accessible and inventory keeps origina… 0.07s  
+  ✓ failed storage cannot create a copy or receipt and cancelled work i… 0.10s  
+  ✓ faculty scope protects the legacy download and assistants cannot re… 0.09s  
+
+   PASS  Tests\Feature\StudentAcademicJourneyTest
+  ✓ private work is stored and staff can access only after authorizatio… 0.39s  
+
+  Tests:    9 passed (275 assertions)
+  Duration: 2.93s
+

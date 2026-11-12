@@ -211,6 +211,10 @@ export function CourseCard({
         credits: number;
         semester: string | null;
         catalog_only?: boolean;
+        registered?: boolean;
+        is_optional?: boolean;
+        archived?: boolean;
+        unit?: string | null;
     };
 }) {
     return (
@@ -219,8 +223,15 @@ export function CourseCard({
             <span>{course.code || (course.catalog_only ? 'PROGRAMME DU NIVEAU' : 'ENSEIGNEMENT PUBLIÉ')}</span>
             <h3>{course.detail_url ? <Link href={course.detail_url}>{course.title}</Link> : course.title}</h3>
             <p>{course.catalog_only ? 'Au programme · enseignant à confirmer' : course.teacher || 'Enseignant non renseigné'}</p>
+            <p>
+                {[course.unit ? `UE ${course.unit}` : '', course.is_optional ? 'Optionnel' : '', course.archived ? 'Offre archivée' : '']
+                    .filter(Boolean)
+                    .join(' · ')}
+            </p>
             <footer>
-                <span>{course.credits} crédits</span>
+                <span>
+                    {course.credits ?? '—'} crédits {course.registered ? 'inscrits' : 'prévus'}
+                </span>
                 <span>{course.semester || 'Période non précisée'}</span>
             </footer>
         </article>

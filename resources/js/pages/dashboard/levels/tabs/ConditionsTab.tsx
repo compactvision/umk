@@ -1,10 +1,21 @@
-import { ClipboardCheck, FileCheck2, FolderOpen, GraduationCap, Pencil, Plus, Trash2, UserRound } from 'lucide-react';
+import type { AdmissionCondition } from '@/types/academic';
+import { Link } from '@inertiajs/react';
+import { CalendarDays, ClipboardCheck, FileCheck2, FolderOpen, GraduationCap, Pencil, Plus, Trash2, UserRound } from 'lucide-react';
+import type { useLevelModals } from '../hooks/useLevelModals';
 const sections = [
     { id: 'personal_info', title: 'Dossier personnel', text: 'Les pièces et informations concernant le candidat.', icon: UserRound },
     { id: 'academic_info', title: 'Parcours académique', text: 'Les prérequis et justificatifs liés aux études.', icon: GraduationCap },
     { id: 'other', title: 'Conditions complémentaires', text: 'Les autres exigences pour rejoindre ce programme.', icon: FolderOpen },
 ];
-export default function ConditionsTab({ levelConditions = [], modalsHook }) {
+export default function ConditionsTab({
+    levelConditions = [],
+    modalsHook,
+    campaignsHref,
+}: {
+    levelConditions?: AdmissionCondition[];
+    campaignsHref?: string;
+    modalsHook: ReturnType<typeof useLevelModals>;
+}) {
     const conditions = Array.isArray(levelConditions) ? levelConditions : [];
     const required = conditions.filter((condition) => condition.is_required).length;
     return (
@@ -13,12 +24,18 @@ export default function ConditionsTab({ levelConditions = [], modalsHook }) {
                 <div>
                     <span className="ld-eyebrow">REJOINDRE LE PARCOURS</span>
                     <h2 id="ld-admissions-title">Conditions d’admission.</h2>
-                    <p>Un dossier clair, des prérequis bien définis.</p>
+                    <p>Conditions générales et pièces exigées pour ce niveau.</p>
                 </div>
-                <button className="admin-primary" onClick={() => modalsHook.openConditionModal('add')}>
-                    <Plus size={17} />
-                    Ajouter une condition
-                </button>
+                <div className="flex flex-wrap gap-2">
+                    {campaignsHref && (
+                        <Link href={campaignsHref} className="admin-primary">
+                            <CalendarDays size={17} aria-hidden="true" /> Campagnes d’admission
+                        </Link>
+                    )}
+                    <button className="admin-primary" onClick={() => modalsHook.openConditionModal('add')}>
+                        <Plus size={17} /> Ajouter une condition
+                    </button>
+                </div>
             </div>
             <div className="ld-admission-summary">
                 <span className="ld-icon">

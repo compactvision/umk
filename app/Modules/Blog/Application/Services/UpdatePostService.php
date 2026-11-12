@@ -28,15 +28,15 @@ final class UpdatePostService
         }
 
         // 2) Champs simples (on applique uniquement si non null)
-        if ($dto->categoryId !== null)  $post->categoryId  = $dto->categoryId;
+        if ($dto->replaceCategory || $dto->categoryId !== null) $post->categoryId = $dto->categoryId;
         if ($dto->title !== null)       $post->title       = $dto->title;
-        if ($dto->excerpt !== null)     $post->excerpt     = $dto->excerpt;
-        if ($dto->content !== null)     $post->content     = $dto->content;
-        if ($dto->readTime !== null)    $post->readTime    = $dto->readTime;
-        if ($dto->gradient !== null)    $post->gradient    = $dto->gradient;
+        if ($dto->excerpt !== null || in_array('excerpt', $dto->clearFields, true)) $post->excerpt = $dto->excerpt;
+        if ($dto->content !== null || in_array('content', $dto->clearFields, true)) $post->content = $dto->content;
+        if ($dto->readTime !== null || in_array('read_time', $dto->clearFields, true)) $post->readTime = $dto->readTime;
+        if ($dto->gradient !== null || in_array('gradient', $dto->clearFields, true)) $post->gradient = $dto->gradient;
         if ($dto->featured !== null)    $post->featured    = (bool) $dto->featured;
         if ($dto->status !== null)      $post->status      = $dto->status;
-        if ($dto->publishedAt !== null) $post->publishedAt = $dto->publishedAt;
+        if ($dto->publishedAt !== null || in_array('published_at', $dto->clearFields, true)) $post->publishedAt = $dto->publishedAt;
         // if ($dto->seoTitle !== null)    $post->seoTitle    = $dto->seoTitle;
         // if ($dto->seoDescription !== null) $post->seoDescription = $dto->seoDescription;
 

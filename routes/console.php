@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Student\AcademicEnrollment;
+use App\Modules\Student\Application\Services\StudentFinanceService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -43,3 +47,19 @@ Artisan::command('student:migrate-matricules {--dry-run : Prévisualiser sans mo
         return 1;
     }
 })->purpose('Convertir et synchroniser les anciens matricules sans modifier les comptes ni les décisions.');
+
+Artisan::command('student:confirm-covered-enrollments', function () {
+    $finance = app(StudentFinanceService::class);
+    AcademicEnrollment::where('enrollment_status', 'pending_confirmation')
+        ->whereHas('obligations', fn ($query) => $query->where('kind', 'tuition')->where('installment', 1))
+        ->select('id')->eachById(function (AcademicEnrollment $candidate) use ($finance) {
+            DB::transaction(function () use ($candidate, $finance) {
+                $entry = AcademicEnrollment::lockForUpdate()->find($candidate->id);
+                if ($entry) {
+                    $finance->confirmPendingEnrollment($entry);
+                }
+            });
+        });
+})->purpose('Confirmer les inscriptions en attente couvertes, y compris lors de la prise d’effet d’une aide.');
+
+Schedule::command('student:confirm-covered-enrollments')->daily()->timezone('Africa/Kinshasa');

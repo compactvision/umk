@@ -34,7 +34,7 @@ export default function Index({ enrollments, filters, stats, success }: Props) {
     return (
         <Dashboard>
             <Head title="Mes inscriptions" />
-            <div className="student-enrollments">
+            <div className="student-enrollments" data-dashboard-arrival-grid>
                 <header className="student-page-heading">
                     <div>
                         <span>MON PARCOURS À L’USK</span>
@@ -114,7 +114,7 @@ export default function Index({ enrollments, filters, stats, success }: Props) {
                 </div>
                 {enrollments.data.length ? (
                     <>
-                        <div className="student-card-grid">
+                        <div className="student-card-grid" data-dashboard-panel="">
                             {enrollments.data.map((entry) => (
                                 <article key={entry.id} className="student-enrollment-card">
                                     <header>
@@ -181,7 +181,7 @@ export default function Index({ enrollments, filters, stats, success }: Props) {
                         <Pagination value={enrollments} />
                     </>
                 ) : (
-                    <section className="student-empty">
+                    <section className="student-empty" data-dashboard-panel="">
                         <FolderOpen size={36} strokeWidth={1.3} />
                         <h2>{stats.total ? 'Aucun dossier ne correspond.' : 'Votre parcours commence ici.'}</h2>
                         <p>

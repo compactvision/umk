@@ -147,14 +147,14 @@ const AboutPageSection = () => {
 
                         {/* Onglets de navigation */}
                         <div className="mb-8 flex space-x-1 rounded-xl bg-gray-100 p-1">
-                            {[
+                            {([
                                 { id: 'mission', label: 'Mission & Valeurs' },
                                 { id: 'faculties', label: 'Facultés' },
                                 { id: 'cycles', label: 'Cycles & Formations' },
-                            ].map((tab) => (
+                            ] as const).map((tab) => (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setActiveTab(tab.id as any)}
+                                    onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 rounded-lg px-4 py-3 font-medium transition-all duration-300 ${
                                         activeTab === tab.id ? 'bg-white text-amber-600 shadow-md' : 'text-gray-600 hover:text-gray-900'
                                     }`}

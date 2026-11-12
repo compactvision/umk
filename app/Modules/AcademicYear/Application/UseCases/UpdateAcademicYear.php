@@ -2,6 +2,7 @@
 
 namespace App\Modules\AcademicYear\Application\UseCases;
 
+use App\Models\AcademicCalendarEvent;
 use App\Models\AcademicYear as YearModel;
 use App\Models\Student\AcademicSemester;
 use App\Models\Student\AcademicSession;
@@ -37,6 +38,9 @@ final class UpdateAcademicYear
             $sessions = AcademicSession::whereHas('offering', fn ($query) => $query->where('academic_year_id', $id))->where(fn ($query) => $query->where('starts_at', '<', \Carbon\CarbonImmutable::parse($start, 'Africa/Kinshasa')->utc())->orWhere('ends_at', '>', \Carbon\CarbonImmutable::parse($end, 'Africa/Kinshasa')->addDay()->utc()))->exists();
             if ($outside || $sessions) {
                 throw new DomainException('Les semestres et séances existants doivent rester compris dans les dates de l’année académique.');
+            }
+            if (AcademicCalendarEvent::where('academic_year_id', $id)->where(fn ($query) => $query->whereDate('start_date', '<', $start)->orWhereDate('end_date', '>', $end))->exists()) {
+                throw new DomainException('Les événements du calendrier doivent rester compris dans les dates de l’année académique.');
             }
             $year->update($title, $startDate, $endDate);
 

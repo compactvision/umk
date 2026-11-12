@@ -26,6 +26,8 @@ export type StudentEnrollment = {
     status: string;
     payment_status?: string;
     created_at?: string;
+    submitted_at?: string | null;
+    requested_program?: string | null;
     updated_at?: string;
     enrolled_at?: string | null;
     analysis_completed_at?: string | null;

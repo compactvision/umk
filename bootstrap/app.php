@@ -1,14 +1,21 @@
 <?php
 
+use App\Http\Middleware\EnsureApplicationKey;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ObserveHttp;
+use App\Http\Middleware\SeoResponse;
+use App\Http\Middleware\StartNavigationSession;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
-use Spatie\Permission\Middleware\RoleMiddleware;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
 use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->prepend(\App\Http\Middleware\EnsureApplicationKey::class);
+        $middleware->prepend([ObserveHttp::class, EnsureApplicationKey::class]);
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'usk_audience']);
         $middleware->alias([
             'role' => RoleMiddleware::class,
@@ -25,16 +32,20 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
 
-        $middleware->web(append: [
-            \App\Http\Middleware\SeoResponse::class,
+        $middleware->web(replace: [StartSession::class => StartNavigationSession::class], append: [
+            AuthenticateSession::class,
+            SeoResponse::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response) {
-            if ($response->getStatusCode() >= 400) $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+        $exceptions->respond(function (Response $response) {
+            if ($response->getStatusCode() >= 400) {
+                $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+            }
+
             return $response;
         });
     })->create();

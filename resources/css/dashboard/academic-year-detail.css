@@ -8,7 +8,7 @@
 .usk-admin-apps .ayd-topline > span {
     font-size: 8px;
     letter-spacing: 0.15em;
-    color: #a28c56;
+    color: var(--usk-night-gold, var(--usk-day-gold, #a28c56));
 }
 .usk-admin-apps .ayd-actions {
     display: flex;
@@ -21,15 +21,15 @@
     justify-content: center;
     gap: 8px;
     padding: 11px 14px;
-    border: 1px solid #d9e3cc;
-    background: #fffefa;
-    color: #718f5c;
+    border: 1px solid var(--usk-night-border, #d9e3cc);
+    background: var(--usk-night-surface, #fffefa);
+    color: var(--usk-night-mint, var(--usk-day-green, #718f5c));
     font-size: 11px !important;
 }
 .usk-admin-apps .ayd-close {
-    background: #f8f2e5;
-    color: #a28b50;
-    border-color: #e6dabb;
+    background: var(--usk-night-raised, #f8f2e5);
+    color: var(--usk-night-gold, var(--usk-day-gold, #a28b50));
+    border-color: var(--usk-night-border, #e6dabb);
 }
 .usk-admin-apps .ayd-actions button:disabled {
     opacity: 0.5;
@@ -40,8 +40,8 @@
     justify-content: space-between;
     align-items: center;
     gap: 35px;
-    background: #edf3e4;
-    border: 1px solid #dbe5cf;
+    background: var(--usk-night-raised, #edf3e4);
+    border: 1px solid var(--usk-night-border, #dbe5cf);
     border-radius: 12px;
     padding: 38px;
 }
@@ -56,14 +56,14 @@
     font-size: clamp(44px, 5vw, 65px);
     line-height: 1.1;
     font-weight: 400;
-    color: #3d6535;
+    color: var(--usk-night-mint, #3d6535);
     margin: 20px 0;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .ayd-hero p {
     font-size: 13px;
     line-height: 1.8;
-    color: #7d9769;
+    color: var(--usk-night-mint, var(--usk-day-green, #7d9769));
     margin: 0 0 23px;
 }
 .usk-admin-apps .ayd-calendar-seal {
@@ -74,9 +74,9 @@
     gap: 22px;
     width: 175px;
     height: 175px;
-    border: 1px solid #cfddbd;
+    border: 1px solid var(--usk-night-border, #cfddbd);
     border-radius: 50%;
-    color: #9ab383;
+    color: var(--usk-night-muted, var(--usk-day-green, #9ab383));
     flex-shrink: 0;
 }
 .usk-admin-apps .ayd-calendar-seal > span {
@@ -86,10 +86,10 @@
 .usk-admin-apps .ayd-calendar {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    border: 1px solid #dce5d1;
+    border: 1px solid var(--usk-night-border, #dce5d1);
     border-radius: 10px;
     margin: 25px 0 43px;
-    background: #fffefa;
+    background: var(--usk-night-surface, #fffefa);
 }
 .usk-admin-apps .ayd-calendar > div {
     display: flex;
@@ -99,15 +99,15 @@
     min-width: 0;
 }
 .usk-admin-apps .ayd-calendar > div + div {
-    border-left: 1px solid #e4ebda;
+    border-left: 1px solid var(--usk-night-border, #e4ebda);
 }
 .usk-admin-apps .ayd-icon {
     display: grid;
     place-items: center;
     width: 39px;
     height: 39px;
-    background: #f0f5e6;
-    color: #8fab76;
+    background: var(--usk-night-raised, #f0f5e6);
+    color: var(--usk-night-muted, #8fab76);
     border-radius: 8px;
     flex-shrink: 0;
 }
@@ -117,14 +117,14 @@
 .usk-admin-apps .ayd-calendar p > span {
     display: block;
     font-size: 10px;
-    color: #92a280;
+    color: var(--usk-night-mint, var(--usk-day-muted, #92a280));
     margin-bottom: 8px;
 }
 .usk-admin-apps .ayd-calendar strong {
     font-size: 13px;
     line-height: 1.7;
     font-weight: 500;
-    color: #73915e;
+    color: var(--usk-night-mint, var(--usk-day-green, #73915e));
 }
 .usk-admin-apps .ayd-section-heading {
     display: flex;
@@ -136,18 +136,18 @@
 .usk-admin-apps .ayd-section-heading > div > span {
     font-size: 8px;
     letter-spacing: 0.15em;
-    color: #ab965d;
+    color: var(--usk-night-gold, var(--usk-day-gold, #ab965d));
 }
 .usk-admin-apps main .academic-year-detail .ayd-section-heading h2 {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-weight: 400;
     font-size: 35px;
-    color: #6b8b53;
+    color: var(--usk-night-mint, #6b8b53);
     margin: 10px 0;
 }
 .usk-admin-apps .ayd-section-heading p {
     font-size: 11px;
-    color: #94a584;
+    color: var(--usk-night-muted, var(--usk-day-muted, #94a584));
     line-height: 1.8;
     margin: 0;
 }
@@ -156,7 +156,7 @@
     align-items: center;
     gap: 11px;
     font-size: 11px;
-    color: #88a271;
+    color: var(--usk-night-mint, var(--usk-day-green, #88a271));
     white-space: nowrap;
     text-decoration: none;
 }
@@ -171,24 +171,24 @@
     flex-direction: column;
     gap: 15px;
     padding: 23px;
-    background: #fffefa;
-    border: 1px solid #dfe7d4;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dfe7d4);
     border-radius: 9px;
-    color: #9ab382;
+    color: var(--usk-night-muted, #9ab382);
 }
 .usk-admin-apps .ayd-stats strong {
     font-size: 32px;
     line-height: 1.2;
     font-weight: 400;
-    color: #71945a;
+    color: var(--usk-night-mint, #71945a);
 }
 .usk-admin-apps .ayd-stats span {
     font-size: 10px;
-    color: #91a57e;
+    color: var(--usk-night-mint, var(--usk-day-green, #91a57e));
 }
 .usk-admin-apps .ayd-dossier-list {
-    background: #fffefa;
-    border: 1px solid #dfe7d4;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dfe7d4);
     border-radius: 11px;
     padding: 0 25px;
 }
@@ -198,28 +198,28 @@
     justify-content: space-between;
     gap: 15px;
     padding: 24px 0;
-    border-bottom: 1px solid #e5ecdb;
+    border-bottom: 1px solid var(--usk-night-border, #e5ecdb);
 }
 .usk-admin-apps main .academic-year-detail .ayd-list-heading h3 {
     font-size: 15px;
     font-weight: 500;
     margin: 0;
-    color: #64844d;
+    color: var(--usk-night-mint, var(--usk-day-green, #64844d));
 }
 .usk-admin-apps .ayd-list-heading > span {
     font-size: 10px;
-    color: #9aaf85;
+    color: var(--usk-night-muted, var(--usk-day-green, #9aaf85));
 }
 .usk-admin-apps .ayd-dossier {
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 21px 0;
-    color: #98af83;
+    color: var(--usk-night-muted, #98af83);
     text-decoration: none;
 }
 .usk-admin-apps .ayd-dossier + .ayd-dossier {
-    border-top: 1px solid #e9eedf;
+    border-top: 1px solid var(--usk-night-border, #e9eedf);
 }
 .usk-admin-apps .ayd-avatar {
     display: grid;
@@ -227,9 +227,9 @@
     width: 39px;
     height: 39px;
     border-radius: 50%;
-    background: #edf4e2;
-    border: 1px solid #dee8d0;
-    color: #99b17e;
+    background: var(--usk-night-raised, #edf4e2);
+    border: 1px solid var(--usk-night-border, #dee8d0);
+    color: var(--usk-night-muted, #99b17e);
     font-size: 13px;
     flex-shrink: 0;
 }
@@ -239,13 +239,13 @@
 }
 .usk-admin-apps .ayd-dossier strong {
     font-size: 12px;
-    color: #72925a;
+    color: var(--usk-night-mint, var(--usk-day-green, #72925a));
     font-weight: 500;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .ayd-dossier p {
     font-size: 10px;
-    color: #9eaf8d;
+    color: var(--usk-night-muted, var(--usk-day-muted, #9eaf8d));
     margin: 6px 0 0;
     overflow-wrap: anywhere;
 }
@@ -255,30 +255,30 @@
 .usk-admin-apps .ayd-enrollment-status {
     font-size: 9px;
     padding: 5px 8px;
-    border: 1px solid #e2e6d6;
+    border: 1px solid var(--usk-night-border, #e2e6d6);
     border-radius: 5px;
-    background: #f6f7ee;
-    color: #9eaa8a;
+    background: var(--usk-night-surface, #f6f7ee);
+    color: var(--usk-night-muted, #9eaa8a);
     flex-shrink: 0;
 }
 .usk-admin-apps .ayd-enrollment-status.is-validated {
-    background: #eef5e3;
-    border-color: #dbe8ca;
-    color: #88a66f;
+    background: var(--usk-night-raised, #eef5e3);
+    border-color: var(--usk-night-border, #dbe8ca);
+    color: var(--usk-night-mint, #88a66f);
 }
 .usk-admin-apps .ayd-enrollment-status:is(.is-submitted, .is-pending) {
-    background: #f8f3df;
-    border-color: #e9e0b9;
-    color: #b29b5e;
+    background: var(--usk-night-raised, #f8f3df);
+    border-color: var(--usk-night-border, #e9e0b9);
+    color: var(--usk-night-gold, var(--usk-day-gold, #b29b5e));
 }
 .usk-admin-apps .ayd-footnote {
     display: flex;
     align-items: flex-start;
     gap: 9px;
     margin-top: 30px;
-    border-top: 1px solid #dfe7d3;
+    border-top: 1px solid var(--usk-night-border, #dfe7d3);
     padding-top: 22px;
-    color: #a1af90;
+    color: var(--usk-night-muted, var(--usk-day-muted, #a1af90));
 }
 .usk-admin-apps .ayd-footnote svg {
     flex-shrink: 0;
@@ -330,7 +330,7 @@
     }
     .usk-admin-apps .ayd-calendar > div + div {
         border-left: 0;
-        border-top: 1px solid #e4ebda;
+        border-top: 1px solid var(--usk-night-border, #e4ebda);
     }
     .usk-admin-apps .ayd-dossier-list {
         padding: 0 18px;

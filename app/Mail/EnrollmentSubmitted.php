@@ -5,9 +5,12 @@ namespace App\Mail;
 use App\Models\Enrollment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 class EnrollmentSubmitted extends Mailable
 {
@@ -26,7 +29,7 @@ class EnrollmentSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new \Illuminate\Mail\Mailables\Address(config('mail.from.address'), 'Université Simon Kimbangu'),
+            from: new Address(config('mail.from.address'), 'Université Simon Kimbangu'),
             subject: 'USK — Votre candidature a bien été reçue',
         );
     }
@@ -50,7 +53,7 @@ class EnrollmentSubmitted extends Mailable
                     'Année académique' => $this->enrollment->academicYear?->title,
                     'Référence du dossier' => $this->enrollment->reference,
                     'Matricule' => $this->enrollment->matricule,
-                    'Date de réception' => $this->enrollment->updated_at?->timezone('Africa/Kinshasa')->format('d/m/Y à H:i').' (Kinshasa)',
+                    'Date de réception' => (isset($this->enrollment->meta['submitted_at']) ? Carbon::parse($this->enrollment->meta['submitted_at']) : $this->enrollment->updated_at)?->timezone('Africa/Kinshasa')->format('d/m/Y à H:i').' (Kinshasa)',
                 ], fn ($value) => $value !== null && $value !== ''),
                 'actionUrl' => url('/dashboard/enrollments/'.$this->enrollment->uuid),
                 'actionLabel' => 'Suivre ma candidature',
@@ -64,7 +67,7 @@ class EnrollmentSubmitted extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

@@ -8,21 +8,34 @@ use App\Modules\Blog\Application\Services\CreatePostService;
 use App\Modules\Blog\Application\DTO\CreatePostData;
 use App\Modules\Blog\Application\DTO\UpdatePostData;
 use App\Modules\Blog\Application\Services\UpdatePostService;
+use App\Modules\Blog\Domain\Repositories\PostRepository;
 use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
 use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\CategoryModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $q          = request('q');
-        $categoryId = request('category_id');
-        $status     = request('status');
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:255'],
+            'category_id' => ['nullable', 'integer', 'min:1'],
+            'status' => ['nullable', 'in:draft,published,archived'],
+        ]);
 
         $posts = PostModel::query()
+            ->with(['category:id,name', 'author:id,first_name,last_name'])
+            ->when(isset($filters['q']), fn ($query) => $query->where(fn ($match) => $match
+                ->where('title', 'like', '%'.$filters['q'].'%')
+                ->orWhere('excerpt', 'like', '%'.$filters['q'].'%')
+                ->orWhere('content', 'like', '%'.$filters['q'].'%')))
+            ->when($filters['category_id'] ?? null, fn ($query, $category) => $query->where('category_id', $category))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
             ->orderByDesc('id')
             ->paginate(9)
             ->through(fn($p) => [
@@ -41,10 +54,10 @@ class PostController extends Controller
                 'status'       => $p->status,
                 'published_at' => optional($p->published_at)?->toIso8601String(),
                 'category'     => $p->category?->only(['id', 'name']),
-                'author'       => $p->author?->only(['id', 'name']),
+                'author'       => $p->author ? ['id' => $p->author->id, 'name' => trim($p->author->first_name.' '.$p->author->last_name)] : null,
                 'created_at'   => $p->created_at?->toIso8601String(),
             ])
-            ->withQueryString();
+            ->appends($filters);
 
         $categories = CategoryModel::query()->orderBy('name')->get(['id', 'name']);
 
@@ -52,9 +65,16 @@ class PostController extends Controller
             'categories' => $categories,
             'posts'      => $posts,
             'videoUploadLimitMb' => \App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes() / 1024,
-            'filters'    => compact('q', 'categoryId', 'status'),
+            'filters' => $filters,
+            'openCreate' => $request->boolean('create'),
         ]);
     }
+
+    public function create()
+    {
+        return to_route('dashboard.admin.posts.index', ['create' => 1]);
+    }
+
     public function store(StorePostRequest $request, CreatePostService $service)
     {
         $authorId = $request->user()->id;
@@ -94,7 +114,7 @@ class PostController extends Controller
             ->with('success', 'Article créé avec succès');
     }
 
-    public function show(string $slug)
+    public function show(Request $request, string $slug)
     {
         $p = PostModel::where('slug', $slug)
             ->firstOrFail();
@@ -116,8 +136,9 @@ class PostController extends Controller
 
             'main_image_1' => $p->main_image_1 ? $this->mediaUrl($p->main_image_1) : null,
             'main_image_2' => $p->main_image_2 ? $this->mediaUrl($p->main_image_2) : null,
-            'gallery'      => collect($p->gallery ?? [])->map(function ($g) {
+            'gallery'      => collect($p->gallery ?? [])->values()->map(function ($g, $index) {
                 return [
+                    'id'      => $index + 1,
                     'path'    => isset($g['path']) ? $this->mediaUrl($g['path']) : null,
                     'alt'     => $g['alt'] ?? null,
                     'caption' => $g['caption'] ?? null,
@@ -128,12 +149,15 @@ class PostController extends Controller
             'likes'        => (int) $p->likes,
 
             'category'     => $p->category?->only(['id', 'name']),
-            'author'       => $p->author?->only(['id', 'name']),
+            'author'       => $p->author ? ['id' => $p->author->id, 'name' => trim($p->author->first_name.' '.$p->author->last_name)] : null,
             'created_at'   => $p->created_at?->toIso8601String(),
         ];
 
         return Inertia::render('dashboard/blog/Show', [
             'post' => $post,
+            'categories' => CategoryModel::query()->orderBy('name')->get(['id', 'name']),
+            'galleryRevision' => $this->galleryRevision($p),
+            'openEdit' => $request->boolean('edit'),
             'videoUploadLimitMb' => \App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes() / 1024,
             'can'  => [
                 'update' => true,
@@ -142,14 +166,19 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, int $id, UpdatePostService $service)
+    public function edit(PostModel $post)
+    {
+        return to_route('dashboard.admin.posts.show', ['slug' => $post->slug, 'edit' => 1]);
+    }
+
+    public function update(Request $request, PostModel $post, UpdatePostService $service)
     {
         $validated = $request->validate([
             'video_url' => ['nullable', 'url', 'max:2048', new \App\Modules\Blog\Infrastructure\Rules\VideoUrl],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm', 'max:'.\App\Modules\Blog\Infrastructure\Rules\VideoUploadLimit::kilobytes(), 'prohibits:video_url'],
             'remove_video' => ['sometimes', 'boolean'],
             'category_id'   => ['nullable', 'integer', 'exists:categories,id'],
-            'title'         => ['nullable', 'string', 'max:255'],
+            'title'         => ['sometimes', 'required', 'string', 'max:255'],
             'excerpt'       => ['nullable', 'string', 'max:300'],
             'content'       => ['nullable', 'string'],
             'read_time'     => ['nullable', 'string', 'max:50'],
@@ -163,14 +192,31 @@ class PostController extends Controller
             'remove_main_image_1' => ['sometimes', 'boolean'],
             'remove_main_image_2' => ['sometimes', 'boolean'],
 
-            'gallery.*'     => ['nullable', 'image', 'max:4096'],
+            'gallery' => ['nullable', 'array', 'max:20'],
+            'gallery.*'     => ['image', 'max:4096'],
             'replace_gallery' => ['sometimes', 'boolean'],
+            'gallery_revision' => ['required_with:removed_gallery_ids,gallery_existing_meta', 'string', 'size:64'],
+            'removed_gallery_ids' => ['sometimes', 'array'],
+            'removed_gallery_ids.*' => ['integer', 'min:1', 'distinct'],
+            'gallery_existing_meta' => ['sometimes', 'array'],
+            'gallery_existing_meta.*' => ['array:id,alt,caption'],
+            'gallery_existing_meta.*.id' => ['required', 'integer', 'min:1', 'distinct'],
+            'gallery_existing_meta.*.alt' => ['nullable', 'string', 'max:255'],
+            'gallery_existing_meta.*.caption' => ['nullable', 'string', 'max:500'],
 
             'seo_title'       => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:300'],
 
             'regenerate_slug' => ['sometimes', 'boolean'],
         ]);
+
+        return DB::transaction(fn () => $this->saveUpdate($request, PostModel::lockForUpdate()->findOrFail($post->id), $service, $validated));
+    }
+
+    private function saveUpdate(Request $request, PostModel $post, UpdatePostService $service, array $validated)
+    {
+        $galleryItems = $this->editGallery($post, $validated);
+        $replaceGallery = $galleryItems !== null || $request->boolean('replace_gallery');
 
         // 1) Uploads -> chemins finaux (ou null si non fourni)
         $disk = 'public';
@@ -190,9 +236,8 @@ class PostController extends Controller
         }
 
         // Galerie (on convertit en tableau d’items {path,alt,caption})
-        $galleryItems = null;
         if ($request->hasFile('gallery')) {
-            $galleryItems = [];
+            $galleryItems ??= [];
             foreach ($request->file('gallery') as $img) {
                 $galleryItems[] = [
                     'path' => $img->store('blog/gallery', $disk),
@@ -204,11 +249,13 @@ class PostController extends Controller
 
         $video = $request->file('video_file')?->store('posts/videos', 'public')
             ?? ($request->input('video_url') ?: ($request->boolean('remove_video') ? UpdatePostData::REMOVE : null));
+        $clearable = array_intersect_key($validated, array_flip(['excerpt', 'content', 'read_time', 'gradient', 'published_at']));
 
         $dto = new UpdatePostData(
-            postId: $id,
+            postId: $post->id,
             videoUrl: $video,
             categoryId: $validated['category_id'] ?? null,
+            replaceCategory: array_key_exists('category_id', $validated),
             title: $validated['title'] ?? null,
             excerpt: $validated['excerpt'] ?? null,
             content: $validated['content'] ?? null,
@@ -222,8 +269,9 @@ class PostController extends Controller
             publishedAt: !empty($validated['published_at']) ? new \DateTimeImmutable($validated['published_at']) : null,
             seoTitle: $validated['seo_title'] ?? null,
             seoDescription: $validated['seo_description'] ?? null,
-            replaceGallery: (bool)($validated['replace_gallery'] ?? false),
+            replaceGallery: $replaceGallery,
             regenerateSlug: (bool)($validated['regenerate_slug'] ?? false),
+            clearFields: array_keys(array_filter($clearable, fn ($value) => $value === null)),
         );
 
         $post = $service->handle($dto);
@@ -232,6 +280,44 @@ class PostController extends Controller
             ->route('dashboard.admin.posts.show', $post->slug)
             ->with('success', 'Article mis à jour avec succès.');
     }
+
+    public function destroy(PostModel $post, PostRepository $posts)
+    {
+        $posts->delete($post->id);
+
+        return to_route('dashboard.admin.posts.index')->with('success', 'Article supprimé avec succès.');
+    }
+
+    private function galleryRevision(PostModel $post): string
+    {
+        return hash('sha256', json_encode($post->gallery ?? [], JSON_THROW_ON_ERROR));
+    }
+
+    private function editGallery(PostModel $post, array $validated): ?array
+    {
+        $removed = array_map('intval', $validated['removed_gallery_ids'] ?? []);
+        $metadata = collect($validated['gallery_existing_meta'] ?? [])->keyBy('id');
+        if ($removed === [] && $metadata->isEmpty()) {
+            return null;
+        }
+
+        $existing = array_values($post->gallery ?? []);
+        if (! hash_equals($this->galleryRevision($post), $validated['gallery_revision'])
+            || collect($removed)->merge($metadata->keys())->contains(fn ($id) => ! isset($existing[$id - 1]['path']))) {
+            throw ValidationException::withMessages(['gallery_revision' => 'La galerie a changé. Rechargez l’article avant de modifier ses images.']);
+        }
+
+        $gallery = [];
+        foreach ($existing as $index => $image) {
+            $id = $index + 1;
+            if (! in_array($id, $removed, true)) {
+                $gallery[] = array_replace($image, Arr::only($metadata->get($id, []), ['alt', 'caption']));
+            }
+        }
+
+        return $gallery;
+    }
+
     private function mediaUrl(string $path): string
     {
         return preg_match('#^(https?://|/)#', $path) ? $path : Storage::url($path);

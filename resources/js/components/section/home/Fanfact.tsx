@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade, A11y, Keyboard } from "swiper/modules";
 import type { Swiper as SwiperClass } from "swiper";
@@ -110,7 +110,7 @@ const bgGradient: Record<NonNullable<Slide["accent"]>, string> = {
 };
 
 // ---------- Composant ----------
-export default function Fanfact(): JSX.Element {
+export default function Fanfact(): React.JSX.Element {
   const swiperRef = useRef<SwiperClass | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 

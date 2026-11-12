@@ -1,0 +1,1 @@
+Bascule atomique et retour au lien précédent vérifiés sur Linux avec deux releases fictives.

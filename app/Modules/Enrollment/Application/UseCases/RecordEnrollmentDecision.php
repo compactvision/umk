@@ -3,15 +3,24 @@
 namespace App\Modules\Enrollment\Application\UseCases;
 
 use App\Models\Enrollment;
+use App\Models\User;
 use App\Modules\Enrollment\Domain\Enums\EnrollmentStatus;
 use App\Modules\Enrollment\Domain\Exceptions\InvalidEnrollmentStateException;
+use App\Modules\Enrollment\Domain\Services\EnrollmentValidator;
+use App\Modules\Student\Application\Services\StudentAdmissionService;
 use Illuminate\Support\Facades\DB;
 
 final class RecordEnrollmentDecision
 {
     public function execute(int $id, int $actorId, EnrollmentStatus $decision, ?string $reason = null): Enrollment
     {
+        $actor = User::findOrFail($actorId);
+        abort_unless($actor->hasRole('admin') && $actor->can('manage academic access'), 403);
+
         return DB::transaction(function () use ($id, $actorId, $decision, $reason) {
+            if ($decision === EnrollmentStatus::VALIDATED) {
+                User::whereKey(Enrollment::findOrFail($id)->student_id)->lockForUpdate()->firstOrFail();
+            }
             $enrollment = Enrollment::lockForUpdate()->findOrFail($id);
             if (! in_array($decision, [EnrollmentStatus::VALIDATED, EnrollmentStatus::REJECTED], true)
                 || ! $enrollment->status->canTransitionTo($decision)) {
@@ -25,7 +34,8 @@ final class RecordEnrollmentDecision
                 throw new InvalidEnrollmentStateException('Toutes les pièces jointes doivent être acceptées avant de valider ce dossier.');
             }
             if ($decision === EnrollmentStatus::VALIDATED) {
-                app(\App\Modules\Student\Application\Services\StudentAdmissionService::class)->ensureComplete($enrollment);
+                app(EnrollmentValidator::class)->available($enrollment, checkCampaignWindow: false);
+                app(StudentAdmissionService::class)->ensureComplete($enrollment);
             }
             $previous = $enrollment->status->value;
             $enrollment->status = $decision;
@@ -47,7 +57,7 @@ final class RecordEnrollmentDecision
                 'occurred_at' => now(),
             ]);
             if ($decision === EnrollmentStatus::VALIDATED) {
-                app(\App\Modules\Student\Application\Services\StudentAdmissionService::class)->activate($enrollment, $actorId);
+                app(StudentAdmissionService::class)->activate($enrollment, $actorId);
             }
             app(NotifyEnrollmentReview::class)->afterCommit($id, $decision->value, $reason ? ['Motif de la décision' => $reason] : []);
 

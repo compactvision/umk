@@ -28,7 +28,12 @@ class SeoResponse
         }
         $seo = $request->attributes->get('seo');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        if (! $response->headers->has('Referrer-Policy')) {
+            $response->headers->set('Referrer-Policy', $public ? 'strict-origin-when-cross-origin' : 'no-referrer');
+        }
+        if (! $response->headers->has('X-Frame-Options')) {
+            $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        }
         if ($seo) {
             $response->headers->set('X-Robots-Tag', $response->getStatusCode() >= 400 ? 'noindex, nofollow' : $seo['robots']);
             $response->headers->set('Link', '<'.$seo['canonical'].'>; rel="canonical"', false);

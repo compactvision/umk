@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Student\AcademicEnrollment::class, \App\Policies\AcademicEnrollmentPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Student\StudentProfile::class, \App\Policies\StudentProfilePolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\AcademicStructure\AcademicProgram::class, \App\Policies\AcademicStructurePolicy::class);
         $this->app->bind(\Inertia\Ssr\Gateway::class, \App\Modules\Seo\Application\PublicSsrGateway::class);
         if (config('seo.built_assets')) \Illuminate\Support\Facades\Vite::useHotFile(storage_path('framework/seo-build-only.hot'));
         \Illuminate\Auth\Notifications\VerifyEmail::toMailUsing(function ($recipient, string $url) {

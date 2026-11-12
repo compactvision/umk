@@ -1,4 +1,5 @@
 import AdminModal from '@/components/admin/AdminModal';
+import Alert from '@/utils/sweetAlert';
 import { useForm } from '@inertiajs/react';
 import { BookOpen, Building2, Clock3, GraduationCap, Info } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -21,7 +22,13 @@ export default function CreateFacultyPopup({ isEdit, closeModal, faculty }: { is
         ) : null;
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const options = { preserveScroll: true, onSuccess: closeModal };
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => {
+                Alert.success(isEdit ? 'Faculté mise à jour avec succès.' : 'Faculté créée avec succès.');
+                closeModal();
+            },
+        };
         if (isEdit && faculty) put(route('dashboard.admin.faculties.update', faculty.id), options);
         else post(route('dashboard.admin.faculties.store'), options);
     };

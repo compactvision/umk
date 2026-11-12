@@ -18,7 +18,7 @@ type PageData = {
     draft?: Draft;
     faculties: Faculty[];
     years: { id: string | number; title: string }[];
-    levelsByFaculty: Record<string, { id: string | number; title: string }[]>;
+    levelsByFaculty: Record<string, { id: string | number; title: string; programs?: { id: number; name: string; code: string }[] }[]>;
 };
 const titles = ['Choisissez votre formation.', 'Faisons connaissance.', 'Parlez-nous de votre parcours.', 'Un dernier regard avant l’envoi.'];
 const descriptions = [
@@ -46,6 +46,7 @@ export default function EnrollmentPageSection() {
     const faculties = props.faculties.map((f) => ({ ...f, id: String(f.id) }));
     const years: Year[] = props.years.map((y) => ({ id: String(y.id), name: y.title }));
     const availableLevels: Level[] = (props.levelsByFaculty[formData.faculty_id] || []).map((level) => ({ id: String(level.id), name: level.title }));
+    const availablePrograms = (props.levelsByFaculty[formData.faculty_id] || []).find(level => String(level.id) === formData.level_id)?.programs ?? [];
     const { requirements, loading, error: requirementsError } = useRequirements(formData);
     const busy = working || uploadingKeys.length > 0 || loading;
     const formation = {
@@ -85,7 +86,7 @@ export default function EnrollmentPageSection() {
         if (requirementsError) return;
         if (step === 4) {
             for (let current = 1; current <= 4; current++) {
-                const nextErrors = validateStep(current, formData, requirements, noLevels, isConfirmed);
+                const nextErrors = validateStep(current, formData, requirements, noLevels, isConfirmed, availablePrograms.length);
                 if (Object.keys(nextErrors).length) {
                     setStep(current);
                     showErrors(nextErrors);
@@ -93,7 +94,7 @@ export default function EnrollmentPageSection() {
                 }
             }
         }
-        const nextErrors = validateStep(step, formData, requirements, noLevels, isConfirmed);
+        const nextErrors = validateStep(step, formData, requirements, noLevels, isConfirmed, availablePrograms.length);
         if (Object.keys(nextErrors).length) {
             showErrors(nextErrors);
             return;
@@ -108,7 +109,7 @@ export default function EnrollmentPageSection() {
         }
     };
     const saveAndExit = async () => {
-        const firstStepErrors = validateStep(1, formData, requirements, noLevels, isConfirmed);
+        const firstStepErrors = validateStep(1, formData, requirements, noLevels, isConfirmed, availablePrograms.length);
         if (Object.keys(firstStepErrors).length) {
             setStep(1);
             showErrors(firstStepErrors);
@@ -191,15 +192,21 @@ export default function EnrollmentPageSection() {
                             </div>
                         )}
                         {loading && (
-                            <p className="enrollment-info" role="status">
-                                <LoaderCircle size={18} className="animate-spin" /> Chargement des pièces demandées…
-                            </p>
+                            <div role="status" data-requirements-skeleton>
+                                <span className="sr-only">Chargement des pièces demandées…</span>
+                                <div className="usk-inline-skeleton" aria-hidden="true">
+                                    <span className="usk-skeleton-block" />
+                                    <span className="usk-skeleton-block" />
+                                    <span className="usk-skeleton-block" />
+                                </div>
+                            </div>
                         )}
                         {step === 1 && (
                             <Step1Faculty
                                 faculties={faculties}
                                 years={years}
                                 availableLevels={availableLevels}
+                                availablePrograms={availablePrograms}
                                 noLevelsForSelectedFaculty={noLevels}
                                 formData={formData}
                                 setFormData={(update) => {

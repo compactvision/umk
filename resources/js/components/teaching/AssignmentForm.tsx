@@ -1,13 +1,14 @@
 import AdminModal from '@/components/admin/AdminModal';
 import { Link, useForm } from '@inertiajs/react';
 import { useState, type FormEvent } from 'react';
-import { professorName, type Assignment, type Professor, type TeachingCourse, type Year } from './types';
+import { professorName, type Assignment, type Department, type Professor, type TeachingCourse, type Year } from './types';
 
 export default function AssignmentForm({
     courses,
     professors,
     years,
     fixedCourse,
+    departmentOptions,
     fixedProfessor,
     assignment,
     onClose,
@@ -16,6 +17,7 @@ export default function AssignmentForm({
     professors: Professor[];
     years: Year[];
     fixedCourse?: TeachingCourse;
+    departmentOptions?: Department[];
     fixedProfessor?: Professor;
     assignment?: Assignment;
     onClose: () => void;
@@ -25,6 +27,7 @@ export default function AssignmentForm({
     const form = useForm({
         course_id: String(assignment?.course_id ?? fixedCourse?.id ?? ''),
         academic_year_id: String(assignment?.academic_year_id ?? years[0]?.id ?? ''),
+        academic_department_id: String(assignment?.academic_department_id ?? ''),
         professor_id: String(assignment?.professor_id ?? fixedProfessor?.id ?? ''),
         is_published: assignment?.is_published ?? true,
         assistant_professor_id: String(assignment?.assistant_professor_id ?? ''),
@@ -38,6 +41,8 @@ export default function AssignmentForm({
         else form.post(route('dashboard.admin.professors.assignments.store'), options);
     };
     const selectedCourse = fixedCourse ?? courses.find((course) => String(course.id) === form.data.course_id);
+    const departments = departmentOptions ?? selectedCourse?.level?.department_options ?? [];
+    const currentDepartment = assignment?.department;
     const selectedProfessor = fixedProfessor ?? professors.find((professor) => String(professor.id) === form.data.professor_id);
     const inactive = selectedProfessor && !selectedProfessor.is_active;
     return (
@@ -77,7 +82,7 @@ export default function AssignmentForm({
                             value={levelId}
                             onChange={(e) => {
                                 setLevelId(e.target.value);
-                                form.setData('course_id', '');
+                                form.setData((data) => ({ ...data, course_id: '', academic_department_id: '' }));
                             }}
                         >
                             <option value="">Choisir un niveau</option>
@@ -96,7 +101,12 @@ export default function AssignmentForm({
                 ) : (
                     <label>
                         Cours *
-                        <select required disabled={!levelId} value={form.data.course_id} onChange={(e) => form.setData('course_id', e.target.value)}>
+                        <select
+                            required
+                            disabled={!levelId}
+                            value={form.data.course_id}
+                            onChange={(e) => form.setData((data) => ({ ...data, course_id: e.target.value, academic_department_id: '' }))}
+                        >
                             <option value="">Choisir un cours</option>
                             {courses
                                 .filter((course) => String(course.level?.id) === levelId)
@@ -126,6 +136,25 @@ export default function AssignmentForm({
                         ))}
                     </select>
                 </label>
+                {(departments.length > 0 || currentDepartment) && (
+                    <label>
+                        Public de l’enseignement
+                        <select
+                            value={form.data.academic_department_id}
+                            onChange={(event) => form.setData('academic_department_id', event.target.value)}
+                        >
+                            <option value="">Tronc commun</option>
+                            {departments.map((department) => (
+                                <option key={department.id} value={department.id}>
+                                    {department.name}
+                                </option>
+                            ))}
+                            {currentDepartment && !departments.some(({ id }) => id === currentDepartment.id) && (
+                                <option value={currentDepartment.id}>{currentDepartment.name} (inactif)</option>
+                            )}
+                        </select>
+                    </label>
+                )}
                 <label>
                     Assistant (facultatif)
                     <select value={form.data.assistant_professor_id} onChange={(event) => form.setData('assistant_professor_id', event.target.value)}>
@@ -162,7 +191,7 @@ export default function AssignmentForm({
                 <p className="teaching-help">
                     {assignment
                         ? 'Le groupe et le caractère optionnel de cet enseignement sont conservés.'
-                        : 'Cet enseignement sera commun aux étudiants du niveau pour l’année choisie.'}
+                        : 'Le tronc commun est partagé par les étudiants du niveau. Un enseignement de spécialité est réservé au département choisi.'}
                 </p>
                 {inactive && (
                     <p role="alert" className="text-sm text-red-700">

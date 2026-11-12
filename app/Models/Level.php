@@ -23,6 +23,11 @@ class Level extends Model
     /**
      * Détails du niveau (relation 1-1).
      */
+    public function departmentOptions()
+    {
+        return $this->belongsToMany(\App\Models\AcademicStructure\AcademicDepartment::class, 'academic_department_level');
+    }
+
     public function detail(): HasOne
     {
         return $this->hasOne(LevelDetail::class);
@@ -34,6 +39,16 @@ class Level extends Model
     public function admissionConditions(): HasMany
     {
         return $this->hasMany(AdmissionCondition::class);
+    }
+
+    public function scopeAdmissible(Builder $query): Builder
+    {
+        return $query->where('is_active', true)->whereHas('faculty', fn ($q) => $q->where('is_active', true))->where(fn ($q) => $q->whereDoesntHave('programs')->orWhereHas('programs', fn ($q) => $q->openForAdmission()));
+    }
+
+    public function programs()
+    {
+        return $this->belongsToMany(\App\Models\AcademicStructure\AcademicProgram::class, 'academic_program_levels');
     }
 
     public function faculty()

@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Alert from '@/utils/sweetAlert';
 
 const DashboardSignup = () => {
@@ -87,6 +87,7 @@ const DashboardSignup = () => {
                             <input
                                 type="text"
                                 name="last_name"
+                                aria-label="Nom"
                             autoComplete="family-name"
                                 value={data.last_name}
                                 onChange={handleInputChange}
@@ -112,6 +113,7 @@ const DashboardSignup = () => {
                             <input
                                 type="text"
                                 name="first_name"
+                                aria-label="Prénom"
                             autoComplete="given-name"
                                 value={data.first_name}
                                 onChange={handleInputChange}
@@ -138,6 +140,7 @@ const DashboardSignup = () => {
                         <input
                             type="text"
                             name="post_name"
+                            aria-label="Postnom"
                             autoComplete="additional-name"
                             value={data.post_name}
                             onChange={handleInputChange}
@@ -161,6 +164,7 @@ const DashboardSignup = () => {
                         </div>
                         <select
                             name="gender"
+                            aria-label="Genre"
                             value={data.gender}
                             onChange={handleSelectChange}
                             className={`w-full pl-11 pr-4 py-3 bg-transparent transition-all duration-300 outline-none text-gray-700 appearance-none
@@ -188,6 +192,7 @@ const DashboardSignup = () => {
                         <input
                             type="email"
                             name="email"
+                            aria-label="Adresse email"
                             autoComplete="email"
                             value={data.email}
                             onChange={handleInputChange}
@@ -215,6 +220,7 @@ const DashboardSignup = () => {
                             <input
                                 type="password"
                                 name="password"
+                                aria-label="Mot de passe"
                             autoComplete="new-password"
                                 value={data.password}
                                 onChange={handleInputChange}
@@ -240,6 +246,7 @@ const DashboardSignup = () => {
                             <input
                                 type="password"
                                 name="password_confirmation"
+                                aria-label="Confirmation du mot de passe"
                             autoComplete="new-password"
                                 value={data.password_confirmation}
                                 onChange={handleInputChange}

@@ -1,0 +1,15 @@
+
+   PASS  Tests\Feature\EnrollmentManagementFollowupTest
+  ✓ same status group conflict is rejected and no op replays are record… 1.20s  
+  ✓ decision resolves only its own request and preserves private reason  0.26s  
+  ✓ old and new schedule memberships are date bounded without restoring… 0.23s  
+  ✓ student page exposes the official renewal without creating a new id… 0.11s  
+  ✓ annual filters include promotions and private decisions are not sha… 0.14s  
+  ✓ same level reorientation versions context and preserves source ledg… 0.12s  
+  ✓ context migration preserves existing rows and failed binding keeps…  0.09s  
+  ✓ capacity changes preserve existing memberships and require the facu… 0.10s  
+  ✓ migration recognizes preexisting audited transfers without rewritin… 0.05s  
+
+  Tests:    9 passed (205 assertions)
+  Duration: 2.59s
+

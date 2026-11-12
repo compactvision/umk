@@ -3,7 +3,7 @@
 }
 @media (min-width: 1100px) {
     .usk-student-profile-shell {
-        background: #f0f3ee;
+        background: var(--usk-night-raised, #f0f3ee);
         overflow: clip;
     }
     .usk-student-profile-shell .student-profile-container {
@@ -16,8 +16,8 @@
     }
     .is-profile .portal-toolbar select {
         max-width: 460px;
-        background: #fff;
-        border-color: #dce4d8;
+        background: var(--usk-night-background, #fff);
+        border-color: var(--usk-night-border, #dce4d8);
         min-height: 42px;
     }
     .student-profile-desktop-intro {
@@ -29,7 +29,7 @@
         align-items: center;
         gap: 8px;
         margin-bottom: 20px;
-        color: #627660;
+        color: var(--usk-night-mint, var(--usk-day-green, #627660));
         font-size: 11px;
         text-decoration: none;
     }
@@ -40,10 +40,10 @@
         gap: 22px;
         overflow: hidden;
         padding: 30px 34px;
-        border: 1px solid #315741;
+        border: 1px solid var(--usk-night-field-border, #315741);
         border-radius: 12px;
-        background: radial-gradient(ellipse at 95% 10%, #c1aa6220, transparent 55%), linear-gradient(110deg, #1c503d, #073e32 65%, #062e26);
-        color: #fff;
+        background: radial-gradient(ellipse at 95% 10%, color-mix(in srgb, var(--usk-night-warm, #c1aa62) 13%, transparent), transparent 55%), linear-gradient(110deg, var(--usk-night-brand, #1c503d), var(--usk-night-brand-deep, #073e32) 65%, var(--usk-night-brand-deep, #062e26));
+        color: var(--usk-night-white, #fff);
         box-shadow: 0 8px 28px #173b2810;
     }
     .student-profile-heading-icon {
@@ -54,7 +54,7 @@
         border-radius: 14px;
         border: 1px solid #e4d2a337;
         background: #ffffff08;
-        color: #e6d29a;
+        color: var(--usk-night-gold, #e6d29a);
         flex-shrink: 0;
     }
     .student-profile-page-heading > div:nth-child(2) {
@@ -64,7 +64,7 @@
     .student-profile-page-heading > div > span {
         font-size: 8px;
         letter-spacing: 0.2em;
-        color: #d2c49b;
+        color: var(--usk-night-gold, #d2c49b);
         font-weight: 600;
     }
     .student-profile-page-heading p {
@@ -77,7 +77,7 @@
     .student-profile-page-heading small {
         font-size: 12px;
         line-height: 1.7;
-        color: #d0dfd3;
+        color: var(--usk-night-muted, #d0dfd3);
     }
     .student-profile-page-heading button {
         display: flex;
@@ -85,17 +85,17 @@
         gap: 10px;
         justify-content: center;
         flex-shrink: 0;
-        border: 1px solid #ffffff40;
+        border: 1px solid color-mix(in srgb, var(--usk-night-border, #ffffff) 25%, transparent);
         border-radius: 7px;
         background: #ffffff08;
-        color: #fff;
+        color: var(--usk-night-white, #fff);
         padding: 12px 16px;
         font-size: 11px;
         cursor: pointer;
     }
     .student-profile-page-heading button:hover {
         background: #ffffff15;
-        border-color: #dfc77d;
+        border-color: var(--usk-night-border, #dfc77d);
     }
     .is-profile .portal-content-layout {
         display: grid;
@@ -106,9 +106,9 @@
     .is-profile .portal-content-layout > .portal-profile-cover-card {
         grid-column: 1;
         grid-row: 1;
-        border: 1px solid #dfe6d9;
+        border: 1px solid var(--usk-night-border, #dfe6d9);
         border-radius: 13px;
-        background: white;
+        background: var(--usk-night-surface, white);
         margin: 0;
         min-width: 0;
         box-shadow: 0 5px 24px #183b2810;
@@ -133,31 +133,31 @@
         overflow-wrap: anywhere;
     }
     .is-profile .portal-profile-eyebrow {
-        color: #708366;
+        color: var(--usk-night-mint, var(--usk-day-green, #708366));
         font-size: 8px;
         letter-spacing: 0.13em;
     }
     .is-profile .portal-profile-faculty {
         font-size: 12px;
-        color: #748568;
+        color: var(--usk-night-mint, var(--usk-day-green, #748568));
         line-height: 1.8;
         margin-bottom: 22px;
     }
     .is-profile .portal-profile-contact {
         font-size: 12px;
         line-height: 1.9;
-        color: #536d4c;
+        color: var(--usk-night-mint, #536d4c);
     }
     .is-profile .portal-profile-identifier {
         margin: 22px 0;
         padding: 9px 15px;
-        background: #edf3e7;
-        color: #3a5e35;
-        border: 1px solid #dbe5d0;
+        background: var(--usk-night-raised, #edf3e7);
+        color: var(--usk-night-mint, #3a5e35);
+        border: 1px solid var(--usk-night-border, #dbe5d0);
     }
     .is-profile .portal-profile-identifier span {
         font-size: 9px;
-        color: #718666;
+        color: var(--usk-night-mint, var(--usk-day-green, #718666));
         opacity: 1;
     }
     .is-profile .portal-profile-identifier strong {
@@ -166,19 +166,19 @@
     .is-profile .portal-profile-course-total {
         align-self: stretch;
         padding-top: 22px;
-        border-top: 1px solid #e1e8d9;
+        border-top: 1px solid var(--usk-night-border, #e1e8d9);
     }
     .is-profile .portal-profile-course-total > strong {
         font-size: 35px;
-        color: #2d5737;
+        color: var(--usk-night-mint, #2d5737);
     }
     .is-profile .portal-profile-course-total > span {
         font-size: 12px;
-        color: #687e5b;
+        color: var(--usk-night-mint, var(--usk-day-green, #687e5b));
     }
     .is-profile .portal-profile-course-total small {
         font-size: 10px;
-        color: #5e7b4f;
+        color: var(--usk-night-mint, #5e7b4f);
     }
     .is-profile .profile-password-trigger {
         display: none;
@@ -198,33 +198,33 @@
     }
     .is-profile .profile-editor-intro {
         padding: 26px 28px 24px;
-        border: 1px solid #dfe6d9;
+        border: 1px solid var(--usk-night-border, #dfe6d9);
         border-bottom: 0;
         border-radius: 12px 12px 0 0;
-        background: linear-gradient(115deg, #f6f9f1, #fff);
+        background: linear-gradient(115deg, var(--usk-night-surface, #f6f9f1), var(--usk-night-surface, #fff));
         gap: 20px;
     }
     .is-profile .profile-editor-intro > div > span {
         font-size: 8px;
         letter-spacing: 0.16em;
-        color: #8b875e;
+        color: var(--usk-night-gold, #8b875e);
     }
     .usk-dashboard .student-portal.is-profile .profile-editor-intro h2 {
         font-size: 23px;
         font-weight: 500;
         line-height: 1.4;
         margin: 7px 0 9px;
-        color: #315438;
+        color: var(--usk-night-mint, #315438);
     }
     .is-profile .profile-editor-intro p {
-        color: #718367;
+        color: var(--usk-night-mint, #718367);
         font-size: 12px;
         line-height: 1.8;
     }
     .is-profile .profile-editor-intro > svg {
         width: 24px;
         height: 24px;
-        color: #90a47e;
+        color: var(--usk-night-mint, #90a47e);
     }
     .is-profile .profile-editor-layout {
         display: block;
@@ -239,10 +239,10 @@
         flex-wrap: wrap;
         gap: 6px;
         padding: 13px 16px;
-        border: 1px solid #dfe6d9;
+        border: 1px solid var(--usk-night-border, #dfe6d9);
         border-top: 0;
         border-radius: 0 0 12px 12px;
-        background: #fff;
+        background: var(--usk-night-surface, #fff);
         box-shadow: 0 4px 14px #163d2806;
         margin-bottom: 24px;
     }
@@ -252,7 +252,7 @@
         padding: 10px 12px;
         border: 1px solid transparent;
         border-radius: 6px;
-        color: #75896a;
+        color: var(--usk-night-mint, var(--usk-day-green, #75896a));
         font-size: 10px;
         line-height: 1.5;
         white-space: nowrap;
@@ -263,13 +263,13 @@
         height: 15px;
     }
     .is-profile .profile-section-nav a:hover {
-        color: #345c37;
-        background: #f5f8ef;
+        color: var(--usk-night-mint, #345c37);
+        background: var(--usk-night-surface, #f5f8ef);
     }
     .is-profile .profile-section-nav a[aria-current='location'] {
-        background: #eaf2e2;
-        border-color: #dce7d2;
-        color: #365e36;
+        background: var(--usk-night-raised, #eaf2e2);
+        border-color: var(--usk-night-border, #dce7d2);
+        color: var(--usk-night-mint, #365e36);
         font-weight: 500;
     }
     .is-profile .student-profile-form {
@@ -281,8 +281,8 @@
         min-width: 0;
         padding: 25px 28px 29px;
         margin: 0;
-        background: #fff;
-        border: 1px solid #dfe6d9;
+        background: var(--usk-night-surface, #fff);
+        border: 1px solid var(--usk-night-border, #dfe6d9);
         border-radius: 12px;
         box-shadow: 0 4px 18px #173b2805;
         scroll-margin-top: 180px;
@@ -291,7 +291,7 @@
         gap: 14px;
         padding-bottom: 20px;
         margin-bottom: 23px;
-        border-bottom: 1px solid #e8edde;
+        border-bottom: 1px solid var(--usk-night-border, #e8edde);
     }
     .is-profile .profile-form-section > header > span {
         display: grid;
@@ -300,8 +300,8 @@
         width: 34px;
         height: 34px;
         border-radius: 8px;
-        background: #f0f5e8;
-        color: #7e955f;
+        background: var(--usk-night-raised, #f0f5e8);
+        color: var(--usk-night-mint, var(--usk-day-green, #7e955f));
         font-size: 10px;
         font-weight: 500;
         padding: 0;
@@ -310,13 +310,13 @@
         font-size: 16px;
         line-height: 1.5;
         font-weight: 500;
-        color: #345a36;
+        color: var(--usk-night-mint, #345a36);
         margin: 0 0 5px;
     }
     .is-profile .profile-form-section > header p {
         font-size: 11px;
         line-height: 1.8;
-        color: #7c8f6b;
+        color: var(--usk-night-mint, var(--usk-day-green, #7c8f6b));
     }
     .is-profile .profile-fields {
         gap: 22px 24px;
@@ -327,19 +327,19 @@
     }
     .is-profile .profile-field label {
         font-size: 12px;
-        color: #56734a;
+        color: var(--usk-night-mint, #56734a);
         font-weight: 500;
     }
     .is-profile .profile-field label > span {
-        color: #a08647;
+        color: var(--usk-night-gold, #a08647);
     }
     .is-profile .profile-field :is(input, select, textarea) {
         min-height: 46px;
         padding: 12px 14px;
-        border-color: #dce5d3;
+        border-color: var(--usk-night-border, #dce5d3);
         border-radius: 7px;
-        background: #fdfefa;
-        color: #345732;
+        background: var(--usk-night-background, #fdfefa);
+        color: var(--usk-night-mint, #345732);
         font-size: 13px;
         transition:
             border-color 0.18s,
@@ -347,25 +347,25 @@
             background 0.18s;
     }
     .is-profile .profile-field :is(input, select, textarea):hover {
-        border-color: #bdcfae;
+        border-color: var(--usk-night-border, #bdcfae);
     }
     .is-profile .profile-field :is(input, select, textarea):focus {
-        border-color: #71915c;
-        background: white;
+        border-color: var(--usk-night-field-border, #71915c);
+        background: var(--usk-night-background, white);
         box-shadow: 0 0 0 3px #7e9c6020;
     }
     .is-profile .profile-field [aria-invalid='true'] {
-        border-color: #b8795d;
+        border-color: var(--usk-night-danger, #b8795d);
     }
     .is-profile .profile-field input[readonly] {
-        background: #f0f4e9;
-        color: #7d906c;
+        background: var(--usk-night-background, #f0f4e9);
+        color: var(--usk-night-mint, var(--usk-day-green, #7d906c));
     }
     .is-profile .profile-field > small,
     .is-profile .profile-field-help {
         font-size: 10px;
         line-height: 1.8;
-        color: #7d906e;
+        color: var(--usk-night-mint, var(--usk-day-green, #7d906e));
     }
     .is-profile .profile-photo-editor {
         padding: 12px 0 3px;
@@ -374,15 +374,15 @@
     .is-profile .profile-photo-preview {
         width: 108px;
         height: 108px;
-        border: 4px solid white;
-        outline: 1px solid #dde7d3;
+        border: 4px solid var(--usk-night-border, white);
+        outline: 1px solid var(--usk-night-gold, #dde7d3);
         box-shadow: 0 5px 20px #1c482211;
     }
     .is-profile .profile-upload-button {
         border-radius: 7px;
-        background: #f4f7ee;
-        border-color: #dce7d1;
-        color: #466c3b;
+        background: var(--usk-night-surface, #f4f7ee);
+        border-color: var(--usk-night-border, #dce7d1);
+        color: var(--usk-night-mint, #466c3b);
     }
     .is-profile .profile-save-bar {
         position: sticky;
@@ -390,40 +390,40 @@
         z-index: 15;
         margin-top: 2px;
         padding: 17px 21px;
-        border: 1px solid #d8e3cc;
+        border: 1px solid var(--usk-night-border, #d8e3cc);
         border-radius: 10px;
-        background: #fffffffa;
+        background: var(--usk-night-surface, #fffffffa);
         box-shadow: 0 8px 32px #173b2820;
         gap: 16px;
     }
     .is-profile .profile-save-bar p {
         font-size: 11px;
-        color: #6f855f;
+        color: var(--usk-night-mint, var(--usk-day-green, #6f855f));
         margin: 0;
         align-items: center;
     }
     .is-profile .profile-save-bar p > svg {
-        color: #8a9c74;
+        color: var(--usk-night-mint, #8a9c74);
         flex-shrink: 0;
     }
     .is-profile .profile-save-bar > button {
         padding: 13px 18px;
         border-radius: 7px;
         font-size: 12px;
-        background: #164c34;
-        border-color: #164c34;
+        background: var(--usk-night-brand-deep, #164c34);
+        border-color: var(--usk-night-field-border, #164c34);
         box-shadow: 0 3px 10px #164c3417;
         min-height: 44px;
     }
     .is-profile .profile-save-bar > button:hover {
-        background: #0b3b28;
+        background: var(--usk-night-brand-deep, #0b3b28);
     }
     .is-profile .profile-error-summary {
         margin: 0;
-        border: 1px solid #e8c6b4;
-        border-left: 3px solid #be805d;
+        border: 1px solid var(--usk-night-border, #e8c6b4);
+        border-left: 3px solid var(--usk-night-danger, #be805d);
         border-radius: 8px;
-        background: #fcf6ef;
+        background: var(--usk-night-surface, #fcf6ef);
     }
 }
 @media (min-width: 1100px) and (max-width: 1400px) {
@@ -485,7 +485,7 @@
     .student-profile-page-heading .student-profile-guide {
         border-color: transparent;
         background: transparent;
-        color: #d8d6b9;
+        color: var(--usk-night-muted, #d8d6b9);
         padding-inline: 10px;
     }
     .student-profile-page-heading .student-profile-guide:hover {

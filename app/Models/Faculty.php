@@ -34,6 +34,16 @@ class Faculty extends Model
         'duration_years' => 4
     ];
 
+    public function university()
+    {
+        return $this->belongsTo(\App\Models\AcademicStructure\University::class);
+    }
+
+    public function departments()
+    {
+        return $this->hasMany(\App\Models\AcademicStructure\AcademicDepartment::class);
+    }
+
     // Scopes
     public function scopeActive(Builder $query): Builder
     {

@@ -37,8 +37,7 @@ export default function LevelPopup({ onClose, faculties, level = null, levelCode
         setImagePreview(url);
         return () => URL.revokeObjectURL(url);
     }, [data.image, level?.image]);
-    const defaultCodes = ['L1', 'L2', 'L3', 'L4', 'M1', 'M2', 'D1'];
-    const codes = [...new Set([...(levelCodes.length ? levelCodes.map((item) => item.code) : defaultCodes), ...(level?.code ? [level.code] : [])])];
+    const codes = [...new Set([...levelCodes.map((item) => item.code), ...(level?.code ? [level.code] : [])])];
     const faculty = faculties?.data?.find((item) => String(item.id) === String(data.faculty_id));
     const formErrors = errors as Record<string, string | undefined>;
     const error = (field: string) =>
@@ -135,20 +134,10 @@ export default function LevelPopup({ onClose, faculties, level = null, levelCode
                                 <label className="lf-label" htmlFor="level-create-code">
                                     Code académique <span>*</span>
                                 </label>
-                                <select
-                                    id="level-create-code"
-                                    value={data.code}
-                                    onChange={(e) => setData('code', e.target.value)}
-                                    required
-                                    aria-invalid={!!errors.code}
-                                >
-                                    <option value="">Choisir un code</option>
-                                    {codes.map((code) => (
-                                        <option key={code} value={code}>
-                                            {code}
-                                        </option>
-                                    ))}
-                                </select>
+                                <input id="level-create-code" list="academic-level-codes" value={data.code}
+                                    onChange={(event) => setData('code', event.target.value)} required maxLength={10}
+                                    aria-invalid={!!errors.code} placeholder="Code défini par l’établissement" />
+                                <datalist id="academic-level-codes">{codes.map(code => <option key={code} value={code} />)}</datalist>
                                 {error('code')}
                             </div>
                             <div>

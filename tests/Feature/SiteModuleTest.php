@@ -2,14 +2,25 @@
 
 namespace Tests\Feature;
 
+use App\Models\Site;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class SiteModuleTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $admin = User::factory()->create();
+        $admin->assignRole(Role::findOrCreate('admin', 'web'));
+        $this->actingAs($admin);
+    }
 
     public function test_can_save_and_retrieve_site_info()
     {
@@ -92,15 +103,15 @@ class SiteModuleTest extends TestCase
         $response->assertStatus(200);
 
         // Verify files were stored
-        Storage::disk('public')->assertExists('site/' . $logo->hashName());
-        Storage::disk('public')->assertExists('site/' . $favicon->hashName());
+        Storage::disk('public')->assertExists('site/'.$logo->hashName());
+        Storage::disk('public')->assertExists('site/'.$favicon->hashName());
 
         // Verify paths are in database
         $this->assertDatabaseHas('sites', [
             'site_name' => 'Test Site',
         ]);
 
-        $site = \App\Models\Site::first();
+        $site = Site::first();
         $this->assertStringContainsString('site/', $site->logo_url);
         $this->assertStringContainsString('site/', $site->favicon_url);
     }

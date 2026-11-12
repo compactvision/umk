@@ -48,7 +48,7 @@ final class ReplaceReviewedDocument
                     'student_name' => \App\Mail\TransactionalEmail::recipientName($entry->student),
                     'document_uuid' => $document->uuid, 'filename' => $document->filename, 'version' => $document->version,
                 ]);
-                \App\Models\User::whereHas('roles', fn ($query) => $query->where('name', 'admin')->where('guard_name', 'web'))
+                \App\Models\User::role('admin')->permission('manage academic access')
                     ->each(fn ($admin) => $admin->notify($notice));
 
                 return ['id' => $entry->id, 'document' => $document->only(['uuid', 'filename', 'version'])];

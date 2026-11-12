@@ -5,6 +5,7 @@ type Props = {
     faculties: Faculty[];
     years: Year[];
     availableLevels: Level[];
+    availablePrograms?: { id: number; name: string; code: string }[];
     noLevelsForSelectedFaculty: boolean;
     formData: FormData;
     setFormData: Dispatch<SetStateAction<FormData>>;
@@ -15,6 +16,7 @@ export default function Step1Faculty({
     faculties,
     years,
     availableLevels,
+    availablePrograms = [],
     noLevelsForSelectedFaculty,
     formData,
     setFormData,
@@ -66,7 +68,7 @@ export default function Step1Faculty({
                         aria-invalid={!!errors[key]}
                         aria-describedby={`${key}-help${errors[key] ? ` ${key}-error` : ''}`}
                         onChange={(e) => {
-                            setFormData((prev) => ({ ...prev, [key]: e.target.value, ...(key === 'faculty_id' ? { level_id: '' } : {}) }));
+                            setFormData((prev) => ({ ...prev, [key]: e.target.value, ...(key === 'faculty_id' ? { level_id: '', academic_program_id: '' } : key === 'level_id' ? { academic_program_id: '' } : {}) }));
                             setErrors((prev) => ({ ...prev, [key]: '' }));
                         }}
                     >
@@ -87,6 +89,8 @@ export default function Step1Faculty({
                     )}
                 </div>
             ))}
+            {availablePrograms.length === 1 && <p className="enrollment-info">Programme officiel : {availablePrograms[0].name} ({availablePrograms[0].code}).</p>}
+            {availablePrograms.length > 1 && <div className="enrollment-field"><label htmlFor="academic_program_id">Programme officiel <span className="enrollment-required">*</span></label><select id="academic_program_id" required value={formData.academic_program_id ?? ''} aria-invalid={!!errors.academic_program_id} onChange={event => setFormData(previous => ({ ...previous, academic_program_id: event.target.value }))}><option value="">Choisissez le programme correspondant à votre candidature</option>{availablePrograms.map(program => <option key={program.id} value={program.id}>{program.code} · {program.name}</option>)}</select>{errors.academic_program_id && <p role="alert" className="enrollment-field-error">{errors.academic_program_id}</p>}</div>}
             {(noLevelsForSelectedFaculty || !years.length || !faculties.length) && (
                 <p className="enrollment-info">
                     <AlertCircle size={19} />

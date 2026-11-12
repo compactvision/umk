@@ -1,7 +1,4 @@
 <?php
 
-namespace App\Modules\AcademicYear\Domain\Exceptions;
-
-use DomainException;
-
-class AcademicYearNotFoundException extends DomainException {}
+// Compatibility include for the historical file name.
+require_once __DIR__.'/AcademicYearNotFoundException.php';

@@ -57,6 +57,55 @@ class AdminEnrollmentManagementTest extends TestCase
         );
     }
 
+    public function test_overview_shows_priorities_and_recent_decisions_from_the_workflow(): void
+    {
+        $admin = $this->user('admin@example.test', true);
+        $candidate = $this->user('student@example.test');
+        $newer = $this->dossier($candidate);
+        $older = $this->dossier($candidate);
+        $corrected = $this->dossier($candidate, 'pending');
+        $this->dossier($candidate, 'pending');
+        $this->dossier($candidate, 'draft');
+        $admitted = $this->dossier($candidate, 'validated');
+        $refused = $this->dossier($candidate, 'rejected');
+        $this->document($corrected)->update(['version' => 2, 'review_status' => 'pending']);
+
+        foreach ([[$newer, 'submitted', 1], [$older, 'submitted', 2], [$admitted, 'validated', 2], [$refused, 'rejected', 1]] as [$entry, $event, $days]) {
+            $entry->events()->create(['event' => $event, 'actor_id' => $admin->id, 'occurred_at' => now()->subDays($days)]);
+        }
+
+        $url = '/dashboard/admin/enrollments/overview';
+        $this->actingAs($candidate)->get($url)->assertForbidden();
+        $this->actingAs($admin)->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('dashboard/adminEnrollments/Overview')
+            ->where('counts', ['new' => 2, 'review' => 2, 'reexamination' => 1])
+            ->has('priorities', 3)
+            ->where('priorities.0.id', $corrected->id)
+            ->where('priorities.0.corrected_count', 1)
+            ->where('priorities.1.id', $older->id)
+            ->where('priorities.2.id', $newer->id)
+            ->missing('priorities.0.candidate.email')
+            ->has('decisions', 2)
+            ->where('decisions.0.id', $refused->id)
+            ->where('decisions.0.status', 'rejected')
+            ->where('decisions.1.id', $admitted->id)
+        );
+        $this->get('/dashboard/admin/enrollments?status=submitted')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('enrollments.data.0.id', $newer->id)
+            ->where('enrollments.data.1.id', $older->id)
+            ->where('enrollments.data.0.submitted_at', $newer->events()->firstOrFail()->occurred_at->toISOString())
+        );
+        $this->get('/dashboard/admin/enrollments?reexamination=1')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('enrollments.total', 1)
+            ->where('enrollments.data.0.id', $corrected->id)
+        );
+        $this->get('/dashboard/admin/enrollments?queue=decisions')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('enrollments.total', 2)
+            ->where('enrollments.data.0.status', 'rejected')
+            ->where('enrollments.data.1.status', 'validated')
+        );
+    }
+
     public function test_filters_apply_to_all_results_on_the_server(): void
     {
         $admin = $this->user('admin@example.test', true);

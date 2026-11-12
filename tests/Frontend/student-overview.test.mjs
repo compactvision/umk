@@ -9,22 +9,30 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const require = createRequire(import.meta.url);
 const source = await readFile(new URL('../../resources/js/components/student/StudentOverview.tsx', import.meta.url), 'utf8');
 const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 } });
+const dateSource = await readFile(new URL('../../resources/js/lib/scheduleDates.ts', import.meta.url), 'utf8');
+const dateModule = { exports: {} };
+vm.runInNewContext(ts.transpileModule(dateSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { module: dateModule, exports: dateModule.exports });
+const examSource = await readFile(new URL('../../resources/js/components/student/ScheduleExamPeriods.tsx', import.meta.url), 'utf8');
+const examModule = { exports: {} };
+vm.runInNewContext(ts.transpileModule(examSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 } }).outputText, { module: examModule, exports: examModule.exports, require: name => name === '@/lib/scheduleDates' ? dateModule.exports : require(name) });
 const module = { exports: {} };
 vm.runInNewContext(outputText, { module, exports: module.exports, require(name) {
     if (name === '@inertiajs/react') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
     if (name === 'lucide-react') return new Proxy({}, { get: () => () => null });
     if (name === './PortalCards') return { EmptyState: ({ title, children }) => React.createElement('div', {}, title, children) };
+    if (name === '@/lib/scheduleDates') return dateModule.exports;
+    if (name === './ScheduleExamPeriods') return examModule.exports;
     if (name === './types') return { money: value => `${value / 100} USD` };
     return require(name);
 } });
 const Overview = module.exports.default;
-const base = () => ({ academic: { id: 7, application_uuid: 'own-application' }, balance: { assessed: false, overdue_cents: 0 }, permissions: { results_view: { allowed: true }, courses_view: { allowed: true }, schedule_view: { allowed: true } }, data: { generated_at: '2026-11-02T23:30:00+01:00', today_count: 0, week_count: 0, course_count: 0, today_sessions: [], week_sessions: [], alerts: [], latest_results: [], announcements: [], upcoming_evaluations: [] } });
-test('L’accueil respecte l’ordre frais, horaire, évaluations puis cours sans inventer de montants', () => {
+const base = () => ({ academic: { id: 7, application_uuid: 'own-application' }, balance: { assessed: false, overdue_cents: 0 }, permissions: { results_view: { allowed: true }, courses_view: { allowed: true }, schedule_view: { allowed: true } }, data: { schedule_week: '2026-11-02', generated_at: '2026-11-02T23:30:00+01:00', today_count: 0, week_count: 0, course_count: 0, today_sessions: [], week_sessions: [], alerts: [], latest_results: [], announcements: [], upcoming_evaluations: [] } });
+test('L’accueil présente l’horaire, les cours, les frais et les évaluations sans inventer de montants', () => {
     const props = base(); props.permissions.evaluations_participate = { allowed: false };
     const html = renderToStaticMarkup(React.createElement(Overview, props));
-    assert.ok(html.indexOf('Frais obligatoires') < html.indexOf('Horaire du jour'));
-    assert.ok(html.indexOf('Horaire du jour') < html.indexOf('Évaluations en cours'));
-    assert.ok(html.indexOf('Évaluations en cours') < html.indexOf('Cours du niveau'));
+    assert.ok(html.indexOf('Horaire des cours') < html.indexOf('Cours du niveau'));
+    assert.ok(html.indexOf('Cours du niveau') < html.indexOf('Frais obligatoires'));
+    assert.ok(html.indexOf('Frais obligatoires') < html.indexOf('Évaluations en cours'));
     assert.match(html, /Frais à confirmer/); assert.doesNotMatch(html, /0 USD/);
     assert.match(html, /schedule\?academic=7/); assert.match(html, /Aucune évaluation en cours/);
 });

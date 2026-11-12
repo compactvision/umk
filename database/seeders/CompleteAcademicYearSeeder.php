@@ -211,7 +211,7 @@ class CompleteAcademicYearSeeder extends Seeder
             }
             EnrollmentEvent::create(['enrollment_id' => $application->id, 'event' => 'demo_created', 'actor_id' => $actor->id, 'payload' => ['demo' => true], 'occurred_at' => now()]);
         }
-        $entry = $application->academicEnrollment ?: app(StudentAdmissionService::class)->activate($application, $actor->id, false);
+        $entry = $application->academicEnrollment ?: app(StudentAdmissionService::class)->activate($application, $actor->id, false, historicalImport: true);
         $finance = app(StudentFinanceService::class);
         if (! $entry->obligations()->exists()) {
             $finance->assess($entry, $actor, $number === 3 ? 'foreign' : 'national', [$year->start_date, AcademicSemester::where('academic_year_id', $year->id)->where('number', 2)->firstOrFail()->start_date->toDateString()], 'Barème du scénario fictif de démonstration.');
@@ -222,15 +222,15 @@ class CompleteAcademicYearSeeder extends Seeder
             }
             $reference = 'DEMO-Y'.$year->id.'-E'.$entry->id.'-T'.$obligation->installment;
             if (! StudentPayment::where('reference', $reference)->exists() && $obligation->amount_cents > 0) {
-                $payment = $finance->record($entry, $actor, ['amount' => number_format($obligation->amount_cents / 100, 2, '.', ''), 'method' => 'other', 'reference' => $reference, 'note' => 'VERSEMENT FICTIF — aucun mouvement bancaire réel.']);
-                $finance->transition($payment, $actor, 'confirmed', 'Confirmation fictive du scénario de démonstration.');
+                $payment = $finance->record($entry, $actor, ['amount' => \App\Modules\Student\Application\Services\Money::decimal((int)$obligation->amount_cents), 'method' => 'other', 'reference' => $reference, 'note' => 'VERSEMENT FICTIF — aucun mouvement bancaire réel.']);
+                $finance->transition($payment, $actor, 'confirmed', 'Confirmation fictive du scénario de démonstration.', notify: false);
             }
         }
         if ($number === 3) {
             $first = $entry->obligations()->where('kind', 'tuition')->orderBy('installment')->first();
             $reference = 'DEMO-Y'.$year->id.'-E'.$entry->id.'-PENDING';
             if ($first && $first->amount_cents > 0 && ! StudentPayment::where('reference', $reference)->exists()) {
-                $finance->record($entry, $actor, ['amount' => number_format($first->amount_cents / 100, 2, '.', ''), 'method' => 'other', 'reference' => $reference, 'note' => 'VERSEMENT FICTIF EN ATTENTE — aucun mouvement bancaire réel.']);
+                $finance->record($entry, $actor, ['amount' => \App\Modules\Student\Application\Services\Money::decimal((int)$first->amount_cents), 'method' => 'other', 'reference' => $reference, 'note' => 'VERSEMENT FICTIF EN ATTENTE — aucun mouvement bancaire réel.']);
             }
         }
 

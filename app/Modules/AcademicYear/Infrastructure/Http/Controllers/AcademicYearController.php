@@ -107,10 +107,12 @@ class AcademicYearController extends Controller
         }
     }
 
-    public function open(int $id, OpenAcademicYear $useCase): RedirectResponse
+    public function open(\Illuminate\Http\Request $request, int $id, OpenAcademicYear $useCase): RedirectResponse
     {
         try {
-            $useCase->execute($id);
+            abort_unless($request->user()->can('manage academic access'), 403);
+            $data = $request->validate(['reason' => 'nullable|string|min:10|max:1000']);
+            $useCase->execute($id, $request->user()->id, $data['reason'] ?? '');
 
             return back()
                 ->with('success', 'Année académique ouverte avec succès.');
@@ -123,10 +125,12 @@ class AcademicYearController extends Controller
         }
     }
 
-    public function close(int $id, CloseAcademicYear $closeAcademicYear)
+    public function close(\Illuminate\Http\Request $request, int $id, CloseAcademicYear $closeAcademicYear)
     {
         try {
-            $closeAcademicYear->execute($id);
+            abort_unless($request->user()->can('manage academic access'), 403);
+            $data = $request->validate(['reason' => 'nullable|string|min:10|max:1000']);
+            $closeAcademicYear->execute($id, $request->user()->id, $data['reason'] ?? '');
 
             return back()
                 ->with('success', 'Année académique clôturée');

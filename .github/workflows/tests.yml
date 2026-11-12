@@ -1,6 +1,7 @@
 name: tests
 
 on:
+  workflow_call:
   push:
     branches:
       - develop
@@ -9,6 +10,9 @@ on:
     branches:
       - develop
       - main
+
+permissions:
+  contents: read
 
 jobs:
   ci:
@@ -23,6 +27,7 @@ jobs:
         with:
           php-version: 8.4
           tools: composer:v2
+          extensions: gd, pdo_sqlite, zip
           coverage: xdebug
 
       - name: Setup Node
@@ -34,11 +39,22 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
-      - name: Build Assets
-        run: npm run build
-
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: TypeScript and frontend checks
+        run: |
+          npm run types
+          npm run lint:check
+          npm run test:frontend
+
+      - name: Dependency security gates
+        run: |
+          composer audit --locked
+          npm audit --omit=dev --audit-level=high
+
+      - name: Build Assets
+        run: npm run build
 
       - name: Copy Environment File
         run: cp .env.example .env
@@ -48,3 +64,42 @@ jobs:
 
       - name: Tests
         run: ./vendor/bin/phpunit
+
+  postgres-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: umk_test
+          POSTGRES_USER: umk_test
+          POSTGRES_PASSWORD: test_only_password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U umk_test -d umk_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: umk_test
+      DB_USERNAME: umk_test
+      DB_PASSWORD: test_only_password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql, gd, zip
+      - run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci && npm run build
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - name: PostgreSQL domain integration (isolated service)
+        run: ./vendor/bin/phpunit --filter='PhaseOneSecurityTest|CredentialRevocationTest|DraftStorageTransactionTest|StudentAcademicJourneyTest|AdminEnrollmentManagementTest|ScheduleModuleTest|EnrollmentJourneyTest|AcademicStructureTest|AcademicStructureMigrationTest|AdmissionConsolidationTest|EnrollmentReviewWorkflowTest|AcademicTeachingTest|UniversityFinanceTest|OfficialDocumentWorkflowTest|AcademicLifecycleTest|ProductionReadinessTest'
+      - name: PostgreSQL concurrency (two connections)
+        run: ./vendor/bin/phpunit tests/Integration/PostgresConcurrencyTest.php

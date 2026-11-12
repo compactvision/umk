@@ -1,19 +1,21 @@
+import type { useLevelData } from '../hooks/useLevelData';
 import { Award, BriefcaseBusiness, Languages, Pencil, Target } from 'lucide-react';
-export default function DetailsSection({ levelData, onEdit, getFieldValue }) {
-    let options = levelData.options;
+export default function DetailsSection({ levelData, onEdit }: { levelData: ReturnType<typeof useLevelData>['detailsData']; onEdit: (field: string) => void }) {
+    const rawOptions = levelData.options;
+    let options = rawOptions;
     if (typeof options === 'string') {
         try {
             options = JSON.parse(options);
         } catch {
-            options = options
+            options = String(rawOptions)
                 .split(',')
-                .map((value) => value.trim())
+                .map((value: string) => value.trim())
                 .filter(Boolean);
         }
     }
     const opportunities = Array.isArray(options) ? options.filter((value) => typeof value === 'string' && value.trim()) : [];
     const edit = (field: string, label: string) => (
-        <button className="ld-edit-button" onClick={() => onEdit(field, getFieldValue(field))} aria-label={`Modifier : ${label}`}>
+        <button className="ld-edit-button" onClick={() => onEdit(field)} aria-label={`Modifier : ${label}`}>
             <Pencil size={14} strokeWidth={1.7} />
             <span>Modifier</span>
         </button>

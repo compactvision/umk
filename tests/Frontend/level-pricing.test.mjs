@@ -10,3 +10,5 @@ test('Une répartition incomplète ne présente pas un total trompeur', () => as
 test('Le total existant reste visible sans répartition inventée', () => assert.equal(paymentTotal(null, '', 405), 405));
 test('Des tranches explicitement nulles en montant donnent un total nul', () => assert.equal(paymentTotal(0, 0, 405), 0));
 test('Un tarif absent reste à confirmer', () => assert.equal(paymentTotal('', '', null), null));
+
+test('Les centimes décimaux sont additionnés exactement et la précision excessive est refusée', () => { assert.equal(paymentTotal('0.29', '0.28'), 0.57); assert.equal(paymentTotal('0.001', '0.99'), null); });

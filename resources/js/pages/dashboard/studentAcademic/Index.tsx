@@ -6,24 +6,54 @@ import { EmptyState, PaymentOverview } from '@/components/student/PortalCards';
 import { labels, money, type Balance } from '@/components/student/types';
 import { formatDate } from '@/lib/studentEnrollment';
 import { Head, Link, router } from '@inertiajs/react';
-import { BookOpen, ClipboardCheck, CreditCard, GraduationCap, MessageSquare, Plus, Search, Settings2, ShieldCheck } from 'lucide-react';
+import {
+    BookOpen,
+    ClipboardCheck,
+    CreditCard,
+    GraduationCap,
+    LayoutGrid,
+    List,
+    MessageSquare,
+    Plus,
+    Search,
+    Settings2,
+    ShieldCheck,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import '../../../../css/dashboard/student-academic.css';
 import '../../../../css/student-portal.css';
 import AcademicForm, { type Field, type FormSpec } from './AcademicForm';
 type StudentRow = {
+    program: string | null;
+    account_status: string;
     id: number;
     name: string;
     matricule: string | null;
     faculty: string;
+    department: string | null;
     level: string;
     year: string;
     status: string;
     student_status: string;
+    photo_url: string | null;
 };
 type Props = {
-    students: { data: StudentRow[]; total: number; links: { url: string | null; label: string; active: boolean }[] };
-    filters: { academic?: number; q?: string; tab?: string };
+    students: { data: StudentRow[]; total: number; current_page: number; links: { url: string | null; label: string; active: boolean }[] };
+    programs: { id: number; name: string }[];
+    departments: { id: number; name: string; faculty_id: number; faculty: { name: string } }[];
+    filters: {
+        program?: number;
+        academic?: number;
+        q?: string;
+        tab?: string;
+        faculty?: number;
+        department?: number;
+        level?: number;
+        view?: 'table' | 'grid';
+        history?: '1';
+        year?: number;
+        enrollment_status?: 'pending_confirmation' | 'confirmed' | 'completed' | 'suspended' | 'cancelled';
+    };
     selected: {
         id: number;
         profile_id: number;
@@ -69,7 +99,7 @@ type Props = {
         allow_exemption: boolean;
         regulation_reference: string | null;
     }[];
-    levels: { id: number; title: string; faculty: { name: string } }[];
+    levels: { id: number; title: string; faculty_id: number; faculty: { name: string }; department_options: { id: number; name: string }[] }[];
     years: { id: number; title: string }[];
     groups: { id: number; intake: { name: string } }[];
     courses: { id: number; level_id: number; title: string }[];
@@ -79,12 +109,21 @@ type Props = {
         level_id: number;
         academic_year_id: number;
         course: { title: string };
+        department: { id: number; name: string } | null;
         professor: { first_name: string; last_name: string } | null;
         semester: string | null;
         is_optional: boolean;
         is_published: boolean;
     }[];
-    resources: { id: number; academic_offering_id: number; kind: string; title: string; is_published: boolean; student_profile_id: number | null }[];
+    resources: {
+        assessment_exists?: boolean;
+        id: number;
+        academic_offering_id: number;
+        kind: string;
+        title: string;
+        is_published: boolean;
+        student_profile_id: number | null;
+    }[];
     sessions: { id: number; offering: { course: { title: string } }; starts_at: string; ends_at: string; room: string; is_published: boolean }[];
     submissions: {
         id: number;
@@ -93,6 +132,7 @@ type Props = {
         filename: string | null;
         version: number;
         submitted_at: string;
+        version_url: string;
         download_url: string | null;
     }[];
     requests: {
@@ -139,6 +179,7 @@ const auditLabels: Record<string, string> = {
     academic_access_rule_created: 'Règle d’accès définie',
     academic_access_rule_disabled: 'Règle d’accès désactivée',
     academic_status_changed: 'Situation académique modifiée',
+    academic_enrollment_confirmed: 'Inscription confirmée automatiquement',
     course_created: 'Matière créée',
     offering_created: 'Enseignement affecté',
     academic_publication_changed: 'Publication modifiée',
@@ -164,9 +205,17 @@ const reason: Field = {
     required: true,
     help: 'Cette justification est conservée dans le journal d’audit.',
 };
+const directoryPanelKeys = 'tab q faculty department program level view year enrollment_status history page';
+
 export default function Index(props: Props) {
     const tab = props.filters.tab || 'students';
     const selected = props.selected;
+    const [faculty, setFaculty] = useState(String(props.filters.faculty ?? ''));
+    const [level, setLevel] = useState(String(props.filters.level ?? ''));
+    const [department, setDepartment] = useState(String(props.filters.department ?? ''));
+    const [program, setProgram] = useState(String(props.filters.program ?? ''));
+    const [year, setYear] = useState(String(props.filters.year ?? ''));
+    const [status, setStatus] = useState<string>(props.filters.enrollment_status ?? '');
     const [query, setQuery] = useState(props.filters.q || '');
     const [spec, setSpec] = useState<FormSpec | null>(null);
     const [toast, setToast] = useState<ToastFeedback | null>(null);
@@ -187,7 +236,7 @@ export default function Index(props: Props) {
     };
     const offeringOptions = props.offerings.map((offering) => ({
         value: offering.id,
-        label: `${offering.course.title} · ${props.years.find((y) => y.id === offering.academic_year_id)?.title || ''} · ${offering.is_published ? 'Publié' : 'Brouillon'}`,
+        label: `${offering.course.title} · ${offering.department?.name ?? 'Tronc commun'} · ${props.years.find((y) => y.id === offering.academic_year_id)?.title || ''} · ${offering.is_published ? 'Publié' : 'Brouillon'}`,
     }));
     const publish = (type: string, id: number, isPublished: boolean, title: string) =>
         show(
@@ -276,6 +325,113 @@ export default function Index(props: Props) {
                 reason,
             ],
         );
+    const directoryView = props.filters.view ?? 'table';
+    const enrollmentStatus = props.filters.enrollment_status;
+    const history = props.filters.history === '1';
+    const pendingEnrollments = !history && enrollmentStatus === 'pending_confirmation';
+    const directoryTitle = history
+        ? 'Historique des inscriptions'
+        : pendingEnrollments
+          ? 'Inscriptions en attente'
+          : enrollmentStatus === 'confirmed'
+            ? 'Inscriptions annuelles'
+            : 'Répertoire des étudiants';
+    const hasFilters =
+        props.filters.q ||
+        props.filters.faculty ||
+        props.filters.department ||
+        props.filters.level ||
+        props.filters.program ||
+        props.filters.year ||
+        enrollmentStatus;
+    const facultyOptions = [...new Map(props.levels.map((item) => [item.faculty_id, item.faculty.name])).entries()].sort((left, right) =>
+        left[1].localeCompare(right[1], 'fr'),
+    );
+    const departments = props.departments.filter((item) => !faculty || String(item.faculty_id) === faculty);
+    const levels = props.levels
+        .filter((item) => !faculty || String(item.faculty_id) === faculty)
+        .sort((left, right) => left.faculty.name.localeCompare(right.faculty.name, 'fr') || left.title.localeCompare(right.title, 'fr'));
+    const dossier = (student: StudentRow) =>
+        route('dashboard.admin.student-academic.show', {
+            ...props.filters,
+            tab: undefined,
+            academic: student.id,
+            page: props.students.current_page,
+        });
+    const studentIdentity = (student: StudentRow) => (
+        <Link href={dossier(student)} className="academic-directory-identity">
+            <span className="academic-directory-initials" aria-hidden="true">
+                {student.name
+                    .split(/\s+/)
+                    .slice(0, 2)
+                    .map((name) => name.charAt(0))
+                    .join('')
+                    .toLocaleUpperCase('fr')}
+                {student.photo_url && (
+                    <img
+                        key={student.photo_url}
+                        src={student.photo_url}
+                        alt=""
+                        loading="lazy"
+                        onError={(event) => {
+                            event.currentTarget.hidden = true;
+                        }}
+                    />
+                )}
+            </span>
+            <div>
+                <strong>{student.name}</strong>
+                <small>{student.matricule || 'Matricule à renseigner'}</small>
+                <small>{student.account_status}</small>
+            </div>
+        </Link>
+    );
+    const studentActions = (student: StudentRow) => (
+        <div className="academic-directory-actions">
+            <Link href={dossier(student)}>Ouvrir le dossier</Link>
+            {pendingEnrollments && props.abilities.finance && (
+                <Link href={base} data={{ tab: 'finance', academic: student.id }}>
+                    Suivi financier
+                </Link>
+            )}
+            {props.abilities.access && !history && (
+                <button
+                    className="academic-link-button"
+                    onClick={() =>
+                        show(
+                            'Situation académique',
+                            'Un changement de statut entraîne le recalcul immédiat des droits pédagogiques.',
+                            `${base}/${student.id}/status`,
+                            [
+                                {
+                                    name: 'student_status',
+                                    label: 'Statut étudiant',
+                                    type: 'select',
+                                    value: student.student_status,
+                                    required: true,
+                                    options: ['active', 'suspended', 'graduated', 'archived'].map((value) => ({ value, label: labels[value] })),
+                                },
+                                {
+                                    name: 'enrollment_status',
+                                    label: 'Statut de l’inscription',
+                                    type: 'select',
+                                    value: student.status,
+                                    required: true,
+                                    options: ['pending_confirmation', 'confirmed', 'suspended', 'completed', 'cancelled'].map((value) => ({
+                                        value,
+                                        label: labels[value],
+                                    })),
+                                },
+                                reason,
+                            ],
+                        )
+                    }
+                >
+                    Modifier les statuts
+                </button>
+            )}
+        </div>
+    );
     const tabs = [
         { id: 'students', label: 'Étudiants', icon: GraduationCap, show: true },
         { id: 'finance', label: 'Suivi financier', icon: CreditCard, show: props.abilities.finance },
@@ -284,26 +440,50 @@ export default function Index(props: Props) {
         { id: 'requests', label: 'Demandes', icon: MessageSquare, show: props.abilities.access },
     ];
     return (
-        <Dashboard>
-            <Head title="Nos étudiants" />
+        <Dashboard hideAppsNavigation={tab === 'students'}>
+            <Head title={tab === 'students' ? directoryTitle : 'Nos étudiants'} />
             {toast && <FeedbackToast key={toast.id} feedback={toast} onDismiss={() => setToast(null)} />}
             <div className="student-portal academic-administration">
-                <PageHeading
-                    title="Nos étudiants"
-                    description="Admissions activées, affectations pédagogiques, suivi financier et droits d’accès."
-                />
-                <nav className="portal-tabs" aria-label="Gestion du parcours étudiant">
-                    {tabs
-                        .filter((t) => t.show)
-                        .map((item) => (
-                            <Link href={choose(item.id)} key={item.id} aria-current={tab === item.id ? 'page' : undefined}>
-                                <item.icon size={15} />
-                                {item.label}
-                            </Link>
-                        ))}
-                </nav>
+                {tab === 'students' ? (
+                    <header className="directory-heading">
+                        <div>
+                            <p className="directory-heading-label">
+                                <GraduationCap size={17} aria-hidden="true" /> Scolarité
+                            </p>
+                            <h1>{directoryTitle}</h1>
+                            <p>
+                                {history
+                                    ? 'Consultez les inscriptions de la plus récente à la plus ancienne, par année académique.'
+                                    : pendingEnrollments
+                                      ? 'Les candidatures admises apparaissent ici jusqu’à la couverture intégrale de la première tranche.'
+                                      : 'Retrouvez une inscription par faculté, département ou niveau.'}
+                            </p>
+                        </div>
+                        <div className="directory-heading-count">
+                            <strong>{props.students.total.toLocaleString('fr-FR')}</strong>
+                            <span>{props.students.total === 1 ? 'Inscription affichée' : 'Inscriptions affichées'}</span>
+                        </div>
+                    </header>
+                ) : (
+                    <>
+                        <PageHeading
+                            title="Nos étudiants"
+                            description="Admissions activées, affectations pédagogiques, suivi financier et droits d’accès."
+                        />
+                        <nav className="portal-tabs" aria-label="Gestion du parcours étudiant">
+                            {tabs
+                                .filter((t) => t.show)
+                                .map((item) => (
+                                    <Link href={choose(item.id)} key={item.id} aria-current={tab === item.id ? 'page' : undefined}>
+                                        <item.icon size={15} />
+                                        {item.label}
+                                    </Link>
+                                ))}
+                        </nav>
+                    </>
+                )}
                 {selected && (
-                    <section className="academic-selected">
+                    <section className="academic-selected" data-dashboard-panel="academic">
                         <GraduationCap size={24} strokeWidth={1.4} />
                         <div>
                             <strong>{selected.name}</strong>
@@ -317,119 +497,272 @@ export default function Index(props: Props) {
                 )}
                 {tab === 'students' && (
                     <>
-                        <form
-                            className="academic-student-search"
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                router.get(base, { q: query, tab });
-                            }}
-                        >
-                            <label htmlFor="academic-search">Retrouver un étudiant</label>
-                            <div>
-                                <Search size={17} />
-                                <input
-                                    id="academic-search"
-                                    type="search"
-                                    value={query}
-                                    placeholder="Nom, email ou matricule…"
-                                    onChange={(event) => setQuery(event.target.value)}
-                                />
-                                <button className="admin-primary">Rechercher</button>
-                            </div>
-                        </form>
-                        <section className="portal-panel">
-                            <header>
-                                <h2>Inscriptions académiques</h2>
-                                <span>{props.students.total} inscription(s)</span>
+                        <section className="portal-panel academic-directory" aria-label="Inscriptions académiques">
+                            <form
+                                className="academic-student-search"
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    router.get(
+                                        base,
+                                        {
+                                            ...props.filters,
+                                            tab,
+                                            q: query || undefined,
+                                            faculty: faculty || undefined,
+                                            department: department || undefined,
+                                            program: program || undefined,
+                                            level: level || undefined,
+                                            view: directoryView,
+                                            year: year || undefined,
+                                            enrollment_status: status || undefined,
+                                        },
+                                        { preserveScroll: true },
+                                    );
+                                }}
+                            >
+                                <div className="directory-search-row">
+                                    <label className="directory-search-field" htmlFor="academic-search">
+                                        <span className="sr-only">Retrouver un étudiant</span>
+                                        <span className="directory-search-input">
+                                            <Search size={18} aria-hidden="true" />
+                                            <input
+                                                id="academic-search"
+                                                type="search"
+                                                value={query}
+                                                placeholder="Nom, email ou matricule…"
+                                                onChange={(event) => setQuery(event.target.value)}
+                                            />
+                                        </span>
+                                    </label>
+                                    <button type="submit" className="admin-primary">
+                                        Rechercher
+                                    </button>
+                                </div>
+                                <div className="directory-filters">
+                                    <label>
+                                        <span>Faculté</span>
+                                        <select
+                                            aria-label="Filtrer par faculté"
+                                            value={faculty}
+                                            onChange={(event) => {
+                                                setFaculty(event.target.value);
+                                                setDepartment('');
+                                                setLevel('');
+                                            }}
+                                        >
+                                            <option value="">Toutes les facultés</option>
+                                            {facultyOptions.map(([id, name]) => (
+                                                <option key={id} value={id}>
+                                                    {name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Département</span>
+                                        <select
+                                            aria-label="Filtrer par département"
+                                            value={department}
+                                            onChange={(event) => setDepartment(event.target.value)}
+                                        >
+                                            <option value="">Tous les départements</option>
+                                            {departments.map((item) => (
+                                                <option key={item.id} value={item.id}>
+                                                    {faculty ? item.name : `${item.faculty.name} · ${item.name}`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Niveau</span>
+                                        <select aria-label="Filtrer par niveau" value={level} onChange={(event) => setLevel(event.target.value)}>
+                                            <option value="">Tous les niveaux</option>
+                                            {levels.map((item) => (
+                                                <option key={item.id} value={item.id}>
+                                                    {faculty ? item.title : `${item.faculty.name} · ${item.title}`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    {
+                                        <>
+                                            <label>
+                                                <span>Programme</span>
+                                                <select value={program} onChange={(event) => setProgram(event.target.value)}>
+                                                    <option value="">Tous les programmes</option>
+                                                    {props.programs.map((item) => (
+                                                        <option key={item.id} value={item.id}>
+                                                            {item.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                            <label>
+                                                <span>Année académique</span>
+                                                <select value={year} onChange={(event) => setYear(event.target.value)}>
+                                                    <option value="">Toutes les années</option>
+                                                    {props.years.map((item) => (
+                                                        <option key={item.id} value={item.id}>
+                                                            {item.title}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                            <label>
+                                                <span>Statut</span>
+                                                <select value={status} onChange={(event) => setStatus(event.target.value)}>
+                                                    <option value="">Tous les statuts</option>
+                                                    {['confirmed', 'pending_confirmation', 'completed', 'suspended', 'cancelled'].map((value) => (
+                                                        <option key={value} value={value}>
+                                                            {labels[value]}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                        </>
+                                    }
+                                </div>
+                            </form>
+                            <header className="academic-directory-header">
+                                <div>
+                                    <h2>{history ? 'Inscriptions par année' : 'Liste des inscriptions'}</h2>
+                                    {hasFilters && (
+                                        <Link
+                                            className="directory-reset"
+                                            href={base}
+                                            data={{
+                                                tab,
+                                                view: directoryView,
+                                                academic: selected?.id,
+                                                history: props.filters.history,
+                                                enrollment_status: history ? undefined : enrollmentStatus,
+                                            }}
+                                        >
+                                            Réinitialiser les filtres
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="academic-directory-views" role="group" aria-label="Mode d’affichage">
+                                    {(
+                                        [
+                                            { value: 'table', label: 'Tableau', Icon: List },
+                                            { value: 'grid', label: 'Grille', Icon: LayoutGrid },
+                                        ] as const
+                                    ).map(({ value, label, Icon }) => (
+                                        <button
+                                            key={value}
+                                            type="button"
+                                            className="admin-secondary"
+                                            aria-pressed={directoryView === value}
+                                            onClick={() => {
+                                                if (directoryView !== value)
+                                                    router.get(
+                                                        base,
+                                                        { ...props.filters, tab, view: value, page: props.students.current_page },
+                                                        { preserveScroll: true },
+                                                    );
+                                            }}
+                                        >
+                                            <Icon size={16} aria-hidden="true" /> {label}
+                                        </button>
+                                    ))}
+                                </div>
                             </header>
-                            <div className="academic-table-scroll">
-                                <table className="academic-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Étudiant</th>
-                                            <th>Formation</th>
-                                            <th>Inscription</th>
-                                            <th>Gestion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {props.students.data.map((student) => (
-                                            <tr key={student.id}>
-                                                <td>
-                                                    <strong>{student.name}</strong>
-                                                    <small>{student.matricule || 'Matricule à renseigner'}</small>
-                                                </td>
-                                                <td>
-                                                    {student.faculty}
-                                                    <small>
-                                                        {student.level} · {student.year}
-                                                    </small>
-                                                </td>
-                                                <td>
-                                                    <span className={`portal-status is-${student.status}`}>
-                                                        {labels[student.status] || student.status}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <Link href={choose(props.abilities.finance ? 'finance' : 'students', student.id)}>
-                                                        Ouvrir le suivi
-                                                    </Link>
-                                                    {props.abilities.access && (
-                                                        <button
-                                                            className="academic-link-button"
-                                                            onClick={() =>
-                                                                show(
-                                                                    'Situation académique',
-                                                                    'Un changement de statut entraîne le recalcul immédiat des droits pédagogiques.',
-                                                                    `${base}/${student.id}/status`,
-                                                                    [
-                                                                        {
-                                                                            name: 'student_status',
-                                                                            label: 'Statut étudiant',
-                                                                            type: 'select',
-                                                                            value: student.student_status,
-                                                                            required: true,
-                                                                            options: ['active', 'suspended', 'graduated', 'archived'].map(
-                                                                                (value) => ({ value, label: labels[value] }),
-                                                                            ),
-                                                                        },
-                                                                        {
-                                                                            name: 'enrollment_status',
-                                                                            label: 'Statut de l’inscription',
-                                                                            type: 'select',
-                                                                            value: student.status,
-                                                                            required: true,
-                                                                            options: [
-                                                                                'pending_confirmation',
-                                                                                'confirmed',
-                                                                                'suspended',
-                                                                                'completed',
-                                                                                'cancelled',
-                                                                            ].map((value) => ({ value, label: labels[value] })),
-                                                                        },
-                                                                        reason,
-                                                                    ],
-                                                                )
-                                                            }
-                                                        >
-                                                            Modifier les statuts
-                                                        </button>
-                                                    )}
-                                                </td>
+                            {directoryView === 'table' && props.students.data.length > 0 && (
+                                <div className="academic-table-scroll" data-dashboard-panel={directoryPanelKeys}>
+                                    <table className="academic-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Étudiant</th>
+                                                <th>Faculté</th>
+                                                <th>Département</th>
+                                                <th>Niveau</th>
+                                                {history && <th>Année académique</th>}
+                                                <th>Statut</th>
+                                                <th>{history ? 'Dossier' : 'Gestion'}</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            {props.students.data.map((student) => (
+                                                <tr key={student.id}>
+                                                    <td>{studentIdentity(student)}</td>
+                                                    <td>{student.faculty}</td>
+                                                    <td>
+                                                        {student.department || 'Sans département'}
+                                                        <small style={{ display: 'block' }}>{student.program || 'Programme non rattaché'}</small>
+                                                    </td>
+                                                    <td>
+                                                        {student.level}
+                                                        {!history && <small>{student.year}</small>}
+                                                    </td>
+                                                    {history && (
+                                                        <td>
+                                                            {student.year}
+                                                            <small style={{ display: 'block' }}>{student.account_status}</small>
+                                                        </td>
+                                                    )}
+                                                    <td>
+                                                        <span className={`portal-status is-${student.status}`}>
+                                                            {labels[student.status] || student.status}
+                                                        </span>
+                                                    </td>
+                                                    <td>{studentActions(student)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                            {directoryView === 'grid' && props.students.data.length > 0 && (
+                                <div className="academic-directory-grid" data-dashboard-panel={directoryPanelKeys}>
+                                    {props.students.data.map((student) => (
+                                        <article key={student.id}>
+                                            <div className="academic-directory-card-header">
+                                                {studentIdentity(student)}
+                                                <span className={`portal-status is-${student.status}`}>
+                                                    {labels[student.status] || student.status}
+                                                </span>
+                                            </div>
+                                            <dl>
+                                                <div>
+                                                    <dt>Faculté</dt>
+                                                    <dd>{student.faculty}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Département</dt>
+                                                    <dd>{student.department || 'Sans département'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Niveau</dt>
+                                                    <dd>{student.level}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Année</dt>
+                                                    <dd>{student.year}</dd>
+                                                </div>
+                                            </dl>
+                                            {studentActions(student)}
+                                        </article>
+                                    ))}
+                                </div>
+                            )}
                             {!props.students.data.length && (
-                                <EmptyState title="Aucun profil étudiant activé.">
-                                    La validation d’un dossier complet crée automatiquement le profil et l’inscription académique.
-                                </EmptyState>
+                                <div data-dashboard-panel={directoryPanelKeys}>
+                                    <EmptyState title={pendingEnrollments ? 'Aucune inscription en attente.' : 'Aucune inscription trouvée.'}>
+                                        {pendingEnrollments &&
+                                        !props.filters.q &&
+                                        !props.filters.faculty &&
+                                        !props.filters.department &&
+                                        !props.filters.level
+                                            ? 'Les nouvelles admissions apparaîtront ici.'
+                                            : 'Ajustez la recherche ou les filtres pour afficher d’autres résultats.'}
+                                    </EmptyState>
+                                </div>
                             )}
                             <Pagination value={props.students} />
                         </section>
-                        {selected && props.abilities.access && (
-                            <section className="portal-panel">
+                        {selected && props.abilities.access && !history && (
+                            <section className="portal-panel" data-dashboard-panel="tab academic">
                                 <header>
                                     <h2>Affectations de l’étudiant sélectionné</h2>
                                 </header>
@@ -517,8 +850,10 @@ export default function Index(props: Props) {
                 {tab === 'finance' &&
                     (selected && props.balance ? (
                         <>
-                            <PaymentOverview balance={props.balance} />
-                            <section className="portal-panel">
+                            <div data-dashboard-panel="tab academic">
+                                <PaymentOverview balance={props.balance} />
+                            </div>
+                            <section className="portal-panel" data-dashboard-panel="tab academic">
                                 <header>
                                     <div>
                                         <h2>Obligations financières</h2>
@@ -592,7 +927,7 @@ export default function Index(props: Props) {
                                     <p className="portal-muted">Aucune obligation n’est encore établie. Confirmez la catégorie tarifaire.</p>
                                 )}
                             </section>
-                            <section className="portal-panel">
+                            <section className="portal-panel" data-dashboard-panel="tab academic">
                                 <header>
                                     <h2>Versements et confirmations</h2>
                                     <button
@@ -644,7 +979,14 @@ export default function Index(props: Props) {
                                                             {payment.reference}
                                                             <small>{payment.method}</small>
                                                         </td>
-                                                        <td>{money(payment.amount_cents, payment.currency)}</td>
+                                                        <td>
+                                                            {money(payment.amount_cents, payment.currency)}
+                                                            {payment.status === 'confirmed' && (
+                                                                <Link href={route('dashboard.admin.finance.index', { academic: selected!.id })}>
+                                                                    Remboursements avec autorisation
+                                                                </Link>
+                                                            )}
+                                                        </td>
                                                         <td>
                                                             <span className={`portal-status is-${payment.status}`}>
                                                                 {labels[payment.status] || payment.status}
@@ -693,14 +1035,6 @@ export default function Index(props: Props) {
                                                                                     required: true,
                                                                                     options: [
                                                                                         { value: 'cancelled', label: 'Annuler cette écriture' },
-                                                                                        ...(payment.status === 'confirmed'
-                                                                                            ? [
-                                                                                                  {
-                                                                                                      value: 'refunded',
-                                                                                                      label: 'Enregistrer un remboursement effectué',
-                                                                                                  },
-                                                                                              ]
-                                                                                            : []),
                                                                                     ],
                                                                                 },
                                                                                 reason,
@@ -708,7 +1042,7 @@ export default function Index(props: Props) {
                                                                         )
                                                                     }
                                                                 >
-                                                                    Annulation / remboursement
+                                                                    Annuler l’écriture
                                                                 </button>
                                                             )}
                                                         </td>
@@ -724,7 +1058,7 @@ export default function Index(props: Props) {
                                     </EmptyState>
                                 )}
                             </section>
-                            <section className="portal-panel">
+                            <section className="portal-panel" data-dashboard-panel="tab academic">
                                 <header>
                                     <h2>Autorisations financières</h2>
                                 </header>
@@ -768,12 +1102,14 @@ export default function Index(props: Props) {
                             </section>
                         </>
                     ) : (
-                        <EmptyState title="Sélectionnez un étudiant." icon={GraduationCap}>
-                            Ouvrez une inscription depuis l’onglet Étudiants pour consulter son compte financier.
-                        </EmptyState>
+                        <div data-dashboard-panel="tab academic">
+                            <EmptyState title="Sélectionnez un étudiant." icon={GraduationCap}>
+                                Ouvrez une inscription depuis l’onglet Étudiants pour consulter son compte financier.
+                            </EmptyState>
+                        </div>
                     ))}
                 {tab === 'rules' && (
-                    <section className="portal-panel">
+                    <section className="portal-panel" data-dashboard-panel="tab">
                         <header>
                             <div>
                                 <h2>Des droits adaptés à chaque parcours</h2>
@@ -837,7 +1173,7 @@ export default function Index(props: Props) {
                 )}
                 {tab === 'teaching' && (
                     <>
-                        <section className="portal-panel">
+                        <section className="portal-panel" data-dashboard-panel="tab">
                             <header>
                                 <div>
                                     <h2>Les enseignements publiés</h2>
@@ -858,6 +1194,7 @@ export default function Index(props: Props) {
                                                         name: 'course_id',
                                                         label: 'Matière du catalogue',
                                                         type: 'select',
+                                                        clears: 'academic_department_id',
                                                         required: true,
                                                         options: props.courses.map((course) => ({ value: course.id, label: course.title })),
                                                     },
@@ -867,6 +1204,19 @@ export default function Index(props: Props) {
                                                         type: 'select',
                                                         required: true,
                                                         options: optionsYears,
+                                                    },
+                                                    {
+                                                        name: 'academic_department_id',
+                                                        label: 'Public de l’enseignement',
+                                                        type: 'select',
+                                                        optionsFor: ({ course_id }) => {
+                                                            const course = props.courses.find(({ id }) => id === Number(course_id));
+                                                            return (
+                                                                props.levels
+                                                                    .find(({ id }) => id === course?.level_id)
+                                                                    ?.department_options.map(({ id, name }) => ({ value: id, label: name })) ?? []
+                                                            );
+                                                        },
                                                     },
                                                     {
                                                         name: 'professor_id',
@@ -906,7 +1256,7 @@ export default function Index(props: Props) {
                                             <strong>{offering.course.title}</strong>
                                             <p>
                                                 {props.years.find((year) => year.id === offering.academic_year_id)?.title} ·{' '}
-                                                {offering.semester || 'Période non définie'} ·{' '}
+                                                {offering.semester || 'Période non définie'} · {offering.department?.name ?? 'Tronc commun'} ·{' '}
                                                 {offering.professor
                                                     ? `${offering.professor.first_name} ${offering.professor.last_name}`
                                                     : 'Enseignant à affecter'}
@@ -931,7 +1281,7 @@ export default function Index(props: Props) {
                                 </EmptyState>
                             )}
                         </section>
-                        <section className="portal-panel">
+                        <section className="portal-panel" data-dashboard-panel="tab">
                             <header>
                                 <h2>Ressources, travaux et publications</h2>
                                 <button
@@ -958,7 +1308,8 @@ export default function Index(props: Props) {
                                                         { value: 'material', label: 'Support pédagogique' },
                                                         { value: 'assignment', label: 'Travail / devoir' },
                                                         { value: 'evaluation', label: 'Évaluation' },
-                                                        { value: 'online', label: 'Cours en ligne' }, { value: 'video', label: 'Vidéo' },
+                                                        { value: 'online', label: 'Cours en ligne' },
+                                                        { value: 'video', label: 'Vidéo' },
                                                         { value: 'result', label: 'Résultat personnel' },
                                                         { value: 'announcement', label: 'Annonce' },
                                                         { value: 'document', label: 'Document personnel' },
@@ -993,19 +1344,30 @@ export default function Index(props: Props) {
                                             {resource.kind} · {resource.is_published ? 'Publié' : 'Brouillon'}
                                         </small>
                                     </div>
-                                    <button
-                                        className="academic-link-button"
-                                        onClick={() => publish('resources', resource.id, resource.is_published, resource.title)}
-                                    >
-                                        {resource.is_published ? 'Dépublier' : 'Publier'}
-                                    </button>
+                                    {resource.assessment_exists ? (
+                                        <Link
+                                            className="academic-link-button"
+                                            href={route('dashboard.admin.assessments.index', { resource: resource.id })}
+                                        >
+                                            Ouvrir l’évaluation
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            className="academic-link-button"
+                                            onClick={() => publish('resources', resource.id, resource.is_published, resource.title)}
+                                        >
+                                            {resource.is_published ? 'Dépublier' : 'Publier'}
+                                        </button>
+                                    )}
                                 </article>
                             ))}
                         </section>
-                        <section className="portal-panel">
+                        <section className="portal-panel" data-dashboard-panel="tab">
                             <header>
                                 <h2>Emploi du temps</h2>
-                                <Link className="admin-secondary" href="/dashboard/admin/schedule">Gérer les horaires</Link>
+                                <Link className="admin-secondary" href="/dashboard/admin/schedule">
+                                    Gérer les horaires
+                                </Link>
                                 <button
                                     className="admin-primary"
                                     onClick={() =>
@@ -1053,7 +1415,7 @@ export default function Index(props: Props) {
                     </>
                 )}
                 {tab === 'teaching' && selected && (
-                    <section className="portal-panel">
+                    <section className="portal-panel" data-dashboard-panel="tab academic">
                         <h2>Travaux de {selected.name}</h2>
                         {props.submissions.length ? (
                             props.submissions.map((work) => (
@@ -1061,7 +1423,7 @@ export default function Index(props: Props) {
                                     <div>
                                         <h3>{work.title}</h3>
                                         <small>
-                                            {formatDate(work.submitted_at, true)} · Version {work.version}
+                                            {formatDate(work.submitted_at, true)} · <Link href={work.version_url}>Version {work.version}</Link>
                                         </small>
                                         {work.body && <p>{work.body}</p>}
                                         {work.download_url && (
@@ -1080,7 +1442,7 @@ export default function Index(props: Props) {
                     </section>
                 )}
                 {tab === 'requests' && (
-                    <section className="portal-panel">
+                    <section className="portal-panel" data-dashboard-panel="tab">
                         <h2>Demandes et réclamations</h2>
                         {props.requests.length ? (
                             props.requests.map((ticket) => (

@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Student\StudentProfile;
 use App\Modules\Blog\Infrastructure\Persistence\Eloquent\Models\PostModel;
-use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Auth\MustVerifyEmail; // le trait ajoute hasVerifiedEmail(), markEmailAsVerified()...
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use Notifiable, MustVerifyEmail, HasRoles;
+    use HasRoles, \Illuminate\Database\Eloquent\Factories\HasFactory, MustVerifyEmail, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -58,7 +59,15 @@ class User extends Authenticatable implements MustVerifyEmailContract
         ]);
     }
 
-    public function studentProfile() { return $this->hasOne(\App\Models\Student\StudentProfile::class); }
+    public function academicFaculties()
+    {
+        return $this->belongsToMany(Faculty::class, 'academic_staff_faculties', 'user_id', 'faculty_id');
+    }
+
+    public function studentProfile()
+    {
+        return $this->hasOne(StudentProfile::class);
+    }
 
     public function enrollments()
     {
@@ -72,7 +81,6 @@ class User extends Authenticatable implements MustVerifyEmailContract
 
     public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
-
 }

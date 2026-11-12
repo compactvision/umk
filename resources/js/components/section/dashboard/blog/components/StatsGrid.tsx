@@ -1,6 +1,5 @@
 export default function StatsGrid({
     total,
-    postsCount,
     published,
     drafts,
     categoriesCount,

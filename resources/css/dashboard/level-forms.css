@@ -1,9 +1,9 @@
 .usk-admin-apps .level-form-modal {
-    border-color: #d6dfcb;
+    border-color: var(--usk-night-border, #d6dfcb);
 }
 .usk-admin-apps .level-form-modal .admin-modal-header {
     padding: 30px 32px 27px;
-    background: #f1f4e9;
+    background: var(--usk-night-raised, #f1f4e9);
 }
 .usk-admin-apps .level-form-modal .admin-modal-header h2 {
     font-size: 37px;
@@ -12,7 +12,7 @@
     padding: 29px 32px;
 }
 .usk-admin-apps .level-form-modal .admin-modal-footer {
-    background: #f7f8f1;
+    background: var(--usk-night-surface, #f7f8f1);
     padding-inline: 32px;
 }
 .usk-admin-apps .lf-edit-modal {
@@ -40,7 +40,7 @@
 .usk-admin-apps .lf-form-section + .lf-form-section {
     margin-top: 29px;
     padding-top: 26px;
-    border-top: 1px solid #e4e9db;
+    border-top: 1px solid var(--usk-night-border, #e4e9db);
 }
 .usk-admin-apps .lf-section-title {
     display: flex;
@@ -51,10 +51,10 @@
 .usk-admin-apps .lf-section-title > span {
     width: 28px;
     height: 28px;
-    background: #edf2e4;
-    border: 1px solid #dce6cf;
+    background: var(--usk-night-raised, #edf2e4);
+    border: 1px solid var(--usk-night-border, #dce6cf);
     border-radius: 7px;
-    color: #92a477;
+    color: var(--usk-night-mint, #92a477);
     display: grid;
     place-items: center;
     font-size: 10px;
@@ -63,25 +63,25 @@
 .usk-admin-apps .level-form-modal .lf-section-title h3 {
     font-size: 14px;
     font-weight: 500;
-    color: #45673b;
+    color: var(--usk-night-mint, #45673b);
     margin: 0;
     line-height: 1.6;
 }
 .usk-admin-apps .lf-section-title p {
     font-size: 10px;
     line-height: 1.8;
-    color: #93a180;
+    color: var(--usk-night-mint, #93a180);
     margin: 4px 0 0;
 }
 .usk-admin-apps .lf-label {
     display: block;
     font-size: 11px;
     font-weight: 500;
-    color: #637e51;
+    color: var(--usk-night-mint, #637e51);
     margin: 0 0 9px;
 }
 .usk-admin-apps .lf-label > span {
-    color: #ae9351;
+    color: var(--usk-night-gold, #ae9351);
     margin-left: 3px;
 }
 .usk-admin-apps .lf-label-row {
@@ -93,17 +93,17 @@
 }
 .usk-admin-apps .lf-label-row > span {
     font-size: 9px;
-    color: #a2ac92;
+    color: var(--usk-night-muted, #a2ac92);
     margin-bottom: 9px;
 }
 .usk-admin-apps .level-form-modal .lf-fields :is(input:not([type='checkbox']):not([type='radio']):not([type='file']), textarea) {
     width: 100%;
     box-sizing: border-box;
     padding: 13px 14px;
-    border: 1px solid #dce5d0;
-    background: #fffefa;
+    border: 1px solid var(--usk-night-border, #dce5d0);
+    background: var(--usk-night-background, #fffefa);
     border-radius: 7px;
-    color: #4d6b40;
+    color: var(--usk-night-mint, #4d6b40);
     font-family: inherit;
     font-size: 12px;
     font-weight: 400;
@@ -118,24 +118,24 @@
     resize: vertical;
 }
 .usk-admin-apps .level-form-modal .lf-fields :is(input, textarea)::placeholder {
-    color: #a6af97;
+    color: var(--usk-night-muted, #a6af97);
 }
 .usk-admin-apps .level-form-modal .lf-fields :is(input, textarea):focus-visible {
-    outline: 2px solid #b09a61;
+    outline: 2px solid var(--usk-night-gold, #b09a61);
     outline-offset: 3px;
-    border-color: #adbd98;
+    border-color: var(--usk-night-border, #adbd98);
 }
 .usk-admin-apps .level-form-modal .lf-fields [aria-invalid='true'] {
-    border-color: #c79782 !important;
+    border-color: var(--usk-night-danger, #c79782) !important;
 }
 .usk-admin-apps .lf-help {
-    color: #9aa78a;
+    color: var(--usk-night-muted, #9aa78a);
     font-size: 10px;
     margin: 8px 0 0;
     line-height: 1.8;
 }
 .usk-admin-apps .lf-error {
-    color: #aa624d;
+    color: var(--usk-night-danger, #aa624d);
     font-size: 11px;
     margin: 9px 0 0;
     line-height: 1.7;
@@ -160,10 +160,10 @@
     align-items: center;
     gap: 12px;
     padding: 13px 14px;
-    background: #fffefa;
-    border: 1px solid #e0e7d6;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #e0e7d6);
     border-radius: 8px;
-    color: #99ab83;
+    color: var(--usk-night-muted, #99ab83);
     transition:
         border-color 0.15s,
         background 0.15s;
@@ -172,12 +172,12 @@
     display: block;
     font-size: 11px;
     font-weight: 500;
-    color: #708a5d;
+    color: var(--usk-night-mint, #708a5d);
 }
 .usk-admin-apps .lf-category-card small {
     display: block;
     font-size: 9px;
-    color: #a0ad8e;
+    color: var(--usk-night-muted, #a0ad8e);
     margin-top: 4px;
 }
 .usk-admin-apps .lf-radio-check {
@@ -187,28 +187,28 @@
     width: 17px;
     height: 17px;
     border-radius: 50%;
-    border: 1px solid #d4dfc6;
-    background: #fafbf5;
+    border: 1px solid var(--usk-night-border, #d4dfc6);
+    background: var(--usk-night-surface, #fafbf5);
     flex-shrink: 0;
 }
 .usk-admin-apps .lf-radio-check svg {
     opacity: 0;
 }
 .usk-admin-apps .lf-category input:checked + .lf-category-card {
-    border-color: #a0b587;
-    background: #f0f5e7;
-    color: #729253;
+    border-color: var(--usk-night-border, #a0b587);
+    background: var(--usk-night-background, #f0f5e7);
+    color: var(--usk-night-mint, #729253);
 }
 .usk-admin-apps .lf-category input:checked + .lf-category-card .lf-radio-check {
-    background: #6d8f50;
-    color: #fff;
-    border-color: #6d8f50;
+    background: var(--usk-night-background, #6d8f50);
+    color: var(--usk-night-white, #fff);
+    border-color: var(--usk-night-field-border, #6d8f50);
 }
 .usk-admin-apps .lf-category input:checked + .lf-category-card .lf-radio-check svg {
     opacity: 1;
 }
 .usk-admin-apps .lf-category input:focus-visible + .lf-category-card {
-    outline: 2px solid #b09a61;
+    outline: 2px solid var(--usk-night-gold, #b09a61);
     outline-offset: 3px;
 }
 .usk-admin-apps .lf-switch-card {
@@ -216,10 +216,10 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    border: 1px solid #dce5cf;
+    border: 1px solid var(--usk-night-border, #dce5cf);
     border-radius: 9px;
     padding: 18px;
-    background: #f8faf2;
+    background: var(--usk-night-surface, #f8faf2);
     cursor: pointer;
 }
 .usk-admin-apps .lf-switch-copy {
@@ -230,11 +230,11 @@
     display: block;
     font-size: 12px;
     font-weight: 500;
-    color: #6a8656;
+    color: var(--usk-night-mint, #6a8656);
 }
 .usk-admin-apps .lf-switch-copy small {
     display: block;
-    color: #9aab86;
+    color: var(--usk-night-muted, #9aab86);
     font-size: 10px;
     line-height: 1.8;
     margin-top: 5px;
@@ -250,7 +250,7 @@
     width: 38px;
     height: 22px;
     border-radius: 20px;
-    background: #dce4d0;
+    background: var(--usk-night-raised, #dce4d0);
     flex-shrink: 0;
     transition: background 0.2s;
 }
@@ -261,25 +261,25 @@
     height: 16px;
     left: 3px;
     top: 3px;
-    background: #fffef9;
+    background: var(--usk-night-surface, #fffef9);
     border-radius: 50%;
     box-shadow: 0 1px 3px #2c482122;
     transition: transform 0.2s;
 }
 .usk-admin-apps .lf-switch-card > input:checked + .lf-switch-track {
-    background: #759955;
+    background: var(--usk-night-background, #759955);
 }
 .usk-admin-apps .lf-switch-card > input:checked + .lf-switch-track:after {
     transform: translateX(16px);
 }
 .usk-admin-apps .lf-switch-card > input:focus-visible + .lf-switch-track {
-    outline: 2px solid #b09a61;
+    outline: 2px solid var(--usk-night-gold, #b09a61);
     outline-offset: 4px;
 }
 .usk-admin-apps .lf-preview {
     align-self: start;
-    background: #f1f5e7;
-    border: 1px solid #dfe7d0;
+    background: var(--usk-night-raised, #f1f5e7);
+    border: 1px solid var(--usk-night-border, #dfe7d0);
     border-radius: 10px;
     padding: 24px;
     min-width: 0;
@@ -289,7 +289,7 @@
     font-size: 8px;
     font-weight: 600;
     letter-spacing: 0.13em;
-    color: #aa955b;
+    color: var(--usk-night-gold, #aa955b);
 }
 .usk-admin-apps .lf-preview-icon {
     display: inline-flex;
@@ -297,29 +297,29 @@
     align-items: center;
     width: 57px;
     height: 57px;
-    background: #e6edd8;
-    color: #92aa74;
+    background: var(--usk-night-raised, #e6edd8);
+    color: var(--usk-night-muted, #92aa74);
     border-radius: 13px;
     margin: 30px 0 23px;
 }
 .usk-admin-apps .lf-preview-category {
     display: block;
     font-size: 9px;
-    color: #9daa86;
+    color: var(--usk-night-muted, #9daa86);
 }
 .usk-admin-apps .level-form-modal .lf-preview h3 {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-size: 27px;
     line-height: 1.15;
     font-weight: 400;
-    color: #688451;
+    color: var(--usk-night-mint, #688451);
     margin: 12px 0 15px;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .lf-preview-description {
     font-size: 11px;
     line-height: 1.9;
-    color: #9caa87;
+    color: var(--usk-night-muted, #9caa87);
     margin: 0 0 21px;
     white-space: pre-line;
     overflow-wrap: anywhere;
@@ -329,25 +329,25 @@
     align-items: center;
     gap: 6px;
     font-size: 9px;
-    border: 1px solid #d6e2c2;
-    background: #eaf1dc;
+    border: 1px solid var(--usk-night-border, #d6e2c2);
+    background: var(--usk-night-raised, #eaf1dc);
     padding: 6px 9px;
     border-radius: 5px;
-    color: #94a87a;
+    color: var(--usk-night-muted, #94a87a);
 }
 .usk-admin-apps .lf-status.is-required {
-    background: #f5efd8;
-    border-color: #e8dcad;
-    color: #ac9659;
+    background: var(--usk-night-raised, #f5efd8);
+    border-color: var(--usk-night-border, #e8dcad);
+    color: var(--usk-night-gold, #ac9659);
 }
 .usk-admin-apps .lf-preview-note {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    border-top: 1px solid #dce5cd;
+    border-top: 1px solid var(--usk-night-border, #dce5cd);
     padding-top: 21px;
     margin-top: 28px;
-    color: #a2b08c;
+    color: var(--usk-night-muted, #a2b08c);
 }
 .usk-admin-apps .lf-preview-note svg {
     flex-shrink: 0;
@@ -362,7 +362,7 @@
     align-items: flex-start;
     gap: 17px;
     padding-bottom: 25px;
-    border-bottom: 1px solid #e1e8d8;
+    border-bottom: 1px solid var(--usk-night-border, #e1e8d8);
     margin-bottom: 25px;
 }
 .usk-admin-apps .lf-context-icon {
@@ -372,19 +372,19 @@
     width: 50px;
     height: 50px;
     border-radius: 11px;
-    background: #eef4e2;
-    color: #8da571;
+    background: var(--usk-night-raised, #eef4e2);
+    color: var(--usk-night-mint, #8da571);
     flex-shrink: 0;
 }
 .usk-admin-apps .level-form-modal .lf-edit-context h3 {
     font-size: 17px;
     font-weight: 500;
-    color: #64814f;
+    color: var(--usk-night-mint, #64814f);
     margin: 8px 0 6px;
 }
 .usk-admin-apps .lf-edit-context p {
     font-size: 11px;
-    color: #9dab8b;
+    color: var(--usk-night-muted, #9dab8b);
     margin: 0;
     line-height: 1.8;
 }
@@ -400,7 +400,7 @@
     right: 15px;
     transform: translateY(-50%);
     font-size: 10px;
-    color: #a0ad8b;
+    color: var(--usk-night-muted, #a0ad8b);
     pointer-events: none;
 }
 .usk-admin-apps .lf-edit-note {
@@ -410,8 +410,8 @@
     margin-top: 26px;
     padding: 15px 16px;
     border-radius: 7px;
-    background: #f2f6e9;
-    color: #a0ae8a;
+    background: var(--usk-night-surface, #f2f6e9);
+    color: var(--usk-night-muted, #a0ae8a);
 }
 .usk-admin-apps .lf-edit-note svg {
     flex-shrink: 0;
@@ -432,16 +432,16 @@
     flex-direction: column;
     align-items: center;
     gap: 13px;
-    border: 1px dashed #bfcea8;
+    border: 1px dashed var(--usk-night-border, #bfcea8);
     border-radius: 9px;
     padding: 32px 22px;
-    background: #f6f9ed;
-    color: #9bb47d;
+    background: var(--usk-night-surface, #f6f9ed);
+    color: var(--usk-night-muted, #9bb47d);
     cursor: pointer;
     text-align: center;
 }
 .usk-admin-apps .lf-upload strong {
-    color: #819f65;
+    color: var(--usk-night-mint, #819f65);
     font-size: 13px;
     font-weight: 500;
     overflow-wrap: anywhere;
@@ -449,10 +449,10 @@
 }
 .usk-admin-apps .lf-upload > span {
     font-size: 10px;
-    color: #acb898;
+    color: var(--usk-night-muted, #acb898);
 }
 .usk-admin-apps .lf-file-input:focus-visible + .lf-upload {
-    outline: 2px solid #b09a61;
+    outline: 2px solid var(--usk-night-gold, #b09a61);
     outline-offset: 4px;
 }
 .usk-admin-apps .lf-image-preview {
@@ -462,13 +462,13 @@
     width: 100%;
     max-height: 240px;
     object-fit: contain;
-    background: #f0f4e6;
-    border: 1px solid #dce5d0;
+    background: var(--usk-night-raised, #f0f4e6);
+    border: 1px solid var(--usk-night-border, #dce5d0);
     border-radius: 8px;
 }
 .usk-admin-apps .lf-image-preview figcaption {
     font-size: 9px;
-    color: #a0ad8c;
+    color: var(--usk-night-muted, #a0ad8c);
     margin-top: 8px;
 }
 @media (max-width: 760px) {
@@ -550,10 +550,10 @@
     width: 100%;
     min-height: 48px;
     padding: 12px 35px 12px 14px;
-    border: 1px solid #dce5d0;
+    border: 1px solid var(--usk-night-border, #dce5d0);
     border-radius: 7px;
-    background-color: #fffefa;
-    color: #4d6b40;
+    background-color: var(--usk-night-background, #fffefa);
+    color: var(--usk-night-mint, #4d6b40);
     font: inherit;
     font-size: 12px;
     box-shadow: none;
@@ -567,7 +567,7 @@
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    color: #8ea67a;
+    color: var(--usk-night-mint, #8ea67a);
 }
 .usk-admin-apps .level-form-modal .lf-select-wrap select {
     padding-left: 41px;
@@ -575,7 +575,7 @@
 .usk-admin-apps .lf-label .lf-optional {
     font-size: 8px;
     font-weight: 400;
-    color: #99a88b;
+    color: var(--usk-night-muted, #99a88b);
 }
 .usk-admin-apps .lf-description-meta {
     display: flex;
@@ -586,24 +586,24 @@
 .usk-admin-apps .lf-description-meta > span {
     font-size: 9px;
     white-space: nowrap;
-    color: #9aa78a;
+    color: var(--usk-night-muted, #9aa78a);
 }
 .usk-admin-apps .lf-level-image-column {
     min-width: 0;
-    border-left: 1px solid #e3e9da;
+    border-left: 1px solid var(--usk-night-border, #e3e9da);
     padding-left: 28px;
 }
 .usk-admin-apps .level-form-modal .lf-level-image-column > h3 {
     font-family: 'Libre Caslon Display', Georgia, serif;
     font-size: 28px;
     font-weight: 400;
-    color: #617f4b;
+    color: var(--usk-night-mint, #617f4b);
     margin: 13px 0 10px;
     line-height: 1.1;
 }
 .usk-admin-apps .lf-level-live-card {
-    background: #fffefa;
-    border: 1px solid #dce5d0;
+    background: var(--usk-night-surface, #fffefa);
+    border: 1px solid var(--usk-night-border, #dce5d0);
     border-radius: 9px;
     overflow: hidden;
     margin: 23px 0 20px;
@@ -611,7 +611,7 @@
 .usk-admin-apps .lf-level-cover {
     position: relative;
     height: 170px;
-    background: #eef3e3;
+    background: var(--usk-night-raised, #eef3e3);
 }
 .usk-admin-apps .lf-level-cover > img {
     width: 100%;
@@ -626,13 +626,13 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #a0b68b;
-    background: linear-gradient(130deg, #e7efda, #f6f5e9);
+    color: var(--usk-night-muted, #a0b68b);
+    background: linear-gradient(130deg, var(--usk-night-raised, #e7efda), var(--usk-night-surface, #f6f5e9));
 }
 .usk-admin-apps .lf-level-cover-empty > span {
     font-size: 6px;
     letter-spacing: 0.12em;
-    color: #a8b494;
+    color: var(--usk-night-muted, #a8b494);
 }
 .usk-admin-apps .lf-level-code {
     position: absolute;
@@ -640,8 +640,8 @@
     left: 12px;
     padding: 5px 9px;
     border-radius: 4px;
-    background: #fffffff0;
-    color: #7d9966;
+    background: color-mix(in srgb, var(--usk-night-surface, #ffffff) 94%, transparent);
+    color: var(--usk-night-mint, #7d9966);
     font-size: 10px;
 }
 .usk-admin-apps .lf-level-card-copy {
@@ -650,26 +650,26 @@
 .usk-admin-apps .lf-level-card-copy > span:first-child {
     display: block;
     font-size: 9px;
-    color: #a69668;
+    color: var(--usk-night-gold, #a69668);
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .lf-level-card-copy h4 {
     font-size: 17px;
     line-height: 1.5;
     font-weight: 500;
-    color: #65834f;
+    color: var(--usk-night-mint, #65834f);
     margin: 10px 0 7px;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .lf-level-card-copy > p {
     font-size: 10px;
-    color: #9daa8b;
+    color: var(--usk-night-muted, #9daa8b);
     margin: 0 0 15px;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .lf-active-status {
-    color: #7f9d64;
-    background: #edf4e1;
+    color: var(--usk-night-mint, #7f9d64);
+    background: var(--usk-night-raised, #edf4e1);
 }
 .usk-admin-apps .lf-create-upload {
     padding: 21px 16px;
@@ -683,7 +683,7 @@
     align-items: center;
     gap: 8px;
     margin-top: 12px;
-    color: #91a57e;
+    color: var(--usk-night-mint, var(--usk-day-green, #91a57e));
     font-size: 10px;
 }
 .usk-admin-apps .lf-selected-file > span {
@@ -695,9 +695,9 @@
 .usk-admin-apps .lf-selected-file > button {
     display: grid;
     place-items: center;
-    border: 1px solid #dce5d0;
-    background: #f6f9ee;
-    color: #99ac87;
+    border: 1px solid var(--usk-night-border, #dce5d0);
+    background: var(--usk-night-surface, #f6f9ee);
+    color: var(--usk-night-muted, #99ac87);
     width: 27px;
     height: 27px;
     cursor: pointer;
@@ -708,7 +708,7 @@
     gap: 10px;
     margin-top: 16px;
     font-size: 10px;
-    color: #8a9e75;
+    color: var(--usk-night-mint, #8a9e75);
 }
 .usk-admin-apps .lf-upload-progress progress {
     flex: 1;
@@ -725,7 +725,7 @@
         padding-left: 0;
         padding-top: 26px;
         border-left: 0;
-        border-top: 1px solid #e3e9da;
+        border-top: 1px solid var(--usk-night-border, #e3e9da);
     }
     .usk-admin-apps .lf-level-cover {
         height: 220px;
@@ -754,8 +754,8 @@
     align-items: start;
 }
 .usk-admin-apps .lf-faculty-preview {
-    background: #f1f5e8;
-    border: 1px solid #dce6cf;
+    background: var(--usk-night-raised, #f1f5e8);
+    border: 1px solid var(--usk-night-border, #dce6cf);
     border-radius: 11px;
     padding: 25px;
     min-width: 0;
@@ -766,21 +766,21 @@
     align-items: center;
     justify-content: center;
     gap: 17px;
-    border-bottom: 1px solid #dce5d0;
+    border-bottom: 1px solid var(--usk-night-border, #dce5d0);
     padding: 30px 0 25px;
     margin-bottom: 23px;
-    color: #94ab7a;
+    color: var(--usk-night-muted, #94ab7a);
 }
 .usk-admin-apps .lf-faculty-preview-mark > span {
     font-size: 7px;
     letter-spacing: 0.13em;
-    color: #a6b392;
+    color: var(--usk-night-muted, #a6b392);
 }
 .usk-admin-apps .lf-faculty-code {
     display: inline-block;
-    background: #e5edd7;
-    color: #7d9864;
-    border: 1px solid #d4e0c1;
+    background: var(--usk-night-raised, #e5edd7);
+    color: var(--usk-night-mint, #7d9864);
+    border: 1px solid var(--usk-night-border, #d4e0c1);
     padding: 5px 9px;
     border-radius: 5px;
     font-size: 10px;
@@ -791,14 +791,14 @@
     font-size: 31px;
     line-height: 1.15;
     font-weight: 400;
-    color: #617f4b;
+    color: var(--usk-night-mint, #617f4b);
     margin: 16px 0;
     overflow-wrap: anywhere;
 }
 .usk-admin-apps .lf-faculty-description {
     font-size: 11px;
     line-height: 1.9;
-    color: #93a381;
+    color: var(--usk-night-mint, #93a381);
     margin: 0 0 23px;
     white-space: pre-line;
     overflow-wrap: anywhere;
@@ -815,14 +815,14 @@
     align-items: center;
     gap: 7px;
     font-size: 10px;
-    color: #8ca075;
+    color: var(--usk-night-mint, #8ca075);
 }
 .usk-admin-apps .lf-faculty-signature {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-top: 25px;
-    color: #a7b693;
+    color: var(--usk-night-muted, #a7b693);
 }
 .usk-admin-apps .lf-faculty-signature > span {
     flex: 1;
@@ -834,7 +834,7 @@
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0;
-    color: #8b9e76;
+    color: var(--usk-night-mint, #8b9e76);
 }
 @media (max-width: 780px) {
     .usk-admin-apps .lf-faculty-layout {
@@ -860,14 +860,14 @@
 }
 .usk-admin-apps .lf-payment-category {
     padding: 18px;
-    border: 1px solid #dce5cf;
-    background: #fafcf4;
+    border: 1px solid var(--usk-night-border, #dce5cf);
+    background: var(--usk-night-surface, #fafcf4);
     border-radius: 8px;
     min-width: 0;
 }
 .usk-admin-apps .lf-payment-category h4 {
     font-size: 13px;
-    color: #678650;
+    color: var(--usk-night-mint, #678650);
     margin: 0 0 22px;
     font-weight: 500;
 }
@@ -879,16 +879,16 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 10px;
-    border-top: 1px solid #dce5cf;
+    border-top: 1px solid var(--usk-night-border, #dce5cf);
     padding-top: 17px;
     margin-top: 22px;
 }
 .usk-admin-apps .lf-payment-total > span {
     font-size: 10px;
-    color: #92a57e;
+    color: var(--usk-night-muted, #92a57e);
 }
 .usk-admin-apps .lf-payment-total > output {
     font-size: 20px;
-    color: #789960;
+    color: var(--usk-night-mint, #789960);
     font-weight: 500;
 }

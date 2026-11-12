@@ -50,7 +50,7 @@ class Enrollment extends Model
         });
     }
 
-    public function academicEnrollment() { return $this->hasOne(\App\Models\Student\AcademicEnrollment::class, 'application_id'); }
+    public function academicEnrollment() { return $this->hasOne(\App\Models\Student\AcademicEnrollment::class, 'application_id')->oldestOfMany(); }
 
     /** RELATIONS **/
     public function student()

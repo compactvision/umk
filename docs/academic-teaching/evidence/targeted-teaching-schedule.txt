@@ -1,0 +1,35 @@
+
+   PASS  Tests\Feature\AcademicTeachingTest
+  ✓ catalog codes are unique and archive preserves published references  0.73s  
+  ✓ optional item and independent ue credits are frozen and duplicate c… 0.09s  
+  ✓ offering creation is idempotent and refuses the wrong period and gr… 0.14s  
+  ✓ managed resources require explicit registration and stay private af… 0.23s  
+  ✓ optional course prerequisite uses official unit results or explicit… 0.12s  
+  ✓ other version of same course does not grant access or inherit regis… 0.14s  
+  ✓ group change closes old registration and keeps past session history  0.11s  
+  ✓ team history keeps original teacher and assistants block overlappin… 0.11s  
+  ✓ teacher workspace is scoped and assistant cannot publish or see ros… 0.16s  
+  ✓ archive preserves activities and scoped staff cannot mutate other f… 0.09s  
+  ✓ legacy audit reports ambiguity without rewriting any offering        0.11s  
+
+   PASS  Tests\Feature\ScheduleModuleTest
+  ✓ weekly creation stores utc and can be filtered edited and deleted    0.10s  
+  ✓ conflicts for rooms teachers and levels are rejected even in draft   0.07s  
+  ✓ repetition rolls back entirely when a later week conflicts           0.04s  
+  ✓ year boundaries and invalid intervals are rejected                   0.03s  
+  ✓ distinct groups can meet concurrently but common courses cannot ove… 0.05s  
+  ✓ reassigning an already scheduled course checks teacher availability  0.05s  
+  ✓ semester plan generates only selected weekdays inclusively           0.07s  
+  ✓ semester plan is atomic if the last occurrence conflicts             0.05s  
+  ✓ semester plan rejects wrong semester empty days and invalid periods  0.04s  
+  ✓ a course can meet on monday morning and wednesday afternoon in diff… 0.06s  
+  ✓ two distinct slots on the same day are allowed but overlaps roll ba… 0.07s  
+  ✓ each dynamic slot requires its own valid times                       0.03s  
+  ✓ curriculum saves three weekly slots in the course semester with opt… 0.07s  
+  ✓ semester edit updates only the matching weekly slot and rolls back…  0.11s  
+  ✓ calendar can delete one occurrence or the matching semester slot     0.06s  
+  ✓ student cannot manage the schedule                                   0.03s  
+
+  Tests:    27 passed (321 assertions)
+  Duration: 3.13s
+

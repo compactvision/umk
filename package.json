@@ -9,7 +9,9 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "types": "tsc --noEmit",
-        "test:admissions": "node --test tests/Frontend/admissions.test.mjs"
+        "test:admissions": "node --test tests/Frontend/admissions.test.mjs",
+        "lint:check": "eslint . --max-warnings=0",
+        "test:frontend": "node --test tests/Frontend/*.test.mjs"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
@@ -63,7 +65,7 @@
         "react-dom": "^19.0.0",
         "react-icons": "^5.5.0",
         "sweetalert2": "^11.22.2",
-        "swiper": "^11.2.10",
+        "swiper": "^12.2.0",
         "tailwind-merge": "^3.0.1",
         "tailwindcss": "^4.0.0",
         "tailwindcss-animate": "^1.0.7",

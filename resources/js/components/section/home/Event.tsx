@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 type MiniEvent = {
   img: string;
@@ -73,7 +73,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
   "Conférence": { bg: "bg-amber-100", text: "text-amber-700" },
 };
 
-export default function Event(): JSX.Element {
+export default function Event(): React.JSX.Element {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
   const f = splitDate(featured.dateLabel);

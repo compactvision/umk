@@ -15,6 +15,8 @@ class Classes extends Model
     protected $table = 'classes';
     protected $fillable = ['faculty_id','level_id','intake_id','section','capacity','status'];
 
+    public function promotion(): BelongsTo { return $this->belongsTo(\App\Models\AcademicStructure\AcademicPromotion::class, 'academic_promotion_id'); }
+
     public function faculty(): BelongsTo { return $this->belongsTo(Faculty::class); }
     public function level(): BelongsTo { return $this->belongsTo(Level::class); }
     public function intake(): BelongsTo { return $this->belongsTo(Intake::class); }

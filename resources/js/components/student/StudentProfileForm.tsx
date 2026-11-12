@@ -44,7 +44,7 @@ export default function StudentProfileForm({
         if (!viewport) return;
         let frame = 0;
         const updateActiveSection = () => {
-            let current = sections[0][0];
+            let current: (typeof sections)[number][0] = sections[0][0];
             for (const [id] of sections) {
                 const node = document.getElementById(`profile-section-${id}`);
                 if (node && node.getBoundingClientRect().top <= viewport.getBoundingClientRect().top + 48) current = id;

@@ -1,0 +1,10 @@
+
+   PASS  Tests\Feature\AcademicLifecycleTest
+  ✓ graduation requires a certified curriculum and separate authority    1.32s  
+  ✓ conditional progression preserves result and creates only pending e… 0.24s  
+  ✓ interruption resumption and scope follow the same student            0.19s  
+  ✓ completion counts certified prior credits only when the rule allows… 0.13s  
+
+  Tests:    4 passed (107 assertions)
+  Duration: 2.04s
+

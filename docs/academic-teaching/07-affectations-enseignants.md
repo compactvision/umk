@@ -1,0 +1,9 @@
+# Affectations et espace enseignant
+
+Les fiches `Professor`, leur recherche et la désactivation restent en place. Les champs `professor_id` et `assistant_professor_id` continuent d’alimenter les anciennes interfaces. `TeachingTeam` historise ces pointeurs lors d’un changement et accepte plusieurs intervenants et assistants additionnels. Les dates d’effet démarrent à la décision (ou borne inconnue pour le rattachement initial historique) ; une fin clôt une ligne et ne l’efface pas. Les séances historiques conservent le responsable en vigueur à leur date pour l’affichage étudiant.
+
+Les services vérifient activité, rôle unique courant sur l’offre, périmètre et conflits sur les séances à venir des offres versionnées. Le contrôle historique de réaffectation des offres anciennes couvre également leurs autres créneaux. Le responsable d’une offre publiée se remplace ; il ne se retire pas en laissant l’offre sans responsable. Les créneaux vérifient également les enseignants supplémentaires selon les périodes d’affectation. Aucun quota de charge institutionnel n’est inventé.
+
+L’admin global disposant de `manage users` associe explicitement un compte vérifié de rôle `professor` à une fiche par `POST /dashboard/admin/professors/{professor}/account`, avec motif. L’association est unique ; aucune inférence à partir de l’adresse de l’annuaire. Désactiver la fiche ou retirer le lien supprime l’accès sans effacer l’historique.
+
+`/dashboard/teacher` liste les offres du compte lié : contexte, groupe, séances, supports communs. Responsable ou intervenant avec `manage students` : liste nominative de son public actuel. Avec `manage courses`, ils peuvent publier un lien HTTP(S) commun dans une offre ouverte non archivée. Assistant : consultation de son offre et des supports communs, sans liste nominative ni publication. Aucun accès aux travaux privés, dossiers, notes ou autres offres par l’espace enseignant.

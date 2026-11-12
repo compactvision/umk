@@ -8,8 +8,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 class EnrollmentJourneyTest extends TestCase
 {
@@ -19,6 +19,7 @@ class EnrollmentJourneyTest extends TestCase
     {
         $user = new User;
         $user->forceFill(['first_name' => 'Test', 'last_name' => 'Étudiant', 'email' => $email, 'password' => 'test-password', 'email_verified_at' => now()])->save();
+
         return $user;
     }
 
@@ -27,6 +28,7 @@ class EnrollmentJourneyTest extends TestCase
         $faculty = DB::table('faculties')->insertGetId(['name' => 'Droit', 'code' => 'DR']);
         $level = DB::table('levels')->insertGetId(['faculty_id' => $faculty, 'title' => 'Licence 1', 'code' => 'L1']);
         $year = DB::table('academic_years')->insertGetId(['title' => '2026-2027', 'start_date' => '2026-10-01', 'end_date' => '2027-09-30', 'status' => 'open']);
+
         return ['faculty_id' => (string) $faculty, 'level_id' => (string) $level, 'year_id' => (string) $year, 'name' => 'Test Étudiant', 'email' => 'student@example.test', 'program' => 'Droit', 'documents' => []];
     }
 
@@ -43,7 +45,7 @@ class EnrollmentJourneyTest extends TestCase
         $this->assertArrayNotHasKey('cvv', $response->json('draft.form_snapshot'));
         $this->postJson('/dashboard/enrollments/save-progress', ['uuid' => $uuid, 'last_step' => 3, 'form_snapshot' => $snapshot])->assertOk()->assertJsonPath('draft.uuid', $uuid)->assertJsonPath('draft.last_step', 3);
         $this->assertDatabaseCount('enrollments', 1);
-        $this->get('/dashboard/enrollments/' . $uuid . '/edit')->assertOk()->assertInertia(fn (Assert $page) => $page
+        $this->get('/dashboard/enrollments/'.$uuid.'/edit')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('dashboard/enrollments/Enrollment')
             ->where('draft.uuid', $uuid)
             ->where('draft.last_step', 3)
@@ -69,8 +71,8 @@ class EnrollmentJourneyTest extends TestCase
         Storage::fake('local');
         $student = $this->student();
         $snapshot = $this->snapshot();
-        Storage::disk('temp')->put('enrollments/tmp/token/diploma.pdf', 'first document');
-        $snapshot['documents']['diploma'] = ['temp' => ['token' => 'token', 'path' => 'enrollments/tmp/token/diploma.pdf'], 'filename' => 'diploma.pdf', 'mime' => 'application/pdf', 'size_bytes' => 14];
+        Storage::disk('temp')->put("enrollments/tmp/{$student->id}/token/diploma.pdf", 'first document');
+        $snapshot['documents']['diploma'] = ['temp' => ['token' => 'token', 'path' => "enrollments/tmp/{$student->id}/token/diploma.pdf"], 'filename' => 'diploma.pdf', 'mime' => 'application/pdf', 'size_bytes' => 14];
         $response = $this->actingAs($student)->postJson('/dashboard/enrollments/save-progress', ['last_step' => 4, 'form_snapshot' => $snapshot])->assertOk();
         $uuid = $response->json('draft.uuid');
         $document = EnrollmentDocument::firstOrFail();
@@ -78,8 +80,8 @@ class EnrollmentJourneyTest extends TestCase
         $this->assertSame(hash('sha256', 'first document'), $document->sha256);
         $this->assertSame($document->uuid, $response->json('draft.form_snapshot.documents.diploma.uuid'));
         $oldPath = $document->path;
-        Storage::disk('temp')->put('enrollments/tmp/replacement/diploma.pdf', 'replacement');
-        $snapshot['documents']['diploma']['temp'] = ['token' => 'replacement', 'path' => 'enrollments/tmp/replacement/diploma.pdf'];
+        Storage::disk('temp')->put("enrollments/tmp/{$student->id}/replacement/diploma.pdf", 'replacement');
+        $snapshot['documents']['diploma']['temp'] = ['token' => 'replacement', 'path' => "enrollments/tmp/{$student->id}/replacement/diploma.pdf"];
         $this->postJson('/dashboard/enrollments/save-progress', ['uuid' => $uuid, 'last_step' => 4, 'form_snapshot' => $snapshot])->assertOk();
         $this->assertDatabaseCount('enrollment_documents', 1);
         Storage::disk('local')->assertMissing($oldPath);

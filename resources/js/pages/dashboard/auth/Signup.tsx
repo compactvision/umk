@@ -1,4 +1,3 @@
-import React from 'react'
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
 import DashboardSignup from '@/components/section/dashboard/auth/DashboardSignup';
 

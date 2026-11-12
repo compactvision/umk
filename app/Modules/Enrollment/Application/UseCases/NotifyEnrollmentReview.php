@@ -21,7 +21,7 @@ final class NotifyEnrollmentReview
                 Mail::to($enrollment->student->email)->send(new EnrollmentReviewUpdated($enrollment, $kind, $remarks));
                 $event = 'email_sent';
             } catch (\Throwable $exception) {
-                Log::error('Échec de notification du dossier', ['enrollment_id' => $id, 'kind' => $kind, 'error' => $exception->getMessage()]);
+                Log::error('Échec de notification du dossier', ['enrollment_id' => $id, 'kind' => $kind]);
                 $event = 'email_failed';
             }
             $enrollment->events()->create(['event' => $event, 'payload' => ['notification' => $kind], 'occurred_at' => now()]);

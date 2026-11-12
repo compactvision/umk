@@ -1,308 +1,313 @@
-import DeleteConfirmation from '@/components/admin/DeleteConfirmation';
 import PageHeading from '@/components/admin/PageHeading';
-import Pagination from '@/components/admin/Pagination';
 import CreateFacultyPopup from '@/components/form/CreateFacultyPopup';
-import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
-import Alert from '@/utils/sweetAlert';
-import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { ArrowUpRight, BookOpen, Building2, ChevronDown, Clock3, Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
-import { route } from 'ziggy-js';
+import { useCatalogView } from '@/hooks/use-catalog-view';
+import { usePanelFade } from '@/hooks/use-panel-fade';
+import ReferenceEditor from '@/pages/dashboard/academicStructure/ReferenceEditor';
+import type { Row } from '@/pages/dashboard/academicStructure/types';
+import { Head, Link } from '@inertiajs/react';
+import { ArrowUpRight, Building2, ChevronRight, Layers3, Pencil, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
+import '../../../../css/dashboard/academic-structure.css';
 import '../../../../css/dashboard/faculty-catalog.css';
+import DepartmentOptionsEditor, { type OrientationLevel } from './DepartmentOptionsEditor';
 
-type FacultyLevel = {
-    id: number;
-    faculty_id: number;
-    title: string;
-    code: string;
-    image?: string;
-    tag?: string;
-    description?: string;
-    is_active?: boolean;
-    level_name?: string;
-    level_code?: string;
-    student_number?: number;
-};
-type FacultyRecord = {
+type Faculty = {
     id: number;
     name: string;
     code: string;
+    description: string | null;
     duration_years: number;
-    description?: string;
-    is_active?: boolean;
-    levels?: FacultyLevel[];
+    is_active: boolean;
+    university_id: number | null;
+    departments: Row[];
+    levels: OrientationLevel[];
 };
-const Faculty = () => {
-    const { faculties = { data: [] }, levelCodes = { data: [] } } = usePage().props as {
-        faculties: { data: FacultyRecord[] };
-        levelCodes: { data: { id: number; code: string }[] };
-    };
 
-    // Données fictives si rien ne vient du backend
-    const fakeLevelCodes = [
-        { id: 1, code: 'L1', name: 'Licence 1' },
-        { id: 2, code: 'L2', name: 'Licence 2' },
-        { id: 3, code: 'L3', name: 'Licence 3' },
-    ];
+type Props = {
+    faculties: Faculty[];
+    institution: { id: number; name: string } | null;
+    selectedFacultyId: number | null;
+    viewDepartments: boolean;
+    manageStructure: boolean;
+};
 
-    const codesToUse = levelCodes?.data?.length ? levelCodes.data : fakeLevelCodes;
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [levelEdit, setLevelEdit] = useState(false);
-    const [selectedLevel, setSelectedLevel] = useState<FacultyLevel | null>(null);
-    const [search, setSearch] = useState('');
-    const [selectedFaculty, setSelectedFaculty] = useState<FacultyRecord | null>(null);
-
-    const openEditModal = (faculty: FacultyRecord) => {
-        setIsEdit(true);
-        setIsModalOpen(true);
-        setSelectedFaculty(faculty);
-    };
-
-    const openCreateModal = () => {
-        setIsEdit(false);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setIsEdit(false);
-        setLevelEdit(false);
-        setSelectedFaculty(null);
-        setSelectedLevel(null);
-    };
-
-    const [pendingDelete, setPendingDelete] = useState<FacultyRecord | null>(null);
-    const deleteForm = useForm({});
-    const deleteFaculty = (faculty: FacultyRecord) => {
-        deleteForm.clearErrors();
-        setPendingDelete(faculty);
-    };
-    const confirmDeleteFaculty = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!pendingDelete || deleteForm.processing) return;
-        deleteForm.delete(route('dashboard.admin.faculties.destroy', pendingDelete.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                setPendingDelete(null);
-                Alert.success('Faculté supprimée avec succès.');
-            },
-        });
-    };
-
-    const viewLevel = (level: FacultyLevel) => {
-        router.visit(route('dashboard.admin.levels.details.show', level.id));
-    };
-
-    const editLevel = (level: FacultyLevel) => {
-        setLevelEdit(true);
-        setSelectedLevel(level);
-    };
-
-    const deleteLevel = async (levelId: number) => {
-        const confirmed = await Alert.deleteConfirm('ce niveau');
-        if (!confirmed) return;
-
-        Alert.loading('Suppression en cours...');
-        router.delete(route('dashboard.admin.levels.destroy', levelId), {
-            onSuccess: () => {
-                Alert.success('Niveau supprimé avec succès.');
-                closeModal();
-            },
-            onError: () => {
-                Alert.error('Une erreur est survenue.');
-                closeModal();
-            },
-            onFinish: () => {
-                Alert.close();
-            },
-        });
-    };
-
-    const normalizedSearch = search
+const normalize = (value: string) =>
+    value
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLocaleLowerCase('fr')
         .trim();
-    const filtered = faculties.data.filter((faculty) =>
-        `${faculty.name} ${faculty.code}`
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLocaleLowerCase('fr')
-            .includes(normalizedSearch),
-    );
+
+export default function FacultyDirectory({ faculties, institution, selectedFacultyId, viewDepartments, manageStructure }: Props) {
+    const [view, setView] = useCatalogView({ search: '', selection: selectedFacultyId });
+    const { search, selection } = view;
+    const [createFaculty, setCreateFaculty] = useState(false);
+    const [editFaculty, setEditFaculty] = useState<Faculty | null>(null);
+    const [orientation, setOrientation] = useState<OrientationLevel | null>(null);
+    const [reference, setReference] = useState<{ kind: 'faculty-context' | 'department'; record: Partial<Row> } | null>(null);
+
+    const filtered = faculties.filter((faculty) => normalize(`${faculty.name} ${faculty.code}`).includes(normalize(search)));
+    const selected = filtered.find((faculty) => faculty.id === selection) ?? filtered[0];
+    const attached = selected?.university_id === institution?.id && Boolean(institution);
+    const resultsPanel = usePanelFade<HTMLElement>(filtered.map((faculty) => faculty.id).join(','));
+    const detailPanel = usePanelFade<HTMLElement>(selected?.id);
+    const setResultsPanel = (element: HTMLElement | null) => {
+        resultsPanel.current = element;
+    };
+
     return (
-        <Dashboard>
-            <div className="faculty-catalog">
+        <Dashboard hideAppsNavigation>
+            <Head title="Facultés et départements" />
+            <div className="as-page as-establishment faculty-directory">
                 <PageHeading
-                    title="Facultés"
-                    description="Une organisation claire, des parcours à portée de main."
+                    title="Facultés et départements"
+                    description="Sélectionnez une faculté pour consulter ses départements et accéder à sa fiche."
                     action={
-                        <button type="button" onClick={openCreateModal} className="admin-primary">
-                            <Plus size={17} strokeWidth={1.8} />
+                        <button type="button" className="admin-primary" onClick={() => setCreateFaculty(true)}>
+                            <Plus size={17} />
                             Nouvelle faculté
                         </button>
                     }
                 />
-                <div className="fc-toolbar">
-                    <label className="fc-search">
-                        <Search size={18} strokeWidth={1.7} />
-                        <input
-                            type="search"
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Rechercher une faculté ou un code…"
-                            aria-label="Rechercher une faculté sur cette page"
-                        />
-                    </label>
-                    <span aria-live="polite">
-                        {filtered.length} faculté{filtered.length > 1 ? 's' : ''} sur cette page
-                    </span>
-                </div>
-                <div className="fc-grid">
-                    {filtered.map((faculty) => {
-                        const levels = faculty.levels || [];
-                        return (
-                            <article className="fc-card" key={faculty.id}>
-                                <div className="fc-card-top">
-                                    <span className="fc-faculty-icon">
-                                        <Building2 size={25} strokeWidth={1.4} />
-                                    </span>
-                                    <span className="fc-code">{faculty.code}</span>
-                                    <div className="fc-actions">
-                                        <button
-                                            type="button"
-                                            onClick={() => openEditModal(faculty)}
-                                            aria-label={`Modifier ${faculty.name}`}
-                                            title="Modifier la faculté"
-                                        >
-                                            <Pencil size={16} strokeWidth={1.7} />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="fc-delete"
-                                            onClick={() => deleteFaculty(faculty)}
-                                            aria-label={`Supprimer ${faculty.name}`}
-                                            title="Supprimer la faculté"
-                                        >
-                                            <Trash2 size={16} strokeWidth={1.7} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="fc-card-copy">
-                                    <h2>
-                                        <Link href={route('dashboard.admin.faculties.show', faculty.id)}>{faculty.name}</Link>
-                                    </h2>
-                                    <p>{faculty.description || 'La présentation de cette faculté reste à compléter.'}</p>
-                                </div>
-                                <div className="fc-metadata">
-                                    <span>
-                                        <Clock3 size={15} />
-                                        {faculty.duration_years} an{faculty.duration_years > 1 ? 's' : ''} de cursus
-                                    </span>
-                                    <span className={faculty.is_active === false ? 'is-inactive' : ''}>
-                                        {faculty.is_active === false ? 'Inactive' : 'Active'}
-                                    </span>
-                                </div>
-                                <details className="fc-levels">
-                                    <summary>
-                                        <span>
-                                            <BookOpen size={16} strokeWidth={1.6} />
-                                            Niveaux de formation
+
+                <div className="faculty-directory-grid">
+                    <section className="as-panel as-establishment-panel" aria-labelledby="faculty-list-heading">
+                        <div className="faculty-directory-section-heading">
+                            <h2 id="faculty-list-heading">Facultés</h2>
+                            <span className="faculty-directory-count" role="status">
+                                {filtered.length}
+                                <span className="sr-only"> {filtered.length === 1 ? 'faculté affichée' : 'facultés affichées'}</span>
+                            </span>
+                        </div>
+                        <label className="faculty-directory-search">
+                            <Search size={17} aria-hidden="true" />
+                            <input
+                                type="search"
+                                aria-label="Rechercher une faculté"
+                                placeholder="Rechercher par nom ou code…"
+                                value={search}
+                                onChange={(event) => setView((current) => ({ ...current, search: event.target.value }))}
+                            />
+                        </label>
+                        {filtered.length ? (
+                            <ul className="faculty-directory-list" ref={setResultsPanel}>
+                                {filtered.map((faculty) => {
+                                    const count = faculty.departments.length;
+                                    return (
+                                        <li key={faculty.id}>
+                                            <button
+                                                type="button"
+                                                aria-pressed={selected?.id === faculty.id}
+                                                onClick={() => setView((current) => ({ ...current, selection: faculty.id }))}
+                                            >
+                                                <Building2 size={17} aria-hidden="true" />
+                                                <span className="faculty-directory-list-copy">
+                                                    <strong>{faculty.name}</strong>
+                                                    <small>
+                                                        {faculty.code}
+                                                        {faculty.university_id === null
+                                                            ? ' · À rattacher'
+                                                            : viewDepartments && faculty.university_id === institution?.id
+                                                              ? ` · ${count} département${count > 1 ? 's' : ''}`
+                                                              : ''}
+                                                    </small>
+                                                </span>
+                                                <ChevronRight size={16} aria-hidden="true" />
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <p className="as-note" role="status" ref={setResultsPanel}>
+                                {search.trim() ? 'Aucune faculté ne correspond à la recherche.' : 'Aucune faculté enregistrée.'}
+                            </p>
+                        )}
+                    </section>
+
+                    {selected && (
+                        <section
+                            className="as-panel as-establishment-panel faculty-directory-detail"
+                            aria-labelledby="selected-faculty-heading"
+                            ref={detailPanel}
+                        >
+                            <div className="as-panel-title faculty-directory-identity">
+                                <div>
+                                    <div className="faculty-directory-meta">
+                                        <span className="faculty-directory-emblem">
+                                            <Building2 size={23} strokeWidth={1.5} aria-hidden="true" />
                                         </span>
-                                        <span className="fc-level-count">{levels.length}</span>
-                                        <ChevronDown size={16} strokeWidth={1.7} />
-                                    </summary>
-                                    <div className="fc-level-list">
-                                        {levels.length ? (
-                                            levels.map((level) => (
-                                                <div className="fc-level-row" key={level.id}>
-                                                    <span className="fc-level-code">{level.code || level.level_code}</span>
-                                                    <Link href={route('dashboard.admin.levels.details.show', level.id)}>
-                                                        {level.title || level.level_name || 'Niveau de formation'}
-                                                    </Link>
-                                                    <div className="fc-level-actions">
-                                                        <button
-                                                            type="button"
-                                                            title="Modifier le niveau"
-                                                            aria-label={`Modifier ${level.title || level.code}`}
-                                                            onClick={() => editLevel(level)}
-                                                        >
-                                                            <Pencil size={14} />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            title="Consulter le niveau"
-                                                            aria-label={`Consulter ${level.title || level.code}`}
-                                                            onClick={() => viewLevel(level)}
-                                                        >
-                                                            <Eye size={15} />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="fc-delete"
-                                                            title="Supprimer le niveau"
-                                                            aria-label={`Supprimer ${level.title || level.code}`}
-                                                            onClick={() => deleteLevel(level.id)}
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="fc-no-levels">Aucun niveau n’est encore configuré.</p>
+                                        <span className="faculty-directory-code">{selected.code}</span>
+                                        <span className={`as-badge ${selected.is_active ? 'as-established' : 'faculty-directory-inactive'}`}>
+                                            {selected.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                    <h2 id="selected-faculty-heading">{selected.name}</h2>
+                                    <p className="as-note">
+                                        {attached
+                                            ? institution?.name
+                                            : selected.university_id === null
+                                              ? 'À rattacher à l’établissement'
+                                              : 'Rattachée à un autre établissement'}
+                                    </p>
+                                </div>
+                                <div className="as-actions">
+                                    <button type="button" className="admin-secondary" onClick={() => setEditFaculty(selected)}>
+                                        <Pencil size={15} />
+                                        Modifier
+                                    </button>
+                                    <Link className="as-establishment-link" href={route('dashboard.admin.faculties.show', selected.id)}>
+                                        Ouvrir la fiche <ArrowUpRight size={15} />
+                                    </Link>
+                                </div>
+                            </div>
+                            {selected.description && <p className="faculty-directory-description">{selected.description}</p>}
+                            {manageStructure && institution && selected.university_id === null && (
+                                <button
+                                    type="button"
+                                    className="admin-secondary"
+                                    onClick={() => setReference({ kind: 'faculty-context', record: { id: selected.id, name: selected.name } })}
+                                >
+                                    Rattacher à l’établissement
+                                </button>
+                            )}
+
+                            {viewDepartments && (
+                                <div className="faculty-directory-departments">
+                                    <div className="as-panel-title">
+                                        <div className="faculty-directory-section-heading">
+                                            <h3>Départements</h3>
+                                            {attached && <span className="faculty-directory-count">{selected.departments.length}</span>}
+                                        </div>
+                                        {manageStructure && attached && (
+                                            <button
+                                                type="button"
+                                                className="admin-secondary"
+                                                onClick={() => setReference({ kind: 'department', record: { faculty_id: selected.id } })}
+                                            >
+                                                <Plus size={16} />
+                                                Ajouter un département
+                                            </button>
                                         )}
                                     </div>
-                                </details>
-                                <Link className="fc-card-footer" href={route('dashboard.admin.faculties.show', faculty.id)}>
-                                    Explorer la faculté
-                                    <ArrowUpRight size={17} strokeWidth={1.7} />
-                                </Link>
-                            </article>
-                        );
-                    })}
+                                    {!attached ? (
+                                        <p className="as-note">
+                                            {selected.university_id === null
+                                                ? 'Rattachez la faculté à l’établissement pour configurer ses départements.'
+                                                : 'Les départements de cette faculté relèvent de son établissement.'}
+                                        </p>
+                                    ) : selected.departments.length ? (
+                                        <div className="as-scroll">
+                                            <table className="as-table" aria-label={`Départements de ${selected.name}`}>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Département</th>
+                                                        <th scope="col">Statut</th>
+                                                        <th scope="col">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {selected.departments.map((department) => (
+                                                        <tr key={department.id}>
+                                                            <td>
+                                                                {department.name}
+                                                                <small>{department.code}</small>
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    className={`as-badge ${department.is_active ? 'as-established' : 'faculty-directory-inactive'}`}
+                                                                >
+                                                                    {department.is_active ? 'Actif' : 'Inactif'}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <div className="as-actions">
+                                                                    <Link
+                                                                        className="as-establishment-link"
+                                                                        href={route('dashboard.admin.student-academic.index', {
+                                                                            department: department.id,
+                                                                        })}
+                                                                    >
+                                                                        Étudiants
+                                                                    </Link>
+                                                                    {manageStructure && (
+                                                                        <button
+                                                                            type="button"
+                                                                            aria-label={`Modifier ${department.name}`}
+                                                                            onClick={() => setReference({ kind: 'department', record: department })}
+                                                                        >
+                                                                            Modifier
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="faculty-directory-empty">
+                                            <Layers3 size={21} strokeWidth={1.5} aria-hidden="true" />
+                                            <p>Aucun département pour cette faculté.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {viewDepartments && attached && selected.levels.length > 0 && (
+                                <section className="faculty-directory-departments" aria-labelledby="department-orientation-heading">
+                                    <h3 id="department-orientation-heading">Choix du département par niveau</h3>
+                                    <p className="as-note">Ouvrez le choix dans l’espace étudiant à partir des niveaux concernés.</p>
+                                    <ul>
+                                        {selected.levels.map((level) => (
+                                            <li className="as-reference-row" key={level.id}>
+                                                <span>
+                                                    <strong>{level.title}</strong>
+                                                    <small>
+                                                        {level.department_options.map(({ name }) => name).join(' · ') || 'Aucun choix proposé'}
+                                                    </small>
+                                                </span>
+                                                {manageStructure &&
+                                                    (selected.departments.some(({ is_active }) => is_active) ||
+                                                        level.department_options.length > 0) && (
+                                                        <button
+                                                            type="button"
+                                                            aria-label={`Configurer le choix pour ${level.title}`}
+                                                            onClick={() => setOrientation(level)}
+                                                        >
+                                                            Configurer
+                                                        </button>
+                                                    )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </section>
+                            )}
+                        </section>
+                    )}
                 </div>
-                {!filtered.length && (
-                    <div className="fc-empty">
-                        <Building2 size={34} strokeWidth={1.3} />
-                        <h2>{search ? 'Aucune faculté ne correspond.' : 'Vos facultés prennent forme ici.'}</h2>
-                        <p>{search ? 'Essayez un autre nom ou un autre code.' : 'Créez votre première faculté pour structurer vos formations.'}</p>
-                        {search ? (
-                            <button onClick={() => setSearch('')}>Effacer la recherche</button>
-                        ) : (
-                            <button className="admin-primary" onClick={openCreateModal}>
-                                <Plus size={16} />
-                                Nouvelle faculté
-                            </button>
-                        )}
-                    </div>
-                )}
-                <Pagination value={faculties} />
-                {pendingDelete && (
-                    <DeleteConfirmation
-                        title="Supprimer cette faculté ?"
-                        name={pendingDelete.name}
-                        detail={`FACULTÉ · ${pendingDelete.code}`}
-                        explanation="La faculté sera retirée de votre organisation académique."
-                        hint="La suppression est possible uniquement si aucun niveau ni aucune inscription n’est lié à cette faculté."
-                        busy={deleteForm.processing}
-                        errors={deleteForm.errors}
-                        onClose={() => setPendingDelete(null)}
-                        onConfirm={confirmDeleteFaculty}
+
+                {createFaculty && <CreateFacultyPopup isEdit={false} closeModal={() => setCreateFaculty(false)} />}
+                {editFaculty && (
+                    <CreateFacultyPopup
+                        isEdit
+                        faculty={{ ...editFaculty, description: editFaculty.description ?? '' }}
+                        closeModal={() => setEditFaculty(null)}
                     />
                 )}
-
-                {/* Modal */}
-                {isModalOpen && <CreateFacultyPopup isEdit={isEdit} closeModal={closeModal} faculty={selectedFaculty} />}
-
-                {/* Level Edit Modal */}
-                {levelEdit && <LevelPopup faculties={faculties} onClose={closeModal} level={selectedLevel} levelCodes={codesToUse} />}
+                {orientation && selected && (
+                    <DepartmentOptionsEditor level={orientation} departments={selected.departments} onClose={() => setOrientation(null)} />
+                )}
+                {reference && (
+                    <ReferenceEditor
+                        kind={reference.kind}
+                        record={reference.record}
+                        context={{ institution, faculties }}
+                        onClose={() => setReference(null)}
+                    />
+                )}
             </div>
         </Dashboard>
     );
-};
-
-export default Faculty;
+}

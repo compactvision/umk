@@ -2,6 +2,8 @@ import DeleteConfirmation from '@/components/admin/DeleteConfirmation';
 import CreateFacultyPopup from '@/components/form/CreateFacultyPopup';
 import LevelPopup from '@/components/form/LevelPopup';
 import Dashboard from '@/components/layouts/Dashboard/Dashboard';
+import { useCatalogView } from '@/hooks/use-catalog-view';
+import { usePanelFade } from '@/hooks/use-panel-fade';
 import LevelCard, { type CatalogLevel } from '@/pages/dashboard/levels/components/LevelCard';
 import { Head, useForm } from '@inertiajs/react';
 import { Building2, Clock3, GraduationCap, Layers3, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
@@ -10,8 +12,8 @@ import '../../../../css/dashboard/faculty-detail.css';
 import '../../../../css/dashboard/levels-catalog.css';
 type Faculty = { id: number; name: string; code: string; description?: string; duration_years: number; is_active: boolean; levels: CatalogLevel[] };
 export default function FacultyShow({ faculty }: { faculty: Faculty }) {
-    const [search, setSearch] = useState('');
-    const [status, setStatus] = useState('all');
+    const [view, setView] = useCatalogView({ search: '', status: 'all' });
+    const { search, status } = view;
     const [createLevel, setCreateLevel] = useState(false);
     const [editFaculty, setEditFaculty] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -34,12 +36,12 @@ export default function FacultyShow({ faculty }: { faculty: Faculty }) {
             (status === 'all' || (status === 'active' ? !!level.is_active : !level.is_active)) &&
             normalize(`${level.title} ${level.code} ${level.tag || ''}`).includes(normalize(search)),
     );
+    const resultsPanel = usePanelFade(filtered.map((level) => level.id).join(','));
     const reset = () => {
-        setSearch('');
-        setStatus('all');
+        setView({ search: '', status: 'all' });
     };
     return (
-        <Dashboard>
+        <Dashboard hideAppsNavigation>
             <Head title={`${faculty.name} · Faculté`} />
             <div className="levels-catalog faculty-detail-page">
                 <div className="fd-topline">
@@ -82,7 +84,7 @@ export default function FacultyShow({ faculty }: { faculty: Faculty }) {
                         <span>UNIVERSITÉ SIMON KIMBANGU</span>
                     </div>
                 </header>
-                <div className="fd-stats" aria-label="Aperçu des niveaux de cette faculté">
+                <div className="fd-stats" role="group" aria-label="Aperçu des niveaux de cette faculté">
                     <div>
                         <Layers3 size={22} strokeWidth={1.5} />
                         <p>
@@ -127,14 +129,18 @@ export default function FacultyShow({ faculty }: { faculty: Faculty }) {
                             <input
                                 type="search"
                                 value={search}
-                                onChange={(event) => setSearch(event.target.value)}
+                                onChange={(event) => setView((current) => ({ ...current, search: event.target.value }))}
                                 aria-label="Rechercher un niveau de cette faculté"
                                 placeholder="Rechercher un niveau ou un code…"
                             />
                         </label>
                         <label className="fd-status-select">
                             <span>Statut</span>
-                            <select value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filtrer les niveaux par statut">
+                            <select
+                                value={status}
+                                onChange={(event) => setView((current) => ({ ...current, status: event.target.value }))}
+                                aria-label="Filtrer les niveaux par statut"
+                            >
                                 <option value="all">Tous les statuts</option>
                                 <option value="active">Actifs</option>
                                 <option value="inactive">Inactifs</option>
@@ -153,13 +159,13 @@ export default function FacultyShow({ faculty }: { faculty: Faculty }) {
                         )}
                     </div>
                     {filtered.length ? (
-                        <div className="levels-cards fd-level-grid">
+                        <div className="levels-cards fd-level-grid" ref={resultsPanel}>
                             {filtered.map((level) => (
                                 <LevelCard level={level} key={level.id} />
                             ))}
                         </div>
                     ) : (
-                        <div className="levels-empty">
+                        <div className="levels-empty" ref={resultsPanel}>
                             <GraduationCap size={38} strokeWidth={1.3} />
                             <h2>{levels.length ? 'Aucun niveau ne correspond.' : 'Les premiers parcours commencent ici.'}</h2>
                             <p>

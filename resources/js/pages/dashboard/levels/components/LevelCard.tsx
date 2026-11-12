@@ -10,7 +10,7 @@ export type CatalogLevel = {
     tag?: string | null;
     is_active?: boolean | number;
 };
-export default function LevelCard({ level }: { level: CatalogLevel }) {
+export default function LevelCard({ level, compact = false }: { level: CatalogLevel; compact?: boolean }) {
     const [failed, setFailed] = useState(false);
     const image = level.image ? (/^(https?:\/\/|\/)/.test(level.image) ? level.image : `/storage/${level.image}`) : '';
     return (
@@ -20,8 +20,8 @@ export default function LevelCard({ level }: { level: CatalogLevel }) {
                     <img src={image} alt="" loading="lazy" onError={() => setFailed(true)} />
                 ) : (
                     <div className="levels-cover-placeholder">
-                        <GraduationCap size={44} strokeWidth={1.2} />
-                        <span>UNIVERSITÉ SIMON KIMBANGU</span>
+                        <GraduationCap size={compact ? 26 : 44} strokeWidth={1.2} aria-hidden="true" />
+                        {!compact && <span>UNIVERSITÉ SIMON KIMBANGU</span>}
                     </div>
                 )}
                 <span className="levels-code">{level.code}</span>

@@ -24,7 +24,7 @@ trait ValidatesLevelInstallments
             foreach (['national', 'foreign'] as $category) {
                 $first = $this->input("price_{$category}_first");
                 $second = $this->input("price_{$category}_second");
-                if (is_numeric($first) && is_numeric($second) && round((float) $first * 100) + round((float) $second * 100) > 9999999999) {
+                if (preg_match('/^\d{1,9}(\.\d{1,2})?$/D', (string)$first) && preg_match('/^\d{1,9}(\.\d{1,2})?$/D', (string)$second) && \App\Modules\Student\Application\Services\Money::cents((string)$first) + \App\Modules\Student\Application\Services\Money::cents((string)$second) > 9999999999) {
                     $validator->errors()->add("price_{$category}_second", 'Le total des deux tranches ne peut pas dépasser 99 999 999,99 USD.');
                 }
             }

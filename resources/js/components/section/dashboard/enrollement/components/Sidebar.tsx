@@ -1,6 +1,6 @@
 // resources/js/pages/enrollment/components/Sidebar.tsx
 import { Award, Check, ChevronDown, Globe, TrendingUp, Users } from 'lucide-react';
-import { Section } from '../types';
+import { Section, SectionField } from '../types';
 
 export default function Sidebar({
     sections,
@@ -15,7 +15,7 @@ export default function Sidebar({
     sections: Section[];
     expandedSections: Record<number, boolean>;
     setExpandedSections: (v: Record<number, boolean>) => void;
-    isFieldCompleted: (f: any) => boolean;
+    isFieldCompleted: (f: SectionField) => boolean;
     percentage: number;
     totalFields: number;
     completedFields: number;

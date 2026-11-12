@@ -45,7 +45,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
 
                     {Object.keys(errors).length > 0 && (
                         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
-                            {Object.values(errors).map((error, index) => <p key={index}>{error}</p>)}
+                            {Object.values(errors).map((error, index) => <p key={index}>{String(error)}</p>)}
                         </div>
                     )}
 

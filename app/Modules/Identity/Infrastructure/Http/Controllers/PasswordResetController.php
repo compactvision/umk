@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Modules\Identity\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Modules\Identity\Application\UseCases\RequestPasswordReset;
 use App\Modules\Identity\Application\UseCases\ResetPassword;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PasswordResetController extends Controller
 {
@@ -33,8 +34,8 @@ class PasswordResetController extends Controller
     public function reset(Request $request, ResetPassword $useCase)
     {
         $validated = $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
+            'token' => 'required',
+            'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
 
@@ -45,7 +46,7 @@ class PasswordResetController extends Controller
         );
 
         return $success
-            ? redirect()->route('dashboard.index')->with('status', 'Mot de passe réinitialisé.')
+            ? redirect()->route('login')->with('status', 'Mot de passe réinitialisé.')
             : back()->withErrors(['email' => 'Le lien est invalide ou expiré.']);
     }
 }

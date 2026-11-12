@@ -86,9 +86,8 @@ export default function SemesterManager({ year, semesters }: { year?: Year; seme
         <section className="semester-manager" aria-label="Périodes des semestres">
             <header>
                 <div>
-                    <span>ÉTAPE 1 · LE CALENDRIER ACADÉMIQUE</span>
                     <h2>Les semestres · {year.title}</h2>
-                    <p>Définissez les périodes une seule fois, puis programmez les cours chaque semaine.</p>
+                    <p>Les dates s’appliquent à tous les niveaux de cette année.</p>
                 </div>
                 <small>
                     {label(year.start_date)} — {label(year.end_date)}

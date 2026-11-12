@@ -4,11 +4,15 @@ namespace App\Console\Commands;
 
 use App\Support\ApplicationKey;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 
 class ApplicationPreflight extends Command
 {
-    protected $signature = 'app:preflight {--production : Vérifier les paramètres de production} {--database : Vérifier la connexion et les migrations} {--assets : Vérifier le manifeste et ses fichiers}';
+    protected $signature = 'app:preflight {--production : Vérifier les paramètres de production} {--database : Vérifier la connexion et les migrations} {--assets : Vérifier le manifeste et ses fichiers} {--runtime : Vérifier le cache et la file configurée} {--http : Vérifier la disponibilité HTTP du endpoint /up}';
 
     protected $description = 'Contrôler la configuration sans afficher ni modifier les secrets.';
 
@@ -25,8 +29,18 @@ class ApplicationPreflight extends Command
             if (config('app.debug')) {
                 $errors[] = 'APP_DEBUG doit être false.';
             }
-            if (! str_starts_with(config('app.url'), 'https://')) {
+            $url = config('app.url');
+            if (! filter_var($url, FILTER_VALIDATE_URL) || parse_url($url, PHP_URL_SCHEME) !== 'https') {
                 $errors[] = 'APP_URL doit utiliser le domaine HTTPS de production.';
+            }
+            if (! config('session.secure') || ! config('session.http_only') || ! in_array(config('session.same_site'), ['lax', 'strict'], true)) {
+                $errors[] = 'Les cookies de session doivent être Secure, HttpOnly et SameSite=Lax ou Strict.';
+            }
+            if (! extension_loaded('gd')) {
+                $errors[] = 'L’extension PHP GD est requise pour les QR des documents officiels.';
+            }
+            if (! extension_loaded('zip')) {
+                $errors[] = 'L’extension PHP ZIP est requise pour les rapports financiers Excel.';
             }
         }
         if ($this->option('production')) {
@@ -50,6 +64,9 @@ class ApplicationPreflight extends Command
             }
         }
         if ($this->option('assets')) {
+            if ($this->option('production') && is_file(public_path('hot'))) {
+                $errors[] = 'Le marqueur Vite public/hot doit être absent de la release.';
+            }
             $manifest = public_path('build/manifest.json');
             try {
                 if (! is_readable($manifest)) {
@@ -71,13 +88,46 @@ class ApplicationPreflight extends Command
                 $errors[] = 'Manifeste Vite absent ou illisible. Exécutez npm run build.';
             }
         }
+        if ($this->option('runtime')) {
+            $probe = 'preflight:'.Str::uuid();
+            try {
+                if (! Cache::put($probe, 'ready', 30) || Cache::get($probe) !== 'ready') {
+                    $errors[] = 'Le cache configuré ne confirme pas la sonde.';
+                }
+            } catch (\Throwable) {
+                $errors[] = 'Le cache configuré est indisponible.';
+            } finally {
+                try {
+                    Cache::forget($probe);
+                } catch (\Throwable) {
+                    // The probe expires automatically.
+                }
+            }
+            if (in_array(config('queue.default'), ['database', 'redis'], true)) {
+                try {
+                    $this->line('Profondeur de la file par défaut : '.Queue::size());
+                } catch (\Throwable) {
+                    $errors[] = 'La file par défaut est indisponible.';
+                }
+            }
+        }
+        if ($this->option('http')) {
+            try {
+                $response = Http::withoutRedirecting()->timeout(15)->get(rtrim(config('app.url'), '/').'/up');
+                if ($response->status() !== 200) {
+                    $errors[] = 'Le contrôle HTTP /up a échoué.';
+                }
+            } catch (\Throwable $exception) {
+                $errors[] = 'Le contrôle HTTP /up est indisponible.';
+            }
+        }
         foreach ($errors as $error) {
             $this->error($error);
         }
         if ($errors) {
             return self::FAILURE;
         }
-        $this->info('Configuration valide pour les contrôles demandés. Aucune clé ni donnée n’a été modifiée.');
+        $this->info('Configuration valide pour les contrôles demandés.');
 
         return self::SUCCESS;
     }

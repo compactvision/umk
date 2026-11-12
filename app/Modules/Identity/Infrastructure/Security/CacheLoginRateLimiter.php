@@ -2,16 +2,19 @@
 
 namespace App\Modules\Identity\Infrastructure\Security;
 
-use App\Modules\Identity\Domain\Services\LoginRateLimiter;
 use App\Modules\Identity\Domain\Exceptions\TooManyLoginAttemptsException;
-use Illuminate\Support\Facades\Cache;
+use App\Modules\Identity\Domain\Services\LoginRateLimiter;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 final class CacheLoginRateLimiter implements LoginRateLimiter
 {
     private int $firstThreshold = 5;
+
     private int $firstDelay = 15; // minutes
+
     private int $secondThreshold = 3;
+
     private int $secondDelay = 30; // minutes
 
     public function ensureIsNotLimited(string $email): void
@@ -29,29 +32,32 @@ final class CacheLoginRateLimiter implements LoginRateLimiter
     public function hit(string $email): void
     {
         $key = $this->getKey($email);
-        $data = Cache::get($key, ['attempts' => 0, 'locked_until' => null]);
+        Cache::lock($key.':lock', 5)->block(3, function () use ($key) {
+            $data = Cache::get($key, ['attempts' => 0, 'locked_until' => null]);
 
-        $data['attempts']++;
+            $data['attempts']++;
 
-        // 1ère série (5 tentatives → 15min)
-        if ($data['attempts'] >= $this->firstThreshold && !$data['locked_until']) {
-            $data['locked_until'] = Carbon::now()->addMinutes($this->firstDelay);
-        }
-        // 2ème série (3 tentatives → 30min)
-        elseif ($data['locked_until'] && $data['attempts'] >= $this->firstThreshold + $this->secondThreshold) {
-            $data['locked_until'] = Carbon::now()->addMinutes($this->secondDelay);
-        }
+            // 1ère série (5 tentatives → 15min)
+            if ($data['attempts'] >= $this->firstThreshold && ! $data['locked_until']) {
+                $data['locked_until'] = Carbon::now()->addMinutes($this->firstDelay);
+            }
+            // 2ème série (3 tentatives → 30min)
+            elseif ($data['locked_until'] && $data['attempts'] >= $this->firstThreshold + $this->secondThreshold) {
+                $data['locked_until'] = Carbon::now()->addMinutes($this->secondDelay);
+            }
 
-        Cache::put($key, $data, 60); // garde les infos 1h
+            Cache::put($key, $data, now()->addHour());
+        });
     }
 
     public function clear(string $email): void
     {
-        Cache::forget($this->getKey($email));
+        $key = $this->getKey($email);
+        Cache::lock($key.':lock', 5)->block(3, fn () => Cache::forget($key));
     }
 
     private function getKey(string $email): string
     {
-        return 'login:attempts:' . sha1($email);
+        return 'login:attempts:'.sha1(mb_strtolower(trim($email)));
     }
 }

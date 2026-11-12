@@ -1,0 +1,224 @@
+
+> build
+> vite build --outDir /tmp/umk-phase01-production-build
+
+vite v6.4.5 building for production...
+
+(!) outDir /tmp/umk-phase01-production-build is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+
+/assets/fonts/dm-sans-latin-400-normal.woff2 referenced in /assets/fonts/dm-sans-latin-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-400-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-500-normal.woff2 referenced in /assets/fonts/dm-sans-latin-500-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-500-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-500-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-600-normal.woff2 referenced in /assets/fonts/dm-sans-latin-600-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-600-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-600-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-700-normal.woff2 referenced in /assets/fonts/dm-sans-latin-700-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/dm-sans-latin-ext-700-normal.woff2 referenced in /assets/fonts/dm-sans-latin-ext-700-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/libre-caslon-display-latin-400-normal.woff2 referenced in /assets/fonts/libre-caslon-display-latin-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/fonts/libre-caslon-display-latin-ext-400-normal.woff2 referenced in /assets/fonts/libre-caslon-display-latin-ext-400-normal.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/img/bg/pro-banner.png referenced in /assets/img/bg/pro-banner.png didn't resolve at build time, it will remain unchanged to be resolved at runtime
+transforming...
+
+/assets/usk/students.jpg referenced in /assets/usk/students.jpg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/assets/usk/students-800.webp referenced in /assets/usk/students-800.webp didn't resolve at build time, it will remain unchanged to be resolved at runtime
+✓ 2575 modules transformed.
+rendering chunks...
+computing gzip size...
+../../../../../tmp/umk-phase01-production-build/manifest.json                                 82.47 kB │ gzip:   7.97 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-XGdYbzvK.css                      0.91 kB │ gzip:   0.46 kB
+../../../../../tmp/umk-phase01-production-build/assets/DeleteConfirmation-CEd9GNn7.css         1.16 kB │ gzip:   0.44 kB
+../../../../../tmp/umk-phase01-production-build/assets/FeedbackToast-BzKkg4wJ.css              1.54 kB │ gzip:   0.71 kB
+../../../../../tmp/umk-phase01-production-build/assets/teaching-Cow5DYQA.css                   2.96 kB │ gzip:   0.91 kB
+../../../../../tmp/umk-phase01-production-build/assets/Homepage-AWwo3u5E.css                   4.68 kB │ gzip:   1.59 kB
+../../../../../tmp/umk-phase01-production-build/assets/FacultyShow-X17YXWOs.css                4.79 kB │ gzip:   1.32 kB
+../../../../../tmp/umk-phase01-production-build/assets/student-course-BqMb_cP5.css             4.83 kB │ gzip:   1.26 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-BeH_2cy4.css                      5.95 kB │ gzip:   1.57 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-CxThXUyz.css                       6.18 kB │ gzip:   1.58 kB
+../../../../../tmp/umk-phase01-production-build/assets/AdminModal-BVl_QLq-.css                 6.19 kB │ gzip:   1.92 kB
+../../../../../tmp/umk-phase01-production-build/assets/Faculty-ve1hXK7w.css                    6.47 kB │ gzip:   1.78 kB
+../../../../../tmp/umk-phase01-production-build/assets/public-faculty-BfP3PBhw.css             7.39 kB │ gzip:   2.03 kB
+../../../../../tmp/umk-phase01-production-build/assets/CreateAcademicYearPopup-j2xOXB7g.css    8.31 kB │ gzip:   2.08 kB
+../../../../../tmp/umk-phase01-production-build/assets/SessionCalendar-D_FdMKoU.css            8.96 kB │ gzip:   2.39 kB
+../../../../../tmp/umk-phase01-production-build/assets/levels-catalog-CZIJQGu-.css             9.26 kB │ gzip:   2.21 kB
+../../../../../tmp/umk-phase01-production-build/assets/BlogDetailsPage-C8E8yxdB.css            9.89 kB │ gzip:   2.55 kB
+../../../../../tmp/umk-phase01-production-build/assets/CourseShow-DCmZwzEA.css                10.03 kB │ gzip:   2.45 kB
+../../../../../tmp/umk-phase01-production-build/assets/Blogpage-ugWzc1yp.css                  10.45 kB │ gzip:   2.73 kB
+../../../../../tmp/umk-phase01-production-build/assets/Course-B3ByGUau.css                    11.74 kB │ gzip:   2.90 kB
+../../../../../tmp/umk-phase01-production-build/assets/Enrollment-BMoI2dhB.css                11.98 kB │ gzip:   3.00 kB
+../../../../../tmp/umk-phase01-production-build/assets/test--nhCeun7.css                      14.24 kB │ gzip:   3.19 kB
+../../../../../tmp/umk-phase01-production-build/assets/student-enrollments-CM2pgXk2.css       14.96 kB │ gzip:   3.47 kB
+../../../../../tmp/umk-phase01-production-build/assets/level-forms-B3mUoZ10.css               16.36 kB │ gzip:   3.56 kB
+../../../../../tmp/umk-phase01-production-build/assets/Dashboard-DXfocG1i.css                 16.61 kB │ gzip:   4.15 kB
+../../../../../tmp/umk-phase01-production-build/assets/admin-enrollments-B89fKcIw.css         17.08 kB │ gzip:   4.05 kB
+../../../../../tmp/umk-phase01-production-build/assets/Portal-DB4NnfEC.css                    26.62 kB │ gzip:   5.70 kB
+../../../../../tmp/umk-phase01-production-build/assets/Admissionpage-CokMo_gb.css             41.56 kB │ gzip:   8.23 kB
+../../../../../tmp/umk-phase01-production-build/assets/App-xKHwTH0p.css                       44.32 kB │ gzip:   9.11 kB
+../../../../../tmp/umk-phase01-production-build/assets/student-portal-BeiXstJC.css            49.59 kB │ gzip:   9.72 kB
+../../../../../tmp/umk-phase01-production-build/assets/app-EB8q9Mg2.css                      181.47 kB │ gzip:  21.73 kB
+../../../../../tmp/umk-phase01-production-build/assets/types-MDtVkrLz.js                       0.06 kB │ gzip:   0.07 kB
+../../../../../tmp/umk-phase01-production-build/assets/app-CrRUyXxj.js                         0.12 kB │ gzip:   0.13 kB
+../../../../../tmp/umk-phase01-production-build/assets/PageHeading-Co5aVXue.js                 0.29 kB │ gzip:   0.22 kB
+../../../../../tmp/umk-phase01-production-build/assets/check--POe_GJ6.js                       0.30 kB │ gzip:   0.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/chevron-down-B20SL62w.js                0.31 kB │ gzip:   0.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/chevron-left-CUuCv2nT.js                0.31 kB │ gzip:   0.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/chevron-right-DsliZvvZ.js               0.31 kB │ gzip:   0.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/play-CAhCi2ll.js                        0.32 kB │ gzip:   0.26 kB
+../../../../../tmp/umk-phase01-production-build/assets/loader-circle-D9PLGZG7.js               0.33 kB │ gzip:   0.27 kB
+../../../../../tmp/umk-phase01-production-build/assets/plus--pZN487l.js                        0.34 kB │ gzip:   0.26 kB
+../../../../../tmp/umk-phase01-production-build/assets/x-BKU9QiYu.js                           0.34 kB │ gzip:   0.26 kB
+../../../../../tmp/umk-phase01-production-build/assets/arrow-down-mvVTdET7.js                  0.35 kB │ gzip:   0.27 kB
+../../../../../tmp/umk-phase01-production-build/assets/arrow-right-BGOYO3ML.js                 0.35 kB │ gzip:   0.27 kB
+../../../../../tmp/umk-phase01-production-build/assets/arrow-left-CCtsEChV.js                  0.35 kB │ gzip:   0.27 kB
+../../../../../tmp/umk-phase01-production-build/assets/arrow-up-right-BKh2X6Qt.js              0.35 kB │ gzip:   0.27 kB
+../../../../../tmp/umk-phase01-production-build/assets/search-DRtBfZbf.js                      0.35 kB │ gzip:   0.28 kB
+../../../../../tmp/umk-phase01-production-build/assets/user-round-CXEKq1YW.js                  0.36 kB │ gzip:   0.29 kB
+../../../../../tmp/umk-phase01-production-build/assets/clock-3-DV2Sske1.js                     0.37 kB │ gzip:   0.28 kB
+../../../../../tmp/umk-phase01-production-build/assets/info-BHWg5Yt3.js                        0.38 kB │ gzip:   0.29 kB
+../../../../../tmp/umk-phase01-production-build/assets/credit-card-ttZIyRgP.js                 0.39 kB │ gzip:   0.30 kB
+../../../../../tmp/umk-phase01-production-build/assets/mail--JyBJBMx.js                        0.39 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/history-CZdeED5Z.js                     0.42 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/link-2-2PjWpZgL.js                      0.43 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/menu-nf2djuXF.js                        0.43 kB │ gzip:   0.29 kB
+../../../../../tmp/umk-phase01-production-build/assets/compass-CudpbQme.js                     0.43 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/camera-CC4LimzV.js                      0.43 kB │ gzip:   0.32 kB
+../../../../../tmp/umk-phase01-production-build/assets/circle-alert-jnXxg8n-.js                0.43 kB │ gzip:   0.30 kB
+../../../../../tmp/umk-phase01-production-build/assets/external-link-Bc07V-TP.js               0.43 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/eye-CpGiGh_y.js                         0.44 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/map-pin-BEOzBRXQ.js                     0.44 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/lock-keyhole-BscJ-dES.js                0.44 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/file-check-2-C9GGWMk8.js                0.44 kB │ gzip:   0.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/upload-EnnTEZNg.js                      0.44 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/download-ChP4AxWp.js                    0.45 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/triangle-alert-C_QIOxP_.js              0.45 kB │ gzip:   0.32 kB
+../../../../../tmp/umk-phase01-production-build/assets/shield-DkTuJjNk.js                      0.45 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/award-DXWutRIE.js                       0.45 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/image-By4fV--v.js                       0.45 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/pencil-C8aLY8TW.js                      0.46 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/book-open-C-O-_BxX.js                   0.46 kB │ gzip:   0.32 kB
+../../../../../tmp/umk-phase01-production-build/assets/folder-open-E_p36BYZ.js                 0.48 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/maximize-2-zuftmIMt.js                  0.48 kB │ gzip:   0.32 kB
+../../../../../tmp/umk-phase01-production-build/assets/clipboard-check-CmC2E20n.js             0.49 kB │ gzip:   0.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/users-DtYcY45h.js                       0.49 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/languages-Du0Zp9fX.js                   0.50 kB │ gzip:   0.33 kB
+../../../../../tmp/umk-phase01-production-build/assets/printer-BKLrOwVL.js                     0.50 kB │ gzip:   0.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/shield-check-xttwB8hZ.js                0.50 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/Pagination-CTDfR4_L.js                  0.51 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/save-BMxa0DE0.js                        0.51 kB │ gzip:   0.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/graduation-cap-CkXUidAK.js              0.52 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/key-round-Dglfn9j0.js                   0.53 kB │ gzip:   0.37 kB
+../../../../../tmp/umk-phase01-production-build/assets/trash-2-DI3mfDDp.js                     0.54 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/scale-Ckg9vnY1.js                       0.55 kB │ gzip:   0.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/earth-C_TflaUl.js                       0.58 kB │ gzip:   0.38 kB
+../../../../../tmp/umk-phase01-production-build/assets/phone-DqXMFUaA.js                       0.58 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/landmark-D76OeS9Q.js                    0.59 kB │ gzip:   0.35 kB
+../../../../../tmp/umk-phase01-production-build/assets/levelPricing-B4SpOPLm.js                0.59 kB │ gzip:   0.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/layers-IqGMgD63.js                      0.61 kB │ gzip:   0.35 kB
+../../../../../tmp/umk-phase01-production-build/assets/eye-off-2X_o9OO2.js                     0.61 kB │ gzip:   0.39 kB
+../../../../../tmp/umk-phase01-production-build/assets/building-2-B9o8P6ID.js                  0.62 kB │ gzip:   0.36 kB
+../../../../../tmp/umk-phase01-production-build/assets/Breadcumb-1jiH9l2M.js                   0.64 kB │ gzip:   0.38 kB
+../../../../../tmp/umk-phase01-production-build/assets/scheduleDates-DvUW3dOv.js               0.76 kB │ gzip:   0.41 kB
+../../../../../tmp/umk-phase01-production-build/assets/types-ZNg3AKvZ.js                       0.76 kB │ gzip:   0.48 kB
+../../../../../tmp/umk-phase01-production-build/assets/coins-C8v7bA18.js                       0.83 kB │ gzip:   0.43 kB
+../../../../../tmp/umk-phase01-production-build/assets/target-C_rc7R2i.js                      0.85 kB │ gzip:   0.42 kB
+../../../../../tmp/umk-phase01-production-build/assets/SitePlan-e8gDBPGT.js                    0.87 kB │ gzip:   0.47 kB
+../../../../../tmp/umk-phase01-production-build/assets/user-check-B0NMBCmZ.js                  0.88 kB │ gzip:   0.45 kB
+../../../../../tmp/umk-phase01-production-build/assets/DeleteConfirmation-BUnh_5Vl.js          0.97 kB │ gzip:   0.49 kB
+../../../../../tmp/umk-phase01-production-build/assets/InfosTab-CKSubXRq.js                    1.00 kB │ gzip:   0.53 kB
+../../../../../tmp/umk-phase01-production-build/assets/FeedbackToast-CYnni4Ja.js               1.11 kB │ gzip:   0.64 kB
+../../../../../tmp/umk-phase01-production-build/assets/file-pen-line-Ynzf8Uek.js               1.21 kB │ gzip:   0.49 kB
+../../../../../tmp/umk-phase01-production-build/assets/ImagePreviewModal-UtjwyMzE.js           1.27 kB │ gzip:   0.63 kB
+../../../../../tmp/umk-phase01-production-build/assets/LevelNavigation-4O2RsvGj.js             1.31 kB │ gzip:   0.75 kB
+../../../../../tmp/umk-phase01-production-build/assets/LevelCard-BIszrDgg.js                   1.34 kB │ gzip:   0.66 kB
+../../../../../tmp/umk-phase01-production-build/assets/IllustrationSection-CapCLMhH.js         1.36 kB │ gzip:   0.69 kB
+../../../../../tmp/umk-phase01-production-build/assets/LevelHero-CWtNzutZ.js                   1.46 kB │ gzip:   0.69 kB
+../../../../../tmp/umk-phase01-production-build/assets/wallet-CkMwOoFy.js                      1.54 kB │ gzip:   0.57 kB
+../../../../../tmp/umk-phase01-production-build/assets/createLucideIcon-Bjpcbvup.js            1.57 kB │ gzip:   0.66 kB
+../../../../../tmp/umk-phase01-production-build/assets/sweetAlert-BT_SC03W.js                  1.58 kB │ gzip:   0.64 kB
+../../../../../tmp/umk-phase01-production-build/assets/LegalPage-DFUOrNf1.js                   1.66 kB │ gzip:   0.82 kB
+../../../../../tmp/umk-phase01-production-build/assets/Tuitionspage-CdL77vyp.js                1.68 kB │ gzip:   0.89 kB
+../../../../../tmp/umk-phase01-production-build/assets/ProfessorsTab-DC4dcccV.js               1.74 kB │ gzip:   0.85 kB
+../../../../../tmp/umk-phase01-production-build/assets/studentEnrollment-D1sXDbuq.js           2.14 kB │ gzip:   1.06 kB
+../../../../../tmp/umk-phase01-production-build/assets/AdminModal-B9_iK8wA.js                  2.21 kB │ gzip:   1.05 kB
+../../../../../tmp/umk-phase01-production-build/assets/VideoPlayer-DChEqiqi.js                 2.30 kB │ gzip:   1.24 kB
+../../../../../tmp/umk-phase01-production-build/assets/ProfessorForm-D1DUNtj7.js               2.32 kB │ gzip:   0.90 kB
+../../../../../tmp/umk-phase01-production-build/assets/Contactpage-CXys_gGu.js                 2.44 kB │ gzip:   1.08 kB
+../../../../../tmp/umk-phase01-production-build/assets/LevelContent-CHlVTC1Y.js                2.61 kB │ gzip:   1.14 kB
+../../../../../tmp/umk-phase01-production-build/assets/StatsGrid-B6Q_YPqg.js                   2.62 kB │ gzip:   1.08 kB
+../../../../../tmp/umk-phase01-production-build/assets/PublicImage-DC07gpPV.js                 2.74 kB │ gzip:   0.76 kB
+../../../../../tmp/umk-phase01-production-build/assets/VideoFields-Nfu4yIM3.js                 2.76 kB │ gzip:   1.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/Coursespage-BZlYg8CX.js                 2.93 kB │ gzip:   1.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/levelUtils-D78aBf1M.js                  2.96 kB │ gzip:   1.52 kB
+../../../../../tmp/umk-phase01-production-build/assets/useLevelData-B66U-Txu.js                2.99 kB │ gzip:   1.04 kB
+../../../../../tmp/umk-phase01-production-build/assets/DetailsSection-CmV4oWeu.js              3.03 kB │ gzip:   1.10 kB
+../../../../../tmp/umk-phase01-production-build/assets/test-zFSteNoN.js                        3.13 kB │ gzip:   1.38 kB
+../../../../../tmp/umk-phase01-production-build/assets/useLevelModals-BDmDdDmj.js              3.20 kB │ gzip:   1.31 kB
+../../../../../tmp/umk-phase01-production-build/assets/Attendance-CL91s2Mu.js                  3.33 kB │ gzip:   1.54 kB
+../../../../../tmp/umk-phase01-production-build/assets/AcademicForm-DpfKYVz0.js                3.38 kB │ gzip:   1.39 kB
+../../../../../tmp/umk-phase01-production-build/assets/DocumentReview-A0asdMZm.js              3.46 kB │ gzip:   1.62 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-D_bdwBab.js                        3.74 kB │ gzip:   1.64 kB
+../../../../../tmp/umk-phase01-production-build/assets/ConditionsTab-DwwrRqnm.js               3.84 kB │ gzip:   1.48 kB
+../../../../../tmp/umk-phase01-production-build/assets/VerifyEmail-CNuGqETI.js                 3.93 kB │ gzip:   1.64 kB
+../../../../../tmp/umk-phase01-production-build/assets/StudentSchedule-CwPmV4jh.js             4.26 kB │ gzip:   1.73 kB
+../../../../../tmp/umk-phase01-production-build/assets/Professor-DGVf5SyZ.js                   4.28 kB │ gzip:   1.63 kB
+../../../../../tmp/umk-phase01-production-build/assets/SessionCalendar-BxS2782y.js             4.57 kB │ gzip:   1.96 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-SLRRSwrJ.js                       4.71 kB │ gzip:   1.81 kB
+../../../../../tmp/umk-phase01-production-build/assets/AssignmentForm-Bk6Skqdi.js              5.06 kB │ gzip:   1.69 kB
+../../../../../tmp/umk-phase01-production-build/assets/ConditionModal-TzXq8Ooh.js              5.89 kB │ gzip:   2.12 kB
+../../../../../tmp/umk-phase01-production-build/assets/FacultyShow-n2E-FyF_.js                 5.95 kB │ gzip:   2.24 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-tGp_4o6C.js                       6.27 kB │ gzip:   2.34 kB
+../../../../../tmp/umk-phase01-production-build/assets/PortalCards-DF2ttNru.js                 6.29 kB │ gzip:   2.49 kB
+../../../../../tmp/umk-phase01-production-build/assets/CreateAcademicYearPopup-DmwtZNps.js     6.50 kB │ gzip:   2.39 kB
+../../../../../tmp/umk-phase01-production-build/assets/Faculty-DoqOSFkw.js                     6.64 kB │ gzip:   2.51 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-CN0ehkAx.js                       6.66 kB │ gzip:   2.40 kB
+../../../../../tmp/umk-phase01-production-build/assets/CreateFacultyPopup-kjTsDQan.js          6.75 kB │ gzip:   2.23 kB
+../../../../../tmp/umk-phase01-production-build/assets/CoursesTab-E6yAUaXJ.js                  6.98 kB │ gzip:   2.64 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-2RmdRNO8.js                       7.39 kB │ gzip:   2.82 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-aLuX_pg9.js                       7.70 kB │ gzip:   2.76 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-C6Jgdxpx.js                        7.96 kB │ gzip:   2.99 kB
+../../../../../tmp/umk-phase01-production-build/assets/FacultyShow-DEGQBOU9.js                 7.98 kB │ gzip:   2.59 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-Dvn70v_B.js                       8.09 kB │ gzip:   2.90 kB
+../../../../../tmp/umk-phase01-production-build/assets/Login-Bvgnkfxn.js                       8.12 kB │ gzip:   3.09 kB
+../../../../../tmp/umk-phase01-production-build/assets/EditModal-BVTb1DUH.js                   8.73 kB │ gzip:   3.37 kB
+../../../../../tmp/umk-phase01-production-build/assets/LevelPopup-Gd48CXia.js                  9.03 kB │ gzip:   3.09 kB
+../../../../../tmp/umk-phase01-production-build/assets/BlogDetailsPage-DJdHRvep.js             9.16 kB │ gzip:   3.26 kB
+../../../../../tmp/umk-phase01-production-build/assets/admissions-zMBxLGk7.js                  9.29 kB │ gzip:   3.55 kB
+../../../../../tmp/umk-phase01-production-build/assets/Conditionpage-9bOvewQz.js               9.70 kB │ gzip:   2.68 kB
+../../../../../tmp/umk-phase01-production-build/assets/Politiquepage-DiqWR9p1.js               9.83 kB │ gzip:   2.85 kB
+../../../../../tmp/umk-phase01-production-build/assets/CourseShow-bgxAw1dE.js                 11.41 kB │ gzip:   3.72 kB
+../../../../../tmp/umk-phase01-production-build/assets/ResetPassword-UBesHHIm.js              11.63 kB │ gzip:   2.98 kB
+../../../../../tmp/umk-phase01-production-build/assets/Blogpage-C5ICnF5E.js                   12.22 kB │ gzip:   4.58 kB
+../../../../../tmp/umk-phase01-production-build/assets/App-CknxaiUg.js                        12.40 kB │ gzip:   4.25 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-Kv8jldcV.js                       12.67 kB │ gzip:   3.75 kB
+../../../../../tmp/umk-phase01-production-build/assets/Signup-JvR_VnYR.js                     13.39 kB │ gzip:   3.55 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-CZ_Y4Wv3.js                       14.10 kB │ gzip:   4.83 kB
+../../../../../tmp/umk-phase01-production-build/assets/Course-CP9o3kOG.js                     14.83 kB │ gzip:   4.76 kB
+../../../../../tmp/umk-phase01-production-build/assets/Show-x5pmsYmE.js                       14.99 kB │ gzip:   5.18 kB
+../../../../../tmp/umk-phase01-production-build/assets/Homepage-Chy-i6Pm.js                   15.42 kB │ gzip:   5.03 kB
+../../../../../tmp/umk-phase01-production-build/assets/ForgotPassword-CoZV9SG0.js             15.74 kB │ gzip:   3.72 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-BcN9IMWW.js                      16.12 kB │ gzip:   3.82 kB
+../../../../../tmp/umk-phase01-production-build/assets/Aboutpage-BtZkk0no.js                  16.18 kB │ gzip:   5.29 kB
+../../../../../tmp/umk-phase01-production-build/assets/EditPostModal-RFjxeRPF.js              18.62 kB │ gzip:   4.43 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-CEod9Zub.js                      21.01 kB │ gzip:   6.38 kB
+../../../../../tmp/umk-phase01-production-build/assets/Enrollment-sjglHJ91.js                 22.50 kB │ gzip:   7.83 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-C2SPYRar.js                      28.38 kB │ gzip:   8.37 kB
+../../../../../tmp/umk-phase01-production-build/assets/Admissionpage-BfWNuTib.js              36.72 kB │ gzip:  10.94 kB
+../../../../../tmp/umk-phase01-production-build/assets/index-B4z5YqkY.js                      40.71 kB │ gzip:  13.78 kB
+../../../../../tmp/umk-phase01-production-build/assets/Portal-XGJ9YTjC.js                     52.30 kB │ gzip:  15.71 kB
+../../../../../tmp/umk-phase01-production-build/assets/Dashboard-D4lWM0B3.js                  53.48 kB │ gzip:  17.20 kB
+../../../../../tmp/umk-phase01-production-build/assets/sweetalert2.esm.all-C2Wuf_dN.js        79.01 kB │ gzip:  21.00 kB
+../../../../../tmp/umk-phase01-production-build/assets/Index-DmrCuk8f.js                     107.71 kB │ gzip:  33.87 kB
+../../../../../tmp/umk-phase01-production-build/assets/app-Dnnkdi_f.js                       468.17 kB │ gzip: 151.79 kB
+✓ built in 6.71s
