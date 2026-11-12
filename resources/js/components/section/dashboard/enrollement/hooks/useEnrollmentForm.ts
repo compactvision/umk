@@ -135,21 +135,15 @@ export function useEnrollmentForm(initial: Partial<EnrollmentFormData> & { uuid?
     };
     const submitEnrollment = async (): Promise<boolean> => {
         if (!uuid || !(await saveProgress(4))) return false;
-        return new Promise((resolve) =>
-            router.post(
-                `/dashboard/enrollments/${uuid}/submit`,
-                {},
-                {
-                    preserveScroll: true,
-                    onSuccess: () => resolve(true),
-                    onError: (errors) => {
-                        setSaveError(Object.values(errors)[0] || 'La soumission a échoué. Réessayez.');
-                        resolve(false);
-                    },
-                    onCancel: () => resolve(false),
-                },
-            ),
-        );
+        try {
+            const { data } = await axios.post<{ ok: boolean; redirect: string }>(route('dashboard.enrollments.submit', uuid));
+            router.visit(data.redirect);
+            return true;
+        } catch (error) {
+            const response = axios.isAxiosError(error) ? error.response?.data : null;
+            setSaveError(response?.message || 'La soumission a échoué. Réessayez.');
+            return false;
+        }
     };
     return {
         formData,

@@ -92,7 +92,8 @@ class AdmissionConsolidationTest extends TestCase
         $temp = $this->postJson('/dashboard/enrollments/documents/upload', ['key' => $key, 'file' => UploadedFile::fake()->create('preuve.pdf', 10, 'application/pdf')])->assertOk()->json('temp');
         $snapshot['documents'][$key] = ['filename' => $temp['filename'], 'mime' => $temp['mime'], 'temp' => $temp];
         $this->postJson('/dashboard/enrollments/save-progress', ['uuid' => $draft, 'last_step' => 4, 'form_snapshot' => $snapshot])->assertOk();
-        $this->post($submit)->assertSessionHasNoErrors()->assertRedirect('/dashboard/enrollments');
+        $this->postJson($submit)->assertOk()->assertJsonPath('redirect', '/dashboard/enrollments');
+        $this->get('/dashboard/enrollments')->assertOk();
         $this->post($submit)->assertSessionHasNoErrors()->assertRedirect('/dashboard/enrollments');
         $entry = Enrollment::where('uuid', $draft)->firstOrFail();
         $this->assertNotEmpty($entry->meta['submitted_at']);
@@ -132,7 +133,9 @@ class AdmissionConsolidationTest extends TestCase
         $this->postJson($url.'/save-progress', $payload)->assertOk()->assertJsonPath('draft.uuid', $uuid);
         $entry = Enrollment::where('uuid', $uuid)->firstOrFail();
         $year->update(['status' => 'closed']);
-        $this->post($url.'/'.$uuid.'/submit')->assertSessionHasErrors('submit');
+        $this->postJson($url.'/'.$uuid.'/submit')->assertUnprocessable()
+            ->assertJsonPath('message', 'Cette année académique ne reçoit plus de candidatures.');
+        $this->post($url.'/'.$uuid.'/submit')->assertRedirect($url.'/'.$uuid.'/edit')->assertSessionHasErrors('submit');
         $entry->update(['draft_expires_at' => now()->subDay()]);
         $this->get($url.'/'.$uuid.'/edit')->assertNotFound();
         $this->postJson($url.'/save-progress', $payload + ['uuid' => $uuid])->assertJsonValidationErrors('uuid');
