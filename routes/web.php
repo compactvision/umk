@@ -419,6 +419,7 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
             });
 
             Route::prefix('/admission-conditions')->name('admission-conditions.')->group(function () {
+                Route::post('/{level}/copy-previous', [AdmissionConditionController::class, 'copyPrevious'])->whereNumber('level')->name('copy-previous');
                 Route::post('/', [AdmissionConditionController::class, 'store'])->name('store');
                 Route::put('/{id}', [AdmissionConditionController::class, 'update'])->name('update');
                 Route::delete('/{id}', [AdmissionConditionController::class, 'destroy'])->name('destroy');

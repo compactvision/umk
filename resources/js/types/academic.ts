@@ -9,4 +9,4 @@ export type LevelDetails = {
 };
 export type AcademicLevel = { id: number; faculty_id: number; title: string; code: string; level_name: string; level_code: string; description: string; image: string; is_active: boolean; details: LevelDetails; admission_conditions: AdmissionCondition[] };
 export type Faculty = { id: number; name: string; code: string; description: string; image: string; duration_years: string; is_active: boolean; levels: AcademicLevel[]; student_count: number; levels_count: number };
-export type LevelPageProps = { initialTab?: 'infos' | 'conditions'; canManageAdmissionCampaigns?: boolean; levelDetail: LevelDetails; level: AcademicLevel; admissionConditions: AdmissionCondition[]; faculties: { data: Faculty[] } };
+export type LevelPageProps = { previousConditionLevel?: { code: string } | null; initialTab?: 'infos' | 'conditions'; canManageAdmissionCampaigns?: boolean; levelDetail: LevelDetails; level: AcademicLevel; admissionConditions: AdmissionCondition[]; faculties: { data: Faculty[] } };

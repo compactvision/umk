@@ -13,6 +13,7 @@ use App\Modules\LevelDetail\Infrastructure\Http\Requests\UpdateLevelDetailsReque
 use App\Modules\LevelDetail\Infrastructure\Http\Requests\SaveCourseRequest;
 use App\Modules\LevelDetail\Infrastructure\Http\Requests\CreateLevelDetailsRequest;
 use App\Modules\AdmissionCondition\Application\UseCases\ListAdmissionCondition;
+use App\Modules\AdmissionCondition\Application\UseCases\CopyPreviousLevelConditions;
 
 final class LevelDetailController extends Controller
 {
@@ -65,6 +66,7 @@ final class LevelDetailController extends Controller
             'canManageCourses' => request()->user()->can('publish academic content')
                 && \App\Modules\Teaching\Application\Services\TeachingScope::allows(request()->user(), (int) $level->faculty_id),
             'admissionConditions' => $conditionsArray,
+            'previousConditionLevel' => app(CopyPreviousLevelConditions::class)->source($level)?->only(['code']),
             'level' => array_merge($level->only(['id', 'faculty_id', 'title', 'code', 'tag', 'description', 'image']), ['is_active' => (bool) $level->is_active]),
             'faculties' => ['data' => $level->faculty ? [$level->faculty->only(['id', 'name'])] : []],
         ]);

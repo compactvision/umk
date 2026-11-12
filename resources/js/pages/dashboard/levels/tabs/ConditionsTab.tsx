@@ -1,6 +1,6 @@
-import type { AdmissionCondition } from '@/types/academic';
-import { Link } from '@inertiajs/react';
-import { CalendarDays, ClipboardCheck, FileCheck2, FolderOpen, GraduationCap, Pencil, Plus, Trash2, UserRound } from 'lucide-react';
+import type { AdmissionCondition, LevelPageProps } from '@/types/academic';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { CalendarDays, ClipboardCheck, Copy, FileCheck2, FolderOpen, GraduationCap, Pencil, Plus, Trash2, UserRound } from 'lucide-react';
 import type { useLevelModals } from '../hooks/useLevelModals';
 const sections = [
     { id: 'personal_info', title: 'Dossier personnel', text: 'Les pièces et informations concernant le candidat.', icon: UserRound },
@@ -16,6 +16,8 @@ export default function ConditionsTab({
     campaignsHref?: string;
     modalsHook: ReturnType<typeof useLevelModals>;
 }) {
+    const { level, previousConditionLevel, flash } = usePage<LevelPageProps & { flash?: { success?: string } }>().props;
+    const copy = useForm({});
     const conditions = Array.isArray(levelConditions) ? levelConditions : [];
     const required = conditions.filter((condition) => condition.is_required).length;
     return (
@@ -32,11 +34,25 @@ export default function ConditionsTab({
                             <CalendarDays size={17} aria-hidden="true" /> Campagnes d’admission
                         </Link>
                     )}
+                    {previousConditionLevel && (
+                        <button
+                            type="button"
+                            className="admin-secondary"
+                            disabled={copy.processing}
+                            onClick={() =>
+                                copy.post(route('dashboard.admin.levels.admission-conditions.copy-previous', level.id), { preserveScroll: true })
+                            }
+                        >
+                            <Copy size={17} aria-hidden="true" />
+                            {copy.processing ? 'Copie en cours…' : `Reprendre les conditions de ${previousConditionLevel.code}`}
+                        </button>
+                    )}
                     <button className="admin-primary" onClick={() => modalsHook.openConditionModal('add')}>
                         <Plus size={17} /> Ajouter une condition
                     </button>
                 </div>
             </div>
+            {flash?.success && <p role="status">{flash.success}</p>}
             <div className="ld-admission-summary">
                 <span className="ld-icon">
                     <ClipboardCheck size={23} strokeWidth={1.5} />

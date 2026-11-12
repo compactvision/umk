@@ -35,8 +35,6 @@ export function useLevelModals(level: LevelDetails) {
         id: null as number | null,
     });
 
-    console.log("conditionData", conditionData)
-
     const openEditModal = (field: SetStateAction<string>) => {
         setEditErrors({});
         setEditField(field);
@@ -101,10 +99,7 @@ export function useLevelModals(level: LevelDetails) {
     const saveCondition = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        // alert(conditionMode)
-
         if (conditionMode === 'add') {
-            console.log("conditionDataForm", conditionData)
             postCondition(route('dashboard.admin.levels.admission-conditions.store'), {
                 onSuccess: () => {
 

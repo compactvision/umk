@@ -3,7 +3,9 @@
 namespace App\Modules\AdmissionCondition\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\AdmissionCondition\Infrastructure\Http\Requests\AdmissionConditionRequest;
+use App\Models\AdmissionCondition;
+use App\Models\Level;
+use App\Modules\AdmissionCondition\Application\UseCases\CopyPreviousLevelConditions;
 use App\Modules\AdmissionCondition\Application\UseCases\CreateAdmissionCondition;
 use App\Modules\AdmissionCondition\Application\UseCases\UpdateAdmissionCondition;
 use App\Modules\AdmissionCondition\Application\UseCases\DeleteAdmissionCondition;
@@ -11,7 +13,7 @@ use App\Modules\AdmissionCondition\Application\UseCases\ListAdmissionCondition;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Requests\CreateAdmissionConditionRequest;
 use App\Modules\AdmissionCondition\Infrastructure\Http\Requests\UpdateAdmissionConditionRequest;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class AdmissionConditionController extends Controller
 {
@@ -59,7 +61,7 @@ class AdmissionConditionController extends Controller
             $request->boolean('is_required')
         );
 
-        return back()->with('success', 'Condition ajoutée avec succès.');
+        return $this->conditionsTab($request->integer('level_id'))->with('success', 'Condition ajoutée avec succès.');
     }
 
     /**
@@ -80,7 +82,7 @@ class AdmissionConditionController extends Controller
             $request->boolean('is_required')
         );
 
-        return back()->with('success', 'Condition mise à jour avec succès.');
+        return $this->conditionsTab($request->integer('level_id'))->with('success', 'Condition mise à jour avec succès.');
     }
 
     /**
@@ -90,8 +92,25 @@ class AdmissionConditionController extends Controller
         int $id,
         DeleteAdmissionCondition $useCase
     ) {
+        $levelId = AdmissionCondition::findOrFail($id)->level_id;
         $useCase->execute($id);
 
-        return back()->with('success', 'Condition supprimée avec succès.');
+        return ($levelId ? $this->conditionsTab($levelId) : back())->with('success', 'Condition supprimée avec succès.');
+    }
+
+    public function copyPrevious(Level $level, CopyPreviousLevelConditions $useCase): RedirectResponse
+    {
+        $added = $useCase->execute($level);
+
+        return $this->conditionsTab($level->id)->with('success', match ($added) {
+            0 => 'Aucune nouvelle condition à reprendre.',
+            1 => 'Une condition reprise du niveau précédent.',
+            default => "$added conditions reprises du niveau précédent.",
+        });
+    }
+
+    private function conditionsTab(int $levelId): RedirectResponse
+    {
+        return to_route('dashboard.admin.levels.details.show', ['id' => $levelId, 'tab' => 'conditions'], 303);
     }
 }
