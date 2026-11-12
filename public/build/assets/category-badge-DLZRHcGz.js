@@ -1,0 +1,1 @@
+function i(t){const c=t&&/^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(t)?t:"#073e32",n=c.slice(1),s=(n.length===3?[...n].map(e=>e.repeat(2)):n.match(/../g)??[]).reduce((e,l,u)=>{const a=parseInt(l,16)/255,f=a<=.04045?a/12.92:((a+.055)/1.055)**2.4;return e+f*[.2126,.7152,.0722][u]},0),o=1.05/(s+.05),r=(s+.05)/.05;return{backgroundColor:c,color:o>=r?"#fff":"#000"}}export{i as c};

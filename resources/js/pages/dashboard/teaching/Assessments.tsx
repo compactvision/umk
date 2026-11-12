@@ -311,7 +311,7 @@ function DraftForm({ props, item, onClose }: { props: Props; item?: Details; onC
                                     type="datetime-local"
                                     required
                                     value={form.data.opens_at}
-                                    onChange={(e) => form.setData('opens_at', e.target.value)}
+                                    onInput={(e) => form.setData('opens_at', e.currentTarget.value)}
                                 />
                             </label>
                             <label>
@@ -320,7 +320,7 @@ function DraftForm({ props, item, onClose }: { props: Props; item?: Details; onC
                                     type="datetime-local"
                                     required
                                     value={form.data.closes_at}
-                                    onChange={(e) => form.setData('closes_at', e.target.value)}
+                                    onInput={(e) => form.setData('closes_at', e.currentTarget.value)}
                                 />
                             </label>
                             <label>
