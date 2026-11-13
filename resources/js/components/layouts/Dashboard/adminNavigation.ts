@@ -182,6 +182,7 @@ export const adminNavigation: { id: string; title: string; shortLabel: string; i
         icon: Wallet,
         items: [
             ['Comptes étudiants, paiements et échéanciers', destination('finance', finance)],
+            ['Confirmation des inscriptions', destination('finance/confirmations', finance)],
             ['Barèmes des frais', destination('finance#tariffs', finance)],
             ['Rapprochements', destination('finance#reconciliation', finance)],
         ],

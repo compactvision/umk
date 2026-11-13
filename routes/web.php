@@ -323,6 +323,8 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
         });
         Route::prefix('finance')->name('finance.')->middleware('can:manage academic finance')->controller(\App\Modules\Student\Infrastructure\Http\Controllers\FinanceController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/confirmations', 'confirmations')->name('confirmations');
+            Route::post('/confirmations/{academic}', 'confirmEnrollment')->whereNumber('academic')->name('confirmations.store');
             Route::get('/export', 'export')->name('export');
             Route::get('/export.xlsx', 'exportXlsx')->name('export-xlsx');
             Route::post('/tariffs', 'tariff')->name('tariffs');

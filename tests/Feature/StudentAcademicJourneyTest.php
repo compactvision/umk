@@ -58,6 +58,7 @@ class StudentAcademicJourneyTest extends TestCase
         parent::setUp();
         $this->artisan('migrate:fresh', ['--force' => true]);
         RefreshDatabaseState::$migrated = false;
+        config(['student.enrollment_auto_confirmation' => true]);
         Mail::fake();
         Storage::fake('local');
     }
@@ -467,6 +468,34 @@ class StudentAcademicJourneyTest extends TestCase
         $this->get('/dashboard/student/fees?academic='.$target->id)->assertInertia(fn (Assert $p) => $p
             ->where('academic.level', 'Licence 2')->where('progression.status', 'confirmed'));
         $this->assertSame('completed', $source->fresh()->enrollment_status);
+    }
+
+    public function test_finance_confirmation_requires_coverage_and_records_a_single_manual_decision(): void
+    {
+        config(['student.enrollment_auto_confirmation' => false]);
+        [$admin, $student, $application] = $this->application();
+        $this->actingAs($admin)->post('/dashboard/admin/enrollments/'.$application->id.'/validate')->assertSessionHasNoErrors();
+        $academic = $application->academicEnrollment()->firstOrFail();
+        app(StudentFinanceService::class)->assess($academic, $admin, 'national');
+        $index = route('dashboard.admin.finance.confirmations');
+        $confirm = route('dashboard.admin.finance.confirmations.store', $academic);
+        $payload = [
+            'operation_key' => '38fa76db-584e-4197-9c6f-121cc1a19f6d',
+            'expected_context' => \App\Modules\Student\Application\Services\AcademicEnrollmentService::contextToken($academic->fresh()),
+            'reason' => 'Première tranche vérifiée dans le compte financier.',
+        ];
+        $this->actingAs($student)->post($confirm, $payload)->assertForbidden();
+        $this->actingAs($admin)->post($confirm, $payload)->assertRedirect($index)->assertSessionHasErrors('enrollment_status');
+
+        $this->payment($academic, $admin, '50.00');
+        $this->assertSame('pending_confirmation', $academic->fresh()->enrollment_status);
+        $this->get($index)->assertInertia(fn (Assert $page) => $page->component('dashboard/finance/Confirmations')
+            ->where('entries.data.0.id', $academic->id)->where('entries.data.0.blocker', null));
+        $payload['expected_context'] = \App\Modules\Student\Application\Services\AcademicEnrollmentService::contextToken($academic->fresh());
+        $this->post($confirm, $payload)->assertRedirect($index)->assertSessionHasNoErrors();
+        $this->post($confirm, $payload)->assertRedirect($index)->assertSessionHasNoErrors();
+        $this->assertSame('confirmed', $academic->fresh()->enrollment_status);
+        $this->assertSame(1, $academic->changes()->count());
     }
 
     public function test_payment_and_valid_aid_combine_to_confirm_the_first_installment_once(): void

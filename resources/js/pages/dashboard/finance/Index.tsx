@@ -172,6 +172,9 @@ export default function Finance(props: Props) {
                         </div>
                     </div>
                     <div className="finance-export-actions">
+                        <Link className="finance-export" href={route('dashboard.admin.finance.confirmations')}>
+                            Confirmation des inscriptions
+                        </Link>
                         <a className="finance-export finance-export-xlsx" href={route('dashboard.admin.finance.export-xlsx', props.filters)}>
                             <FileSpreadsheet size={19} aria-hidden="true" /> Exporter le rapport Excel
                         </a>

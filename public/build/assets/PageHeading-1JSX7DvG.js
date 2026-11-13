@@ -1,1 +1,0 @@
-import{j as e}from"./app-xeyHmcKf.js";function a({title:s,description:n,action:i}){return e.jsxs("header",{className:"admin-page-heading",children:[e.jsxs("div",{children:[e.jsx("span",{children:"GESTION UNIVERSITAIRE"}),e.jsx("h1",{children:s}),e.jsx("p",{children:n})]}),i]})}export{a as P};

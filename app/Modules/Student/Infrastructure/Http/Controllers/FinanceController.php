@@ -13,6 +13,7 @@ use App\Models\Student\FinanceTariff;
 use App\Models\Student\PaymentRefund;
 use App\Models\Student\StudentPayment;
 use App\Modules\Student\Application\Services\AcademicEnrollmentReadService;
+use App\Modules\Student\Application\Services\AcademicEnrollmentService;
 use App\Modules\Student\Application\Services\FeeTariffService;
 use App\Modules\Student\Application\Services\FinanceReconciliationService;
 use App\Modules\Student\Application\Services\FinanceReportingService;
@@ -21,6 +22,7 @@ use App\Modules\Student\Application\Services\PaymentRefundService;
 use App\Modules\Student\Application\Services\StudentFinanceService;
 use App\Modules\Student\Infrastructure\Exports\FinanceWorkbook;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 final class FinanceController extends Controller
@@ -70,6 +72,57 @@ final class FinanceController extends Controller
             'currencies' => config('finance.currencies'), 'methods' => config('finance.methods'), 'dualControl' => config('finance.dual_control'),
             'preview' => ($r->session()->get('finance.preview.actor_id') === $r->user()->id && $r->session()->get('finance.preview.expires_at', 0) >= now()->timestamp) ? $r->session()->get('finance.preview') : null,
         ]);
+    }
+
+    public function confirmations(Request $request, AcademicEnrollmentReadService $read, StudentFinanceService $finance)
+    {
+        $this->staff($request);
+        $filters = $request->validate(['q' => 'nullable|string|max:150']);
+        $actor = $request->user();
+        $requiresPayment = config('student.enrollment_requires_first_installment');
+
+        return Inertia::render('dashboard/finance/Confirmations', [
+            'filters' => $filters,
+            'requiresPayment' => $requiresPayment,
+            'entries' => $read->query($actor, $filters + ['status' => 'pending_confirmation'])
+                ->with('application')->latest('academic_enrollments.id')->paginate(15)->withQueryString()
+                ->through(function (AcademicEnrollment $entry) use ($read, $finance, $requiresPayment, $actor) {
+                    $blocker = match (true) {
+                        $entry->application?->status?->value !== 'validated' => 'Candidature à valider',
+                        $entry->profile->student_status !== 'active' => 'Profil étudiant inactif',
+                        $entry->academicYear->status !== 'open' => 'Année académique fermée',
+                        $requiresPayment && ! $finance->firstTuitionInstallmentCovered($entry) => 'Première tranche à couvrir',
+                        default => null,
+                    };
+
+                    return $read->row($entry) + [
+                        'blocker' => $blocker,
+                        'canConfirm' => $actor->can('manage', $entry),
+                        'context' => AcademicEnrollmentService::contextToken($entry),
+                    ];
+                }),
+        ]);
+    }
+
+    public function confirmEnrollment(Request $request, AcademicEnrollment $academic, AcademicEnrollmentService $service)
+    {
+        $this->staff($request);
+        abort_unless($request->user()->can('manage', $academic), 403);
+        try {
+            $data = $request->validate([
+                'operation_key' => 'required|uuid',
+                'expected_context' => 'required|string|size:64',
+                'reason' => 'required|string|min:10|max:1000',
+            ]);
+            $service->transition($academic, $request->user(), $data + [
+                'expected_status' => 'pending_confirmation',
+                'enrollment_status' => 'confirmed',
+            ]);
+        } catch (ValidationException $exception) {
+            return to_route('dashboard.admin.finance.confirmations', status: 303)->withErrors($exception->errors());
+        }
+
+        return to_route('dashboard.admin.finance.confirmations', status: 303)->with('success', 'Inscription académique confirmée.');
     }
 
     public function tariff(Request $r, FeeTariffService $service)

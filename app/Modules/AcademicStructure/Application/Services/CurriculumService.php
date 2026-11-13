@@ -534,6 +534,9 @@ class CurriculumService
         return DB::transaction(function () use ($owned, $action, $revision, $reason, $actor, $replaceId) {
             if (in_array($action, ['validate', 'publish'], true)) {
                 AcademicYear::orderBy('id')->lockForUpdate()->firstOrFail();
+                if ($action === 'publish' && $owned->academic_year_id !== null) {
+                    AcademicYear::lockForUpdate()->findOrFail($owned->academic_year_id);
+                }
             }
             $version = $this->locked($owned);
             $this->checkRevision($version, $revision);
@@ -583,6 +586,9 @@ class CurriculumService
             }
             $version->revision++;
             $version->save();
+            if ($action === 'publish' && $version->academic_year_id !== null) {
+                $publication['enrollments_bound'] = $this->bindAnnualEnrollments($version, $actor);
+            }
             Audit::record($actor->id, 'curriculum_'.$action, $version, $reason, ['revision' => $version->revision] + $publication);
 
             return $version;
@@ -629,33 +635,132 @@ class CurriculumService
                 }
                 $entry->admission_cohort_id = $cohort->id;
             }
-            $entry->curriculum_version_id = $version->id;
-            $entry->save();
-            Audit::record($actor->id, 'curriculum_bound', $entry, $reason, ['curriculum_version_id' => $version->id]);
+            $this->recordBinding($version, $entry, $actor, $reason);
 
             return $entry;
         });
     }
 
+    private function recordBinding(CurriculumVersion $version, AcademicEnrollment $entry, User $actor, string $reason): void
+    {
+        $entry->curriculum_version_id = $version->id;
+        $entry->save();
+        Audit::record($actor->id, 'curriculum_bound', $entry, $reason, ['curriculum_version_id' => $version->id]);
+    }
+
+    private function enrollmentProgram(AcademicEnrollment $entry, ?int $programId = null): ?int
+    {
+        $groupPromotion = $entry->group?->promotion;
+        if ($groupPromotion && (int) $groupPromotion->academic_year_id !== (int) $entry->academic_year_id) {
+            return null;
+        }
+
+        $references = collect([
+            $programId,
+            $entry->application?->form_snapshot['academic_program_id'] ?? null,
+            $entry->promotion?->academic_program_id,
+            $entry->admissionCohort?->academic_program_id,
+            $groupPromotion?->academic_program_id,
+        ])->filter()->map(fn ($id) => (int) $id)->unique()->values();
+
+        if ($references->count() > 1) {
+            return null;
+        }
+
+        $programs = $entry->level->programs()
+            ->when($references->isNotEmpty(), fn ($query) => $query->whereKey($references->first()))
+            ->limit(2)->pluck('academic_programs.id');
+
+        return $programs->count() === 1 ? (int) $programs->first() : null;
+    }
+
+    public function backfillAnnualBindings(User $actor, ?int $yearId, bool $dryRun): int
+    {
+        Gate::forUser($actor)->authorize('manage', AcademicProgram::class);
+        $university = $this->structure->current();
+        if ($yearId !== null) {
+            $this->structure->year($yearId);
+        }
+
+        $total = 0;
+        CurriculumVersion::where('status', 'published')->whereNotNull('published_at')
+            ->whereNotNull('academic_year_id')
+            ->whereNull('admission_cohort_id')
+            ->when($yearId !== null, fn ($query) => $query->where('academic_year_id', $yearId))
+            ->whereHas('program.faculty', fn ($query) => $query->where('university_id', $university->id))
+            ->with('program')->eachById(function (CurriculumVersion $version) use ($actor, $dryRun, &$total) {
+                if (! TeachingScope::allows($actor, (int) $version->program->faculty_id)) {
+                    return;
+                }
+
+                if ($dryRun) {
+                    $total += $this->bindAnnualEnrollments($version, $actor, dryRun: true);
+
+                    return;
+                }
+
+                $total += DB::transaction(function () use ($version, $actor) {
+                    AcademicYear::lockForUpdate()->findOrFail($version->academic_year_id);
+                    $version = $this->locked($version);
+
+                    return $version->status === 'published' && $version->published_at !== null
+                        ? $this->bindAnnualEnrollments($version, $actor, reason: 'Rattrapage des inscriptions après déploiement.')
+                        : 0;
+                }, 3);
+            });
+
+        return $total;
+    }
+
+    private function bindAnnualEnrollments(
+        CurriculumVersion $version,
+        User $actor,
+        bool $dryRun = false,
+        string $reason = 'Rattachement automatique à la publication de la maquette annuelle.',
+    ): int {
+        $bound = 0;
+        AcademicEnrollment::where('academic_year_id', $version->academic_year_id)
+            ->whereNull('curriculum_version_id')
+            ->whereNotIn('enrollment_status', ['cancelled', 'transferred'])
+            ->whereIn('level_id', $version->units()->select('level_id'))
+            ->whereHas('level', fn ($query) => $query->where('faculty_id', $version->program->faculty_id))
+            ->with(['application', 'level', 'promotion', 'admissionCohort', 'group.promotion'])
+            ->when(! $dryRun, fn ($query) => $query->lockForUpdate())
+            ->eachById(function (AcademicEnrollment $entry) use ($version, $actor, $dryRun, $reason, &$bound) {
+                if ($this->enrollmentProgram($entry) === (int) $version->academic_program_id) {
+                    if (! $dryRun) {
+                        $this->recordBinding($version, $entry, $actor, $reason);
+                    }
+                    $bound++;
+                }
+            });
+
+        return $bound;
+    }
+
     public function resolveNew(AcademicEnrollment $entry, User $actor, ?int $programId = null): void
     {
-        if (! Gate::forUser($actor)->allows('manage', AcademicProgram::class) || ! University::where('context_key', 'current')->exists() || $entry->curriculum_version_id !== null) {
-            return;
-        }
-        $choice = $programId ?? $entry->application?->form_snapshot['academic_program_id'] ?? null;
-        $candidates = CurriculumVersion::where('status', 'published')->when($choice, fn ($q) => $q->where('academic_program_id', (int) $choice))->where('academic_year_id', $entry->academic_year_id)
-            ->whereHas('program', fn ($q) => $q->where('is_active', true)->whereHas('cycle', fn ($q) => $q->where('is_active', true))->whereHas('faculty', fn ($q) => $q->where('university_id', $this->structure->current()->id)))
-            ->whereHas('units', fn ($q) => $q->where('level_id', $entry->level_id))->limit(2)->get();
-        if (! $this->structure->current()->is_active) {
-            return;
-        }
-        if ($candidates->count() !== 1) {
+        if (! Gate::forUser($actor)->allows('manage', $entry) || ! University::where('context_key', 'current')->exists() || $entry->curriculum_version_id !== null) {
             return;
         }
 
-        DB::transaction(function () use ($candidates, $entry, $actor) {
-            $version = $this->locked($candidates->first());
-            // Historical versions remain available for explicit assignments only.
+        $programId = $this->enrollmentProgram($entry, $programId);
+        if ($programId === null || ! $this->structure->current()->is_active) {
+            return;
+        }
+
+        $version = CurriculumVersion::where('status', 'published')
+            ->where('academic_program_id', $programId)
+            ->where('academic_year_id', $entry->academic_year_id)
+            ->whereHas('program', fn ($q) => $q->openForAdmission()->whereHas('faculty', fn ($q) => $q->where('university_id', $this->structure->current()->id)))
+            ->whereHas('units', fn ($q) => $q->where('level_id', $entry->level_id))
+            ->first();
+        if (! $version) {
+            return;
+        }
+
+        DB::transaction(function () use ($version, $entry, $actor) {
+            $version = $this->locked($version);
             if ($version->status === 'published') {
                 $this->bind($version->id, $entry->id, $actor, 'Version annuelle déterminée sans ambiguïté lors de l’activation.');
             }

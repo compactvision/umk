@@ -606,12 +606,30 @@ class AcademicStructureTest extends TestCase
         }
     }
 
+    public function test_backfill_previews_and_repairs_existing_annual_bindings_once(): void
+    {
+        $context = $this->context();
+        [$admin,, $entry] = $context;
+        $version = $this->published($context);
+        // Simulate an enrollment predating automatic attachment on publication.
+        $entry->refresh()->forceFill(["curriculum_version_id" => null])->save();
+        $options = ['--actor' => $admin->id, '--year' => $entry->academic_year_id];
+        $command = 'curriculum:backfill-bindings';
+
+        $this->artisan($command, $options)->expectsOutput('Rattachements possibles : 1')->assertSuccessful();
+        $this->assertNull($entry->fresh()->curriculum_version_id);
+        $this->artisan($command, $options + ['--apply' => true])->expectsOutput('Inscriptions rattachées : 1')->assertSuccessful();
+        $this->assertSame($version->id, $entry->fresh()->curriculum_version_id);
+        $this->artisan($command, $options + ['--apply' => true])->expectsOutput('Inscriptions rattachées : 0')->assertSuccessful();
+        $this->assertSame($version->id, $entry->fresh()->curriculum_version_id);
+    }
+
     public function test_new_admission_resolves_only_an_unambiguous_annual_program(): void
     {
         $context = $this->context();
         [$admin,,$oldEntry,$program] = $context;
         $version = $this->published($context);
-        $this->assertNull($oldEntry->fresh()->curriculum_version_id);
+        $this->assertSame($version->id, $oldEntry->fresh()->curriculum_version_id);
         $activate = function (array $snapshot = []) use ($admin, $oldEntry) {
             $user = User::factory()->create();
             $application = Enrollment::create(['student_id' => $user->id, 'level_id' => $oldEntry->level_id, 'academic_year_id' => $oldEntry->academic_year_id, 'status' => 'validated', 'form_snapshot' => $snapshot]);
@@ -623,12 +641,15 @@ class AcademicStructureTest extends TestCase
         $second = app(StructureService::class)->save('program', ['faculty_id' => $program->faculty_id, 'academic_cycle_id' => $program->academic_cycle_id, 'code' => 'P2', 'name' => 'Autre programme', 'is_active' => true, 'revision' => 0, 'level_ids' => [$oldEntry->level_id], 'reason' => 'Création du second programme.'], $admin);
         $otherContext = $context;
         $otherContext[3] = $second;
-        $otherVersion = $this->published($otherContext, 'V2');
         $ambiguous = $activate();
-        $this->assertNull($ambiguous->curriculum_version_id);
+        $waitingForSecond = $activate(['academic_program_id' => $second->id]);
+        $this->assertNull($waitingForSecond->curriculum_version_id);
+        $otherVersion = $this->published($otherContext, 'V2');
+        $this->assertNull($ambiguous->fresh()->curriculum_version_id);
+        $this->assertSame($otherVersion->id, $waitingForSecond->fresh()->curriculum_version_id);
         $chosen = $activate(['academic_program_id' => $second->id]);
         $this->assertSame($otherVersion->id, $chosen->curriculum_version_id);
-        $this->assertNull($oldEntry->fresh()->curriculum_version_id);
+        $this->assertSame($version->id, $oldEntry->fresh()->curriculum_version_id);
         $this->assertSame($version->id, $resolved->fresh()->curriculum_version_id);
 
         $archivedDuringSelection = false;
